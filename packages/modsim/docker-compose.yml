@@ -1,0 +1,17 @@
+version: '2'
+
+networks:
+  app:
+    driver: bridge
+
+services:
+  modsim:
+    # build: .
+    image: helloysd/modsim
+    container_name: modsim
+    restart: unless-stopped
+    networks:
+      - app
+    ports:
+      - "502:5020"
+    command: bash -c ". .venv/bin/activate && modsim"

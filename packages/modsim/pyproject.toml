@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "modsim"
+version = "0.1.0"
+description = "A Modbus TCP Device Simulator"
+authors = ["Ying Shaodong <helloysd@foxmail.com>"]
+readme = "README.md"
+repository = "https://gitlab.com/helloysd/modsim"
+license = "MIT"
+include = [
+  "LICENSE",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+importlib-metadata = {version = "^1.0", python = "<3.8"}
+pymodbus = {extras = ["twisted"], version = "^2.5.2"}
+paho-mqtt = "^1.5.1"
+
+[tool.poetry.dev-dependencies]
+pip = "^21.2"
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+modsim = "modsim:app"

@@ -1,0 +1,4 @@
+poll,modsim,1,40001,3,holding_register,BE_BE
+ref,reg1,,40001,int16,,
+ref,reg2,,40002,int16,,
+ref,reg3,,40003,int16,,
