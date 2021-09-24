@@ -13,5 +13,5 @@ services:
     networks:
       - app
     ports:
-      - "502:5020"
+      - "5020:5020"
     command: bash -c ". .venv/bin/activate && modsim"
