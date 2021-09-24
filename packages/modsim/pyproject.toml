@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A Modbus TCP Device Simulator"
 authors = ["Ying Shaodong <helloysd@foxmail.com>"]
 readme = "README.md"
-repository = "https://gitlab.com/helloysd/modsim"
+repository = "https://github.com/gavinying/modsim"
 license = "MIT"
 include = [
   "LICENSE",
