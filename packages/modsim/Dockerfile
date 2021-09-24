@@ -10,12 +10,12 @@ COPY . /app/
 # update dependencies (disable if needed)
 RUN poetry update
 
-# install app
-RUN poetry install --no-dev
+# # install app
+# RUN poetry install --no-dev
 
-# # build the app as module
-# RUN poetry install --no-dev --no-root
-# RUN poetry build
+# build the app as module
+RUN poetry install --no-dev --no-root
+RUN poetry build
 
 ###############################################
 # Final Image
@@ -24,9 +24,8 @@ FROM python:$PYTHON_TAG as final
 WORKDIR /app
 COPY --from=builder /app /app
 
-# # install the app as module
-# RUN python -m pip install dist/*.whl
+# install the app as module
+RUN python -m pip install dist/*.whl
 
 # start the app
-# CMD sleep infinity
-CMD bash -c ". .venv/bin/activate && modsim"
+CMD ["modsim"]
