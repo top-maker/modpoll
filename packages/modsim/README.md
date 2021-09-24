@@ -1,1 +1,1 @@
-# ModSim - A Modbus TCP simulator.
+# ModSim - A Simple Modbus TCP Device Simulator
