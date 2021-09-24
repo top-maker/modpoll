@@ -12,12 +12,12 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
+pip = "^21.2"
 importlib-metadata = {version = "^1.0", python = "<3.8"}
 pymodbus = {extras = ["twisted"], version = "^2.5.2"}
 paho-mqtt = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
-pip = "^21.2"
 pytest = "^5.2"
 
 [build-system]

@@ -28,5 +28,5 @@ COPY --from=builder /app /app
 # RUN python -m pip install dist/*.whl
 
 # start the app
-CMD sleep infinity
-# CMD bash -c ". .venv/bin/activate && modsim"
+# CMD sleep infinity
+CMD bash -c ". .venv/bin/activate && modsim"
