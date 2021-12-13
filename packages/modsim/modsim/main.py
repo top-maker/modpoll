@@ -76,10 +76,10 @@ def app():
     #     store = ModbusSlaveContext(..., zero_mode=True)
     # ----------------------------------------------------------------------- # 
     store = ModbusSlaveContext(
-        co=ModbusSequentialDataBlock(1, [17]*100),
-        di=ModbusSequentialDataBlock(10001, [17]*100),
-        ir=ModbusSequentialDataBlock(30001, [17]*100),
-        hr=ModbusSequentialDataBlock(40001, [17]*100))
+        co=ModbusSequentialDataBlock(0, [0xff]*100),
+        di=ModbusSequentialDataBlock(10000, [0xff]*100),
+        ir=ModbusSequentialDataBlock(30000, [0,17]*100),
+        hr=ModbusSequentialDataBlock(40000, [0,17]*100))
     context = ModbusServerContext(slaves=store, single=True)
     
     # ----------------------------------------------------------------------- # 
