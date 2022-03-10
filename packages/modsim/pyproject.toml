@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modsim"
-version = "0.1.0"
+version = "0.2.2"
 description = "A Modbus TCP Device Simulator"
 authors = ["Ying Shaodong <helloysd@foxmail.com>"]
 readme = "README.md"
@@ -15,7 +15,6 @@ python = "^3.6"
 pip = "^21.2"
 importlib-metadata = {version = "^1.0", python = "<3.8"}
 pymodbus = {extras = ["twisted"], version = "^2.5.2"}
-paho-mqtt = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

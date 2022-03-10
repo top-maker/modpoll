@@ -1,3 +1,5 @@
+from pymodbus.constants import Endian
+from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.server.asynchronous import StartTcpServer
 from pymodbus.server.asynchronous import StartUdpServer
 from pymodbus.server.asynchronous import StartSerialServer
@@ -5,84 +7,81 @@ from pymodbus.server.asynchronous import StartSerialServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSequentialDataBlock
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
-from pymodbus.transaction import (ModbusRtuFramer,
-                                  ModbusAsciiFramer,
-                                  ModbusBinaryFramer)
+
+from . import __version__
 
 # --------------------------------------------------------------------------- # 
 # configure the service logging
 # --------------------------------------------------------------------------- # 
 import logging
+
 FORMAT = ('%(asctime)-15s %(threadName)-15s'
           ' %(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
 logging.basicConfig(format=FORMAT)
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 
+log.info(f"====== Start modsim v{__version__} ======")
+
 
 def app():
-    # ----------------------------------------------------------------------- # 
-    # initialize your data store
-    # ----------------------------------------------------------------------- # 
-    # The datastores only respond to the addresses that they are initialized to
-    # Therefore, if you initialize a DataBlock to addresses from 0x00 to 0xFF,
-    # a request to 0x100 will respond with an invalid address exception.
-    # This is because many devices exhibit this kind of behavior (but not all)
-    #
-    #     block = ModbusSequentialDataBlock(0x00, [0]*0xff)
-    #
-    # Continuing, you can choose to use a sequential or a sparse DataBlock in
-    # your data context.  The difference is that the sequential has no gaps in
-    # the data while the sparse can. Once again, there are devices that exhibit
-    # both forms of behavior::
-    #
-    #     block = ModbusSparseDataBlock({0x00: 0, 0x05: 1})
-    #     block = ModbusSequentialDataBlock(0x00, [0]*5)
-    #
-    # Alternately, you can use the factory methods to initialize the DataBlocks
-    # or simply do not pass them to have them initialized to 0x00 on the full
-    # address range::
-    #
-    #     store = ModbusSlaveContext(di = ModbusSequentialDataBlock.create())
-    #     store = ModbusSlaveContext()
-    #
-    # Finally, you are allowed to use the same DataBlock reference for every
-    # table or you you may use a seperate DataBlock for each table.
-    # This depends if you would like functions to be able to access and modify
-    # the same data or not::
-    #
-    #     block = ModbusSequentialDataBlock(0x00, [0]*0xff)
-    #     store = ModbusSlaveContext(di=block, co=block, hr=block, ir=block)
-    #
-    # The server then makes use of a server context that allows the server to
-    # respond with different slave contexts for different unit ids. By default
-    # it will return the same context for every unit id supplied (broadcast
-    # mode).
-    # However, this can be overloaded by setting the single flag to False
-    # and then supplying a dictionary of unit id to context mapping::
-    #
-    #     slaves  = {
-    #         0x01: ModbusSlaveContext(...),
-    #         0x02: ModbusSlaveContext(...),
-    #         0x03: ModbusSlaveContext(...),
-    #     }
-    #     context = ModbusServerContext(slaves=slaves, single=False)
-    #
-    # The slave context can also be initialized in zero_mode which means that a
-    # request to address(0-7) will map to the address (0-7). The default is
-    # False which is based on section 4.4 of the specification, so address(0-7)
-    # will map to (1-8)::
-    #
-    #     store = ModbusSlaveContext(..., zero_mode=True)
-    # ----------------------------------------------------------------------- # 
+    # ----------------------------------------------------------------------- #
+    # build your payload
+    # ----------------------------------------------------------------------- #
+    coil_builder = BinaryPayloadBuilder(byteorder=Endian.Big,
+                                        wordorder=Endian.Big)
+    # address=0, bytes=8
+    for i in range(8):
+        coil_builder.add_bits([0, 1, 0, 1, 1, 0, 1, 0])
+
+    builder = BinaryPayloadBuilder(byteorder=Endian.Big,
+                                   wordorder=Endian.Big)
+    # address=0, bytes=8
+    builder.add_16bit_uint(1)
+    builder.add_16bit_uint(2)
+    builder.add_16bit_uint(3)
+    builder.add_16bit_uint(4)
+    # address=8, bytes=8
+    builder.add_16bit_int(-1)
+    builder.add_16bit_int(-2)
+    builder.add_16bit_int(-3)
+    builder.add_16bit_int(-4)
+    # address=16, bytes=8
+    builder.add_32bit_uint(12345678)
+    builder.add_32bit_uint(12345678)
+    # address=24, bytes=8
+    builder.add_32bit_int(-12345678)
+    builder.add_32bit_int(-12345678)
+    # address=32, bytes=8
+    builder.add_32bit_float(12.34)
+    builder.add_32bit_float(-12.34)
+    # address=40, bytes=8
+    builder.add_64bit_uint(12345678900)
+    # address=48, bytes=8
+    builder.add_64bit_int(-12345678900)
+    # address=56, bytes=16
+    builder.add_64bit_float(123.45)
+    builder.add_64bit_float(-123.45)
+    # address=72, bytes=?
+    builder.add_string('abcdefgh')
+
+    # ----------------------------------------------------------------------- #
+    # use that payload in the data store
+    # ----------------------------------------------------------------------- #
+    # Here we use the same reference block for each underlying store.
+    # ----------------------------------------------------------------------- #
+
+    co_values = coil_builder.to_registers()
+    hr_values = builder.to_registers()
     store = ModbusSlaveContext(
-        co=ModbusSequentialDataBlock(0, [0xff]*100),
-        di=ModbusSequentialDataBlock(10000, [0xff]*100),
-        ir=ModbusSequentialDataBlock(30000, [0,17]*100),
-        hr=ModbusSequentialDataBlock(40000, [0,17]*100))
+        co=ModbusSequentialDataBlock(0, co_values),
+        di=ModbusSequentialDataBlock(10000, co_values),
+        ir=ModbusSequentialDataBlock(30000, hr_values),
+        hr=ModbusSequentialDataBlock(40000, hr_values),
+        zero_mode=True)
     context = ModbusServerContext(slaves=store, single=True)
-    
-    # ----------------------------------------------------------------------- # 
+
+    # ----------------------------------------------------------------------- #
     # initialize the server information
     # ----------------------------------------------------------------------- # 
     # If you don't set this or any fields, they are defaulted to empty strings.
@@ -93,8 +92,8 @@ def app():
     identity.VendorUrl = 'https://gitlab.com/helloysd/modpoll'
     identity.ProductName = 'Modbus Simulator'
     identity.ModelName = 'Modbus Simulator'
-    identity.MajorMinorRevision = '0.1.0'
-    
+    identity.MajorMinorRevision = __version__
+
     # ----------------------------------------------------------------------- # 
     # run the server you want
     # ----------------------------------------------------------------------- # 

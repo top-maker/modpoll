@@ -1,7 +1,7 @@
 #!/bin/bash
 APP_NAME="modsim"
-APP_TAG="0.1.0"
-PYTHON_TAG="3.8-slim-buster"
+APP_TAG="0.2.2"
+PYTHON_TAG="3.6-slim-buster"
 
 echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY"
 
@@ -11,6 +11,7 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 docker buildx use mybuilder
 
 docker buildx build \
+  --build-arg "APP_TAG=$APP_TAG" \
   --build-arg "PYTHON_TAG=$PYTHON_TAG" \
   --platform linux/amd64,linux/arm64 \
   --tag "$DOCKER_REGISTRY/$DOCKER_REGISTRY_USERNAME/$APP_NAME:$APP_TAG" \
