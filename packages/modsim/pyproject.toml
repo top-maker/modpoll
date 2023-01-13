@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modsim"
-version = "0.2.2"
+version = "0.3.0"
 description = "A Modbus TCP Device Simulator"
 authors = ["Ying Shaodong <helloysd@foxmail.com>"]
 readme = "README.md"
@@ -11,13 +11,12 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-pip = ">= 21.0"
-importlib-metadata = {version = "^1.0", python = "<3.8"}
-pymodbus = {extras = ["twisted"], version = "^2.5.2"}
+python = "^3.8"
+pymodbus = "^3.0.2"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pip = ">= 21.0"
+pytest = "^7.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

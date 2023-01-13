@@ -1,7 +1,7 @@
 #!/bin/bash
 APP_NAME="modsim"
-APP_TAG="0.2.2"
-PYTHON_TAG="3.6-slim-buster"
+APP_TAG="0.3.0"
+PYTHON_TAG="3.8-slim-buster"
 
 echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY"
 
