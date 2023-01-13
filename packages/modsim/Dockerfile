@@ -3,6 +3,9 @@ FROM python:$PYTHON_TAG
 ARG APP_TAG="0.3.0"
 WORKDIR /app
 
-RUN pip install modsim==$APP_TAG
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
-CMD ["modsim"]
+COPY . .
+
+CMD [ "python3", "main.py"]
