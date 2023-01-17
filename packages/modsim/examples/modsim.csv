@@ -14,8 +14,6 @@ ref,value11,40012,int32,rw
 ref,value12,40014,int32,rw
 ref,value13,40016,float32,rw
 ref,value14,40018,float32,rw
-poll,coil,0,4,BE_BE
+poll,coil,0,24,BE_BE
 ref,coil1-8,0,bool,rw
-ref,coil9-16,1,bool,rw
-ref,coil17-24,2,bool,rw
-ref,coil25-32,3,bool,rw
+ref,coil9-24,8,bool16,rw

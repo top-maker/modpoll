@@ -21,17 +21,28 @@ ref,value11,40012,int32,rw
 ref,value12,40014,int32,rw
 ref,value13,40016,float32,rw
 ref,value14,40018,float32,rw
-poll,coil,0,4,BE_BE
+poll,coil,0,24,BE_BE
 ref,coil1-8,0,bool,rw
-ref,coil9-16,1,bool,rw
-ref,coil17-24,2,bool,rw
-ref,coil25-32,3,bool,rw
+ref,coil9-24,8,bool16,rw
 ```
 
 ## Quick Start
 
 A docker image has been provided for user to directly run the program, 
 
-  ```bash
-  docker run -p 5020:5020 helloysd/modsim
-  ```
+```bash
+docker run -p 5020:5020 helloysd/modsim
+```
+
+It will create a virtual Modbus TCP device running at `localhost:5020`, and then you can poll it using *modpoll* tool, 
+
+```bash
+modpoll --tcp localhost --tcp-port 5020 --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
+```
+
+> Use `sudo` before the docker command if you want to use the standard port `502`.
+
+```bash
+sudo docker run -p 502:5020 helloysd/modsim
+modpoll --tcp localhost --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
+```
