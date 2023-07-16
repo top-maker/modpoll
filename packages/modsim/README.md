@@ -1,8 +1,13 @@
 # ModSim - A Simple Modbus TCP Device Simulator
 
-*modsim* is a very simple Modbus TCP device simulator deployed on cloud, which populates a few registers for each type of Coil / Discrete input / Input register / Holding register. 
+*modsim* is a simple Modbus TCP device simulator deployed at `modsim.topmaker.net:502`. 
+It works as a remote Modbus-TCP (virtual) device, which has already been populated with all 4 types of registers, i.e. 
+- Coil Type
+- Discrete input Type
+- Input register Type
+- Holding register Type
 
-It is recommended to use [modpoll](https://github.com/gavinying/modpoll) to test with it, the example configuration is as following,
+It is recommended to use [modpoll](https://github.com/gavinying/modpoll) to communicate with it, the example configuration is as following,
 
 ```
 device,modsim001,1,,
