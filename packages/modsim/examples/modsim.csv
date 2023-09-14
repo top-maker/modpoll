@@ -1,10 +1,10 @@
 device,modsim001,1,,
-poll,coil,0,16,BE_BE
-ref,coil01-08,0,bool,rw
-ref,coil09-16,8,bool,rw
+poll,coil,0,12,BE_BE
+ref,coil01-08,0,bool8,rw
+ref,coil09-12,1,bool8,rw
 poll,discrete_input,10000,16,BE_BE
-ref,di01-08,10000,bool,rw
-ref,di09-16,10008,bool,rw
+ref,di01-08,10000,bool8,rw
+ref,di09-16,10001,bool8,rw
 poll,input_register,30000,20,BE_BE
 ref,input_reg01,30000,uint16,rw
 ref,input_reg02,30001,uint16,rw

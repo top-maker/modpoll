@@ -60,14 +60,14 @@ def setup_server(args):
         # ----------------------------------------------------------------------- #
         # build your payload
         # ----------------------------------------------------------------------- #
-        co_builder = BinaryPayloadBuilder(byteorder=Endian.Big,
-                                          wordorder=Endian.Big)
+        co_builder = BinaryPayloadBuilder(byteorder=Endian.BIG,
+                                          wordorder=Endian.BIG)
         # address=0, bytes=3
         for i in range(3):
-            co_builder.add_bits([True, False, True, False, False, False, False, False])
+            co_builder.add_bits([True, False, True, False, False, False, False, True])
 
-        hr_builder = BinaryPayloadBuilder(byteorder=Endian.Big,
-                                          wordorder=Endian.Big)
+        hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG,
+                                          wordorder=Endian.BIG)
         # address=0, bytes=8
         hr_builder.add_16bit_uint(1)
         hr_builder.add_16bit_uint(2)
