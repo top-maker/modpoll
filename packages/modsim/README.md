@@ -1,7 +1,7 @@
 # ModSim - A Simple Modbus TCP Device Simulator
 
-*modsim* is a simple Modbus TCP device simulator deployed at `modsim.topmaker.net:502`. 
-It works as a remote Modbus-TCP (virtual) device, which has already been populated with all 4 types of registers, i.e. 
+*modsim* is a simple Modbus TCP device simulator deployed at `modsim.topmaker.net:502`.
+It works as a remote Modbus-TCP (virtual) device, which has already been populated with all 4 types of registers, i.e.
 - Coil Type
 - Discrete input Type
 - Input register Type
@@ -33,13 +33,13 @@ ref,coil9-24,8,bool16,rw
 
 ## Quick Start
 
-A docker image has been provided for user to directly run the program, 
+A docker image has been provided for user to directly run the program,
 
 ```bash
 docker run -p 5020:5020 helloysd/modsim
 ```
 
-It will create a virtual Modbus TCP device running at `localhost:5020`, and then you can poll it using *modpoll* tool, 
+It will create a virtual Modbus TCP device running at `localhost:5020`, and then you can poll it using *modpoll* tool,
 
 ```bash
 modpoll --tcp localhost --tcp-port 5020 --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
