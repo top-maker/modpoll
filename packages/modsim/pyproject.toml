@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modsim"
-version = "0.3.2"
+version = "0.3.3"
 description = "A Modbus TCP Device Simulator"
 authors = ["Ying Shaodong <helloysd@foxmail.com>"]
 readme = "README.md"

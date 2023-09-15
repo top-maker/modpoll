@@ -62,7 +62,9 @@ def setup_server(args):
         co_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
         # address=0, bytes=3
         for i in range(3):
-            co_builder.add_bits([True, False, True, False, False, False, False, True])
+            # The bits within each byte are big-endian
+            # The coils status (from the first position) = [1,0,1,0,0,0,0,1]
+            co_builder.add_bits([True, False, False, False, False, True, False, True])
 
         hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
         # address=0, bytes=8
