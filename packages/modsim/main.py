@@ -42,7 +42,6 @@ from pymodbus.server import (
     StartAsyncTlsServer,
     StartAsyncUdpServer,
 )
-from pymodbus.version import version
 
 from utils import __version__, get_commandline, get_utc_time
 
@@ -123,7 +122,6 @@ def setup_server(args):
             "VendorUrl": "https://github.com/riptideio/pymodbus/",
             "ProductName": "Pymodbus Server",
             "ModelName": "Pymodbus Server",
-            "MajorMinorRevision": version.short(),
         }
     )
     return args
@@ -143,13 +141,10 @@ async def run_async_server(args):
             address=address,  # listen address
             # custom_functions=[],  # allow custom handling
             framer=args.framer,  # The framer strategy to use
-            # handler=None,  # handler for each session
-            allow_reuse_address=True,  # allow the reuse of an address
             # ignore_missing_slaves=True,  # ignore request to a missing slave
-            # broadcast_enable=False,  # treat unit_id 0 as broadcast address,
+            # broadcast_enable=False,  # treat slave_id 0 as broadcast address,
             # timeout=1,  # waiting time for request to complete
             # TBD strict=True,  # use strict timing, t1.5 for Modbus RTU
-            # defer_start=False,  # Only define server do not activate
         )
     elif args.comm == "udp":
         address = ("127.0.0.1", args.port) if args.port else None
