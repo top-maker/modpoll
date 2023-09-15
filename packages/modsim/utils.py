@@ -17,7 +17,7 @@ config = {}
 # except ModuleNotFoundError:
 #     import importlib_metadata
 # __version__ = importlib_metadata.version(__package__)
-__version__ = "0.3.0"
+__version__ = "0.3.2"
 # === package version end ===
 
 
@@ -37,9 +37,14 @@ __version__ = "0.3.0"
 # === parse args ===
 import argparse
 
+
 def get_parser():
-    parser = argparse.ArgumentParser(description=f'{__package__} v{__version__} - My python app template')
-    parser.add_argument('-v', '--version', action='version', version=f'{__package__} v{__version__}')
+    parser = argparse.ArgumentParser(
+        description=f"{__package__} v{__version__} - My python app template"
+    )
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"{__package__} v{__version__}"
+    )
     parser.add_argument(
         "--comm",
         choices=["tcp", "udp", "serial", "tls"],
@@ -109,6 +114,8 @@ def get_commandline():
     if args.comm != "serial" and args.port:
         args.port = int(args.port)
     return args
+
+
 # === parse args end ===
 
 
@@ -132,8 +139,11 @@ log.info("start logging")
 from datetime import datetime
 from datetime import timezone
 
+
 def get_utc_time():
     dt = datetime.now(timezone.utc)
     utc_time = dt.replace(tzinfo=timezone.utc)
     return utc_time
+
+
 # === end utc time ===

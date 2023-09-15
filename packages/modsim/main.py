@@ -42,7 +42,6 @@ from pymodbus.server import (
     StartAsyncTlsServer,
     StartAsyncUdpServer,
 )
-from pymodbus.version import version
 
 from utils import __version__, get_commandline, get_utc_time
 
@@ -60,14 +59,12 @@ def setup_server(args):
         # ----------------------------------------------------------------------- #
         # build your payload
         # ----------------------------------------------------------------------- #
-        co_builder = BinaryPayloadBuilder(byteorder=Endian.BIG,
-                                          wordorder=Endian.BIG)
+        co_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
         # address=0, bytes=3
         for i in range(3):
             co_builder.add_bits([True, False, True, False, False, False, False, True])
 
-        hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG,
-                                          wordorder=Endian.BIG)
+        hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
         # address=0, bytes=8
         hr_builder.add_16bit_uint(1)
         hr_builder.add_16bit_uint(2)
@@ -95,7 +92,7 @@ def setup_server(args):
         hr_builder.add_64bit_float(123.45)
         hr_builder.add_64bit_float(-123.45)
         # address=72, bytes=?
-        hr_builder.add_string('abcdefgh')
+        hr_builder.add_string("abcdefgh")
 
         # ----------------------------------------------------------------------- #
         # use that payload in the data store
@@ -109,7 +106,8 @@ def setup_server(args):
             di=ModbusSequentialDataBlock(10000, co_values),
             ir=ModbusSequentialDataBlock(30000, hr_values),
             hr=ModbusSequentialDataBlock(40000, hr_values),
-            zero_mode=True)
+            zero_mode=True,
+        )
         args.context = ModbusServerContext(slaves=store, single=True)
 
     # ----------------------------------------------------------------------- #
@@ -124,7 +122,6 @@ def setup_server(args):
             "VendorUrl": "https://github.com/riptideio/pymodbus/",
             "ProductName": "Pymodbus Server",
             "ModelName": "Pymodbus Server",
-            "MajorMinorRevision": version.short(),
         }
     )
     return args
@@ -144,13 +141,10 @@ async def run_async_server(args):
             address=address,  # listen address
             # custom_functions=[],  # allow custom handling
             framer=args.framer,  # The framer strategy to use
-            # handler=None,  # handler for each session
-            allow_reuse_address=True,  # allow the reuse of an address
             # ignore_missing_slaves=True,  # ignore request to a missing slave
-            # broadcast_enable=False,  # treat unit_id 0 as broadcast address,
+            # broadcast_enable=False,  # treat slave_id 0 as broadcast address,
             # timeout=1,  # waiting time for request to complete
             # TBD strict=True,  # use strict timing, t1.5 for Modbus RTU
-            # defer_start=False,  # Only define server do not activate
         )
     elif args.comm == "udp":
         address = ("127.0.0.1", args.port) if args.port else None
@@ -225,7 +219,8 @@ async def run_async_server(args):
 
 def app():
     _logger.info(
-        f"Start modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC")
+        f"Start modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
+    )
 
     run_args = setup_server(get_commandline())
     asyncio.run(run_async_server(run_args), debug=True)
