@@ -57,15 +57,15 @@ A docker image has been provided for user to directly run the program,
 docker run -p 5020:5020 helloysd/modsim
 ```
 
-It will create a virtual Modbus TCP device running at `localhost:5020`, and then you can poll it using *modpoll* tool,
+The above one-line command will create a virtual Modbus TCP device running at `localhost:5020`.
+
+To verify it, you can test by [modpoll](https://github.com/gavinying/modpoll) tool with the following command,
 
 ```bash
-modpoll --tcp localhost --tcp-port 5020 --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
+modpoll \
+  --tcp localhost \
+  --tcp-port 5020 \
+  --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
 ```
 
-> Use `sudo` before the docker command if you want to use the standard port `502`.
-
-```bash
-sudo docker run -p 502:5020 helloysd/modsim
-modpoll --tcp localhost --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
-```
+> **_Note_**: add `sudo` before `docker run` command if you want to use the Modbus TCP standard port `502`.

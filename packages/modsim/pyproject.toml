@@ -2,7 +2,7 @@
 name = "modsim"
 version = "0.3.4"
 description = "A Modbus TCP Device Simulator"
-authors = ["Ying Shaodong <helloysd@foxmail.com>"]
+authors = ["Ying Shaodong <helloysd@gmail.com>"]
 readme = "README.md"
 repository = "https://github.com/gavinying/modsim"
 license = "MIT"
@@ -12,7 +12,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.8.2,<4.0"
-pymodbus = "^3.5.2"
+pymodbus = "^3.5.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
@@ -25,11 +25,11 @@ safety = "^2.3.0"
 sphinx = "^4.2.0"
 sphinx-argparse = "^0.3.1"
 sphinx-rtd-theme = "^1.0.0"
-pre-commit = "^3.3.3"
+pre-commit = "^3.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-modsim = "modsim:app"
+modsim = "modsim.main:app"
