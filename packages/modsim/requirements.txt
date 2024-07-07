@@ -1,3 +1,1 @@
-pymodbus==3.6.4 ; python_full_version >= "3.8.2" and python_version < "4.0" \
-    --hash=sha256:6eee2c7eedb794317784c967096fa1fe42200357e9b5a349d838ee9159624fe2 \
-    --hash=sha256:d67a82bd6f177b4b5e429ccd9c192deed3288fb342b5f5447937b0263fa17d27
+pymodbus==3.5.4 ; python_full_version >= "3.8.2" and python_version < "4.0"

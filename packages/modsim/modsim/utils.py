@@ -1,5 +1,11 @@
 """A collection of utility tools
 """
+
+import argparse
+import logging.config
+from datetime import datetime, timezone
+import importlib.metadata as metadata  # For Python 3.8+
+from typing import Any, Optional, Dict
 from pymodbus.transaction import (
     ModbusAsciiFramer,
     ModbusBinaryFramer,
@@ -8,37 +14,22 @@ from pymodbus.transaction import (
     ModbusTlsFramer,
 )
 
-args = None
-config = {}
-
-# === package version ===
-# try:
-#     import importlib.metadata as importlib_metadata
-# except ModuleNotFoundError:
-#     import importlib_metadata
-# __version__ = importlib_metadata.version(__package__)
-__version__ = "0.3.4"
-# === package version end ===
+# global
+args: Optional[argparse.Namespace] = None
+config: Dict[str, Any] = {}
 
 
-# # === KeyboardInterrupt ===
-# import sys
-# import signal
-# import threading
-#
-# event_exit = threading.Event()
-# def _signal_handler(signal, frame):
-#     log.info(f'Exiting {sys.argv[0]}')
-#     event_exit.set()
-# signal.signal(signal.SIGINT, _signal_handler)
-# # === KeyboardInterrupt end ===
+def get_version() -> str:
+    try:
+        return metadata.version(__package__)
+    except metadata.PackageNotFoundError:
+        return "unknown"
 
 
-# === parse args ===
-import argparse
+__version__ = get_version()
 
 
-def get_parser():
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=f"{__package__} v{__version__} - My python app template"
     )
@@ -92,17 +83,17 @@ def get_parser():
     return parser
 
 
-def get_commandline():
+def get_commandline() -> argparse.Namespace:
     args = get_parser().parse_args()
 
     # set defaults
-    comm_defaults = {
+    comm_defaults: Dict[str, list] = {
         "tcp": ["socket", 5020],
         "udp": ["socket", 5020],
         "serial": ["rtu", "/dev/ptyp0"],
         "tls": ["tls", 5020],
     }
-    framers = {
+    framers: Dict[str, Any] = {
         "ascii": ModbusAsciiFramer,
         "binary": ModbusBinaryFramer,
         "rtu": ModbusRtuFramer,
@@ -116,34 +107,21 @@ def get_commandline():
     return args
 
 
-# === parse args end ===
+def get_logger() -> logging.Logger:
+    if config and config.get("logging"):
+        logging.config.dictConfig(config["logging"])
+    else:
+        print("no config file found, load default settings.")
+        logging.basicConfig(
+            level=get_commandline().log.upper(),
+            format="%(asctime)s | %(levelname).1s | %(processName)s | %(name)s | %(message)s",
+        )
+    logger = logging.getLogger(__name__)
+    logger.info("start logging")
+    return logger
 
 
-# === config logging ===
-import logging.config
-
-if config and config.get("logging"):
-    logging.config.dictConfig(config["logging"])
-else:
-    print("no config file found, load default settings.")
-    logging.basicConfig(
-        level=get_commandline().log.upper(),
-        format="%(asctime)s | %(levelname).1s | %(processName)s | %(name)s | %(message)s",
-    )
-log = logging.getLogger(__name__)
-log.info("start logging")
-# === config logging end ===
-
-
-# === utc time ===
-from datetime import datetime
-from datetime import timezone
-
-
-def get_utc_time():
+def get_utc_time() -> datetime:
     dt = datetime.now(timezone.utc)
     utc_time = dt.replace(tzinfo=timezone.utc)
     return utc_time
-
-
-# === end utc time ===

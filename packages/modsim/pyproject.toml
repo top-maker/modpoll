@@ -1,35 +1,45 @@
 [tool.poetry]
-name = "modsim"
-version = "0.3.4"
-description = "A Modbus TCP Device Simulator"
+name = "modbus-tcp-simulator"
+version = "0.4.0"
+description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
 authors = ["Ying Shaodong <helloysd@gmail.com>"]
-readme = "README.md"
 repository = "https://github.com/gavinying/modsim"
-license = "MIT"
-include = [
-  "LICENSE",
-]
+documentation = "https://gavinying.github.io/modsim/"
+readme = "README.md"
+packages = [{ include = "modsim" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8.2,<4.0"
-pymodbus = "^3.5.4"
+pymodbus = "~3.5.4"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.2.0"
-pytest-cov = "^4.0.0"
-black = "^23.7.0"
-isort = "^5.12.0"
-flake8 = "^6.0.0"
-bandit = "^1.7.4"
-safety = "^2.3.0"
-sphinx = "^4.2.0"
-sphinx-argparse = "^0.3.1"
-sphinx-rtd-theme = "^1.0.0"
 pre-commit = "^3.5.0"
+pytest = "^8.2.2"
+deptry = "^0.16.1"
+mypy = "^1.10.1"
+tox = "^4.16.0"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.28"
+mkdocstrings = {extras = ["python"], version = "^0.25.1"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+files = ["modsim"]
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.poetry.scripts]
 modsim = "modsim.main:app"

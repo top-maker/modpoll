@@ -24,8 +24,8 @@ The corresponding client can be started as:
 """
 
 import os
-import logging
 import asyncio
+from typing import Any
 
 from pymodbus.constants import Endian
 from pymodbus.datastore import (
@@ -43,12 +43,12 @@ from pymodbus.server import (
     StartAsyncUdpServer,
 )
 
-from utils import __version__, get_commandline, get_utc_time
+from .utils import __version__, get_commandline, get_utc_time, get_logger
 
-_logger = logging.getLogger()
+_logger = get_logger()
 
 
-def setup_server(args):
+def setup_server(args: Any) -> Any:
     """Run server setup."""
     # The datastores only respond to the addresses that are initialized
     # If you initialize a DataBlock to addresses of 0x00 to 0xFF, a request to
@@ -129,7 +129,7 @@ def setup_server(args):
     return args
 
 
-async def run_async_server(args):
+async def run_async_server(args: Any) -> Any:
     """Run server."""
     txt = f"### start ASYNC server, listening on {args.port} - {args.comm}"
     _logger.info(txt)
@@ -219,7 +219,7 @@ async def run_async_server(args):
     return server
 
 
-def app():
+def app() -> None:
     _logger.info(
         f"Start modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
     )

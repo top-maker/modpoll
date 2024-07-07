@@ -1,0 +1,66 @@
+name: release-main
+
+on:
+  release:
+    types: [created]
+    branches: [main]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up the environment
+        uses: ./.github/actions/setup-poetry-env
+
+      - name: Export tag
+        id: vars
+        run: echo tag=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
+
+      - name: Build and publish python package
+        run: |
+          source .venv/bin/activate
+          poetry version $RELEASE_VERSION
+          make build-and-publish
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+          IMAGE_NAME: modsim
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ steps.vars.outputs.tag }} \
+            -t ${DOCKER_USERNAME}/${IMAGE_NAME}:latest \
+            --push .
+
+  deploy-docs:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up the environment
+        uses: ./.github/actions/setup-poetry-env
+
+      - name: Deploy documentation
+        run: poetry run mkdocs gh-deploy --force
