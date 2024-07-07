@@ -1,10 +1,10 @@
 site_name: modsim
-repo_url: https://github.com/top-maker/modsim
-site_url: https://top-maker.github.io/modsim
+repo_url: https://github.com/gavinying/modsim
+site_url: https://gavinying.github.io/modsim
 site_description: A Simple Modbus TCP Device Simulator used for modpoll tool
 site_author: Ying Shaodong
 edit_uri: edit/main/docs/
-repo_name: top-maker/modsim
+repo_name: gavinying/modsim
 
 nav:
   - Home: index.md
@@ -42,7 +42,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/top-maker/modsim
+      link: https://github.com/gavinying/modsim
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/modsim
 
