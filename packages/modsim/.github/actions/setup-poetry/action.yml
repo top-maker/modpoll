@@ -1,4 +1,4 @@
-name: "setup-poetry-env"
+name: "setup-poetry"
 description: "Composite action to setup the Python and poetry environment."
 
 inputs:

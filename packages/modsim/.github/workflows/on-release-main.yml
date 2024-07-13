@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-poetry-env
+        uses: ./.github/actions/setup-poetry
 
       - name: Export tag
         id: vars
@@ -37,20 +37,21 @@ jobs:
       - name: Login to Docker Registry
         uses: docker/login-action@v3
         with:
-          registry: docker.io
+          registry: ${{ vars.DOCKER_REGISTRY }}
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker images
         env:
+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
           DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
           IMAGE_NAME: modsim
+          TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            -t ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ steps.vars.outputs.tag }} \
-            -t ${DOCKER_USERNAME}/${IMAGE_NAME}:latest \
-            --push .
+          TAG=${TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$TAG"
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:$TAG -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:${MAJOR} -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:${MAJOR}.${MINOR} -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:latest --push .
+
 
   deploy-docs:
     needs: build-and-publish
@@ -60,7 +61,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-poetry-env
+        uses: ./.github/actions/setup-poetry
 
       - name: Deploy documentation
         run: poetry run mkdocs gh-deploy --force
