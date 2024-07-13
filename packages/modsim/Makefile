@@ -47,20 +47,14 @@ publish: ## Publish a release to PyPI.
 build-and-publish: build publish ## Build and publish.
 
 .PHONY: docker-build-dev
-docker-build-dev: ## Build docker using docker buildx
-	@echo "🚀 Login to docker registry"
-	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin "${DOCKER_REGISTRY}"
-	@echo "🚀 Set up QEMU"
-	@docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-	@echo "🚀 Create the builder if not exists"
-	@docker buildx inspect mybuilder &>/dev/null || docker buildx create --name mybuilder ; docker buildx use mybuilder
+docker-build-dev: ## Build docker for local dev
 	@echo "🚀 Creating docker image file"
-	@docker buildx build --platform linux/amd64,linux/arm64 -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${PROJECT_NAME}:dev --push .
+	@docker build -t ${PROJECT_NAME}:dev .
 
 .PHONY: docker-run-dev
-docker-run-dev: docker-build-dev ## run in docker
-	@echo "🚀 Docker run: ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${PROJECT_NAME}:dev"
-	@docker run --rm ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${PROJECT_NAME}:dev
+docker-run-dev: docker-build-dev ## Run docker for local dev
+	@echo "🚀 Docker run: ${PROJECT_NAME}:dev"
+	@docker run --rm ${PROJECT_NAME}:dev
 
 .PHONY: docs-test
 docs-test: ## Test if documentation can be built without warnings or errors
