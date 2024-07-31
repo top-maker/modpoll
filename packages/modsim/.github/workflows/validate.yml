@@ -1,0 +1,15 @@
+name: validate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: validate-pr-title
+        uses:  ytanikin/PRConventionalCommits@1.1.0
+        with:
+          task_types: '["feat", "fix", "docs", "test", "ci", "refactor", "perf", "chore", "revert"]'
+          add_label: 'false'

@@ -20,5 +20,6 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
-          default-branch: master
-          command: manifest
+          release-type: python
+          include-v-in-tag: false
+          draft: false  # must be 'false' for the first release
