@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1](https://github.com/gavinying/modsim/compare/0.5.0...v0.5.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* Broken version info ([f70294c](https://github.com/gavinying/modsim/commit/f70294c9250c56ba4da1418a22e89f76ee34cba5))
+* validation pipeline ([f9236bc](https://github.com/gavinying/modsim/commit/f9236bc90bfbbcb4664684979b7174ef8083ebd3))
+
 ## [0.5.0](https://github.com/gavinying/modsim/compare/v0.4.0...0.5.0) (2024-07-13)
 
 
