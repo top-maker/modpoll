@@ -21,5 +21,3 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           release-type: python
-          include-v-in-tag: false
-          draft: false  # must be 'false' for the first release

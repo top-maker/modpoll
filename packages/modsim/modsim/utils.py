@@ -1,10 +1,8 @@
-"""A collection of utility tools
-"""
+"""A collection of utility tools"""
 
 import argparse
 import logging.config
 from datetime import datetime, timezone
-import importlib.metadata as metadata  # For Python 3.8+
 from typing import Any, Optional, Dict
 from pymodbus.transaction import (
     ModbusAsciiFramer,
@@ -14,24 +12,16 @@ from pymodbus.transaction import (
     ModbusTlsFramer,
 )
 
+from . import __version__
+
 # global
 args: Optional[argparse.Namespace] = None
 config: Dict[str, Any] = {}
 
 
-def get_version() -> str:
-    try:
-        return metadata.version(__package__)
-    except metadata.PackageNotFoundError:
-        return "unknown"
-
-
-__version__ = get_version()
-
-
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=f"{__package__} v{__version__} - My python app template"
+        description=f"Modsim v{__version__} - A Simple Modbus TCP Device Simulator used for modpoll tool"
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"{__package__} v{__version__}"
@@ -117,7 +107,6 @@ def get_logger() -> logging.Logger:
             format="%(asctime)s | %(levelname).1s | %(processName)s | %(name)s | %(message)s",
         )
     logger = logging.getLogger(__name__)
-    logger.info("start logging")
     return logger
 
 

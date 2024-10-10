@@ -5,7 +5,7 @@ networks:
 services:
   modsim:
     # build: .
-    image: helloysd/modsim:latest
+    image: topmaker/modsim:latest
     container_name: modsim
     restart: unless-stopped
     networks:

@@ -1,0 +1,10 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "draft": false,
+      "prerelease": false,
+      "version-file": "modsim/__init__.py"
+    }
+  }
+}

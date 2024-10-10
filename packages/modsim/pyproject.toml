@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "modbus-tcp-simulator"
+name = "modsim"
 version = "0.5.0"
 description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
 authors = ["Ying Shaodong <helloysd@gmail.com>"]
@@ -10,7 +10,8 @@ packages = [{ include = "modsim" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8.2,<4.0"
-pymodbus = "~3.5.4"
+importlib-metadata = "^8.3.0"
+pymodbus = "~3.6.9"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"

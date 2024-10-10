@@ -32,7 +32,6 @@ from pymodbus.datastore import (
     ModbusSequentialDataBlock,
     ModbusServerContext,
     ModbusSlaveContext,
-    ModbusSparseDataBlock,
 )
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.payload import BinaryPayloadBuilder
@@ -43,7 +42,8 @@ from pymodbus.server import (
     StartAsyncUdpServer,
 )
 
-from .utils import __version__, get_commandline, get_utc_time, get_logger
+from . import __version__
+from .utils import get_commandline, get_utc_time, get_logger
 
 _logger = get_logger()
 
@@ -55,7 +55,7 @@ def setup_server(args: Any) -> Any:
     # 0x100 will respond with an invalid address exception.
     # This is because many devices exhibit this kind of behavior (but not all)
     if not args.context:
-        _logger.info("### Create datastore")
+        _logger.info("Create datastore")
         # ----------------------------------------------------------------------- #
         # build your payload
         # ----------------------------------------------------------------------- #
@@ -131,7 +131,7 @@ def setup_server(args: Any) -> Any:
 
 async def run_async_server(args: Any) -> Any:
     """Run server."""
-    txt = f"### start ASYNC server, listening on {args.port} - {args.comm}"
+    txt = f"Start ASYNC server, listening on {args.port} - {args.comm}"
     _logger.info(txt)
     if args.comm == "tcp":
         address = ("", args.port) if args.port else None
@@ -221,7 +221,7 @@ async def run_async_server(args: Any) -> Any:
 
 def app() -> None:
     _logger.info(
-        f"Start modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
+        f"Starting modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
     )
 
     run_args = setup_server(get_commandline())
