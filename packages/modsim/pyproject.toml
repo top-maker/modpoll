@@ -10,7 +10,6 @@ packages = [{ include = "modsim" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8.2,<4.0"
-importlib-metadata = "^8.3.0"
 pymodbus = "~3.6.9"
 
 [tool.poetry.group.dev.dependencies]
