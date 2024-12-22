@@ -94,7 +94,7 @@ def setup_server(args: Any) -> Any:
         hr_builder.add_64bit_float(123.45)
         hr_builder.add_64bit_float(-123.45)
         # address=72, bytes=?
-        hr_builder.add_string("abcdefgh")
+        hr_builder.add_string("this is a string")
 
         # ----------------------------------------------------------------------- #
         # use that payload in the data store
