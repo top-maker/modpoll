@@ -10,10 +10,10 @@ It works as a remote Modbus-TCP (virtual) device, which has already been populat
 It is recommended to use [modpoll](https://github.com/gavinying/modpoll) tool to communicate with it, the example configuration is as following,
 
 ```
-device,modsim001,1,,
-poll,coil,0,12,BE_BE
+device,modsim01,1,,
+poll,coil,0,16,BE_BE
 ref,coil01-08,0,bool8,rw
-ref,coil09-12,1,bool8,rw
+ref,coil09-16,1,bool8,rw
 poll,discrete_input,10000,16,BE_BE
 ref,di01-08,10000,bool8,rw
 ref,di09-16,10001,bool8,rw
@@ -32,7 +32,7 @@ ref,input_reg11,30012,int32,rw
 ref,input_reg12,30014,int32,rw
 ref,input_reg13,30016,float32,rw
 ref,input_reg14,30018,float32,rw
-poll,holding_register,40000,20,BE_BE
+poll,holding_register,40000,44,BE_BE
 ref,holding_reg01,40000,uint16,rw
 ref,holding_reg02,40001,uint16,rw
 ref,holding_reg03,40002,uint16,rw
@@ -47,6 +47,11 @@ ref,holding_reg11,40012,int32,rw
 ref,holding_reg12,40014,int32,rw
 ref,holding_reg13,40016,float32,rw
 ref,holding_reg14,40018,float32,rw
+ref,holding_reg15,40020,uint64,rw
+ref,holding_reg16,40024,int64,rw
+ref,holding_reg17,40028,float64,rw
+ref,holding_reg18,40032,float64,rw
+ref,holding_reg19,40036,string16,rw
 ```
 
 ## Quick Start
