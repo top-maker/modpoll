@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/gavinying/modsim/compare/v0.5.1...v0.5.2) (2024-12-22)
+
+
+### Bug Fixes
+
+* Example config issue ([6b47f09](https://github.com/gavinying/modsim/commit/6b47f092b23d4b3a23f1fbf11e15ad20b524e584))
+
 ## [0.5.1](https://github.com/gavinying/modsim/compare/0.5.0...v0.5.1) (2024-10-10)
 
 
