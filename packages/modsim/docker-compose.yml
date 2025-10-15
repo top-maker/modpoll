@@ -6,7 +6,8 @@ networks:
 
 services:
   modsim:
-    build: .
+    # build: .
+    image: topmaker/modsim
     container_name: modsim
     restart: unless-stopped
     networks:
