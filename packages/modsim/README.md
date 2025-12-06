@@ -70,7 +70,7 @@ To verify it, you can test by [modpoll](https://github.com/gavinying/modpoll) to
 modpoll \
   --tcp localhost \
   --tcp-port 5020 \
-  --config https://raw.githubusercontent.com/gavinying/modpoll/master/examples/modsim.csv
+  --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
 ```
 
 > **_Note_**: add `sudo` before `docker run` command if you want to use the Modbus TCP standard port `502`.
