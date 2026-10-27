@@ -2,11 +2,17 @@ name: release-main
 
 on:
   release:
-    types: [created]
-    branches: [main, master]
+    types: [published]
+
+concurrency:
+  group: release-publish
+  queue: max
 
 jobs:
   build-and-publish:
+    if: github.event.release.prerelease == false
+    outputs:
+      latest: ${{ steps.image-tags.outputs.latest }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out
@@ -19,10 +25,20 @@ jobs:
         id: vars
         run: echo tag=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
 
+      - name: Select release image tags
+        id: image-tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+          IMAGE_NAME: modsim
+          TAG: ${{ steps.vars.outputs.tag }}
+        run: python .github/scripts/release_image_tags.py > "$RUNNER_TEMP/image-tags"
+
       - name: Build and publish python package
         run: |
           source .venv/bin/activate
-          poetry version $RELEASE_VERSION
+          python .github/scripts/check-release-version.py "$RELEASE_VERSION"
           make build-and-publish
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
@@ -48,13 +64,14 @@ jobs:
           IMAGE_NAME: modsim
           TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          TAG=${TAG#v}
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$TAG"
-          docker buildx build --platform linux/amd64,linux/arm64 -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:$TAG -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:${MAJOR} -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:${MAJOR}.${MINOR} -t ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/$IMAGE_NAME:latest --push .
+          args=()
+          while IFS= read -r image; do args+=(-t "$image"); done < "$RUNNER_TEMP/image-tags"
+          docker buildx build --platform linux/amd64,linux/arm64 "${args[@]}" --push .
 
 
   deploy-docs:
     needs: build-and-publish
+    if: needs.build-and-publish.outputs.latest == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check out

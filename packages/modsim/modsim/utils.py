@@ -3,7 +3,7 @@
 import argparse
 import logging.config
 from datetime import datetime, timezone
-from typing import Any, Optional, Dict
+from typing import Any, Dict
 from pymodbus.transaction import (
     ModbusAsciiFramer,
     ModbusBinaryFramer,
@@ -14,8 +14,6 @@ from pymodbus.transaction import (
 
 from . import __version__
 
-# global
-args: Optional[argparse.Namespace] = None
 config: Dict[str, Any] = {}
 
 
@@ -74,7 +72,25 @@ def get_parser() -> argparse.ArgumentParser:
 
 
 def get_commandline() -> argparse.Namespace:
-    args = get_parser().parse_args()
+    parser = get_parser()
+    args = parser.parse_args()
+
+    if args.store != "sequential":
+        parser.error("only --store sequential is supported")
+    if args.slaves != 0:
+        parser.error(
+            "--slaves is not supported; the default datastore is shared by all unit IDs"
+        )
+    if args.context is not None:
+        parser.error("--context is not supported from the command line")
+    allowed_framers = {
+        "tcp": {"socket"},
+        "udp": {"socket"},
+        "serial": {"rtu", "ascii", "binary"},
+        "tls": {"tls"},
+    }
+    if args.framer and args.framer not in allowed_framers[args.comm]:
+        parser.error("framer %s is not supported for %s" % (args.framer, args.comm))
 
     # set defaults
     comm_defaults: Dict[str, list] = {
@@ -93,17 +109,21 @@ def get_commandline() -> argparse.Namespace:
     args.framer = framers[args.framer or comm_defaults[args.comm][0]]
     args.port = args.port or comm_defaults[args.comm][1]
     if args.comm != "serial" and args.port:
-        args.port = int(args.port)
+        try:
+            args.port = int(args.port)
+        except ValueError:
+            parser.error("port must be an integer between 1 and 65535")
+        if not 1 <= args.port <= 65535:
+            parser.error("port must be an integer between 1 and 65535")
     return args
 
 
-def get_logger() -> logging.Logger:
+def get_logger(level: str = "info") -> logging.Logger:
     if config and config.get("logging"):
         logging.config.dictConfig(config["logging"])
     else:
-        print("no config file found, load default settings.")
         logging.basicConfig(
-            level=get_commandline().log.upper(),
+            level=level.upper(),
             format="%(asctime)s | %(levelname).1s | %(processName)s | %(name)s | %(message)s",
         )
     logger = logging.getLogger(__name__)

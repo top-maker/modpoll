@@ -41,6 +41,7 @@ publish: ## Publish a release to PyPI.
 		poetry publish; \
 	else \
 		echo "Dry run failed. Version might already exist or other error occurred."; \
+		exit 1; \
 	fi
 
 .PHONY: build-and-publish

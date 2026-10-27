@@ -1,7 +1,7 @@
 # ModSim - A Simple Modbus TCP Device Simulator
 
-*modsim* is a simple Modbus TCP device simulator deployed at `modsim.topmaker.net:502`.
-It works as a remote Modbus-TCP (virtual) device, which has already been populated with all 4 types of registers, i.e.
+*modsim* is a Modbus device simulator that can run locally or in a container. A public simulator is available at `modsim.topmaker.net:502` for quick testing.
+Its default datastore contains all four Modbus tables:
 - Coil Type
 - Discrete input Type
 - Input register Type
@@ -73,8 +73,17 @@ modpoll \
   --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
 ```
 
-> **_Note_**: add `sudo` before `docker run` command if you want to use the Modbus TCP standard port `502`.
+To expose the standard Modbus TCP port on the host, use `docker run -p 502:5020 topmaker/modsim:latest`. Your system may require permission to bind port 502.
 
 ## Local server behavior
 
 Run the simulator without Docker with `python -m modsim --comm tcp --port 5020`. The default server exposes the four Modbus tables with the sample data shown above. Coil and holding-register writes are supported; discrete inputs and input registers are read-only. Requests outside an initialized address range return a Modbus exception. The server handles SIGINT and SIGTERM by stopping its listener so the port can be reused after shutdown.
+
+The default TCP simulator uses one sequential datastore shared by all Unit IDs.
+The CLI currently supports only `--store sequential`; `--slaves` and `--context`
+are not implemented and are rejected. TCP and UDP use the socket framer, TLS uses
+the TLS framer, and serial accepts RTU, ASCII, or binary framing. Serial requires a suitable local device and is not covered by the local protocol regression suite. TLS uses `examples/certificates/pymodbus.crt` and `pymodbus.key` relative to the working directory. A local test covers a self-signed server certificate and a verified client connection; the server does not authenticate client certificates.
+
+UDP mode (`--comm udp`) listens on the loopback address and has local read and
+shutdown coverage. TCP and UDP report a startup error if the requested port is
+already in use.
