@@ -74,3 +74,7 @@ modpoll \
 ```
 
 > **_Note_**: add `sudo` before `docker run` command if you want to use the Modbus TCP standard port `502`.
+
+## Local server behavior
+
+Run the simulator without Docker with `python -m modsim --comm tcp --port 5020`. The default server exposes the four Modbus tables with the sample data shown above. Coil and holding-register writes are supported; discrete inputs and input registers are read-only. Requests outside an initialized address range return a Modbus exception. The server handles SIGINT and SIGTERM by stopping its listener so the port can be reused after shutdown.

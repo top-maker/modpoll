@@ -25,6 +25,8 @@ The corresponding client can be started as:
 
 import os
 import asyncio
+import signal
+from contextlib import suppress
 from typing import Any
 
 from pymodbus.constants import Endian
@@ -40,6 +42,7 @@ from pymodbus.server import (
     StartAsyncTcpServer,
     StartAsyncTlsServer,
     StartAsyncUdpServer,
+    ServerAsyncStop,
 )
 
 from . import __version__
@@ -225,9 +228,50 @@ def app() -> None:
     )
 
     run_args = setup_server(get_commandline())
-    asyncio.run(run_async_server(run_args), debug=True)
+    asyncio.run(_run_server_with_signals(run_args), debug=True)
 
     _logger.info("exiting.")
+
+
+async def _run_server_with_signals(args: Any) -> None:
+    """Run the server and close its listener when the process is signaled."""
+    loop = asyncio.get_running_loop()
+    server_task = asyncio.create_task(run_async_server(args))
+    stop_requested = False
+
+    async def stop_server() -> None:
+        for _ in range(100):
+            if server_task.done():
+                return
+            try:
+                await ServerAsyncStop()
+                return
+            except (AttributeError, RuntimeError):
+                await asyncio.sleep(0.01)
+
+    def request_stop() -> None:
+        nonlocal stop_requested
+        if not stop_requested:
+            stop_requested = True
+            loop.create_task(stop_server())
+
+    installed_signals = []
+    for signum in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(signum, request_stop)
+            installed_signals.append(signum)
+        except (NotImplementedError, RuntimeError):
+            pass
+
+    try:
+        await server_task
+    finally:
+        for signum in installed_signals:
+            loop.remove_signal_handler(signum)
+        if not server_task.done():
+            server_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await server_task
 
 
 if __name__ == "__main__":
