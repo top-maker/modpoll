@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.0](https://github.com/gavinying/modsim/compare/v0.5.2...v1.0.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* deps ([#11](https://github.com/gavinying/modsim/issues/11))
+
+### Features
+
+* prepare modsim 1.0.0 with graceful shutdown ([#9](https://github.com/gavinying/modsim/issues/9)) ([c2bcd5a](https://github.com/gavinying/modsim/commit/c2bcd5aa0a2788249931086d738b17e4ab29894c))
+
+
+### Bug Fixes
+
+* deps ([#11](https://github.com/gavinying/modsim/issues/11)) ([265d54d](https://github.com/gavinying/modsim/commit/265d54d392de65918ca4ba2e2f7fc797652ed8b3))
+
 ## [0.5.2](https://github.com/gavinying/modsim/compare/v0.5.1...v0.5.2) (2024-12-22)
 
 
