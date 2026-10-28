@@ -23,6 +23,9 @@ tox = "^4.16.0"
 mkdocs = "^1.6.0"
 mkdocs-material = "^9.5.28"
 mkdocstrings = {extras = ["python"], version = "^0.25.1"}
+mkdocs-autorefs = ">=1.2,<1.4"
+markdown = ">=3.7,<3.8"
+pymdown-extensions = ">=10.11,<11"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
