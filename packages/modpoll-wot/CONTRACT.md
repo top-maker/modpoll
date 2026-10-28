@@ -12,6 +12,14 @@ model without opening a device connection. Schemas are bundled locally; the
 loader does not dereference contexts or remote schema dependencies. The official
 TD/TM schemas identify themselves as `1.1-12-March-2025` (Draft 7).
 
+Modpoll accepts TM and TD inputs through the same `--config` option, selecting
+the format from document content rather than a filename or URL suffix. A top-level `@type` string equal
+to `tm:ThingModel`, or an array containing that value, selects TM validation.
+Otherwise TD validation applies. Invalid input fails the selected schema without
+retrying another kind. This fixed-alias subset does not resolve arbitrary
+JSON-LD type aliases. The Python API's optional `kind` argument asserts the
+expected kind; it does not override content detection.
+
 | 1.x input | Contract 0.1 |
 | --- | --- |
 | device name | `title`, used verbatim as output device name |

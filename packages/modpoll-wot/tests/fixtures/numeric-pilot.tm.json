@@ -1,0 +1,69 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "numeric-pilot",
+  "modpoll:version": "0.2-pilot",
+  "properties": {
+    "counter": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40000,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "signed": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40002,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "measurement": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40004,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 40000,
+      "modv:quantity": 8,
+      "modpoll:members": [
+        "counter",
+        "signed",
+        "measurement"
+      ]
+    }
+  ]
+}

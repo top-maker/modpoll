@@ -27,3 +27,6 @@ The bundled W3C schemas identify themselves as 1.1-12-March-2025, retrieved from
 https://www.w3.org/2022/wot/td-schema/v1.1 and
 https://www.w3.org/2022/wot/tm-schema/v1.1. Standard validation does not
 establish device correctness.
+
+A source-only [standards-first pilot](pilot.md) explores Form-based mappings and
+TM-to-TD generation separately from the released 0.1 contract.

@@ -49,16 +49,25 @@ def _check_depth(value, depth=0):
             _check_depth(item, depth + 1)
 
 
+def _document_kind(document):
+    """Select the schema from content; validation follows without fallback.
+
+    The executable subset uses the fixed tm:ThingModel spelling. File names,
+    URLs and arbitrary JSON-LD alias resolution do not participate in selection.
+    """
+    types = document.get("@type", [])
+    if isinstance(types, str):
+        types = [types]
+    return "tm" if isinstance(types, list) and "tm:ThingModel" in types else "td"
+
+
 def parse_model(document, *, kind=None, unit_id=None):
     if unit_id is not None and (type(unit_id) is not int or not 1 <= unit_id <= 254):
         raise AcquisitionError("unit_id: expected integer between 1 and 254")
     if not isinstance(document, dict):
         raise AcquisitionError("document: expected object")
     _check_depth(document)
-    types = document.get("@type", [])
-    if isinstance(types, str):
-        types = [types]
-    detected = "tm" if isinstance(types, list) and "tm:ThingModel" in types else "td"
+    detected = _document_kind(document)
     if kind is None:
         kind = detected
     if kind != detected:

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 
 from modpoll_wot import AcquisitionError
-from modpoll_wot.loading import load_model
+from modpoll_wot.loading import load_model, parse_model
 
 FIXTURE = Path(__file__).resolve().parents[3] / "examples/modsim.tm.json"
 
@@ -99,3 +99,40 @@ class ModelUnitDefaultsTests(unittest.TestCase):
             document["modv:unitID"] = value
             with self.subTest(value=value), self.assertRaises(AcquisitionError):
                 parse_model(document)
+
+
+class ContentDetectionTests(unittest.TestCase):
+    def test_tm_marker_accepts_string_and_array_with_additional_type(self):
+        for types in ("tm:ThingModel", ["urn:example:meter", "tm:ThingModel"]):
+            document = json.loads(FIXTURE.read_text())
+            document["@type"] = types
+            with self.subTest(types=types):
+                self.assertEqual(parse_model(document).kind, "tm")
+
+    def test_explicit_python_kind_is_an_assertion_not_an_override(self):
+        with self.assertRaisesRegex(AcquisitionError, "kind disagrees"):
+            parse_model(json.loads(FIXTURE.read_text()), kind="td")
+
+    def test_td_with_or_without_application_type(self):
+        path = FIXTURE.with_name("modsim.td.json")
+        for types in (None, "urn:example:meter", ["urn:example:meter"]):
+            document = json.loads(path.read_text())
+            if types is not None:
+                document["@type"] = types
+            with self.subTest(types=types):
+                self.assertEqual(parse_model(document).kind, "td")
+
+    def test_tm_filename_does_not_rescue_missing_marker(self):
+        document = json.loads(FIXTURE.read_text())
+        del document["@type"]
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "device.tm.json"
+            path.write_text(json.dumps(document))
+            with self.assertRaisesRegex(AcquisitionError, "device.tm.json"):
+                load_model(path)
+
+    def test_invalid_declared_tm_is_rejected(self):
+        document = json.loads(FIXTURE.read_text())
+        document["title"] = 12
+        with self.assertRaises(AcquisitionError):
+            parse_model(document)
