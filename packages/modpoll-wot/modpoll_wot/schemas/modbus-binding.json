@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "$ref": "https://www.w3.org/2022/wot/td-schema/v1.1"
+    }
+  ],
+  "definitions": {
+    "modbusForm": {
+      "type": "object",
+      "properties": {
+        "modv:pollingTime": { "type": "number", "minimum": 0 },
+        "modv:entity": {
+          "type": "string",
+          "enum": ["Coil", "DiscreteInput", "HoldingRegister", "InputRegister"]
+        },
+        "modv:function": {
+          "type": "string",
+          "enum": [
+            "readCoil",
+            "readDiscreteInput",
+            "readHoldingRegisters",
+            "readInputRegisters",
+            "writeSingleCoil",
+            "writeMultipleCoils",
+            "writeMultipleHoldingRegisters",
+            "writeSingleHoldingRegister",
+            "readFileRecord"
+          ]
+        },
+        "modv:type": {
+          "type": "string",
+          "enum": [
+            "xsd:integer",
+            "xsd:boolean",
+            "xsd:string",
+            "xsd:float",
+            "xsd:decimal",
+            "xsd:byte",
+            "xsd:short",
+            "xsd:int",
+            "xsd:long",
+            "xsd:unsignedByte",
+            "xsd:unsignedShort",
+            "xsd:unsignedInt",
+            "xsd:unsignedLong",
+            "xsd:double",
+            "xsd:hexBinary"
+          ]
+        },
+        "modv:mostSignificantByte": { "type": "boolean" },
+        "modv:mostSignificantWord": { "type": "boolean" },
+        "modv:zeroBasedAddressing": { "type": "boolean", "$comment": "Deprecated. Please refrain from using." },
+        "modv:timeout": { "type": "number", "minimum": 0 }
+      }
+    },
+    "affordance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "forms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/modbusForm"
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "@context": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "properties": {
+          "modv": {
+            "type": "string",
+            "enum": ["https://www.w3.org/2019/wot/modbus"]
+          }
+        }
+      }
+    },
+    "properties": {
+      "$ref": "#/definitions/affordance"
+    },
+    "actions": {
+      "$ref": "#/definitions/affordance"
+    },
+    "events": {
+      "$ref": "#/definitions/affordance"
+    }
+  }
+}

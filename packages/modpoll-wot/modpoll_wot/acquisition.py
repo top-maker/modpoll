@@ -42,6 +42,10 @@ class Member:
     readable: bool = True
     writable: bool = False
     unit: str | None = None
+    byte_order: str | None = None
+    physical_bits: bool = False
+    bit_count: int | None = None
+    scalar: bool = False
 
     @property
     def width(self):

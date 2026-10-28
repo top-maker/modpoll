@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "modpoll-wot"
-version = "0.1.0a1"
-description = "WoT Modbus configuration interpreter for Modpoll"
+version = "0.2.0a1"
+description = "Shared WoT Modbus configuration interpreter"
 authors = ["Ying Shaodong <helloysd@gmail.com>"]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/top-maker/modpoll"
 documentation = "https://top-maker.github.io/modpoll/v2/"
 packages = [{ include = "modpoll_wot" }]
-include = ["CONTRACT.md", "modpoll_wot/schemas/*.json", "modpoll_wot/schemas/SOURCES.md"]
+include = ["CONTRACT.md", "profile.md", "modpoll_wot/schemas/*.json", "modpoll_wot/schemas/*.txt", "modpoll_wot/schemas/SOURCES.md"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"

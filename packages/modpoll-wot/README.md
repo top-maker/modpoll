@@ -14,7 +14,7 @@ schema, and acquisition semantics. It does not execute Modbus requests.
 
 ```python
 from modpoll_wot.loading import load_model
-model = load_model("examples/modsim.tm.json", kind="tm", unit_id=1)
+model = load_model("examples/modsim.tm.json", unit_id=1)
 ```
 
 The application adapter is connected to the existing Modpoll poll/decode/output engine. Run checks from the repository root:
@@ -28,5 +28,6 @@ https://www.w3.org/2022/wot/td-schema/v1.1 and
 https://www.w3.org/2022/wot/tm-schema/v1.1. Standard validation does not
 establish device correctness.
 
-A source-only [standards-first pilot](pilot.md) explores Form-based mappings and
-TM-to-TD generation separately from the released 0.1 contract.
+The source candidate 0.2.0a1 supports [profile 0.2](profile.md): standard Form
+mappings, explicit blocks, per-property decoding and TM-to-TD export. The app
+registry pin remains unchanged until the producer is published.

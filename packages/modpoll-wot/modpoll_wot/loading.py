@@ -21,6 +21,9 @@ class Model:
     kind: str
     groups: tuple[Group, ...]
     unit_id: int
+    endpoint: tuple[str, int] | None = None
+    properties_json: str | None = None
+    profile_version: str = "0.1"
 
 
 def _pairs(pairs):
@@ -61,7 +64,9 @@ def _document_kind(document):
     return "tm" if isinstance(types, list) and "tm:ThingModel" in types else "td"
 
 
-def parse_model(document, *, kind=None, unit_id=None):
+def parse_model(
+    document, *, kind=None, unit_id=None, host=None, port=None, parameters=None
+):
     if unit_id is not None and (type(unit_id) is not int or not 1 <= unit_id <= 254):
         raise AcquisitionError("unit_id: expected integer between 1 and 254")
     if not isinstance(document, dict):
@@ -72,6 +77,14 @@ def parse_model(document, *, kind=None, unit_id=None):
         kind = detected
     if kind != detected:
         raise AcquisitionError("document kind disagrees with tm:ThingModel declaration")
+    if document.get("modpoll:version") == "0.2":
+        from .profile import instantiate
+
+        return instantiate(
+            document, host=host, port=port, unit_id=unit_id, parameters=parameters
+        )[0]
+    if parameters:
+        raise AcquisitionError("TM placeholder parameters require contract 0.2")
     validate_standard(document, kind=kind)
     contexts = document.get("@context", [])
     mappings = {}
@@ -126,7 +139,7 @@ def parse_model(document, *, kind=None, unit_id=None):
     return Model(document["title"], kind, groups, unit_id)
 
 
-def loads_model(payload, *, source="<memory>", kind=None, unit_id=None):
+def loads_model(payload, *, source="<memory>", kind=None, unit_id=None, **instance):
     try:
         if (
             len(payload.encode("utf-8") if isinstance(payload, str) else payload)
@@ -136,16 +149,35 @@ def loads_model(payload, *, source="<memory>", kind=None, unit_id=None):
         document = json.loads(
             payload, object_pairs_hook=_pairs, parse_constant=_invalid_number
         )
-        return parse_model(document, kind=kind, unit_id=unit_id)
+        return parse_model(document, kind=kind, unit_id=unit_id, **instance)
     except (ValueError, TypeError, RecursionError) as exc:
         raise AcquisitionError(f"{source}: {exc}") from exc
 
 
-def load_model(path, *, kind=None, unit_id=None):
+def load_model(path, *, kind=None, unit_id=None, **instance):
     path = Path(path)
     try:
         with path.open("rb") as stream:
             payload = stream.read(MAX_BYTES + 1)
     except OSError as exc:
         raise AcquisitionError(f"{path}: {exc}") from exc
-    return loads_model(payload, source=str(path), kind=kind, unit_id=unit_id)
+    return loads_model(
+        payload, source=str(path), kind=kind, unit_id=unit_id, **instance
+    )
+
+
+def load_document(path):
+    """Load bounded duplicate-free JSON for instantiation/export callers."""
+    path = Path(path)
+    try:
+        with path.open("rb") as stream:
+            payload = stream.read(MAX_BYTES + 1)
+        if len(payload) > MAX_BYTES:
+            raise AcquisitionError("configuration exceeds 1 MiB")
+        document = json.loads(
+            payload, object_pairs_hook=_pairs, parse_constant=_invalid_number
+        )
+        _check_depth(document)
+        return document
+    except (ValueError, TypeError, OSError, RecursionError) as exc:
+        raise AcquisitionError(f"{path}: {exc}") from exc

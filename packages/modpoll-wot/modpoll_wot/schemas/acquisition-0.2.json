@@ -1,0 +1,188 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Modpoll executable profile 0.2",
+  "type": "object",
+  "required": [
+    "modpoll:version",
+    "modpoll:acquisition",
+    "properties"
+  ],
+  "properties": {
+    "modpoll:version": {
+      "const": "0.2"
+    },
+    "modpoll:acquisition": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "modv:entity",
+          "modv:address",
+          "modv:quantity",
+          "modpoll:members"
+        ],
+        "properties": {
+          "modv:entity": {
+            "enum": [
+              "Coil",
+              "DiscreteInput",
+              "InputRegister",
+              "HoldingRegister"
+            ]
+          },
+          "modv:address": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "modv:quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000
+          },
+          "modpoll:members": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "forms"
+        ],
+        "properties": {
+          "forms": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "modv:entity",
+                "modv:type"
+              ],
+              "properties": {
+                "href": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contentType": {
+                  "const": "application/octet-stream"
+                },
+                "op": {
+                  "oneOf": [
+                    {
+                      "enum": [
+                        "readproperty",
+                        "writeproperty"
+                      ]
+                    },
+                    {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "enum": [
+                          "readproperty",
+                          "writeproperty"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "modv:entity": {
+                  "enum": [
+                    "Coil",
+                    "DiscreteInput",
+                    "InputRegister",
+                    "HoldingRegister"
+                  ]
+                },
+                "modv:address": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 65535
+                },
+                "modv:quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 2000
+                },
+                "modv:type": {
+                  "enum": [
+                    "xsd:unsignedShort",
+                    "xsd:short",
+                    "xsd:unsignedInt",
+                    "xsd:int",
+                    "xsd:unsignedLong",
+                    "xsd:long",
+                    "xsd:float",
+                    "xsd:double",
+                    "xsd:boolean",
+                    "xsd:string",
+                    "xsd:hexBinary"
+                  ]
+                },
+                "modv:mostSignificantByte": {
+                  "type": "boolean"
+                },
+                "modv:mostSignificantWord": {
+                  "type": "boolean"
+                },
+                "modpoll:multiplier": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$"
+                    }
+                  ]
+                },
+                "modpoll:bit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 15
+                },
+                "modpoll:codec": {
+                  "enum": [
+                    "float16",
+                    "bool",
+                    "bool8",
+                    "bool16"
+                  ]
+                },
+                "modpoll:byteLength": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999
+                },
+                "modpoll:bitPacking": {
+                  "const": "legacy-msb"
+                },
+                "modv:unitID": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 254
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

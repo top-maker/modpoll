@@ -9,7 +9,7 @@
   ],
   "@type": "tm:ThingModel",
   "title": "numeric-pilot",
-  "modpoll:version": "0.2-pilot",
+  "modpoll:version": "0.2",
   "properties": {
     "counter": {
       "type": "integer",
