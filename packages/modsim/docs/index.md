@@ -1,7 +1,7 @@
 # modsim
 
 Modsim is a Modbus simulator for local development and integration with
-[modpoll](https://github.com/gavinying/modpoll). Its default datastore contains
+[modpoll](https://github.com/top-maker/modpoll). Its default datastore contains
 coils, discrete inputs, holding registers and input registers. All Unit IDs
 share that datastore. A public Modbus TCP simulator is available at
 `modsim.topmaker.net:502` for quick testing.

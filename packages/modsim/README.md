@@ -7,7 +7,7 @@ Its default datastore contains all four Modbus tables:
 - Input register Type
 - Holding register Type
 
-It is recommended to use [modpoll](https://github.com/gavinying/modpoll) tool to communicate with it, the example configuration is as following,
+It is recommended to use [modpoll](https://github.com/top-maker/modpoll) tool to communicate with it, the example configuration is as following,
 
 ```
 device,modsim01,1,,
@@ -64,13 +64,13 @@ docker run -p 5020:5020 topmaker/modsim:latest
 
 The above one-line command will create a virtual Modbus TCP device running at `localhost:5020`.
 
-To verify it, you can test by [modpoll](https://github.com/gavinying/modpoll) tool with the following command,
+To verify it, you can test by [modpoll](https://github.com/top-maker/modpoll) tool with the following command,
 
 ```bash
 modpoll \
   --tcp localhost \
   --tcp-port 5020 \
-  --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
+  --config https://raw.githubusercontent.com/top-maker/modpoll/main/examples/modsim.csv
 ```
 
 To expose the standard Modbus TCP port on the host, use `docker run -p 502:5020 topmaker/modsim:latest`. Your system may require permission to bind port 502.
