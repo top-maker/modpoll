@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/top-maker/modsim/compare/v1.0.0...v1.0.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* harden simulator transports and release safety ([#12](https://github.com/top-maker/modsim/issues/12)) ([0982f6a](https://github.com/top-maker/modsim/commit/0982f6aa10a8fcd83a7ad8c17cbbfec7a2bc4f9c))
+
 ## [1.0.0](https://github.com/top-maker/modsim/compare/v0.5.2...v1.0.0) (2026-10-27)
 
 
