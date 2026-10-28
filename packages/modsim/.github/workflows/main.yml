@@ -2,7 +2,7 @@ name: main
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, v2]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
