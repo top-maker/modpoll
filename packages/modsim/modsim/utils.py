@@ -4,12 +4,8 @@ import argparse
 import logging.config
 from datetime import datetime, timezone
 from typing import Any, Dict
-from pymodbus.transaction import (
-    ModbusAsciiFramer,
-    ModbusBinaryFramer,
-    ModbusRtuFramer,
-    ModbusSocketFramer,
-    ModbusTlsFramer,
+from pymodbus.framer import (
+    FramerType,
 )
 
 from . import __version__
@@ -33,7 +29,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--framer",
-        choices=["ascii", "binary", "rtu", "socket", "tls"],
+        choices=["ascii", "rtu", "socket", "tls"],
         help="set framer, default depends on --comm",
         type=str,
     )
@@ -86,7 +82,7 @@ def get_commandline() -> argparse.Namespace:
     allowed_framers = {
         "tcp": {"socket"},
         "udp": {"socket"},
-        "serial": {"rtu", "ascii", "binary"},
+        "serial": {"rtu", "ascii"},
         "tls": {"tls"},
     }
     if args.framer and args.framer not in allowed_framers[args.comm]:
@@ -100,11 +96,10 @@ def get_commandline() -> argparse.Namespace:
         "tls": ["tls", 5020],
     }
     framers: Dict[str, Any] = {
-        "ascii": ModbusAsciiFramer,
-        "binary": ModbusBinaryFramer,
-        "rtu": ModbusRtuFramer,
-        "socket": ModbusSocketFramer,
-        "tls": ModbusTlsFramer,
+        "ascii": FramerType.ASCII,
+        "rtu": FramerType.RTU,
+        "socket": FramerType.SOCKET,
+        "tls": FramerType.TLS,
     }
     args.framer = framers[args.framer or comm_defaults[args.comm][0]]
     args.port = args.port or comm_defaults[args.comm][1]

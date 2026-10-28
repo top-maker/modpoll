@@ -56,13 +56,13 @@ def test_module_name():
 def test_local_tcp_server_reads_and_writes_default_holding_registers(local_tcp_client):
     client = local_tcp_client
 
-    result = client.read_holding_registers(40000, count=4, slave=1)
+    result = client.read_holding_registers(40000, count=4, device_id=1)
     assert not result.isError()
     assert result.registers == [1, 2, 3, 4]
 
-    result = client.write_registers(40000, [12, 13, 14, 15], slave=1)
+    result = client.write_registers(40000, [12, 13, 14, 15], device_id=1)
     assert not result.isError()
-    result = client.read_holding_registers(40000, count=4, slave=1)
+    result = client.read_holding_registers(40000, count=4, device_id=1)
     assert not result.isError()
     assert result.registers == [12, 13, 14, 15]
 
@@ -71,17 +71,17 @@ def test_local_tcp_server_reads_and_writes_default_holding_registers(local_tcp_c
 def test_local_tcp_server_exercises_all_tables_and_boundaries(local_tcp_client):
     client = local_tcp_client
 
-    coils = client.read_coils(0, count=8, slave=1)
+    coils = client.read_coils(0, count=8, device_id=1)
     assert not coils.isError()
     assert coils.bits[:8] == [True, False, True, False, False, False, False, True]
 
-    coil_write = client.write_coil(1, True, slave=1)
+    coil_write = client.write_coil(1, True, device_id=1)
     assert not coil_write.isError()
-    coil_readback = client.read_coils(0, count=2, slave=1)
+    coil_readback = client.read_coils(0, count=2, device_id=1)
     assert not coil_readback.isError()
     assert coil_readback.bits[:2] == [True, True]
 
-    discrete = client.read_discrete_inputs(10000, count=8, slave=1)
+    discrete = client.read_discrete_inputs(10000, count=8, device_id=1)
     assert not discrete.isError()
     assert discrete.bits[:8] == [
         True,
@@ -94,37 +94,37 @@ def test_local_tcp_server_exercises_all_tables_and_boundaries(local_tcp_client):
         True,
     ]
 
-    readonly_coil_write = client.write_coil(10000, True, slave=1)
+    readonly_coil_write = client.write_coil(10000, True, device_id=1)
     assert readonly_coil_write.isError()
-    assert client.read_discrete_inputs(10000, count=1, slave=1).bits[0] is True
+    assert client.read_discrete_inputs(10000, count=1, device_id=1).bits[0] is True
 
-    last_coil_before = client.read_coils(31, count=1, slave=1)
+    last_coil_before = client.read_coils(31, count=1, device_id=1)
     assert not last_coil_before.isError()
-    assert client.write_coils(31, [True, True], slave=1).isError()
-    last_coil_after = client.read_coils(31, count=1, slave=1)
+    assert client.write_coils(31, [True, True], device_id=1).isError()
+    last_coil_after = client.read_coils(31, count=1, device_id=1)
     assert not last_coil_after.isError()
     assert last_coil_after.bits[0] == last_coil_before.bits[0]
 
-    input_registers = client.read_input_registers(30000, count=4, slave=1)
+    input_registers = client.read_input_registers(30000, count=4, device_id=1)
     assert not input_registers.isError()
     assert input_registers.registers == [1, 2, 3, 4]
 
-    readonly_write = client.write_register(30000, 99, slave=1)
+    readonly_write = client.write_register(30000, 99, device_id=1)
     assert readonly_write.isError()
-    unchanged = client.read_input_registers(30000, count=1, slave=1)
+    unchanged = client.read_input_registers(30000, count=1, device_id=1)
     assert not unchanged.isError()
     assert unchanged.registers == [1]
 
-    out_of_range = client.read_holding_registers(40043, count=2, slave=1)
+    out_of_range = client.read_holding_registers(40043, count=2, device_id=1)
     assert out_of_range.isError()
-    last_before = client.read_holding_registers(40043, count=1, slave=1)
+    last_before = client.read_holding_registers(40043, count=1, device_id=1)
     assert not last_before.isError()
-    out_of_range_write = client.write_registers(40043, [11, 12], slave=1)
+    out_of_range_write = client.write_registers(40043, [11, 12], device_id=1)
     assert out_of_range_write.isError()
-    last_after = client.read_holding_registers(40043, count=1, slave=1)
+    last_after = client.read_holding_registers(40043, count=1, device_id=1)
     assert not last_after.isError()
     assert last_after.registers == last_before.registers
-    shared_unit = client.read_holding_registers(40000, count=1, slave=42)
+    shared_unit = client.read_holding_registers(40000, count=1, device_id=42)
     assert not shared_unit.isError()
     assert shared_unit.registers == [1]
 
@@ -255,7 +255,7 @@ def test_local_udp_server_and_shutdown():
             if process.poll() is not None:
                 pytest.fail("UDP server exited during startup")
             try:
-                result = client.read_holding_registers(40000, count=2, slave=1)
+                result = client.read_holding_registers(40000, count=2, device_id=1)
                 if result and not result.isError():
                     break
             except Exception:
@@ -373,13 +373,19 @@ def test_local_tls_server_with_ephemeral_certificate(tmp_path):
                 time.sleep(0.05)
         with context.wrap_socket(raw, server_hostname="localhost") as client:
             client.settimeout(2)
-            client.sendall(b"\x03\x9c\x40\x00\x02")
+            # Send Modbus TCP message with MBAP header
+            # MBAP: transaction_id (2) + protocol_id (2) + length (2) + unit_id (1)
+            # PDU: function_code (1) + starting_address (2) + quantity (2)
+            message = b"\x00\x01\x00\x00\x00\x06\x01\x03\x9c\x40\x00\x02"
+            client.sendall(message)
             response = b""
-            while len(response) < 6:
-                part = client.recv(6 - len(response))
+            # Expect MBAP header (7 bytes) + PDU response (at least 1 byte)
+            while len(response) < 13:
+                part = client.recv(13 - len(response))
                 assert part
                 response += part
-            assert response == b"\x03\x04\x00\x01\x00\x02"
+            # Verify MBAP header and response
+            assert response == b"\x00\x01\x00\x00\x00\x07\x01\x03\x04\x00\x01\x00\x02"
         conflict = subprocess.run(
             [
                 sys.executable,

@@ -28,7 +28,7 @@ addresses return a Modbus exception.
 TCP and UDP use socket framing; UDP listens on loopback. TLS uses TLS framing
 and expects `examples/certificates/pymodbus.crt` and `pymodbus.key` relative
 to the working directory. The TLS server does not authenticate clients. Serial
-supports RTU, ASCII and binary framing; physical serial devices have not been
+supports RTU and ASCII framing; physical serial devices have not been
 validated in the local regression suite.
 
 Only the sequential datastore is implemented. The CLI rejects non-default

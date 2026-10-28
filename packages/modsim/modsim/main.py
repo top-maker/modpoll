@@ -2,20 +2,19 @@
 """Modbus simulator server and process lifecycle."""
 
 import os
+import ssl
 import asyncio
 import signal
 import logging
 from contextlib import suppress
 from typing import Any
 
-from pymodbus.constants import Endian
 from pymodbus.datastore import (
+    ModbusDeviceContext,
     ModbusSequentialDataBlock,
     ModbusServerContext,
-    ModbusSlaveContext,
 )
-from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.payload import BinaryPayloadBuilder
+from pymodbus.pdu.device import ModbusDeviceIdentification
 from pymodbus.server import (
     StartAsyncSerialServer,
     ModbusTcpServer,
@@ -25,6 +24,7 @@ from pymodbus.server import (
 )
 
 from . import __version__
+from .compat import BinaryPayloadBuilder, Endian
 from .utils import get_commandline, get_utc_time, get_logger
 
 _logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def setup_server(args: Any) -> Any:
         for _ in range(3):
             # The bits within each byte are big-endian
             # The coils status (from the first position) = [1,0,1,0,0,0,0,1]
-            co_builder.add_bits([True, False, False, False, False, True, False, True])
+            co_builder.add_bits([True, False, True, False, False, False, False, True])
 
         hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
         # address=0, bytes=8
@@ -79,14 +79,16 @@ def setup_server(args: Any) -> Any:
         # use that payload in the data store
         co_values = co_builder.to_coils()
         hr_values = hr_builder.to_registers()
-        store = ModbusSlaveContext(
-            co=ModbusSequentialDataBlock(0, co_values),
-            di=ModbusSequentialDataBlock(10000, co_values),
-            ir=ModbusSequentialDataBlock(30000, hr_values),
-            hr=ModbusSequentialDataBlock(40000, hr_values),
-            zero_mode=True,
+        # Note: In PyModbus 3.16.1+, ModbusSequentialDataBlock uses address - 1 internally
+        # to convert to SimData. To maintain address ranges, we use address + 1 here.
+        # This maps Modbus addresses the same way as zero_mode=True did in older versions.
+        device_context = ModbusDeviceContext(
+            co=ModbusSequentialDataBlock(1, co_values),
+            di=ModbusSequentialDataBlock(10001, co_values),
+            ir=ModbusSequentialDataBlock(30001, hr_values),
+            hr=ModbusSequentialDataBlock(40001, hr_values),
         )
-        args.context = ModbusServerContext(slaves=store, single=True)
+        args.context = ModbusServerContext(devices=device_context, single=True)
 
     # initialize the server information
     # If you don't set this or any fields, they are defaulted to empty strings.
@@ -108,7 +110,7 @@ async def run_async_server(args: Any) -> Any:
     _logger.info(txt)
     server: Any
     if args.comm == "tcp":
-        address = ("", args.port) if args.port else None
+        address: tuple[str, int] = ("", args.port)
         server = ModbusTcpServer(
             context=args.context,
             identity=args.identity,
@@ -123,8 +125,9 @@ async def run_async_server(args: Any) -> Any:
             await server.serving
         finally:
             await server.shutdown()
+        return server
     elif args.comm == "udp":
-        address = ("127.0.0.1", args.port) if args.port else None
+        address = ("127.0.0.1", args.port)
         server = ModbusUdpServer(
             context=args.context,
             identity=args.identity,
@@ -139,15 +142,17 @@ async def run_async_server(args: Any) -> Any:
             await server.serving
         finally:
             await server.shutdown()
+        return server
     elif args.comm == "serial":
-        server = await StartAsyncSerialServer(
+        await StartAsyncSerialServer(
             context=args.context,
             identity=args.identity,
             port=args.port,
             framer=args.framer,
         )
+        return None
     elif args.comm == "tls":
-        address = ("", args.port) if args.port else None
+        address = ("", args.port)
         cwd = os.getcwd().split("/")[-1]
         if cwd == "examples":
             path = "."
@@ -155,13 +160,20 @@ async def run_async_server(args: Any) -> Any:
             path = "../examples"
         else:
             path = "examples"
+
+        # Create SSL context from cert and key files
+        sslctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        sslctx.load_cert_chain(
+            certfile=f"{path}/certificates/pymodbus.crt",
+            keyfile=f"{path}/certificates/pymodbus.key",
+        )
+
         server = ModbusTlsServer(
             context=args.context,
             identity=args.identity,
             address=address,
             framer=args.framer,
-            certfile=f"{path}/certificates/pymodbus.crt",
-            keyfile=f"{path}/certificates/pymodbus.key",
+            sslctx=sslctx,
         )
         try:
             if not await server.listen():
@@ -171,7 +183,8 @@ async def run_async_server(args: Any) -> Any:
             await server.serving
         finally:
             await server.shutdown()
-    return server
+        return server
+    raise ValueError(f"Unknown communication type: {args.comm}")
 
 
 def app() -> None:
