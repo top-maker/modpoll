@@ -87,3 +87,12 @@ the TLS framer, and serial accepts RTU or ASCII framing. Serial requires a suita
 UDP mode (`--comm udp`) listens on the loopback address and has local read and
 shutdown coverage. TCP and UDP report a startup error if the requested port is
 already in use.
+
+
+## Product documentation and TD candidates
+
+See [examples](examples/README.md) for ADAM-5017UH/ADAM-5000L/TCP and ADAM-6024
+product directories. Each contains the vendor PDFs, source hashes and an authored
+raw TD with its assumptions. These are candidates for the planned v2 configuration
+runtime; current 1.x modsim does not load TD files. They can already be validated
+with the published `modpoll-wot` interpreter and consumed by modpoll v2.

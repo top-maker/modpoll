@@ -1,0 +1,18 @@
+[
+  {
+    "file": "adam-5000-tcp-user-manual-ed1.pdf",
+    "url": "https://advdownload.advantech.com/productfile/Downloadfile3/1-21FOSAD/ADAM-5000-TCP_User_Manual_Ed.1-FINAL.pdf",
+    "retrieved": "2026-10-29",
+    "sha256": "ff2d39714231b02979853c99ac8b43536eebe20007285a4f39fc1802ade6570c",
+    "bytes": 3340069,
+    "copyright": "Advantech; see the original PDF. Vendor documents are not covered by this repository MIT license."
+  },
+  {
+    "file": "adam-5000-io-user-manual-ed4.pdf",
+    "url": "https://advdownload.advantech.com/productfile/Downloadfile4/1-2HXFOVU/ADAM-5000_User_Manual_Ed.4_FINAL.pdf",
+    "retrieved": "2026-10-29",
+    "sha256": "eb915c685f129b399b1d91af1b48ee0c2361224a8b5c144ae9bce82b3e8c7583",
+    "bytes": 3004017,
+    "copyright": "Advantech; see the original PDF. Vendor documents are not covered by this repository MIT license."
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "file": "adam-6000-user-manual-ed12.pdf",
+    "url": "https://advdownload.advantech.com/productfile/Downloadfile4/1-2B6FKTG/ADAM-6000_User_Manaul_Ed.12-FINAL.pdf",
+    "retrieved": "2026-10-29",
+    "sha256": "c171dde578f01adb992c20c72591bb3cad35ccc47a43aa9dfeaa8af51dfadd8d",
+    "bytes": 14756708,
+    "copyright": "Advantech; see the original PDF. Vendor documents are not covered by this repository MIT license."
+  },
+  {
+    "file": "adam-modbus-labview-guide.pdf",
+    "url": "https://advdownload.advantech.com/productfile/Downloadfile3/1-XQXIRV/IAG_SOP_ADAM-40XX%2C%20ADAM-41XX%2C%20ADAM-60XX%20and%20ADAM-62XX_How%20to%20use%20ADAM%20with%20LABView.pdf",
+    "retrieved": "2026-10-29",
+    "sha256": "29ad7585001b516c8cb750056c97716cbbc1d5ba786508a1b3a1b8196cca3f67",
+    "bytes": 899406,
+    "copyright": "Advantech; see original PDF. Not covered by repository MIT license."
+  }
+]

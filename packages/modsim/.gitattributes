@@ -1,0 +1,2 @@
+# Preserve original vendor PDFs without text diff or newline conversion.
+*.pdf binary
