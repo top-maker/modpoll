@@ -127,6 +127,10 @@ custom codecs, bit extraction and multipliers fail by property name rather than
 being stripped or misrepresented. Project TD output retains those semantics.
 No HTTP/cache endpoint is declared without an actual service.
 
+`tools/test-wot-source.py` exports the candidate import path to child CLIs as
+well as pytest. The Python matrix runs the registry-pin suite first, then this
+source suite; pytest's parent-only pythonpath option cannot replace this step.
+
 The distribution gate `tools/verify-wot-distribution.py` builds a disposable
 consumer wheel with the candidate's exact registry pin and tests both installed
 wheels from outside the repository, with no source package imports. It never
