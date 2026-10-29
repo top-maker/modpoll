@@ -1,0 +1,144 @@
+name: preview
+
+on:
+  push:
+    tags: ['v2.*']
+
+concurrency:
+  group: modsim-preview
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-poetry
+      - name: Require accepted candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: python .github/scripts/preview-release.py guard "$TAG"
+      - run: poetry build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-distributions
+          path: dist/*
+      - name: Verify portable distributions
+        run: |
+          python -m venv "$RUNNER_TEMP/wheel"
+          "$RUNNER_TEMP/wheel/bin/pip" install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel/bin/python" -m modsim --version
+          "$RUNNER_TEMP/wheel/bin/pip" check
+          cd "$GITHUB_WORKSPACE"
+          "$RUNNER_TEMP/wheel/bin/pip" install --force-reinstall --no-deps dist/*.tar.gz
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel/bin/python" -m modsim --version
+      - name: Check immutable version
+        id: registry
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: python .github/scripts/preview-release.py immutable "${VERSION#v}"
+      - name: Publish PyPI package
+        if: steps.registry.outputs.exists == 'false'
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: poetry publish --no-interaction
+      - name: Publish GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --verify-tag --prerelease --latest=false --title "Modsim ${TAG#v}" --notes-file docs/preview-notes.md
+          fi
+          gh release upload "$TAG" dist/*
+
+  image:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.DOCKER_REGISTRY }}
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish explicit preview image
+        env:
+          REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          USERNAME: ${{ vars.DOCKER_USERNAME }}
+          TAG: ${{ github.ref_name }}
+        run: docker buildx build --platform linux/amd64,linux/arm64 -t "$REGISTRY/$USERNAME/modsim:${TAG#v}" --push .
+
+  docs:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: ./.github/actions/setup-poetry
+      - run: poetry run mkdocs build -s -f mkdocs-preview.yml --site-dir "$RUNNER_TEMP/site"
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ github.token }}
+          publish_dir: ${{ runner.temp }}/site
+          destination_dir: v2
+          keep_files: true
+
+  acceptance:
+    needs: [publish, image, docs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install published wheel and test dependencies
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          python .github/scripts/preview-release.py download "${TAG#v}" "$RUNNER_TEMP/distributions"
+          python -m venv "$RUNNER_TEMP/installed"
+          "$RUNNER_TEMP/installed/bin/pip" install "$RUNNER_TEMP"/distributions/*.whl pytest
+          "$RUNNER_TEMP/installed/bin/pip" check
+      - name: Test without application source
+        run: |
+          mkdir -p "$RUNNER_TEMP/acceptance"
+          cp -r tests contrib examples "$RUNNER_TEMP/acceptance/"
+          cd "$RUNNER_TEMP/acceptance"
+          "$RUNNER_TEMP/installed/bin/python" -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
+      - name: Verify published image and contributed deployment
+        env:
+          REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          USERNAME: ${{ vars.DOCKER_USERNAME }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          docker run --rm "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --version
+          docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
+          "$RUNNER_TEMP/installed/bin/python" tools/preview-acceptance.py
+      - if: always()
+        run: docker rm -f modsim-preview || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: published-acceptance
+          path: ${{ runner.temp }}/acceptance/acceptance.xml

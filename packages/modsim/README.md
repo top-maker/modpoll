@@ -91,8 +91,19 @@ already in use.
 
 ## Product documentation and TD candidates
 
-See [examples](examples/README.md) for ADAM-5017UH/ADAM-5000L/TCP and ADAM-6024
-product directories. Each contains the vendor PDFs, source hashes and an authored
-raw TD with its assumptions. These are candidates for the planned v2 configuration
-runtime; current 1.x modsim does not load TD files. They can already be validated
-with the published `modpoll-wot` interpreter and consumed by modpoll v2.
+## Model-driven v2 preview
+
+The v2 source supports profile 0.2 TM/TD models, local deployment files with
+multiple isolated Unit IDs on one TCP listener, dynamic scenarios and explicitly
+enabled local Python behaviors. TM sources may be local files or HTTPS URLs.
+Install the source dependencies with `poetry install`, then run:
+
+```bash
+poetry run modsim --deployment examples/lab.sim.json
+```
+
+See [examples](examples/README.md), [community device contributions](contrib/README.md)
+and [configuration and script contracts](docs/model-validation.md).
+Install the preview with `pip install modsim==2.0.0a1` or use
+`topmaker/modsim:2.0.0a1`. Stable 1.x releases retain the unconfigured behavior
+described above. Preview documentation: https://top-maker.github.io/modsim/v2/.

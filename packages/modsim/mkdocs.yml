@@ -10,6 +10,8 @@ nav:
   - Home: index.md
   - Model validation: model-validation.md
   - Modules: modules.md
+  - Preview notes: preview-notes.md
+  - Preview release process: release-process.md
 plugins:
   - search
   - mkdocstrings:

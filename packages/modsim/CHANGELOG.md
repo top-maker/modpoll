@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0a1 (2026-10-29)
+
+- Add profile 0.2 TM/TD configuration from local files and HTTPS URLs.
+- Run isolated Unit IDs on one TCP listener using local deployment files.
+- Add deterministic scenarios, initialization and explicit local Python behaviors.
+- Share complete property codecs across initialization, updates and protocol writes.
+- Add community contributions with ADAM models and synthetic behavior examples.
+- Preserve legacy unconfigured operation; publish v2 as an explicit preview.
+
 ## [1.0.1](https://github.com/top-maker/modsim/compare/v1.0.0...v1.0.1) (2026-10-28)
 
 

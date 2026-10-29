@@ -1,83 +1,143 @@
-# Model-driven simulator validation
+# Model-driven simulation
 
-The `v2` development branch has a candidate `--config` path for profile 0.2 TM
-and TD documents. The shared `modpoll-wot` interpreter detects the document type
-from its contents. This first slice supports TCP, native uint16/int16 values and
-scalar physical booleans. Scaling, extracted register bits and wider types are
-not supported yet. Unsupported models fail before the listener starts.
+The v2 source uses the published, exact `modpoll-wot==0.2.0a1` dependency.
+Install with `poetry install`. Model parsing and TM instantiation belong to that
+shared package; Modsim owns state and protocol execution.
 
-## Prepare an isolated candidate environment
+## One device
 
-The candidate SDK is not yet a published consumer dependency. Keep this local
-validation environment separate from the normal installation. Run these commands
-from sibling `modpoll` and `modsim` checkouts on `v2`:
-
-```sh
-cd /path/to/modpoll/packages/modpoll-wot
-mise exec -- poetry build
-cd /path/to/modsim
-mise exec -- python -m venv /tmp/adam5017-modsim-env
-mise exec -- /tmp/adam5017-modsim-env/bin/python -m pip install \
-  ../modpoll/packages/modpoll-wot/dist/modpoll_wot-0.2.0a1-py3-none-any.whl \
-  pymodbus==3.16.1
+```bash
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
+  --unit-id 1 --port 5020 \
+  --scenario contrib/advantech/adam-5017uh/temperature.sim.json
 ```
 
-## Start the ADAM-5017UH simulator
+`--config` also accepts HTTPS model URLs. GitHub `blob` links are converted to
+raw file URLs. Prefer a tag or commit SHA for repeatable runs; branch URLs change.
+Downloads have a 15-second timeout and a 1 MiB limit, and use the shared bounded
+JSON loader. Only models are downloaded; no script is fetched or executed from a
+model. JSON-LD context URLs are vocabulary identifiers, not execution sources.
 
-From the modsim repository:
+The configured runtime supports profile 0.2 integer types (16/32/64-bit,
+signed/unsigned), IEEE float16/32/64, fixed-capacity UTF-8 strings, register and
+physical scalar booleans, physical boolean arrays, legacy register bool/bool8/
+bool16 arrays, register bit selectors and explicit legacy-MSB packed bit payloads.
+Byte and word ordering follow the shared contract; legacy packed bit numeric
+payloads ignore word ordering, and packed strings ignore both, matching Modpoll.
 
-```sh
-PYTHONPATH="$PWD" mise exec -- /tmp/adam5017-modsim-env/bin/python -m modsim \
-  --config examples/adam-5017uh/adam-5017uh-slot-0.tm.json \
-  --initial-file examples/adam-5017uh/demo-initial.json \
-  --bind 127.0.0.1 --port 15020 --unit-id 1
+Initialization, script updates, generators and Modbus writes use the same codec.
+Integer-wire multipliers are inverted with exact rational arithmetic: values that
+require fractional raw integers or overflow are rejected instead of truncated.
+Negative factors are supported. A zero factor can only encode engineering zero,
+using raw zero. IEEE values use their representable wire precision; startup
+reports and `device.get` return the decoded value. Model constraints apply after
+quantization too: an unrepresentable exact `const` is rejected. Numeric initial
+values use bounded candidates and arithmetic, not enumeration of 32/64-bit ranges.
+Complex constraints may require an explicit initial value/default/enum.
+
+Strings must fit their UTF-8 byte capacity, use zero padding and cannot end in
+NUL (consumers strip trailing NULs). Physical bit arrays have their declared
+length. Legacy register bool arrays retain the consumer's byte/LSB layout and
+preserve unused padding. No engineering-unit conversion is guessed for raw ADAM
+channels. Profile 0.2 is required; the unconfigured demonstration is unchanged.
+
+## Multiple devices on one listener
+
+```bash
+poetry run modsim --deployment examples/lab.sim.json
 ```
 
-The fixture declares slot 0, eight read-only input registers at PDU addresses
-1–8. Its initial values are synthetic raw counts 1000, 2000, …, 8000; they do
-not assert a manufacturer's voltage/current range or ADC encoding.
+Deployment version `"1"` has one optional `server` object and a nonempty `devices`
+list. Server fields are `comm` (currently `tcp`), `bind` (default `127.0.0.1`) and
+`port` (default `5020`). `--bind` and `--port` override these listener settings.
+Each device requires unique `name` and `unitId` (1–254), plus `model` (local path
+or HTTPS URL). Optional fields: `scenario`, `script`, `initial`, `parameters`.
+Parameters instantiate model placeholders. A concrete TD with a conflicting
+Unit ID is rejected by the shared interpreter. A TD's remote endpoint never
+selects the listener bind address.
 
-`--bind` controls the listener, independently of the document's remote endpoint.
-A configured listener defaults to loopback. `--initial NAME=JSON` or
-`--initial-file` supplies values by property name. Otherwise initialization uses
-`const`, `default`, `enum`, then a type/constraint-valid synthetic fallback.
-Unknown names, duplicate overrides and invalid values fail startup.
+Deployment files are local. Relative model/scenario/script paths are resolved
+against the deployment directory. Script paths inside a scenario are relative to
+that scenario. CLI paths are relative to the working directory. Device state,
+script module state and random generators are independent even when the same TM
+is instantiated repeatedly. Duplicate names/Unit IDs, unsupported fields and
+invalid initial values fail before the listener opens. Unconfigured Unit IDs
+return an error and never inherit another device's state.
 
-## Read with modpoll
+## Scenarios
 
-In another terminal, from the modpoll repository:
+Version `"1"` fields:
 
-```sh
-PYTHONPATH="$PWD/packages/modpoll-wot" mise exec -- poetry run python -m modpoll \
-  --config ../modsim/examples/adam-5017uh/adam-5017uh-slot-0.tm.json \
-  --tcp 127.0.0.1 --tcp-port 15020 --unit-id 1 \
-  --once --interval 0 --export /tmp/adam5017-virtual.json
-cat /tmp/adam5017-virtual.json
+| Field | Meaning |
+| --- | --- |
+| `initial` | Property-name/value overrides |
+| `tick` | Update interval in seconds, default 1, minimum 0.001 |
+| `seed` | Per-instance random seed, default 0 |
+| `generators` | Property-name to generator specification |
+| `bindings` | Target property to source property for synthetic loopback |
+| `writePolicy` | `hold` (default) or `overwrite` for generated properties |
+| `script` | Local Python file |
+| `parameters` | Script values exposed as `device.parameters` |
+
+Generators: `constant` (`value`); `sine` (`center`, `amplitude`, positive `period`);
+`ramp` (`start`, `rate`, `minimum`, `maximum`, clamped to bounds);
+`noise` (`minimum`, `maximum`, uniform seeded noise). Integer-property noise
+uses integer sampling to preserve the full 64-bit range.
+Numeric generators round to the nearest integer for integer model properties.
+Boolean channels can use constant values, bindings or scripts. All updates must
+satisfy the model's schema and raw encoding bounds. Unknown properties are errors.
+Binding chains and cycles are rejected; use a script for ordered dependencies.
+
+Initialization order: model defaults/type fallback → scenario initial →
+deployment/CLI initial → script `initialize` → first dynamic update at elapsed 0.
+`--initial` and `--initial-file` remain available for single-device runs. Startup
+logs include the final initialized values; raw values are synthetic unless the
+contribution explicitly documents their source.
+
+On each tick: generators → script `tick` → bindings. Modbus writes validate the
+whole request, then run `on_write` and bindings before responding. Invalid write
+requests or failed write hooks roll back register changes. Partial register
+writes re-decode every overlapping property, including properties whose first
+register was not touched. Batch updates and alias constraints are checked before
+commit. Bit-field updates preserve neighboring bits. Protocol writes may not
+change read-only/reserved bits; a writable bit sharing a register with read-only
+bits can be changed while preserving those bits. Reads that would expose a
+write-only field are rejected, while FC5/6 write echoes remain supported.
+Model read-only measurements may be changed internally but cannot be written by clients.
+`hold` stops a generator for a property after a valid client write until restart;
+`overwrite` permits the next tick to replace it. Scripts define their own write
+response and may deliberately overwrite values.
+
+## Local Python behaviors
+
+```bash
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
+  --scenario contrib/advantech/adam-5017uh/scripted.sim.json --allow-scripts
 ```
 
-Expect `AI0_RAW` through `AI7_RAW` to contain 1000 through 8000. Replace the TM
-filename with `adam-5017uh-slot-0.generated.td.json` to check the generated TD.
-Each poll reads the eight input registers in one FC4 request.
+Optional synchronous hooks:
 
-The model-driven context rejects unconfigured tables/addresses, out-of-block
-requests and writes to read-only addresses. ADAM-5017UH exposes input registers;
-Modbus defines no write operation for that table. Virtual negative tests against
-unconfigured holding registers use FC6/FC16, and must not be copied to hardware:
-the same addresses in another table could control device settings.
+```python
+def initialize(device):
+    device.set("AI0_RAW", 100)
 
-## Read hardware manually
 
-Set `ADAM_HOST` to your device address and confirm its TCP port and Unit ID.
-From the modpoll repository, use the same TM:
+def tick(device, elapsed, dt):
+    device.set("AI0_RAW", 100 + int(elapsed) % 100)
 
-```sh
-PYTHONPATH="$PWD/packages/modpoll-wot" mise exec -- poetry run python -m modpoll \
-  --config ../modsim/examples/adam-5017uh/adam-5017uh-slot-0.tm.json \
-  --tcp "$ADAM_HOST" --tcp-port 502 --unit-id 1 \
-  --once --interval 0 --export /tmp/adam5017-real.json
+
+def on_write(device, changes):
+    if "AO0_RAW" in changes:
+        device.set("AI0_RAW", changes["AO0_RAW"])
 ```
 
-Hardware values will differ from the synthetic values. Compare raw words with
-the vendor utility and verify the channel range/data format before interpreting
-physical units. A successful simulator run does not validate the hardware map.
-Stop the simulator with Ctrl+C when finished.
+Use `get(name)`, `set(name, value)` and `set_many({...})`. Batch updates validate
+all values before changing cells. Hooks run on the server event loop and must not
+block; async hooks are rejected. Python is ordinary local code, enabled explicitly
+by `--allow-scripts`. Each device loads its own module instance. Runtime errors
+in periodic behavior stop the simulation and release its listener rather than
+silently serving stale values. SIGINT/SIGTERM cancel updates and close the server.
+
+The sample loopback is an explicit synthetic assumption, not a claim that real
+ADAM hardware automatically connects AO to AI or DO to DI. No fault injection,
+recording/replay, multi-listener runtime or remote behavior execution is included.

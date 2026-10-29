@@ -27,7 +27,9 @@ These are generated views of a single maintained TM, not separate source models.
 
 Hardware work remains: confirm the 5017UH range/data format and actual responses;
 verify the candidate 6024 tables, addresses, normalization and output limits.
-The current modsim runtime still does not load these TM/TD files.
+At the time of this verification, the modsim runtime did not load these TM/TD files.
+The current v2 runtime supports the native raw-I/O subset; see
+[configuration](../docs/model-validation.md).
 
 ## Shared TD follow-up (2026-10-29)
 
@@ -45,3 +47,24 @@ and FC4 block reads remained unchanged. The shared package's 41 tests passed,
 including rejection of conflicting, duplicate and unknown media parameters.
 The earlier separate-target verification above is historical; those separate TD
 artifacts have been removed. No physical device was connected.
+
+
+## Configured runtime codec validation (2026-10-29)
+
+The v2 working tree now uses one property codec for initialization, scripts,
+generators and protocol writes. Independent constant wire vectors cover integer
+and IEEE types, four byte/word orders, UTF-8 capacity/padding, native and legacy
+boolean layouts, inverse multipliers, bit masks and alias validation. TCP tests
+exercise partial-register writes, rollback, write-only registers/coils and
+independent device state. These tests are synthetic; no ADAM hardware was used.
+
+A separate end-to-end run used modpoll `6b6f897` and its canonical
+`examples/modsim.tm.json` (profile 0.2, four groups, 37 properties) against the
+modified modsim server, with both applications using published
+`modpoll-wot==0.2.0a1`. Explicit initial values included signed integers, uint64
+and int64 values above 2**53 in magnitude, floats, strings, boolean arrays and
+the model's four scaled integer mappings. The real modpoll CLI read all 37 values
+exactly as expected over TCP. An independent PyModbus client then changed uint32,
+float64 and coil values; a second modpoll read again matched all 37 expected
+values. This validates the runtime mapping and wire interpretation, not hardware
+specifications or physical-unit assumptions.

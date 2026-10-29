@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "server": {
+    "comm": "tcp",
+    "bind": "127.0.0.1",
+    "port": 5020
+  },
+  "devices": [
+    {
+      "name": "analog-input",
+      "unitId": 1,
+      "model": "../contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json",
+      "scenario": "../contrib/advantech/adam-5017uh/temperature.sim.json"
+    },
+    {
+      "name": "io-loopback",
+      "unitId": 2,
+      "model": "../contrib/advantech/adam-6024/adam-6024.tm.json",
+      "scenario": "../contrib/advantech/adam-6024/io-loopback.sim.json"
+    }
+  ]
+}

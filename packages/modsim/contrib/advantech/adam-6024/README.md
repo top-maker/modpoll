@@ -51,17 +51,17 @@ in its standard Forms. The same TD is used by the project and node-wot 0.9.2;
 external bindings ignore project grouping and may read properties individually.
 No HTTP cache or background acquisition service is implied.
 
-See [the tool setup and generation guide](../README.md). To validate generation:
+See [the tool setup and generation guide](../../README.md). To validate generation:
 
 ```sh
-mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
+poetry run python examples/generate-td.py --check
 ```
 
 To export a real endpoint for an external Consumer:
 
 ```sh
-mise exec -- /tmp/modsim-wot-tools/bin/python -m modpoll_wot \
-  --config examples/adam-6024/adam-6024.tm.json \
+poetry run python -m modpoll_wot \
+  --config contrib/advantech/adam-6024/adam-6024.tm.json \
   --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-6024-instance.td.json
 ```
@@ -70,4 +70,4 @@ AO/DO are declared writable for future simulated-device tests. This draft is not
 a command to write to physical outputs. Confirm mapping and permitted values
 before hardware output tests. Current modsim 1.x cannot load TD files yet.
 
-Synthetic read/write compatibility is recorded in [the verification report](../verification.md); it does not establish hardware correctness.
+Synthetic read/write compatibility is recorded in [the verification report](../../../examples/verification.md); it does not establish hardware correctness.

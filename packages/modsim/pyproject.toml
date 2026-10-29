@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modsim"
-version = "1.0.1"
+version = "2.0.0a1"
 description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
 authors = ["Ying Shaodong <helloysd@gmail.com>"]
 repository = "https://github.com/top-maker/modsim"
@@ -11,6 +11,8 @@ packages = [{ include = "modsim" }]
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 pymodbus = "~3.16.1"
+modpoll-wot = "==0.2.0a1"
+jsonschema = ">=4.21,<5"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
@@ -49,6 +51,5 @@ markers = ["integration: local protocol integration test"]
 modsim = "modsim.main:app"
 
 [tool.deptry]
-# Example generation is a developer tool using the separate candidate SDK env.
-# Do not turn its unpublished SDK into a runtime dependency before publication.
+# Vendor behavior examples are loaded explicitly rather than imported as a package.
 extend_exclude = ["examples"]

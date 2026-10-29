@@ -41,32 +41,31 @@ binary values in its Forms. Generic bindings such as node-wot ignore
 `modpoll:acquisition`; they use the same property Forms without a separate TD.
 No transformation or custom decoding is required for these raw words.
 
-Use the profile 0.2 candidate tool environment described in [the examples guide](../README.md):
+Use the profile 0.2 shared tool environment described in [the examples guide](../../README.md):
 
 ```sh
-mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
+poetry run python examples/generate-td.py --check
 ```
 
-A candidate-enabled modpoll can use the TM as its configuration source:
+A modpoll 2.0.0a2 can use the TM as its configuration source:
 
 ```sh
 modpoll --once --tcp "$ADAM_HOST" --tcp-port 502 --unit-id 1 \
-  --config /path/to/modsim/examples/adam-5017uh/adam-5017uh-slot-0.tm.json
+  --config /path/to/modsim/contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json
 ```
 
 For an external Consumer, generate a separate instance with its actual endpoint:
 
 ```sh
-mise exec -- /tmp/modsim-wot-tools/bin/python -m modpoll_wot \
-  --config examples/adam-5017uh/adam-5017uh-slot-0.tm.json \
+poetry run python -m modpoll_wot \
+  --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
   --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-5017uh-instance.td.json
 ```
 
 Record raw words and compare against the vendor utility before assigning physical
 units. This fixture does not change range, calibration or module settings.
-The `v2` development branch has a candidate native raw-I/O `--config` path.
-See [model validation](../../docs/model-validation.md) for its isolated SDK environment
-and supported subset. The released modsim 1.x CLI does not load these models.
+The `v2` development branch has a native raw-I/O `--config` path.
+See [model validation](../../../docs/model-validation.md) for the supported subset. The released modsim 1.x CLI does not load these models.
 
-Synthetic read/write compatibility is recorded in [the verification report](../verification.md); it does not establish hardware correctness.
+Synthetic read/write compatibility is recorded in [the verification report](../../../examples/verification.md); it does not establish hardware correctness.

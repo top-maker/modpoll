@@ -1,0 +1,3 @@
+INHERIT: mkdocs.yml
+site_url: https://top-maker.github.io/modsim/v2/
+edit_uri: edit/v2/docs/

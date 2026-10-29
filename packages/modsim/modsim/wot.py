@@ -1,19 +1,14 @@
-"""Optional profile 0.2 raw-I/O adapter for the first model-driven simulator slice.
+"""Compile shared profile 0.2 models into isolated simulator devices."""
 
-The shared interpreter owns configuration parsing. This module only initializes
-native 16-bit/boolean cells and enforces the declared device's address access.
-Install the candidate shared wheel in a validation environment until its registry
-release permits the public consumer to pin it normally.
-"""
-
-import importlib
 import json
-import math
 from typing import Any
 
+from modpoll_wot import parse_model, parse_parameters  # type: ignore[import-untyped]
+from modpoll_wot.loading import load_document  # type: ignore[import-untyped]
 from pymodbus.constants import ExcCodes
 from pymodbus.simulator import DataType, SimData, SimDevice
 
+from .sources import model_document
 
 TABLES = ("coil", "discrete_input", "holding_register", "input_register")
 FUNCTIONS = {
@@ -28,67 +23,21 @@ FUNCTIONS = {
 }
 
 
-def _initial(
-    schema: dict[str, Any], dtype: str, supplied: Any, explicit: bool, validator: Any
-) -> Any:
-    if explicit:
-        candidates = [supplied]
-    elif "const" in schema:
-        candidates = [schema["const"]]
-    elif "default" in schema:
-        candidates = [schema["default"]]
-    elif "enum" in schema:
-        candidates = list(schema["enum"])
-    elif schema.get("type") == "boolean":
-        candidates = [False, True]
-    else:
-        low, high = (-32768, 32767) if dtype == "int16" else (0, 65535)
-        if "minimum" in schema:
-            low = max(low, math.ceil(schema["minimum"]))
-        if "maximum" in schema:
-            high = min(high, math.floor(schema["maximum"]))
-        if "exclusiveMinimum" in schema:
-            low = max(low, math.floor(schema["exclusiveMinimum"]) + 1)
-        if "exclusiveMaximum" in schema:
-            high = min(high, math.ceil(schema["exclusiveMaximum"]) - 1)
-        candidates = [0] + list(range(low, high + 1))
-    check = validator(schema)
-    for value in candidates:
-        encoded = (
-            type(value) is bool
-            if schema.get("type") == "boolean"
-            else type(value) is int
-            and (
-                (-32768 <= value <= 32767) if dtype == "int16" else 0 <= value <= 65535
-            )
-        )
-        if encoded and check.is_valid(value):
-            return value
-    raise ValueError(
-        "initial value is not schema-valid and encodable; provide --initial NAME=JSON"
-    )
-
-
 def configure(args: Any) -> SimDevice:
-    """Compile one configured device; never derive a listener from a TD endpoint."""
-    try:
-        core = importlib.import_module("modpoll_wot")
-        loading = importlib.import_module("modpoll_wot.loading")
-        validator = importlib.import_module("jsonschema").Draft7Validator
-        parse_parameters = core.parse_parameters
-    except (ImportError, AttributeError) as exc:
-        raise ValueError(
-            "--config requires the modpoll-wot 0.2 candidate wheel; see docs/model-validation.md"
-        ) from exc
-    model = core.load_model(
-        args.config, unit_id=args.unit_id, parameters=parse_parameters(args.param)
+    """Compile a device; a TD endpoint never becomes the server bind address."""
+    from .runtime import Device
+
+    model = parse_model(
+        model_document(args.config),
+        unit_id=args.unit_id,
+        parameters=parse_parameters(args.param),
     )
     if model.profile_version != "0.2" or model.properties_json is None:
-        raise ValueError("this model-driven slice requires profile 0.2")
+        raise ValueError("configured simulation requires profile 0.2")
     schemas = json.loads(model.properties_json)
     overrides: dict[str, Any] = {}
     if args.initial_file:
-        overrides = loading.load_document(args.initial_file)
+        overrides = load_document(args.initial_file)
         if not isinstance(overrides, dict):
             raise ValueError("--initial-file must contain a property-name/value object")
     cli_values = parse_parameters(args.initial)
@@ -100,97 +49,16 @@ def configure(args: Any) -> SimDevice:
             f"unknown initial properties: {sorted(overrides.keys() - schemas.keys())}"
         )
     cells: dict[str, dict[int, int | bool]] = {table: {} for table in TABLES}
-    writable: dict[str, dict[int, bool]] = {table: {} for table in TABLES}
+    writable: dict[str, dict[int, int]] = {table: {} for table in TABLES}
+    protected: dict[str, dict[int, int]] = {table: {} for table in TABLES}
+    unreadable: dict[str, set[int]] = {table: set() for table in TABLES}
+    writable_cells: dict[str, set[int]] = {table: set() for table in TABLES}
     ranges: dict[str, list[tuple[int, int]]] = {table: [] for table in TABLES}
-    assigned: set[tuple[str, int]] = set()
-    initialized: dict[str, Any] = {}
-    origins: dict[str, str] = {}
     for group in model.groups:
-        table = group.table
-        ranges[table].append((group.start, group.start + group.quantity))
+        ranges[group.table].append((group.start, group.start + group.quantity))
         for address in range(group.start, group.start + group.quantity):
-            cells[table].setdefault(address, False if table in TABLES[:2] else 0)
-        for member in group.members:
-            if (
-                not member.readable
-                or member.multiplier is not None
-                or member.bit is not None
-                or member.data_type not in ("uint16", "int16", "bool")
-                or (
-                    member.physical_bits
-                    and not (member.scalar and member.bit_count == 1)
-                )
-                or (not member.physical_bits and member.data_type == "bool")
-            ):
-                raise ValueError(
-                    f"{member.property}: this raw-I/O slice supports native 16-bit scalars and scalar booleans only"
-                )
-            schema = schemas[member.property]
-            value = _initial(
-                schema,
-                member.data_type,
-                overrides.get(member.property),
-                member.property in overrides,
-                validator,
-            )
-            raw: int | bool = value
-            if not member.physical_bits:
-                raw = int(value) & 65535
-                if (member.byte_order or group.byte_order).startswith("LE_"):
-                    raw = ((raw & 255) << 8) | (raw >> 8)
-            address = group.start + member.offset
-            key = (table, address)
-            if key in assigned and cells[table][address] != raw:
-                raise ValueError(f"{member.property}: conflicting alias initial values")
-            cells[table][address] = raw
-            writable[table][address] = (
-                writable[table].get(address, True) and member.writable
-            )
-            assigned.add(key)
-            initialized[member.property] = value
-            origins[member.property] = (
-                "override"
-                if member.property in overrides
-                else (
-                    "const"
-                    if "const" in schema
-                    else (
-                        "default"
-                        if "default" in schema
-                        else (
-                            "enum"
-                            if "enum" in schema
-                            else "synthetic type/constraint fallback"
-                        )
-                    )
-                )
-            )
-    blocks: list[list[SimData]] = []
-    for table in TABLES:
-        bits = table in TABLES[:2]
-        if not cells[table]:
-            # SimDevice requires nonempty lists. The context rejects every access
-            # to this unconfigured sentinel, including bit-table padding.
-            blocks.append(
-                [
-                    SimData(
-                        0,
-                        values=[False] if bits else 0,
-                        datatype=DataType.BITS if bits else DataType.INVALID,
-                    )
-                ]
-            )
-        else:
-            blocks.append(
-                [
-                    SimData(
-                        address,
-                        values=[value],
-                        datatype=DataType.BITS if bits else DataType.REGISTERS,
-                        readonly=not writable[table].get(address, False),
-                    )
-                    for address, value in sorted(cells[table].items())
-                ]
+            cells[group.table].setdefault(
+                address, False if group.table in TABLES[:2] else 0
             )
 
     def access(
@@ -204,58 +72,102 @@ def configure(args: Any) -> SimDevice:
         ):
             return ExcCodes.ILLEGAL_ADDRESS
         if writing and any(
-            not writable[table].get(item, False)
+            item not in writable_cells[table]
             for item in range(address, address + count)
+        ):
+            return ExcCodes.ILLEGAL_ADDRESS
+        if not writing and any(
+            item in unreadable[table] for item in range(address, address + count)
         ):
             return ExcCodes.ILLEGAL_ADDRESS
         return None
 
-    args.model_access = access
+    device = Device(model, cells, schemas, access)
+    origins = {}
+    # Explicit defaults first, so an unconstrained alias can inherit existing
+    # register contents rather than inventing a conflicting zero.
+    ordered = sorted(
+        device.codecs,
+        key=lambda n: not (
+            n in overrides or any(k in schemas[n] for k in ("const", "default", "enum"))
+        ),
+    )
+    assigned: dict[tuple[str, int], tuple[int, int]] = {}
+    for name in ordered:
+        codec = device.codecs[name]
+        schema = schemas[name]
+        if name in overrides or any(
+            key in schema for key in ("const", "default", "enum")
+        ):
+            value = codec.initial(overrides.get(name), name in overrides)
+        else:
+            try:
+                value = codec.decode(device.cells)
+                codec.validate(value)
+                codec.encode(value)
+            except (ValueError, UnicodeError, TypeError):
+                value = codec.initial(None, False)
+        for offset, (raw, mask) in enumerate(codec.encode(value)):
+            key = (codec.table, codec.start + offset)
+            previous, owned = assigned.get(key, (0, 0))
+            if (previous ^ raw) & owned & mask:
+                raise ValueError(f"{name}: conflicting alias initial values")
+            assigned[key] = ((previous & ~mask) | (raw & mask), owned | mask)
+            if codec.member.writable:
+                writable_cells[codec.table].add(key[1])
+            permissions = writable if codec.member.writable else protected
+            permissions[codec.table][key[1]] = (
+                permissions[codec.table].get(key[1], 0) | mask
+            )
+            if not codec.member.readable:
+                unreadable[codec.table].add(key[1])
+        device.set_many({name: value}, initializing=True)
+        origins[name] = (
+            "override"
+            if name in overrides
+            else next(
+                (key for key in ("const", "default", "enum") if key in schema),
+                "synthetic type/constraint fallback",
+            )
+        )
+    device.validate_cells(set(assigned))
+    for table in TABLES:
+        for address, mask in writable[table].items():
+            writable[table][address] = mask & ~protected[table].get(address, 0)
+    device.write_masks = writable
+    args.runtime = device
     args.model_initialization = {
         "title": model.title,
         "profile": model.profile_version,
         "unit_id": model.unit_id,
-        "values": initialized,
+        "values": {name: device.get(name) for name in device.codecs},
         "origins": origins,
         "groups": [
             {"table": g.table, "start": g.start, "quantity": g.quantity}
             for g in model.groups
         ],
     }
+    blocks = []
+    for table in TABLES:
+        bits = table in TABLES[:2]
+        blocks.append(
+            [
+                SimData(
+                    address,
+                    values=[value],
+                    datatype=DataType.BITS if bits else DataType.REGISTERS,
+                    readonly=not writable[table].get(address, 0),
+                )
+                for address, value in sorted(device.cells[table].items())
+            ]
+            or [
+                SimData(
+                    0,
+                    values=[False] if bits else 0,
+                    datatype=DataType.BITS if bits else DataType.INVALID,
+                )
+            ]
+        )
     return SimDevice(
-        model.unit_id,
-        simdata=(blocks[0], blocks[1], blocks[2], blocks[3]),
+        model.unit_id, simdata=(blocks[0], blocks[1], blocks[2], blocks[3])
     )
-
-
-class GuardedContext:
-    """Validate exact PDU counts before backend bit packing/padding.
-
-    PyModbus's SimDevice action receives rounded word counts for bit requests;
-    enforcing the model at the public context boundary preserves physical counts.
-    """
-
-    def __init__(self, backend: Any, access: Any) -> None:
-        self.backend = backend
-        self.access = access
-
-    def device_ids(self) -> list[int]:
-        return self.backend.device_ids()  # type: ignore[no-any-return]
-
-    async def async_getValues(
-        self, device_id: int, func_code: int, address: int, count: int = 1
-    ) -> list[int] | list[bool] | ExcCodes:
-        if error := self.access(func_code, address, count, False):
-            return error  # type: ignore[no-any-return]
-        return await self.backend.async_getValues(device_id, func_code, address, count)  # type: ignore[no-any-return]
-
-    async def async_setValues(
-        self,
-        device_id: int,
-        func_code: int,
-        address: int,
-        values: list[int] | list[bool],
-    ) -> ExcCodes | None:
-        if error := self.access(func_code, address, len(values), True):
-            return error  # type: ignore[no-any-return]
-        return await self.backend.async_setValues(device_id, func_code, address, values)  # type: ignore[no-any-return]

@@ -1,0 +1,8 @@
+{
+  "version": "1",
+  "tick": 0.1,
+  "parameters": {
+    "initial": 200
+  },
+  "script": "behavior.py"
+}

@@ -24,12 +24,10 @@ def main():
         from modpoll_wot import export_td
         from modpoll_wot.loading import load_document
     except ImportError:
-        parser.error(
-            "requires the modpoll-wot 0.2.0a1 candidate tool environment; see examples/README.md"
-        )
+        parser.error("requires the modpoll-wot==0.2.0a1; see examples/README.md")
     changed = []
     for product, stem in PRODUCTS.items():
-        directory = ROOT / product
+        directory = ROOT.parent / "contrib" / "advantech" / product
         source = directory / f"{stem}.tm.json"
         model = load_document(source)
         artifacts = {}
@@ -56,7 +54,7 @@ def main():
         ).encode()
         for path, payload in outputs.items():
             if not path.exists() or path.read_bytes() != payload:
-                changed.append(str(path.relative_to(ROOT)))
+                changed.append(str(path.relative_to(ROOT.parent)))
                 if not args.check:
                     path.write_bytes(payload)
     if args.check and changed:

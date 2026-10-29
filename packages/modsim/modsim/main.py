@@ -37,10 +37,10 @@ def setup_server(args: Any) -> Any:
     # If you initialize a DataBlock to addresses of 0x00 to 0xFF, a request to
     # 0x100 will respond with an invalid address exception.
     # This is because many devices exhibit this kind of behavior (but not all)
-    if getattr(args, "config", None):
-        from .wot import configure
+    if getattr(args, "config", None) or getattr(args, "deployment", None):
+        from .deployment import configure_devices
 
-        args.context = configure(args)
+        args.context = configure_devices(args)
         _logger.info(
             "Model initialization: %s",
             json.dumps(args.model_initialization, sort_keys=True),
@@ -121,7 +121,7 @@ async def run_async_server(args: Any) -> Any:
     if args.comm == "tcp":
         address: tuple[str, int] = (
             getattr(args, "bind", None)
-            or ("127.0.0.1" if getattr(args, "config", None) else ""),
+            or ("127.0.0.1" if getattr(args, "runtimes", None) else ""),
             args.port,
         )
         server = ModbusTcpServer(
@@ -130,17 +130,25 @@ async def run_async_server(args: Any) -> Any:
             address=address,
             framer=args.framer,
         )
-        if hasattr(args, "model_access"):
-            from .wot import GuardedContext
+        if hasattr(args, "runtimes"):
+            from .runtime import RuntimeContext
 
-            server.context = GuardedContext(server.context, args.model_access)
+            server.context = RuntimeContext(args.runtimes)
+        tasks = []
         try:
             if not await server.listen():
                 raise OSError(
                     "Could not start Modbus TCP listener on port %s" % args.port
                 )
-            await server.serving
+            tasks = [
+                asyncio.create_task(device.run())
+                for device in getattr(args, "runtimes", [])
+            ]
+            await asyncio.gather(server.serving, *tasks)
         finally:
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
             await server.shutdown()
         return server
     elif args.comm == "udp":
@@ -214,7 +222,7 @@ def app() -> None:
 
     try:
         run_args = setup_server(args)
-    except ValueError as exc:
+    except (ValueError, OSError) as exc:
         _logger.error("Invalid model configuration: %s", exc)
         raise SystemExit(2) from exc
     asyncio.run(_run_server_with_signals(run_args), debug=True)

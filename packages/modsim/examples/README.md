@@ -1,61 +1,46 @@
-# Device examples and vendor references
+# Runnable examples
 
-- [ADAM-5017UH through ADAM-5000L/TCP](adam-5017uh/): first physical-reference
-  candidate, confirmed slot 0, eight raw analog input properties.
-- [ADAM-6024](adam-6024/): second core I/O candidate, six raw AI, two raw AO,
-  two scalar DI and two scalar DO properties in four acquisition blocks.
-- `modsim.csv`: existing modpoll 1.x mapping for the built-in simulator.
+Vendor models, original reference documents and custom behaviors live in
+[contrib](../contrib/README.md). These examples are included in the v2 checkout and preview container;
+the stable 1.x package does not include the deployment runtime.
 
-## One maintained source
+## Static device
 
-Each product folder contains its canonical profile 0.2 `*.tm.json`, vendor PDFs,
-source URLs, PDF hashes and assumptions. TDs are generated artifacts:
-
-| File | Purpose |
-| --- | --- |
-| `*.tm.json` | Maintained source; no deployed endpoint |
-| `*.generated.td.json` | Generated project instance with standard Forms and acquisition policy |
-| `generated.json` | Source/artifact hashes, generator version and loopback instance parameters |
-
-Register addresses and raw types are in property Forms. Group boundaries remain
-explicit in the project acquisition extension. Putting modv fields inside an
-extension object does not make that object understandable by standard bindings.
-Third-party Consumers use concrete property Forms; they do not need or execute
-project grouping for these raw, natively representable properties.
-
-Each TM generates one TD, shared by the project and external Consumers. Its
-standard Forms explicitly describe unsigned binary values; node-wot 0.9.2
-preserves project extensions but does not execute them. There is no node-wot
-specific TD. Grouping/cache behavior is not promised for external Consumers.
-Analog values remain unscaled; removing `raw` from filenames does not change
-property names, value semantics or the pending physical verification.
-
-## Generate and verify
-
-These examples require the `modpoll-wot==0.2.0a1` candidate tool environment.
-The previously released `0.1.0a1` interpreter cannot load profile 0.2. The new
-producer has not been published as part of this examples change; use its built
-wheel in an isolated developer environment. No local-path or unpublished runtime
-dependency is added to modsim.
-
-From this repository, after setting MODPOLL_WOT_WHEEL to the built wheel path:
-
-```sh
-mise exec -- python -m venv /tmp/modsim-wot-tools
-mise exec -- /tmp/modsim-wot-tools/bin/python -m pip install "$MODPOLL_WOT_WHEEL"
-mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py
-mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
+```bash
+poetry run modsim --config contrib/advantech/adam-6024/adam-6024.tm.json --unit-id 1
 ```
 
-The generator delegates all instantiation/export to the common package. It uses
-only the documented loopback instance (127.0.0.1:5020, Unit ID 1). For real
-endpoints use the common CLI with `--config`, `--host`, `--port`, `--unit-id`,
-`--target project` and a new output path; do not commit site-specific TDs as product sources.
+## Dynamic device
 
-Current modsim 1.x still uses its built-in datastore and has no --config option.
-Providing these TM/TD artifacts does not implement modsim v2. Vendor PDF originals
-and their licensing remain unchanged; offline/wire tests do not prove hardware
-mapping or engineering ranges.
+```bash
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
+  --scenario contrib/advantech/adam-5017uh/temperature.sim.json
+```
 
-See [the manual transport verification record](verification.md) for the
-independent fixture and actual node-wot read/write evidence.
+The sine example generates raw counts; it does not infer a temperature scale.
+For a local Python behavior use `scripted.sim.json` and `--allow-scripts`.
+
+## Two Unit IDs on one TCP listener
+
+```bash
+poetry run modsim --deployment examples/lab.sim.json
+```
+
+Unit 1 exposes the ADAM-5017UH raw input mapping. Unit 2 exposes the ADAM-6024
+raw I/O mapping with synthetic AO→AI and DO→DI loopback. Paths in `lab.sim.json`
+are relative to that file, so invocation works from other working directories.
+
+To reference a remote TM, replace a device's `model` value with a modsim GitHub
+raw HTTPS URL. Keep the deployment, scenarios and scripts local. Use a fixed
+commit/tag for reproducible models. See [configuration](../docs/model-validation.md).
+
+## Generated TD maintenance
+
+```bash
+poetry run python examples/generate-td.py
+poetry run python examples/generate-td.py --check
+```
+
+TMs are maintained in contrib; generated TDs and manifests remain beside each
+source. [Earlier interoperability evidence](verification.md) records raw ADAM
+mapping validation, independently of the new multi-device runtime.
