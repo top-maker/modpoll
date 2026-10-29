@@ -8,11 +8,11 @@ flag-based server entry point remains available on other platforms.
 ## Start and reconcile
 
 ```bash
-modsim up -f examples/deployment.yaml -d
-modsim ps -f examples/deployment.yaml
-modsim up -f examples/deployment.yaml --dry-run
-modsim up -f examples/deployment.yaml
-modsim down -f examples/deployment.yaml
+modsim up -f deployment.yaml -d
+modsim ps -f deployment.yaml
+modsim up -f deployment.yaml --dry-run
+modsim up -f deployment.yaml
+modsim down -f deployment.yaml
 ```
 
 All commands default to `deployment.yaml` in the current directory. `up` runs in
@@ -37,13 +37,12 @@ server:
   bind: 127.0.0.1
   port: 5020
 devices:
-  - id: meter-01
-    model: ./managed-device.tm.json
+  - id: analog-input
+    model: ./contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json
     parameters:
-      THING_ID: urn:modsim:example:meter-01
-      TITLE: First device
+      THING_ID: urn:modsim:example:adam-5017uh
       UNIT_ID: 1
-    scenario: ./managed-device.sim.json
+    scenario: ./contrib/advantech/adam-5017uh/temperature.sim.json
 ```
 
 `devices` may be empty. IDs and deployment names use lowercase letters, digits
@@ -109,7 +108,7 @@ loop, keeping an entire write and its echo on one device generation. Other Unit
 IDs and established TCP connections remain available during updates.
 
 ```bash
-modsim reset --device meter-01
+modsim reset --device analog-input
 modsim logs
 ```
 
@@ -135,9 +134,9 @@ flag-based startup retains its existing process-wide failure behavior.
 ## TD export
 
 ```bash
-modsim export --device meter-01 -o meter-01.td.json
+modsim export --device analog-input -o analog-input.td.json
 modsim export --output-dir ./td
-modsim export --running --device meter-01 -o applied.td.json
+modsim export --running --device analog-input -o applied.td.json
 ```
 
 Offline export reads the deployment, instantiates its TMs and validates the TDs;

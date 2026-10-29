@@ -329,9 +329,8 @@ def test_explicit_thing_id_for_model_without_id(tmp_path):
     assert instance.unit_id == 1
 
 
-@pytest.mark.parametrize("name", ["deployment.yaml", "deployment-lab.yaml"])
-def test_shared_example_deployments(name):
-    deployment = load_deployment(ROOT / "examples" / name)
+def test_root_adam_deployment():
+    deployment = load_deployment(ROOT / "deployment.yaml")
     assert deployment.bind == "0.0.0.0"
     assert [item.model.unit_id for item in deployment.instances.values()] == [1, 2]
     assert all(

@@ -3,8 +3,9 @@ services:
     build: .
     init: true
     restart: unless-stopped
-    command: ["python", "-m", "modsim", "up", "-f", "/app/examples/deployment.yaml"]
+    command: ["python", "-m", "modsim", "up", "-f", "/app/deployment.yaml"]
     ports:
       - "127.0.0.1:5020:5020"
     volumes:
-      - ./examples:/app/examples:ro
+      - ./deployment.yaml:/app/deployment.yaml:ro
+      - ./contrib:/app/contrib:ro

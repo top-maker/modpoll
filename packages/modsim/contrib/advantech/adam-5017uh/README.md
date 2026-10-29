@@ -68,4 +68,4 @@ units. This fixture does not change range, calibration or module settings.
 The `v2` development branch has a native raw-I/O `--config` path.
 See [model validation](../../../docs/model-validation.md) for the supported subset. The released modsim 1.x CLI does not load these models.
 
-Synthetic read/write compatibility is recorded in [the verification report](../../../examples/verification.md); it does not establish hardware correctness.
+Synthetic interoperability checks do not establish hardware correctness.

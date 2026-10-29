@@ -99,7 +99,7 @@ enabled local Python behaviors. TM sources may be local files or HTTPS URLs.
 Install the source dependencies with `poetry install`, then run:
 
 ```bash
-poetry run modsim up -f examples/deployment-lab.yaml
+poetry run modsim up -f deployment.yaml
 ```
 
 See [examples](examples/README.md), [community device contributions](contrib/README.md)
@@ -110,11 +110,11 @@ described above. Preview documentation: https://top-maker.github.io/modsim/v2/.
 
 ## Managed deployments (v2 development source)
 
-Start and update the same deployment with `modsim up -f examples/deployment.yaml`;
+Start and update the same deployment with `modsim up -f deployment.yaml`;
 add `-d` for a background process. Edit the deployment and repeat `up` to add,
 remove or replace devices while unchanged devices keep their state. Initial
 values belong in scenarios. Export instantiated TDs with
-`modsim export -f examples/deployment.yaml --output-dir ./td`.
+`modsim export -f deployment.yaml --output-dir ./td`.
 
 The two-level commands `up`, `down`, `ps`, `logs`, `export` and `reset` currently
 support Linux/macOS/WSL. See [managed deployments](docs/managed-deployments.md)
@@ -124,7 +124,7 @@ These additions are source-only and are not part of the published `2.0.0a1`.
 ## Docker Compose managed deployment
 
 Build and start the current checkout with `docker compose up --build -d`.
-The repository's `examples/deployment.yaml` describes two synthetic devices.
+The repository's `deployment.yaml` describes two virtual ADAM devices.
 Its listener binds `0.0.0.0` inside the container; Compose publishes it at
 `127.0.0.1:5020` on the host. Running the same deployment directly on the host
 listens on all interfaces unless `server.bind` is changed to `127.0.0.1`. View logs with
@@ -132,16 +132,20 @@ listens on all interfaces unless `server.bind` is changed to `127.0.0.1`. View l
 Docker's `unless-stopped` policy restarts the container after a crash or Docker
 restart; simulator values are initialized from the scenario on each restart.
 
-Edit `examples/deployment.yaml` or other mounted files under `examples/` and apply device
+Edit `deployment.yaml` or mounted models and scenarios under `contrib/` and apply device
 changes without restarting the container using:
 
 ```bash
-docker compose exec modsim python -m modsim up -f /app/examples/deployment.yaml -d
+docker compose exec modsim python -m modsim up -f /app/deployment.yaml -d
 ```
+
+If an editor replaces the deployment file instead of writing it in place, the
+file bind mount may still refer to the previous file. Recreate the container with
+`docker compose up -d --force-recreate` to pick up the replacement.
 
 Changing the listener requires recreating the container with `docker compose up
 --build -d`. Export TDs inside the container using `docker compose exec modsim
-python -m modsim export -f /app/examples/deployment.yaml --output-dir /tmp/td`; these
+python -m modsim export -f /app/deployment.yaml --output-dir /tmp/td`; these
 files are inside the container. The advertised TD host is `127.0.0.1`, suitable
 for clients on the Docker host; change HOST when clients connect remotely and
 configure the published port accordingly.

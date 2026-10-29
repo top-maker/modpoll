@@ -144,6 +144,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/acceptance"
           cp -r release/tests release/contrib release/examples "$RUNNER_TEMP/acceptance/"
+          if [ -f release/deployment.yaml ]; then cp release/deployment.yaml "$RUNNER_TEMP/acceptance/"; fi
           cd "$RUNNER_TEMP/acceptance"
           "$RUNNER_TEMP/installed/bin/python" -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
       - name: Verify published image and contributed deployment
@@ -158,7 +159,7 @@ jobs:
           if [ "$TAG" = "v2.0.0a1" ]; then
             docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
           else
-            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f examples/deployment-lab.yaml
+            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f /app/deployment.yaml
           fi
           "$RUNNER_TEMP/installed/bin/python" tools/preview-acceptance.py
       - if: always()

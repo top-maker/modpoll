@@ -19,5 +19,6 @@ RUN poetry install --no-interaction --no-ansi --no-root --no-dev
 COPY modsim /app/modsim/
 COPY contrib /app/contrib/
 COPY examples /app/examples/
+COPY deployment.yaml /app/deployment.yaml
 
 CMD [ "python", "-m", "modsim" ]

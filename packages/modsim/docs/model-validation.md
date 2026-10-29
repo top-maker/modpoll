@@ -49,7 +49,7 @@ contract, TM parameters, dynamic device lifecycle and TD export.
 The ADAM lab example starts two independent devices on one listener:
 
 ```bash
-poetry run modsim up -f examples/deployment-lab.yaml
+poetry run modsim up -f deployment.yaml
 ```
 
 Paths in deployment files are relative to the deployment directory; scenario

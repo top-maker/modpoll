@@ -70,4 +70,4 @@ AO/DO are declared writable for future simulated-device tests. This draft is not
 a command to write to physical outputs. Confirm mapping and permitted values
 before hardware output tests. Current modsim 1.x cannot load TD files yet.
 
-Synthetic read/write compatibility is recorded in [the verification report](../../../examples/verification.md); it does not establish hardware correctness.
+Synthetic interoperability checks do not establish hardware correctness.
