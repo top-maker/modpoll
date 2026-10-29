@@ -125,7 +125,9 @@ def prepare(args: Any) -> None:
 
 def apply_scenario(args: Any) -> None:
     device = args.runtime
-    spec = document(args.scenario, SCENARIO) if args.scenario else {}
+    spec = getattr(args, "scenario_spec", None)
+    if spec is None:
+        spec = document(args.scenario, SCENARIO) if args.scenario else {}
     device.tick_interval = spec.get("tick", 1.0)
     if not math.isfinite(device.tick_interval) or device.tick_interval < 0.001:
         raise ValueError("scenario tick must be finite and at least 0.001 seconds")
@@ -192,7 +194,9 @@ def apply_scenario(args: Any) -> None:
     if script:
         if not args.allow_scripts:
             raise ValueError("Python behavior scripts require --allow-scripts")
-        device.load_script(local_path(Path.cwd(), script))
+        device.load_script(
+            local_path(Path.cwd(), script), getattr(args, "script_source", None)
+        )
     device.hook("initialize")
     device.advance(0.0, 0.0)
     origins = args.model_initialization["origins"]

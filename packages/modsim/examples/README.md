@@ -44,3 +44,17 @@ poetry run python examples/generate-td.py --check
 TMs are maintained in contrib; generated TDs and manifests remain beside each
 source. [Earlier interoperability evidence](verification.md) records raw ADAM
 mapping validation, independently of the new multi-device runtime.
+
+## Managed deployment example
+
+From the repository root, run `modsim up -f examples/deployment.yaml -d`.
+Two devices share `managed-device.tm.json` and `managed-device.sim.json`, with
+different stable TD IDs, titles and Unit IDs supplied in deployment parameters.
+Read/write holding register PDU address 10; each device starts at 25 and accepts
+values 0–100. Edit the device list and repeat `up` to reconcile it. Stop with
+`modsim down -f examples/deployment.yaml`.
+
+Export both TDs with
+`modsim export -f examples/deployment.yaml --output-dir /tmp/modsim-td`.
+The managed commands require the v2 development source; see the
+[contract](../docs/managed-deployments.md).

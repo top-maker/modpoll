@@ -107,3 +107,16 @@ and [configuration and script contracts](docs/model-validation.md).
 Install the preview with `pip install modsim==2.0.0a1` or use
 `topmaker/modsim:2.0.0a1`. Stable 1.x releases retain the unconfigured behavior
 described above. Preview documentation: https://top-maker.github.io/modsim/v2/.
+
+## Managed deployments (v2 development source)
+
+Start and update the same deployment with `modsim up -f examples/deployment.yaml`;
+add `-d` for a background process. Edit the deployment and repeat `up` to add,
+remove or replace devices while unchanged devices keep their state. Initial
+values belong in scenarios. Export instantiated TDs with
+`modsim export -f examples/deployment.yaml --output-dir ./td`.
+
+The two-level commands `up`, `down`, `ps`, `logs`, `export` and `reset` currently
+support Linux/macOS/WSL. See [managed deployments](docs/managed-deployments.md)
+for version 2 YAML, instance parameters, update guarantees and compatibility.
+These additions are source-only and are not part of the published `2.0.0a1`.

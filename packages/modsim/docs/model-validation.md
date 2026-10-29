@@ -41,6 +41,13 @@ length. Legacy register bool arrays retain the consumer's byte/LSB layout and
 preserve unused padding. No engineering-unit conversion is guessed for raw ADAM
 channels. Profile 0.2 is required; the unconfigured demonstration is unchanged.
 
+## Managed deployments
+
+For repeatable startup and runtime updates, use deployment version 2 and
+`modsim up`. See [managed deployments](managed-deployments.md) for the YAML
+contract, TM parameters, dynamic device lifecycle and TD export.
+The following flag-based entry point retains its version 1 contract.
+
 ## Multiple devices on one listener
 
 ```bash

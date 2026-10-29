@@ -9,6 +9,7 @@ repo_name: top-maker/modsim
 nav:
   - Home: index.md
   - Model validation: model-validation.md
+  - Managed deployments: managed-deployments.md
   - Modules: modules.md
   - Preview notes: preview-notes.md
   - Preview release process: release-process.md

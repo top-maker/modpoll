@@ -2,6 +2,7 @@
 """Modbus simulator server and process lifecycle."""
 
 import os
+import sys
 import json
 import ssl
 import asyncio
@@ -213,6 +214,11 @@ async def run_async_server(args: Any) -> Any:
 
 
 def app() -> None:
+    from .commands import ACTIONS, run
+
+    if len(sys.argv) > 1 and sys.argv[1] in ACTIONS:
+        run(sys.argv[1:])
+        return
     args = get_commandline()
     global _logger
     _logger = get_logger(args.log)

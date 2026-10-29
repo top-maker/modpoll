@@ -27,11 +27,13 @@ def configure(args: Any) -> SimDevice:
     """Compile a device; a TD endpoint never becomes the server bind address."""
     from .runtime import Device
 
-    model = parse_model(
-        model_document(args.config),
-        unit_id=args.unit_id,
-        parameters=parse_parameters(args.param),
-    )
+    model = getattr(args, "prepared_model", None)
+    if model is None:
+        model = parse_model(
+            model_document(args.config),
+            unit_id=args.unit_id,
+            parameters=parse_parameters(args.param),
+        )
     if model.profile_version != "0.2" or model.properties_json is None:
         raise ValueError("configured simulation requires profile 0.2")
     schemas = json.loads(model.properties_json)

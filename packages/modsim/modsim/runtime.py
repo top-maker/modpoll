@@ -116,14 +116,17 @@ class Device:
                     result.close()
                 raise ValueError(f"{name}: script hooks must be synchronous")
 
-    def load_script(self, path: str) -> None:
+    def load_script(self, path: str, source: bytes | None = None) -> None:
         spec = importlib.util.spec_from_file_location(
             f"modsim_behavior_{self.unit_id}", path
         )
         if spec is None or spec.loader is None:
             raise ValueError(f"cannot load script: {path}")
         self.script = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.script)
+        if source is None:
+            spec.loader.exec_module(self.script)
+        else:
+            exec(compile(source, path, "exec"), self.script.__dict__)
         for name in ("initialize", "tick", "on_write"):
             callback = getattr(self.script, name, None)
             if callback is not None and (

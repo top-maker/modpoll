@@ -229,6 +229,8 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
             process.wait(timeout=5)
         assert process.returncode == 0
     with socket.socket() as check:
+        # Match server reuse semantics: TIME_WAIT is not a live listener.
+        check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         check.bind(("127.0.0.1", port))
 
 
@@ -311,4 +313,6 @@ def test_periodic_script_failure_stops_and_releases_listener(tmp_path):
     assert result.returncode != 0
     assert b"behavior stopped" in result.stderr
     with socket.socket() as check:
+        # Match server reuse semantics: TIME_WAIT is not a live listener.
+        check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         check.bind(("127.0.0.1", port))

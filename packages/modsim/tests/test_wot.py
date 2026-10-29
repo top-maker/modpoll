@@ -121,6 +121,8 @@ def server(tmp_path):
         process.stderr.close()
         assert process.returncode == 0
         with socket.socket() as check:
+            # Match server reuse semantics: TIME_WAIT is not a live listener.
+            check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             check.bind(("127.0.0.1", port))
 
 

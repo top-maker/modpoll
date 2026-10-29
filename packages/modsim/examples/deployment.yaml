@@ -1,0 +1,20 @@
+version: 2
+name: managed-demo
+server:
+  bind: 127.0.0.1
+  port: 5020
+devices:
+  - id: meter-01
+    model: ./managed-device.tm.json
+    parameters:
+      THING_ID: urn:modsim:example:meter-01
+      TITLE: First device
+      UNIT_ID: 1
+    scenario: ./managed-device.sim.json
+  - id: meter-02
+    model: ./managed-device.tm.json
+    parameters:
+      THING_ID: urn:modsim:example:meter-02
+      TITLE: Second device
+      UNIT_ID: 2
+    scenario: ./managed-device.sim.json

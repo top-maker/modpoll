@@ -15,7 +15,8 @@ config: Dict[str, Any] = {}
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=f"Modsim v{__version__} - A Simple Modbus TCP Device Simulator used for modpoll tool"
+        description=f"Modsim v{__version__} - A Simple Modbus TCP Device Simulator used for modpoll tool",
+        epilog="Managed commands: up, down, ps, logs, export, reset. Use modsim COMMAND --help.",
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"{__package__} v{__version__}"
