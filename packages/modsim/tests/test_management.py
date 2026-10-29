@@ -62,7 +62,7 @@ def write(path, spec):
 
 def cli(path, *args, check=True):
     result = subprocess.run(
-        [sys.executable, "-m", "modsim", *args, "-f", str(path)],
+        [sys.executable, "-m", "modsim", *args, "--file", str(path)],
         cwd=path.parent,
         env={**os.environ, "PYTHONPATH": str(ROOT), "PYTHONDONTWRITEBYTECODE": "1"},
         capture_output=True,
@@ -401,10 +401,10 @@ def test_attached_up_and_follow_logs_detach_without_stopping(tmp_path):
     cli(path, "up", "-d")
     env = {**os.environ, "PYTHONPATH": str(ROOT)}
     try:
-        for command in (["up"], ["logs", "--follow"]):
+        for command in (["up"], ["logs", "-f"], ["logs", "--follow"]):
             with (tmp_path / "output.log").open("w+") as output:
                 process = subprocess.Popen(
-                    [sys.executable, "-m", "modsim", *command, "-f", str(path)],
+                    [sys.executable, "-m", "modsim", *command, "--file", str(path)],
                     cwd=tmp_path,
                     env=env,
                     stdout=output,

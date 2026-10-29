@@ -114,7 +114,8 @@ modsim logs
 
 `reset` rebuilds that device from the last successfully applied input snapshot,
 including the original behavior source. It does not read pending file edits.
-`logs` prints the last 1 MiB of the deployment log; `logs --follow` keeps watching.
+`logs` prints the last 1 MiB of the deployment log; `logs -f` or `logs --follow` keeps watching.
+For `logs`, use `--file deployment.yaml` to select a deployment; `-f` means follow.
 `ps` reports device IDs, TD IDs,
 Unit IDs, process ID and failure status as JSON.
 

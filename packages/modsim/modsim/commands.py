@@ -21,14 +21,17 @@ def parser() -> argparse.ArgumentParser:
     actions = root.add_subparsers(dest="action", required=True)
     for action in sorted(ACTIONS):
         command = actions.add_parser(action)
-        command.add_argument("-f", "--file", default="deployment.yaml")
+        if action == "logs":
+            command.add_argument("--file", default="deployment.yaml")
+        else:
+            command.add_argument("-f", "--file", default="deployment.yaml")
         if action == "up":
             command.add_argument("-d", "--detach", action="store_true")
             command.add_argument("--dry-run", action="store_true")
             command.add_argument("--allow-scripts", action="store_true")
             command.add_argument("--serve", action="store_true", help=argparse.SUPPRESS)
         if action == "logs":
-            command.add_argument("--follow", action="store_true")
+            command.add_argument("-f", "--follow", action="store_true")
         if action in ("export", "reset"):
             command.add_argument("--device", required=action == "reset")
         if action == "export":
