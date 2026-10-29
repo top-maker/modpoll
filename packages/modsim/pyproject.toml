@@ -50,7 +50,3 @@ markers = ["integration: local protocol integration test"]
 
 [tool.poetry.scripts]
 modsim = "modsim.main:app"
-
-[tool.deptry]
-# Vendor behavior examples are loaded explicitly rather than imported as a package.
-extend_exclude = ["examples"]

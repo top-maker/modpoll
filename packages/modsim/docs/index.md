@@ -26,7 +26,7 @@ addresses return a Modbus exception.
 ## Transports and options
 
 TCP and UDP use socket framing; UDP listens on loopback. TLS uses TLS framing
-and expects `examples/certificates/pymodbus.crt` and `pymodbus.key` relative
+and expects `certificates/pymodbus.crt` and `pymodbus.key` relative
 to the working directory. The TLS server does not authenticate clients. Serial
 supports RTU and ASCII framing; physical serial devices have not been
 validated in the local regression suite.

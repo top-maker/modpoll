@@ -143,7 +143,8 @@ jobs:
       - name: Test without application source
         run: |
           mkdir -p "$RUNNER_TEMP/acceptance"
-          cp -r release/tests release/contrib release/examples "$RUNNER_TEMP/acceptance/"
+          cp -r release/tests release/contrib "$RUNNER_TEMP/acceptance/"
+          if [ -d release/examples ]; then cp -r release/examples "$RUNNER_TEMP/acceptance/"; fi
           if [ -f release/deployment.yaml ]; then cp release/deployment.yaml "$RUNNER_TEMP/acceptance/"; fi
           cd "$RUNNER_TEMP/acceptance"
           "$RUNNER_TEMP/installed/bin/python" -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml

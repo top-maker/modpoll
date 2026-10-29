@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Modbus simulator server and process lifecycle."""
 
-import os
 import sys
 import json
 import ssl
@@ -174,19 +173,11 @@ async def run_async_server(args: Any) -> Any:
         return None
     elif args.comm == "tls":
         address = ("", args.port)
-        cwd = os.getcwd().split("/")[-1]
-        if cwd == "examples":
-            path = "."
-        elif cwd == "test":
-            path = "../examples"
-        else:
-            path = "examples"
-
         # Create SSL context from cert and key files
         sslctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         sslctx.load_cert_chain(
-            certfile=f"{path}/certificates/pymodbus.crt",
-            keyfile=f"{path}/certificates/pymodbus.key",
+            certfile="certificates/pymodbus.crt",
+            keyfile="certificates/pymodbus.key",
         )
 
         server = ModbusTlsServer(

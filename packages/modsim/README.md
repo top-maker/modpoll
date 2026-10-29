@@ -82,7 +82,7 @@ Run the simulator without Docker with `python -m modsim --comm tcp --port 5020`.
 The default TCP simulator uses one sequential datastore shared by all Unit IDs.
 The CLI currently supports only `--store sequential`; `--slaves` and `--context`
 are not implemented and are rejected. TCP and UDP use the socket framer, TLS uses
-the TLS framer, and serial accepts RTU or ASCII framing. Serial requires a suitable local device and is not covered by the local protocol regression suite. TLS uses `examples/certificates/pymodbus.crt` and `pymodbus.key` relative to the working directory. A local test covers a self-signed server certificate and a verified client connection; the server does not authenticate client certificates.
+the TLS framer, and serial accepts RTU or ASCII framing. Serial requires a suitable local device and is not covered by the local protocol regression suite. TLS uses `certificates/pymodbus.crt` and `certificates/pymodbus.key` relative to the working directory. A local test covers a self-signed server certificate and a verified client connection; the server does not authenticate client certificates.
 
 UDP mode (`--comm udp`) listens on the loopback address and has local read and
 shutdown coverage. TCP and UDP report a startup error if the requested port is
@@ -102,8 +102,8 @@ Install the source dependencies with `poetry install`, then run:
 poetry run modsim up -f deployment.yaml
 ```
 
-See [examples](examples/README.md), [community device contributions](contrib/README.md)
-and [configuration and script contracts](docs/model-validation.md).
+See [community device contributions](contrib/README.md) and
+[configuration and script contracts](docs/model-validation.md).
 Install the preview with `pip install modsim==2.0.0a1` or use
 `topmaker/modsim:2.0.0a1`. Stable 1.x releases retain the unconfigured behavior
 described above. Preview documentation: https://top-maker.github.io/modsim/v2/.
@@ -125,6 +125,10 @@ These additions are source-only and are not part of the published `2.0.0a1`.
 
 Build and start the current checkout with `docker compose up --build -d`.
 The repository's `deployment.yaml` describes two virtual ADAM devices.
+Unit 1 simulates ADAM-5017UH raw inputs; Unit 2 simulates ADAM-6024 raw I/O
+with synthetic AO→AI and DO→DI loopback. The models and scenarios are in
+[contrib](contrib/README.md). These raw values do not establish physical device
+behavior, measurement ranges or output limits; those require hardware validation.
 Its listener binds `0.0.0.0` inside the container; Compose publishes it at
 `127.0.0.1:5020` on the host. Running the same deployment directly on the host
 listens on all interfaces unless `server.bind` is changed to `127.0.0.1`. View logs with
@@ -149,3 +153,6 @@ python -m modsim export -f /app/deployment.yaml --output-dir /tmp/td`; these
 files are inside the container. The advertised TD host is `127.0.0.1`, suitable
 for clients on the Docker host; change HOST when clients connect remotely and
 configure the published port accordingly.
+
+Run `poetry run python tools/generate-td.py --check` to verify generated product
+TDs and their source hashes. Omit `--check` to regenerate them.

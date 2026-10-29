@@ -308,7 +308,7 @@ def test_local_tls_server_with_ephemeral_certificate(tmp_path):
     openssl = shutil.which("openssl")
     if not openssl:
         pytest.skip("openssl is needed to generate a temporary certificate")
-    certdir = tmp_path / "examples" / "certificates"
+    certdir = tmp_path / "certificates"
     certdir.mkdir(parents=True)
     cert = certdir / "pymodbus.crt"
     key = certdir / "pymodbus.key"
