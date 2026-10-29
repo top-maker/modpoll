@@ -1,5 +1,5 @@
 version: 2
-name: adam-lab
+name: modsim-lab
 server:
   bind: 0.0.0.0
   port: 5020
@@ -7,14 +7,14 @@ devices:
 - id: analog-input
   model: ./contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json
   parameters:
-    THING_ID: urn:modsim:example:adam-5017uh
+    THING_ID: urn:modsim:lab:adam-5017uh
     UNIT_ID: 1
     HOST: 127.0.0.1
   scenario: ./contrib/advantech/adam-5017uh/temperature.sim.json
 - id: io-loopback
   model: ./contrib/advantech/adam-6024/adam-6024.tm.json
   parameters:
-    THING_ID: urn:modsim:example:adam-6024
+    THING_ID: urn:modsim:lab:adam-6024
     UNIT_ID: 2
     HOST: 127.0.0.1
   scenario: ./contrib/advantech/adam-6024/io-loopback.sim.json
