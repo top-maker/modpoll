@@ -135,10 +135,13 @@ flag-based startup retains its existing process-wide failure behavior.
 ## TD export
 
 ```bash
-modsim export --device adam-5017uh -o adam-5017uh.td.json
-modsim export --output-dir ./td
-modsim export --running --device adam-5017uh -o applied.td.json
+modsim export
+modsim export --device adam-5017uh -o output/adam-5017uh.td.json
+modsim export --running --device adam-5017uh -o output/applied.td.json
 ```
+
+By default, `modsim export` writes every TD to `output/` in the project root.
+The directory is ignored by Git. `--output-dir` changes the destination.
 
 Offline export reads the deployment, instantiates its TMs and validates the TDs;
 it needs no running process or scenario files and never executes behavior scripts. `--running`

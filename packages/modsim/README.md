@@ -25,7 +25,7 @@ poetry install
 
 ## Run locally
 
-From the repository root, start the example deployment and check its status:
+From the root directory, start the example deployment and check its status:
 
 ```bash
 poetry run modsim up -d
@@ -47,9 +47,13 @@ Useful commands for managing the deployment:
 poetry run modsim logs -f
 poetry run modsim up --dry-run
 poetry run modsim reset --device adam-5017uh
-poetry run modsim export --output-dir ./td
+poetry run modsim export
 poetry run modsim down
 ```
+
+Export writes all TDs to `output/` in the root directory by default; this
+directory is ignored by Git. Use `-o FILE` for one TD or `--output-dir DIR` to
+choose another directory.
 
 Use `-f FILE` to select another deployment. In `logs`, `-f` follows output;
 use `--file FILE` to select the deployment. `up` runs in the foreground by
@@ -59,13 +63,15 @@ Background services do not restart after a machine reboot unless managed by a
 process manager. Managed commands require POSIX (Linux/macOS/WSL); see
 [managed deployments](docs/managed-deployments.md).
 
-`modsim export` uses the same model instantiation as the simulator and does not
-require it to be running. Add `--running` to export the last successfully
-applied configuration rather than pending file edits.
+`modsim export` reads the current deployment file and does not require a
+running simulator. Use `--running` only when you need the last successfully
+applied configuration instead of current file contents. That option connects to
+the managed runtime in the same environment, so a Poetry command can only read
+a Poetry-started deployment; for Docker Compose, run it inside the container.
 
 ## Run with Docker Compose
 
-From the repository root, build and start the current source:
+From the `examples/` directory, build and start the current source:
 
 ```bash
 docker compose up -d --build
@@ -77,46 +83,54 @@ container unless stopped. Each restart resets simulation state. TDs advertise
 `127.0.0.1` by default; configure the advertised host and port mapping when
 clients connect from another machine.
 
-The deployment and model/scenario files are mounted from the repository. Apply
-deployment changes with:
+The deployment and model/scenario files are mounted from the repository.
+`docker compose up -d` starts the configured deployment; do not run `modsim up`
+again just to start it. After editing the mounted deployment file, apply the
+updated configuration to the running simulator with:
 
 ```bash
 docker compose exec modsim python -m modsim up -f /app/examples/deployment.yaml -d
 ```
 
 An unchanged device keeps its state; a changed device is replaced. Listener
-changes require a container restart. If you replace the deployment file, run
-`docker compose up -d --force-recreate` to refresh its bind mount. To export a
-TD from the container, write it to `/tmp` and copy it to the host:
+changes require a container restart. If you replace the deployment file itself,
+run `docker compose up -d --force-recreate` to refresh its bind mount. Export
+all running TDs directly into the host's `examples/td/` directory. The Compose
+file maps the default output directory to that host directory. Run this from
+the `examples/` directory:
 
 ```bash
-docker compose exec modsim python -m modsim export --running \
-  --device adam-6024 -o /tmp/adam-6024.td.json
-docker compose cp modsim:/tmp/adam-6024.td.json ./adam-6024.td.json
+docker compose exec modsim python -m modsim export --running
 ```
+
+This creates one `*.td.json` file per device in `examples/td/`.
 
 Stop the Compose deployment with `docker compose down`.
 
 ## Example: test modpoll against modsim
 
 This example uses modpoll v2 (`modpoll==2.0.0a2`) and the local modsim source.
-Start modsim as described above, then export the running ADAM-6024 TD:
+Export all TDs from the current deployment file. Run from the root directory;
+modsim does not need to be running:
 
 ```bash
-poetry run modsim export --running --device adam-6024 -o ./adam-6024.td.json
+poetry run modsim export
 ```
 
-In another terminal, from the modsim repository root, read the exported TD:
+In another terminal, from the root directory, read the exported TD:
 
 ```bash
 modpoll --once --interval 0 --tcp 127.0.0.1 --tcp-port 5020 \
-  --config ./adam-6024.td.json --export ./adam-6024-snapshot.json
+  --config ./output/adam-6024.td.json --export ./adam-6024-snapshot.json
 ```
+
+If you need the last applied configuration from a Docker Compose deployment,
+use the Compose export command above and point modpoll to
+`./examples/td/adam-6024.td.json` instead.
 
 The TD selects Unit ID 2. On a fresh deployment, `adam6024_raw` reports
 `AO0_RAW: 100` and `AI0_RAW: 100`; values may differ if previously written.
-With Docker Compose, use the export commands in the previous section; the
-same modpoll command applies.
+The command reads the exported TD and connects to modsim on the host port.
 
 ### Optional: write via MQTT
 

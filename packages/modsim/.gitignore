@@ -4,6 +4,9 @@
 ### dotenv ###
 .env
 
+# Generated TD exports
+/output/
+
 ### Linux ###
 *~
 

@@ -8,4 +8,5 @@ services:
       - "127.0.0.1:5020:5020"
     volumes:
       - ./deployment.yaml:/app/examples/deployment.yaml:ro
+      - ./td:/app/output
       - ../contrib:/app/contrib:ro

@@ -23,6 +23,11 @@ def default_deployment() -> str:
     return "examples/deployment.yaml"
 
 
+def default_output_dir() -> Path:
+    """Use an ignored output directory at the project root."""
+    return Path(__file__).resolve().parent.parent / "output"
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Manage a local Modsim deployment")
     actions = root.add_subparsers(dest="action", required=True)
@@ -42,9 +47,9 @@ def parser() -> argparse.ArgumentParser:
         if action in ("export", "reset"):
             command.add_argument("--device", required=action == "reset")
         if action == "export":
-            output = command.add_mutually_exclusive_group(required=True)
+            output = command.add_mutually_exclusive_group()
             output.add_argument("-o", "--output")
-            output.add_argument("--output-dir")
+            output.add_argument("--output-dir", default=str(default_output_dir()))
             command.add_argument("--running", action="store_true")
     return root
 
@@ -83,7 +88,7 @@ def export_documents(tds: dict, args: argparse.Namespace) -> None:
     )
     if output_is_directory:
         output.mkdir(parents=True, exist_ok=True)
-    if args.output_dir:
+    if args.output_dir and output is None:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     for key, td in tds.items():
         target = (
@@ -123,7 +128,14 @@ def run(argv: list[str]) -> None:
         name = identity(path)
         if args.action == "export":
             if args.running:
-                tds = call(name, path, "export")["tds"]
+                try:
+                    tds = call(name, path, "export")["tds"]
+                except FileNotFoundError as exc:
+                    raise ValueError(
+                        "no managed deployment found in this environment; "
+                        "start it with `poetry run modsim up -d`, or run export "
+                        "inside the Docker Compose container"
+                    ) from exc
             else:
                 deployment = load_deployment(path, include_scenarios=False)
                 tds = {key: item.td for key, item in deployment.instances.items()}
