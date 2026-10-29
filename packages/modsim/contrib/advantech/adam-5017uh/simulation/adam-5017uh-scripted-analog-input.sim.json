@@ -4,5 +4,5 @@
   "parameters": {
     "initial": 200
   },
-  "script": "behavior.py"
+  "script": "adam-5017uh-behavior.py"
 }

@@ -7,9 +7,9 @@ shared package; Modsim owns state and protocol execution.
 ## One device
 
 ```bash
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario contrib/advantech/adam-5017uh/temperature.sim.json
+  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 `--config` also accepts HTTPS model URLs. GitHub `blob` links are converted to
@@ -49,7 +49,7 @@ contract, TM parameters, dynamic device lifecycle and TD export.
 The ADAM lab example starts two independent devices on one listener:
 
 ```bash
-poetry run modsim up -f deployment.yaml
+poetry run modsim up -f examples/deployment.yaml
 ```
 
 Paths in deployment files are relative to the deployment directory; scenario
@@ -103,8 +103,8 @@ response and may deliberately overwrite values.
 ## Local Python behaviors
 
 ```bash
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
-  --scenario contrib/advantech/adam-5017uh/scripted.sim.json --allow-scripts
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json --allow-scripts
 ```
 
 Optional synchronous hooks:

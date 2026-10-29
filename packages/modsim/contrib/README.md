@@ -2,7 +2,8 @@
 
 Organize contributions as `contrib/<vendor>/<model>/`. Maintain one profile 0.2
 TM as the register mapping source. Scenarios and scripts reference property names
-and do not duplicate addresses. Generated TDs are derived by
+and do not duplicate addresses. Generate deployment-specific TDs on demand;
+see each model README. The checked-in ADAM-6024 TD is derived by
 `poetry run python tools/generate-td.py`; do not edit them by hand.
 
 Include a README with model/firmware scope, public mapping sources, startup

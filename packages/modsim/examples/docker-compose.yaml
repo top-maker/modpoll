@@ -1,0 +1,11 @@
+name: modsim-lab
+services:
+  modsim:
+    build: ..
+    restart: unless-stopped
+    command: ["python", "-m", "modsim", "up", "-f", "/app/examples/deployment.yaml", "--allow-scripts"]
+    ports:
+      - "127.0.0.1:5020:5020"
+    volumes:
+      - ./deployment.yaml:/app/examples/deployment.yaml:ro
+      - ../contrib:/app/contrib:ro

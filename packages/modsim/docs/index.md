@@ -9,7 +9,7 @@ preview does not include all current managed commands; see
 ## Start a managed deployment
 
 From a source checkout, `docker compose up -d --build` runs the root
-`deployment.yaml`. Unit 1 is a virtual ADAM-5017UH input module and Unit 2 is a
+`examples/deployment.yaml`. Unit 1 is a virtual ADAM-5017UH input module and Unit 2 is a
 virtual ADAM-6024 with synthetic I/O loopback. Compose publishes port 5020 on
 host loopback. The ADAM mappings are manual-derived candidates; simulation is
 not evidence of physical device behavior.

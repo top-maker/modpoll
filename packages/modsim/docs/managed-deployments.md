@@ -8,14 +8,14 @@ flag-based server entry point remains available on other platforms.
 ## Start and reconcile
 
 ```bash
-modsim up -f deployment.yaml -d
-modsim ps -f deployment.yaml
-modsim up -f deployment.yaml --dry-run
-modsim up -f deployment.yaml
-modsim down -f deployment.yaml
+modsim up -f examples/deployment.yaml -d
+modsim ps -f examples/deployment.yaml
+modsim up -f examples/deployment.yaml --dry-run
+modsim up -f examples/deployment.yaml
+modsim down -f examples/deployment.yaml
 ```
 
-All commands default to `deployment.yaml` in the current directory. `up` runs in
+All commands default to `examples/deployment.yaml` in the current directory. `up` runs in
 the foreground on first startup; `-d` starts a detached process. Later `up`
 commands update that process and follow its logs; use `-d` to return immediately.
 Interrupting the original foreground process stops its deployment. Interrupting
@@ -37,19 +37,20 @@ server:
   bind: 127.0.0.1
   port: 5020
 devices:
-  - id: analog-input
-    model: ./contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json
+  - id: adam-5017uh
+    model: contrib/advantech/adam-5017uh/adam-5017uh.tm.json
     parameters:
       THING_ID: urn:modsim:example:adam-5017uh
       UNIT_ID: 1
-    scenario: ./contrib/advantech/adam-5017uh/temperature.sim.json
+    scenario: contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 `devices` may be empty. IDs and deployment names use lowercase letters, digits
 and hyphens, starting with a letter or digit (maximum 64 characters). Device IDs,
 instantiated TD IDs and Unit IDs must each be unique within the deployment.
-Paths resolve relative to the deployment file; scripts resolve relative to their
-scenario file. Models may also use bounded HTTPS URLs. Pin remote model revisions
+Paths in the repository example resolve from the project root; for standalone
+deployments, model and scenario paths resolve relative to the deployment file. Scripts
+resolve relative to their scenario file. Models may also use bounded HTTPS URLs. Pin remote model revisions
 for repeatable runs.
 
 Each device contains only `id`, `model`, optional `parameters` and optional
@@ -108,14 +109,14 @@ loop, keeping an entire write and its echo on one device generation. Other Unit
 IDs and established TCP connections remain available during updates.
 
 ```bash
-modsim reset --device analog-input
+modsim reset --device adam-5017uh
 modsim logs
 ```
 
 `reset` rebuilds that device from the last successfully applied input snapshot,
 including the original behavior source. It does not read pending file edits.
 `logs` prints the last 1 MiB of the deployment log; `logs -f` or `logs --follow` keeps watching.
-For `logs`, use `--file deployment.yaml` to select a deployment; `-f` means follow.
+For `logs`, use `--file examples/deployment.yaml` to select a deployment; `-f` means follow.
 `ps` reports device IDs, TD IDs,
 Unit IDs, process ID and failure status as JSON.
 
@@ -134,9 +135,9 @@ flag-based startup retains its existing process-wide failure behavior.
 ## TD export
 
 ```bash
-modsim export --device analog-input -o analog-input.td.json
+modsim export --device adam-5017uh -o adam-5017uh.td.json
 modsim export --output-dir ./td
-modsim export --running --device analog-input -o applied.td.json
+modsim export --running --device adam-5017uh -o applied.td.json
 ```
 
 Offline export reads the deployment, instantiates its TMs and validates the TDs;

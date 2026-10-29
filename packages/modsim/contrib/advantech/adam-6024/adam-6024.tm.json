@@ -7,13 +7,13 @@
       "xsd": "http://www.w3.org/2001/XMLSchema#"
     }
   ],
-  "title": "adam6024_raw",
-  "description": "ADAM-6024 core I/O raw-word draft. Manual-derived mapping with conventional zero-based address candidates, DO start 16 corroborated by official LabVIEW example. Not hardware-verified. Analog range, normalization and firmware-specific behavior require confirmation.",
+  "title": "Advantech ADAM-6024 Ethernet Remote I/O Module",
+  "description": "Thing Model for the Advantech ADAM-6024 remote I/O module: six analog inputs, two analog outputs, two digital inputs and two digital outputs. Analog channels are exposed as raw 16-bit Modbus words; digital channels are booleans. Register addresses are manual-derived candidates and are not hardware-verified. Confirm address tables, firmware behavior, analog ranges and wire normalization before using with physical equipment.",
   "modpoll:version": "0.2",
   "properties": {
     "AI0_RAW": {
       "type": "integer",
-      "description": "AI channel 0 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 0 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -31,7 +31,7 @@
     },
     "AI1_RAW": {
       "type": "integer",
-      "description": "AI channel 1 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 1 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -49,7 +49,7 @@
     },
     "AI2_RAW": {
       "type": "integer",
-      "description": "AI channel 2 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 2 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -67,7 +67,7 @@
     },
     "AI3_RAW": {
       "type": "integer",
-      "description": "AI channel 3 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 3 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -85,7 +85,7 @@
     },
     "AI4_RAW": {
       "type": "integer",
-      "description": "AI channel 4 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 4 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -103,7 +103,7 @@
     },
     "AI5_RAW": {
       "type": "integer",
-      "description": "AI channel 5 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "description": "Analog input channel 5 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -121,7 +121,7 @@
     },
     "AO0_RAW": {
       "type": "integer",
-      "description": "AO channel 0 raw wire word. The uint16 bounds describe the transport type, not a verified legal DAC output range; do not assume all values are accepted by hardware.",
+      "description": "Analog output channel 0 raw Modbus holding-register word. Writable through Modbus; permitted values and conversion to physical output depend on device range configuration and firmware and must be verified before hardware writes.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -141,7 +141,7 @@
     },
     "AO1_RAW": {
       "type": "integer",
-      "description": "AO channel 1 raw wire word. The uint16 bounds describe the transport type, not a verified legal DAC output range; do not assume all values are accepted by hardware.",
+      "description": "Analog output channel 1 raw Modbus holding-register word. Writable through Modbus; permitted values and conversion to physical output depend on device range configuration and firmware and must be verified before hardware writes.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -161,7 +161,7 @@
     },
     "DI0": {
       "type": "boolean",
-      "description": "Digital input channel 0; raw boolean at literal PDU address 0.",
+      "description": "Digital input channel 0 state.",
       "readOnly": true,
       "forms": [
         {
@@ -176,7 +176,7 @@
     },
     "DI1": {
       "type": "boolean",
-      "description": "Digital input channel 1; raw boolean at literal PDU address 1.",
+      "description": "Digital input channel 1 state.",
       "readOnly": true,
       "forms": [
         {
@@ -191,7 +191,7 @@
     },
     "DO0": {
       "type": "boolean",
-      "description": "Digital output channel 0; raw boolean at literal PDU address 16.",
+      "description": "Digital output channel 0 state; writable through Modbus. Verify physical wiring and permitted operation before controlling hardware.",
       "forms": [
         {
           "op": [
@@ -208,7 +208,7 @@
     },
     "DO1": {
       "type": "boolean",
-      "description": "Digital output channel 1; raw boolean at literal PDU address 17.",
+      "description": "Digital output channel 1 state; writable through Modbus. Verify physical wiring and permitted operation before controlling hardware.",
       "forms": [
         {
           "op": [

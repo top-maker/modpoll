@@ -220,7 +220,7 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
             device(1, initial={"AO0_RAW": 10}),
             device(
                 2,
-                scenario=str(ROOT / "contrib/advantech/adam-6024/io-loopback.sim.json"),
+                scenario=str(ROOT / "contrib/advantech/adam-6024/simulation/io-loopback.sim.json"),
             ),
         ],
         port=port,
@@ -330,7 +330,7 @@ def test_explicit_thing_id_for_model_without_id(tmp_path):
 
 
 def test_root_adam_deployment():
-    deployment = load_deployment(ROOT / "deployment.yaml")
+    deployment = load_deployment(ROOT / "examples/deployment.yaml")
     assert deployment.bind == "0.0.0.0"
     assert [item.model.unit_id for item in deployment.instances.values()] == [1, 2]
     assert all(

@@ -18,6 +18,6 @@ RUN poetry install --no-interaction --no-ansi --no-root --only main
 # Copy Python app to the Docker image
 COPY modsim /app/modsim/
 COPY contrib /app/contrib/
-COPY deployment.yaml /app/deployment.yaml
+COPY examples /app/examples
 
 CMD [ "python", "-m", "modsim" ]

@@ -7,13 +7,13 @@
       "xsd": "http://www.w3.org/2001/XMLSchema#"
     }
   ],
-  "title": "adam5017uh_slot0_raw",
-  "description": "ADAM-5017UH in ADAM-5000L/TCP slot 0. Manual-derived raw-word diagnostic TM; slot confirmed by operator, range/data format and physical responses pending verification.",
+  "title": "Advantech ADAM-5017UH 8-Channel Analog Input Module",
+  "description": "Thing Model for the Advantech ADAM-5017UH eight-channel analog input module. It describes eight read-only Modbus input-register values as raw 16-bit words. The register mapping is derived from the ADAM-5000L/TCP manual and assumes the documented slot word offset; verify rack, slot, firmware, channel range and wire format for the installation. No engineering-unit conversion or hardware validation is claimed.",
   "modpoll:version": "0.2",
   "properties": {
     "AI0_RAW": {
       "type": "integer",
-      "description": "Channel 0: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 0 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -31,7 +31,7 @@
     },
     "AI1_RAW": {
       "type": "integer",
-      "description": "Channel 1: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 1 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -49,7 +49,7 @@
     },
     "AI2_RAW": {
       "type": "integer",
-      "description": "Channel 2: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 2 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -67,7 +67,7 @@
     },
     "AI3_RAW": {
       "type": "integer",
-      "description": "Channel 3: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 3 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -85,7 +85,7 @@
     },
     "AI4_RAW": {
       "type": "integer",
-      "description": "Channel 4: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 4 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -103,7 +103,7 @@
     },
     "AI5_RAW": {
       "type": "integer",
-      "description": "Channel 5: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 5 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -121,7 +121,7 @@
     },
     "AI6_RAW": {
       "type": "integer",
-      "description": "Channel 6: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 6 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,
@@ -139,7 +139,7 @@
     },
     "AI7_RAW": {
       "type": "integer",
-      "description": "Channel 7: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "description": "Analog input channel 7 raw Modbus word. Exposes the 16-bit register value without scaling or engineering-unit conversion; signedness and configured range require device-specific verification.",
       "unit": "count",
       "minimum": 0,
       "maximum": 65535,

@@ -1,19 +1,18 @@
-# ADAM-6024 core I/O candidate
+# Advantech ADAM-6024 Ethernet Remote I/O Module
 
 Specification-based model for the simulator: six AI, two AO,
-two DI and two DO channels. This fixture has not been checked against hardware.
+two DI and two DO channels. The simulation scenario initializes every modeled channel and provides AO→AI and DO→DI bindings for the complete I/O set. This fixture has not been checked against hardware.
 
 ## Files
 
 - [Source TM](adam-6024.tm.json): the maintained mapping, four groups and twelve native per-channel properties.
-- [Generated project TD](adam-6024.generated.td.json): loopback instance, including project acquisition policy.
-- [Generation manifest](generated.json): source/artifact hashes, tool version and instance parameters. Never hand-edit generated TDs.
-- [ADAM-6000 manual, edition 12](adam-6000-user-manual-ed12.pdf): specifications
+- Generated TDs are created for a selected endpoint when needed; they are not part of this device model.
+- [ADAM-6000 manual, edition 12](specs/adam-6000-user-manual-ed12.pdf): specifications
   in section 4.6, printed pages 28–29; ADAM-6024 mapping in appendix B.2,
   printed pages 203–204 (PDF pages 213–214).
-- [Official Modbus/LabVIEW guide](adam-modbus-labview-guide.pdf): page 7 shows
+- [Official Modbus/LabVIEW guide](specs/adam-modbus-labview-guide.pdf): page 7 shows
   an ADAM-6024 DO write with starting address **16**.
-- [Sources and SHA-256](sources.json): vendor URLs and unchanged PDF hashes.
+- [Sources and SHA-256](specs/sources.json): vendor URLs and PDF hashes.
   Vendor documents retain their copyright and are not MIT-licensed.
 
 ## Candidate mapping

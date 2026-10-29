@@ -1,0 +1,55 @@
+{
+  "version": "1",
+  "tick": 0.1,
+  "seed": 42,
+  "generators": {
+    "AI0_RAW": {
+      "kind": "sine",
+      "center": 1000,
+      "amplitude": 100,
+      "period": 10
+    },
+    "AI1_RAW": {
+      "kind": "sine",
+      "center": 2000,
+      "amplitude": 100,
+      "period": 11
+    },
+    "AI2_RAW": {
+      "kind": "sine",
+      "center": 3000,
+      "amplitude": 100,
+      "period": 12
+    },
+    "AI3_RAW": {
+      "kind": "sine",
+      "center": 4000,
+      "amplitude": 100,
+      "period": 13
+    },
+    "AI4_RAW": {
+      "kind": "sine",
+      "center": 5000,
+      "amplitude": 100,
+      "period": 14
+    },
+    "AI5_RAW": {
+      "kind": "sine",
+      "center": 6000,
+      "amplitude": 100,
+      "period": 15
+    },
+    "AI6_RAW": {
+      "kind": "sine",
+      "center": 7000,
+      "amplitude": 100,
+      "period": 16
+    },
+    "AI7_RAW": {
+      "kind": "sine",
+      "center": 8000,
+      "amplitude": 100,
+      "period": 17
+    }
+  }
+}

@@ -1,71 +1,67 @@
-# ADAM-5017UH through ADAM-5000L/TCP
+# ADAM-5017UH
 
-This is a hardware-reference candidate for the TM-driven modsim v2 runtime.
-The operator confirmed **slot 0** and that no other I/O modules are installed.
-The selected per-channel ranges, current data format and actual response captures
-are still unknown. The files do not claim completed hardware verification.
+Manual-derived model of the complete eight-channel analog input module.
+`AI0_RAW` through `AI7_RAW` expose all eight channels as unscaled uint16 words.
+The model is independent of a particular installed module or slot assignment.
+Range settings, wire data format and physical responses remain unverified.
 
 ## Files
 
-- [Source TM](adam-5017uh-slot-0.tm.json): the maintained mapping, eight raw input properties in one block.
-- [Generated project TD](adam-5017uh-slot-0.generated.td.json): loopback instance, retaining acquisition policy.
-- [Generation manifest](generated.json): source/artifact hashes, tool version and example instance parameters. Never edit generated TDs by hand.
-- [Rack/protocol manual, edition 1](adam-5000-tcp-user-manual-ed1.pdf): slot mapping
-  in section 3.5, printed page 26 (PDF page 34); explicit request/response in
-  section 6.3.1, printed page 61 (PDF page 69).
-- [I/O module manual, edition 4](adam-5000-io-user-manual-ed4.pdf): section 1.2.5,
-  printed pages 14–16 (PDF pages 22–24), covers 5017UH specifications and ranges.
-- [Sources and SHA-256](sources.json): original vendor URLs and unchanged PDFs.
-  Vendor documents retain their original copyright and are not MIT-licensed.
+- [Source TM](adam-5017uh.tm.json): all eight input channels and one acquisition block.
+- [Declarative scenario](simulation/adam-5017uh.sim.json): synthetic sine values for all eight analog input channels.
+- [Scripted scenario](simulation/adam-5017uh-scripted-analog-input.sim.json) and [behavior](simulation/adam-5017uh-behavior.py): synthetic
+  counts for all eight analog input channels, enabled with `--allow-scripts`.
+- [Reference materials](specs/) and [source records](specs/sources.json): original vendor URLs, retrieval dates and PDF hashes.
+  Vendor manuals retain their original copyright; they are not MIT-licensed.
+  The model and example behaviors use the repository MIT license.
 
-## Address and value assumptions
+Reference PDFs and their provenance are kept together in `specs/`. Generated
+TDs are created on demand. The reference manuals are:
 
-The rack manual's Figure 6.1 sends Unit ID 1, FC4, PDU start **1**, count 2 for
-slot-0 channel words 40001/40002. Figure 3.10 assigns eight words to slot 0.
-The TM consequently uses FC4/start 1/count 8. Each property Form declares its
-actual PDU address (1–8); acquisition only lists the block and its members. This is based on
-that explicit packet, not the usual assumption that 40001 always means PDU 0.
-Confirm it against this rack/firmware before treating the TD as authoritative.
+- [ADAM-5000/TCP manual, edition 1](specs/adam-5000-tcp-user-manual-ed1.pdf):
+  section 3.5, printed page 26 (PDF page 34), and section 6.3.1,
+  printed page 61 (PDF page 69).
+- [ADAM-5000 I/O manual, edition 4](specs/adam-5000-io-user-manual-ed4.pdf):
+  section 1.2.5, printed pages 14–16 (PDF pages 22–24), covers ADAM-5017UH
+  specifications and ranges.
 
-`AI0_RAW` through `AI7_RAW` preserve uint16 wire words with no multiplier. They
-retain the bit pattern even if the underlying measurement uses a signed or
-normalized representation. `count` denotes a raw word; it does not mean volts,
-milliamps, measured ADC resolution or a configured channel's engineering range.
-Engineering-value properties will be added after the selected ranges and wire
-format are known. In particular, do not infer a scaling denominator from ADC bits.
+## Mapping and scope
 
-The source TM has no deployed host, port or Unit ID. Generated TDs demonstrate
-`127.0.0.1:5020`, Unit ID 1; this is a loopback example, not the physical rack.
-The generated TD retains acquisition metadata and explicitly describes unsigned
-binary values in its Forms. Generic bindings such as node-wot ignore
-`modpoll:acquisition`; they use the same property Forms without a separate TD.
-No transformation or custom decoding is required for these raw words.
+The reference mapping uses InputRegister / FC4, PDU addresses **1–8**, with a
+single start-1/count-8 acquisition block. The rack manual's Figure 6.1 shows
+FC4/start 1/count 2 for slot-0 channel words 40001/40002; Figure 3.10 assigns
+eight words to that slot. This is the address basis for the module model,
+not a restriction to an operator's slot-0 installation. A different rack or slot
+may require different addresses; confirm the mapping for the target installation.
+The TM describes one ADAM-5017UH module, not the other slots of a rack.
 
-Use the profile 0.2 shared tool environment described in [the contribution guide](../../README.md):
+The unsigned representation preserves all 16 wire bits. `count` is a raw word,
+not volts, milliamps, ADC resolution or a configured engineering range. No
+physical conversion is assumed. Check channel ranges and wire format against
+the vendor utility before assigning physical units. Range configuration,
+calibration and rack management are outside this raw-input model.
 
-```sh
-poetry run python tools/generate-td.py --check
-```
+## Use
 
-A modpoll 2.0.0a2 can use the TM as its configuration source:
+From the repository root, start the complete module with synthetic input:
 
 ```sh
-modpoll --once --tcp "$ADAM_HOST" --tcp-port 502 --unit-id 1 \
-  --config /path/to/modsim/contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+  --unit-id 1 --port 5020 \
+  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
-For an external Consumer, generate a separate instance with its actual endpoint:
+The source TM has no deployed host, port or Unit ID. To export a TD for an
+external consumer using the project's pinned `modpoll-wot` dependency:
 
 ```sh
 poetry run python -m modpoll_wot \
-  --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
-  --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
+  --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+  --host 127.0.0.1 --port 5020 --unit-id 1 --target project \
   --output /tmp/adam-5017uh-instance.td.json
 ```
 
-Record raw words and compare against the vendor utility before assigning physical
-units. This fixture does not change range, calibration or module settings.
-The `v2` development branch has a native raw-I/O `--config` path.
-See [model validation](../../../docs/model-validation.md) for the supported subset. The released modsim 1.x CLI does not load these models.
-
+For a physical device, substitute its verified endpoint and mapping. The
+loopback endpoint above is a simulator example. See [model validation](../../../docs/model-validation.md)
+for the supported profile 0.2 subset. modsim 1.x does not load these models.
 Synthetic interoperability checks do not establish hardware correctness.

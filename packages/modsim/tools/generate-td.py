@@ -9,7 +9,6 @@ import sys
 
 ROOT = Path(__file__).resolve().parent
 PRODUCTS = {
-    "adam-5017uh": "adam-5017uh-slot-0",
     "adam-6024": "adam-6024",
 }
 

@@ -16,15 +16,22 @@ from .utils import get_logger
 ACTIONS = {"up", "down", "ps", "logs", "export", "reset"}
 
 
+def default_deployment() -> str:
+    """Select the example manifest from the repository root or examples directory."""
+    if (Path.cwd() / "deployment.yaml").is_file():
+        return "deployment.yaml"
+    return "examples/deployment.yaml"
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Manage a local Modsim deployment")
     actions = root.add_subparsers(dest="action", required=True)
     for action in sorted(ACTIONS):
         command = actions.add_parser(action)
         if action == "logs":
-            command.add_argument("--file", default="deployment.yaml")
+            command.add_argument("--file", default=default_deployment())
         else:
-            command.add_argument("-f", "--file", default="deployment.yaml")
+            command.add_argument("-f", "--file", default=default_deployment())
         if action == "up":
             command.add_argument("-d", "--detach", action="store_true")
             command.add_argument("--dry-run", action="store_true")
@@ -70,16 +77,20 @@ def export_documents(tds: dict, args: argparse.Namespace) -> None:
         if args.device not in tds:
             raise ValueError(f"unknown device: {args.device}")
         tds = {args.device: tds[args.device]}
-    if args.output and len(tds) != 1:
-        raise ValueError(
-            "--output requires exactly one device; use --device or --output-dir"
-        )
+    output = Path(args.output) if args.output else None
+    output_is_directory = output is not None and (
+        output.is_dir() or not output.suffix.lower() == ".json"
+    )
+    if output_is_directory:
+        output.mkdir(parents=True, exist_ok=True)
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     for key, td in tds.items():
         target = (
-            Path(args.output)
-            if args.output
+            output / f"{key}.td.json"
+            if output_is_directory
+            else output
+            if output is not None
             else Path(args.output_dir) / f"{key}.td.json"
         )
         target.write_text(

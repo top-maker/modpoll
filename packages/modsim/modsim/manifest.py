@@ -159,6 +159,16 @@ class Deployment:
     instances: dict[str, Instance]
 
 
+def deployment_root(path: Path) -> Path:
+    """Use the repository root for checked-in examples, config directory otherwise."""
+    for parent in path.parent.parents:
+        if (parent / ".git").exists():
+            return parent
+    if (path.parent / ".git").exists():
+        return path.parent
+    return path.parent
+
+
 def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment:
     """Resolve and validate every instance before the runtime can be changed."""
     path = path.resolve()
@@ -170,6 +180,7 @@ def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment
     validate({"name": name}, obj({"name": IDENTIFIER}, ("name",)))
     bind = spec.get("server", {}).get("bind", "127.0.0.1")
     port = spec.get("server", {}).get("port", 5020)
+    root = deployment_root(path)
     instances: dict[str, Instance] = {}
     units: set[int] = set()
     identities: set[str] = set()
@@ -179,7 +190,7 @@ def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment
             raise ValueError(f"duplicate device id: {key}")
         source = item["model"]
         if not source.startswith("https://"):
-            source = local_path(path.parent, source)
+            source = local_path(root, source)
         document = model_document(source)
         if not isinstance(document, dict):
             raise ValueError(f"{key}: model must be an object")
@@ -223,7 +234,7 @@ def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment
         scenario = {}
         script_path, script_source = None, None
         if include_scenarios and item.get("scenario"):
-            scene_path = Path(local_path(path.parent, item["scenario"]))
+            scene_path = Path(local_path(root, item["scenario"]))
             scenario = read_yaml(scene_path)
             validate(scenario, SCENARIO)
             if scenario.get("script"):
