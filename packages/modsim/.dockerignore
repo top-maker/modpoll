@@ -6,4 +6,5 @@ dist
 .pytest_cache
 .mypy_cache
 **/__pycache__
+/output/
 contrib/**/*.pdf
