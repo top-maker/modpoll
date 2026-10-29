@@ -17,8 +17,10 @@ modsim down -f examples/deployment.yaml
 
 All commands default to `deployment.yaml` in the current directory. `up` runs in
 the foreground on first startup; `-d` starts a detached process. Later `up`
-commands update that process and return. Interrupting the original foreground
-process stops its deployment. `down` waits for cleanup; repeating it is harmless.
+commands update that process and follow its logs; use `-d` to return immediately.
+Interrupting the original foreground process stops its deployment. Interrupting
+an attached `up` or `logs --follow` disconnects that viewer while the existing
+deployment continues. `down` waits for cleanup; repeating it is harmless.
 
 Each deployment has a `name`, defaulting to the deployment directory name. Names
 identify runtimes within the current OS user. A running name cannot be taken over
@@ -112,7 +114,8 @@ modsim logs
 
 `reset` rebuilds that device from the last successfully applied input snapshot,
 including the original behavior source. It does not read pending file edits.
-`logs` prints the last 1 MiB of the deployment log. `ps` reports device IDs, TD IDs,
+`logs` prints the last 1 MiB of the deployment log; `logs --follow` keeps watching.
+`ps` reports device IDs, TD IDs,
 Unit IDs, process ID and failure status as JSON.
 
 Local Python execution requires `up --allow-scripts` when starting the process.

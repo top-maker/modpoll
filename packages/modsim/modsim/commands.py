@@ -27,6 +27,8 @@ def parser() -> argparse.ArgumentParser:
             command.add_argument("--dry-run", action="store_true")
             command.add_argument("--allow-scripts", action="store_true")
             command.add_argument("--serve", action="store_true", help=argparse.SUPPRESS)
+        if action == "logs":
+            command.add_argument("--follow", action="store_true")
         if action in ("export", "reset"):
             command.add_argument("--device", required=action == "reset")
         if action == "export":
@@ -81,6 +83,22 @@ def export_documents(tds: dict, args: argparse.Namespace) -> None:
         print(target)
 
 
+def show_logs(name: str, path: Path, *, follow: bool = False) -> None:
+    """Print recent output and optionally follow until the deployment stops."""
+    log_path = paths(name)[2]
+    if not log_path.exists():
+        raise ValueError("no log for this deployment")
+    with log_path.open("rb") as stream:
+        stream.seek(max(0, log_path.stat().st_size - 1024 * 1024))
+        while True:
+            data = stream.read()
+            if data:
+                print(data.decode("utf-8", errors="replace"), end="", flush=True)
+            if not follow or online(name, path) is None:
+                break
+            time.sleep(0.2)
+
+
 def run(argv: list[str]) -> None:
     args = parser().parse_args(argv)
     get_logger()
@@ -98,12 +116,7 @@ def run(argv: list[str]) -> None:
         if args.action == "logs":
             # Verify the source if the deployment is currently running.
             online(name, path)
-            log_path = paths(name)[2]
-            if not log_path.exists():
-                raise ValueError("no log for this deployment")
-            with log_path.open("rb") as stream:
-                stream.seek(max(0, log_path.stat().st_size - 1024 * 1024))
-                print(stream.read().decode("utf-8", errors="replace"), end="")
+            show_logs(name, path, follow=args.follow)
             return
         if args.action != "up":
             status = online(name, path)
@@ -142,6 +155,12 @@ def run(argv: list[str]) -> None:
                     indent=2,
                 )
             )
+            if not args.detach and not args.dry_run:
+                try:
+                    show_logs(name, path, follow=True)
+                except KeyboardInterrupt:
+                    # Detach from an existing deployment; its owner controls shutdown.
+                    pass
         elif args.dry_run:
 
             async def preview() -> dict:
@@ -180,6 +199,8 @@ def run(argv: list[str]) -> None:
                 time.sleep(0.05)
             process.wait()
             raise ValueError(f"startup failed; inspect {log_path}")
+    except KeyboardInterrupt:
+        return
     except (ValueError, OSError, TypeError, TimeoutError) as exc:
         print(f"modsim: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc

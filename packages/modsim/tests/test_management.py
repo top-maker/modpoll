@@ -214,23 +214,23 @@ def test_cli_live_add_remove_replace_export_reset_and_rollback(tmp_path):
         first_pid = json.loads(cli(path, "ps").stdout)["pid"]
         assert client.connect()
         assert not client.write_register(10, 99, device_id=1).isError()
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=1).registers == [99]
         spec["devices"].append(device(2))
         write(path, spec)
         cli(path, "up", "--dry-run")
         assert client.read_holding_registers(10, device_id=2).isError()
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=2).registers == [12]
         assert client.read_holding_registers(10, device_id=1).registers == [99]
         # Invalid update cannot retire either live instance.
         spec["devices"][1]["parameters"]["UNIT_ID"] = 1
         write(path, spec)
-        assert cli(path, "up", check=False).returncode == 2
+        assert cli(path, "up", "-d", check=False).returncode == 2
         assert client.read_holding_registers(10, device_id=2).registers == [12]
         spec["devices"].pop()
         write(path, spec)
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=2).isError()
         assert client.read_holding_registers(10, device_id=1).registers == [99]
         cli(path, "reset", "--device", "io-1")
@@ -244,25 +244,25 @@ def test_cli_live_add_remove_replace_export_reset_and_rollback(tmp_path):
         assert json.loads(live.read_text())["title"] == "I/O 1"
         assert json.loads(offline.read_text())["title"] == "Changed offline"
         assert not client.write_register(10, 77, device_id=1).isError()
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=1).registers == [12]
         assert json.loads(cli(path, "ps").stdout)["pid"] == first_pid
         # Listener changes explicitly require down/up.
         spec["server"]["port"] = port + 1 if port < 65535 else port - 1
         write(path, spec)
-        assert "run down" in cli(path, "up", check=False).stderr
+        assert "run down" in cli(path, "up", "-d", check=False).stderr
         # Same-name deployments cannot take control from another file.
         conflict = tmp_path / "other.yaml"
         write(conflict, spec)
-        assert "different file" in cli(conflict, "up", check=False).stderr
+        assert "different file" in cli(conflict, "up", "-d", check=False).stderr
         spec["server"]["port"] = port
         spec["devices"] = []
         write(path, spec)
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=1).isError()
         spec["devices"] = [device(1)]
         write(path, spec)
-        cli(path, "up")
+        cli(path, "up", "-d")
         assert client.read_holding_registers(10, device_id=1).registers == [12]
         assert cli(path, "logs").stdout
     finally:
@@ -390,3 +390,40 @@ def test_default_file_foreground_signal_cleanup(tmp_path):
         # Match server reuse semantics: TIME_WAIT is not a live listener.
         check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         check.bind(("127.0.0.1", port))
+
+
+@pytest.mark.integration
+def test_attached_up_and_follow_logs_detach_without_stopping(tmp_path):
+    import signal
+    import time
+
+    path, _, _ = fixture(tmp_path)
+    cli(path, "up", "-d")
+    env = {**os.environ, "PYTHONPATH": str(ROOT)}
+    try:
+        for command in (["up"], ["logs", "--follow"]):
+            with (tmp_path / "output.log").open("w+") as output:
+                process = subprocess.Popen(
+                    [sys.executable, "-m", "modsim", *command, "-f", str(path)],
+                    cwd=tmp_path,
+                    env=env,
+                    stdout=output,
+                    stderr=output,
+                )
+                try:
+                    deadline = time.monotonic() + 10
+                    while time.monotonic() < deadline:
+                        output.flush()
+                        if (tmp_path / "output.log").stat().st_size:
+                            break
+                        assert process.poll() is None
+                        time.sleep(0.05)
+                    else:
+                        pytest.fail("attached command did not print logs")
+                    assert process.poll() is None
+                finally:
+                    process.send_signal(signal.SIGINT)
+                    process.wait(timeout=5)
+                assert json.loads(cli(path, "ps").stdout)["running"] is True
+    finally:
+        cli(path, "down")
