@@ -82,9 +82,9 @@ Binding chains and cycles are rejected; use a script for ordered dependencies.
 
 Initialization order: model defaults/type fallback → scenario initial →
 CLI initial → script `initialize` → first dynamic update at elapsed 0.
-`--initial` and `--initial-file` remain available for single-device runs. Startup
-logs include the final initialized values; raw values are synthetic unless the
-contribution explicitly documents their source.
+`--initial` and `--initial-file` remain available for single-device runs.
+Single-device startup logs include the final initialized values; raw values are
+synthetic unless the contribution explicitly documents their source.
 
 On each tick: generators → script `tick` → bindings. Modbus writes validate the
 whole request, then run `on_write` and bindings before responding. Invalid write
@@ -126,9 +126,10 @@ def on_write(device, changes):
 Use `get(name)`, `set(name, value)` and `set_many({...})`. Batch updates validate
 all values before changing cells. Hooks run on the server event loop and must not
 block; async hooks are rejected. Python is ordinary local code, enabled explicitly
-by `--allow-scripts`. Each device loads its own module instance. Runtime errors
-in periodic behavior stop the simulation and release its listener rather than
-silently serving stale values. SIGINT/SIGTERM cancel updates and close the server.
+by `--allow-scripts`. Each device loads its own module instance. In single-device
+`--config` mode, periodic behavior errors stop the server. In managed mode, an
+error takes only that device offline and is reported by `ps`. SIGINT/SIGTERM
+cancel updates and close the server.
 
 The sample loopback is an explicit synthetic assumption, not a claim that real
 ADAM hardware automatically connects AO to AI or DO to DI. No fault injection,

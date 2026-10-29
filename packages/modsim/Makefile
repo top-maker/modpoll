@@ -2,10 +2,9 @@ PROJECT_NAME ?= modsim
 
 .PHONY: install
 install: ## Install the poetry environment and install the pre-commit hooks
-	@echo "🚀 Creating virtual environment using pyenv and poetry"
+	@echo "🚀 Installing the project and pre-commit hooks"
 	@poetry install
 	@poetry run pre-commit install --allow-missing-config
-	@poetry shell
 
 .PHONY: check
 check: ## Run code quality tools.

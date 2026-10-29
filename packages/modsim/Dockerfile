@@ -13,7 +13,7 @@ WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
 
 # Project initialization:
-RUN poetry install --no-interaction --no-ansi --no-root --no-dev
+RUN poetry install --no-interaction --no-ansi --no-root --only main
 
 # Copy Python app to the Docker image
 COPY modsim /app/modsim/

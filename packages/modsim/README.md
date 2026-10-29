@@ -1,158 +1,109 @@
-# ModSim - A Simple Modbus TCP Device Simulator
+# modsim
 
-*modsim* is a Modbus device simulator that can run locally or in a container. A public simulator is available at `modsim.topmaker.net:502` for quick testing.
-Its default datastore contains all four Modbus tables:
-- Coil Type
-- Discrete input Type
-- Input register Type
-- Holding register Type
+modsim is a standalone Modbus simulator for device integration and testing.
+The v2 development source reads WoT Thing Models (TM), instantiates device
+descriptions (TD), and runs independent simulated devices on one Modbus TCP
+listener. Models, scenarios, the simulator and the client remain separate.
 
-It is recommended to use [modpoll](https://github.com/top-maker/modpoll) tool to communicate with it, the example configuration is as following,
+This README describes the **v2 development branch**. The published `2.0.0a1`
+preview predates the managed deployment commands shown below; do not assume an
+existing `latest` image or installed package contains the current source.
+Stable and preview releases are independent. See [preview notes](docs/preview-notes.md)
+and [release process](docs/release-process.md).
 
-```
-device,modsim01,1,,
-poll,coil,0,16,BE_BE
-ref,coil01-08,0,bool8,rw
-ref,coil09-16,1,bool8,rw
-poll,discrete_input,10000,16,BE_BE
-ref,di01-08,10000,bool8,rw
-ref,di09-16,10001,bool8,rw
-poll,input_register,30000,20,BE_BE
-ref,input_reg01,30000,uint16,rw
-ref,input_reg02,30001,uint16,rw
-ref,input_reg03,30002,uint16,rw
-ref,input_reg04,30003,uint16,rw
-ref,input_reg05,30004,int16,rw
-ref,input_reg06,30005,int16,rw
-ref,input_reg07,30006,int16,rw
-ref,input_reg08,30007,int16,rw
-ref,input_reg09,30008,uint32,rw
-ref,input_reg10,30010,uint32,rw
-ref,input_reg11,30012,int32,rw
-ref,input_reg12,30014,int32,rw
-ref,input_reg13,30016,float32,rw
-ref,input_reg14,30018,float32,rw
-poll,holding_register,40000,44,BE_BE
-ref,holding_reg01,40000,uint16,rw
-ref,holding_reg02,40001,uint16,rw
-ref,holding_reg03,40002,uint16,rw
-ref,holding_reg04,40003,uint16,rw
-ref,holding_reg05,40004,int16,rw
-ref,holding_reg06,40005,int16,rw
-ref,holding_reg07,40006,int16,rw
-ref,holding_reg08,40007,int16,rw
-ref,holding_reg09,40008,uint32,rw
-ref,holding_reg10,40010,uint32,rw
-ref,holding_reg11,40012,int32,rw
-ref,holding_reg12,40014,int32,rw
-ref,holding_reg13,40016,float32,rw
-ref,holding_reg14,40018,float32,rw
-ref,holding_reg15,40020,uint64,rw
-ref,holding_reg16,40024,int64,rw
-ref,holding_reg17,40028,float64,rw
-ref,holding_reg18,40032,float64,rw
-ref,holding_reg19,40036,string16,rw
-```
+## Run with Docker Compose
 
-## Quick Start
-
-A docker image has been provided for user to directly run the program,
+From this repository, build and start the current checkout:
 
 ```bash
-docker run -p 5020:5020 topmaker/modsim:latest
+docker compose up -d --build
+docker compose logs -f
+docker compose down
 ```
 
-The above one-line command will create a virtual Modbus TCP device running at `localhost:5020`.
+The root [deployment.yaml](deployment.yaml) starts two virtual ADAM devices:
+Unit 1 exposes ADAM-5017UH raw inputs; Unit 2 exposes ADAM-6024 raw I/O with
+synthetic AO→AI and DO→DI loopback. The values are raw simulation data, not
+verified physical measurements. Product models, scenarios and source information
+are in [contrib](contrib/README.md).
 
-To verify it, you can test by [modpoll](https://github.com/top-maker/modpoll) tool with the following command,
+Compose publishes `127.0.0.1:5020` on the host and uses Docker's
+`unless-stopped` restart policy. Each process restart initializes simulation
+state again. The deployment listens on `0.0.0.0` inside the container; when run
+directly on the host it listens on all interfaces. Change `server.bind` to
+`127.0.0.1` to restrict a direct local run. Its advertised TD host is separately
+set to `127.0.0.1`; configure the advertised endpoint and port mapping for clients
+on other hosts.
 
-```bash
-modpoll \
-  --tcp localhost \
-  --tcp-port 5020 \
-  --config https://raw.githubusercontent.com/top-maker/modpoll/main/examples/modsim.csv
-```
-
-To expose the standard Modbus TCP port on the host, use `docker run -p 502:5020 topmaker/modsim:latest`. Your system may require permission to bind port 502.
-
-## Local server behavior
-
-Run the simulator without Docker with `python -m modsim --comm tcp --port 5020`. The default server exposes the four Modbus tables with the sample data shown above. Coil and holding-register writes are supported; discrete inputs and input registers are read-only. Requests outside an initialized address range return a Modbus exception. The server handles SIGINT and SIGTERM by stopping its listener so the port can be reused after shutdown.
-
-The default TCP simulator uses one sequential datastore shared by all Unit IDs.
-The CLI currently supports only `--store sequential`; `--slaves` and `--context`
-are not implemented and are rejected. TCP and UDP use the socket framer, TLS uses
-the TLS framer, and serial accepts RTU or ASCII framing. Serial requires a suitable local device and is not covered by the local protocol regression suite. TLS uses `certificates/pymodbus.crt` and `certificates/pymodbus.key` relative to the working directory. A local test covers a self-signed server certificate and a verified client connection; the server does not authenticate client certificates.
-
-UDP mode (`--comm udp`) listens on the loopback address and has local read and
-shutdown coverage. TCP and UDP report a startup error if the requested port is
-already in use.
-
-
-## Product documentation and TD candidates
-
-## Model-driven v2 preview
-
-The v2 source supports profile 0.2 TM/TD models, local deployment files with
-multiple isolated Unit IDs on one TCP listener, dynamic scenarios and explicitly
-enabled local Python behaviors. TM sources may be local files or HTTPS URLs.
-Install the source dependencies with `poetry install`, then run:
-
-```bash
-poetry run modsim up -f deployment.yaml
-```
-
-See [community device contributions](contrib/README.md) and
-[configuration and script contracts](docs/model-validation.md).
-Install the preview with `pip install modsim==2.0.0a1` or use
-`topmaker/modsim:2.0.0a1`. Stable 1.x releases retain the unconfigured behavior
-described above. Preview documentation: https://top-maker.github.io/modsim/v2/.
-
-## Managed deployments (v2 development source)
-
-Start and update the same deployment with `modsim up -f deployment.yaml`;
-add `-d` for a background process. Edit the deployment and repeat `up` to add,
-remove or replace devices while unchanged devices keep their state. Initial
-values belong in scenarios. Export instantiated TDs with
-`modsim export -f deployment.yaml --output-dir ./td`.
-
-The two-level commands `up`, `down`, `ps`, `logs`, `export` and `reset` currently
-support Linux/macOS/WSL. See [managed deployments](docs/managed-deployments.md)
-for version 2 YAML, instance parameters, update guarantees and compatibility.
-These additions are source-only and are not part of the published `2.0.0a1`.
-
-## Docker Compose managed deployment
-
-Build and start the current checkout with `docker compose up --build -d`.
-The repository's `deployment.yaml` describes two virtual ADAM devices.
-Unit 1 simulates ADAM-5017UH raw inputs; Unit 2 simulates ADAM-6024 raw I/O
-with synthetic AO→AI and DO→DI loopback. The models and scenarios are in
-[contrib](contrib/README.md). These raw values do not establish physical device
-behavior, measurement ranges or output limits; those require hardware validation.
-Its listener binds `0.0.0.0` inside the container; Compose publishes it at
-`127.0.0.1:5020` on the host. Running the same deployment directly on the host
-listens on all interfaces unless `server.bind` is changed to `127.0.0.1`. View logs with
-`docker compose logs -f` and stop the container with `docker compose down`.
-Docker's `unless-stopped` policy restarts the container after a crash or Docker
-restart; simulator values are initialized from the scenario on each restart.
-
-Edit `deployment.yaml` or mounted models and scenarios under `contrib/` and apply device
-changes without restarting the container using:
+Edit `deployment.yaml` or the mounted model/scenario files under `contrib/` and
+apply device changes without restarting the container:
 
 ```bash
 docker compose exec modsim python -m modsim up -f /app/deployment.yaml -d
 ```
 
-If an editor replaces the deployment file instead of writing it in place, the
-file bind mount may still refer to the previous file. Recreate the container with
-`docker compose up -d --force-recreate` to pick up the replacement.
+An unchanged device keeps its state; a changed device is replaced. Listener
+changes require restarting the container. If an editor replaces the deployment
+file, its file bind mount may still reference the old file; use
+`docker compose up -d --force-recreate` to refresh it.
 
-Changing the listener requires recreating the container with `docker compose up
---build -d`. Export TDs inside the container using `docker compose exec modsim
-python -m modsim export -f /app/deployment.yaml --output-dir /tmp/td`; these
-files are inside the container. The advertised TD host is `127.0.0.1`, suitable
-for clients on the Docker host; change HOST when clients connect remotely and
-configure the published port accordingly.
+## Run locally
 
-Run `poetry run python tools/generate-td.py --check` to verify generated product
-TDs and their source hashes. Omit `--check` to regenerate them.
+Install the source dependencies with `poetry install`, then from the repository
+root use:
+
+```bash
+poetry run modsim up                  # foreground
+poetry run modsim up -d               # start or update in the background
+poetry run modsim ps
+poetry run modsim logs -f
+poetry run modsim up --dry-run
+poetry run modsim reset --device analog-input
+poetry run modsim export --output-dir ./td
+poetry run modsim down
+```
+
+The commands default to `deployment.yaml` in the current directory. Use
+`-f FILE` to select a deployment; for `logs`, `-f` follows output and
+`--file FILE` selects the deployment. In a foreground `up`, Ctrl+C stops a service started
+by that invocation; when attached to an existing deployment it only detaches.
+`logs -f` also detaches on Ctrl+C. Background processes do not start after a
+machine restart unless a process manager is configured. Managed commands require
+POSIX (Linux/macOS/WSL); see [managed deployments](docs/managed-deployments.md).
+
+`modsim export` writes TDs using the same model instantiation as the running
+simulator. It does not need the server to run. Use `--running` to export the last
+successfully applied configuration instead of pending file edits. For TDs inside
+the Compose container, run `docker compose exec modsim python -m modsim export
+-f /app/deployment.yaml --output-dir /tmp/td`; the output is inside the container.
+
+## Models and scenarios
+
+A deployment has a stable ID per device, a TM path, instance parameters and an
+optional scenario. TD IDs and Modbus Unit IDs must be unique. Scenarios define
+initial values, seeded generators and bindings; local Python behavior requires
+`--allow-scripts`. They do not duplicate the model's register mapping. See
+[model configuration](docs/model-validation.md) for the supported profile,
+codecs, constraints and behavior hooks.
+
+For a single device without a managed deployment:
+
+```bash
+poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh-slot-0.tm.json \
+  --unit-id 1 --port 5020 \
+  --scenario contrib/advantech/adam-5017uh/temperature.sim.json
+```
+
+The single-device model runtime currently supports TCP. The unconfigured demo
+also supports TCP, UDP, TLS, RTU and ASCII; its datastore is shared by all Unit
+IDs. TLS loads `certificates/pymodbus.crt` and `certificates/pymodbus.key` from
+the working directory. See [transport details](docs/index.md#unconfigured-demo).
+
+Generated product TDs and their source hashes can be checked with
+`poetry run python tools/generate-td.py --check`; omit `--check` to regenerate.
+
+## Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the v2 workflow and checks. The
+repository keeps v1 and v2 release lines separate; no release is implied by a
+source change.

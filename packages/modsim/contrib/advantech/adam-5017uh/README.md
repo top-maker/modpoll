@@ -1,6 +1,6 @@
 # ADAM-5017UH through ADAM-5000L/TCP
 
-This is the first hardware-reference candidate for the planned TM-driven modsim v2.
+This is a hardware-reference candidate for the TM-driven modsim v2 runtime.
 The operator confirmed **slot 0** and that no other I/O modules are installed.
 The selected per-channel ranges, current data format and actual response captures
 are still unknown. The files do not claim completed hardware verification.
@@ -41,7 +41,7 @@ binary values in its Forms. Generic bindings such as node-wot ignore
 `modpoll:acquisition`; they use the same property Forms without a separate TD.
 No transformation or custom decoding is required for these raw words.
 
-Use the profile 0.2 shared tool environment described in [the examples guide](../../README.md):
+Use the profile 0.2 shared tool environment described in [the contribution guide](../../README.md):
 
 ```sh
 poetry run python tools/generate-td.py --check

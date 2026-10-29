@@ -1,6 +1,6 @@
 # ADAM-6024 core I/O candidate
 
-Second, specification-based model for the planned simulator: six AI, two AO,
+Specification-based model for the simulator: six AI, two AO,
 two DI and two DO channels. This fixture has not been checked against hardware.
 
 ## Files
@@ -66,7 +66,7 @@ poetry run python -m modpoll_wot \
   --output /tmp/adam-6024-instance.td.json
 ```
 
-AO/DO are declared writable for future simulated-device tests. This draft is not
+AO/DO are declared writable for simulated-device tests. This draft is not
 a command to write to physical outputs. Confirm mapping and permitted values
 before hardware output tests. Current modsim 1.x cannot load TD files yet.
 

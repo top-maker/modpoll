@@ -1,39 +1,38 @@
-# modsim
+# modsim v2 development source
 
-Modsim is a Modbus simulator for local development and integration with
-[modpoll](https://github.com/top-maker/modpoll). Its default datastore contains
-coils, discrete inputs, holding registers and input registers. All Unit IDs
-share that datastore. A public Modbus TCP simulator is available at
-`modsim.topmaker.net:502` for quick testing.
+modsim runs simulated Modbus devices for development and integration testing.
+The current source supports profile 0.2 TM/TD input, scenarios and independent
+devices on a single managed Modbus TCP listener. The published `2.0.0a1`
+preview does not include all current managed commands; see
+[preview notes](preview-notes.md).
 
-## Run the default simulator
+## Start a managed deployment
 
-```bash
-pip install modsim
-modsim --comm tcp --port 5020
-```
+From a source checkout, `docker compose up -d --build` runs the root
+`deployment.yaml`. Unit 1 is a virtual ADAM-5017UH input module and Unit 2 is a
+virtual ADAM-6024 with synthetic I/O loopback. Compose publishes port 5020 on
+host loopback. The ADAM mappings are manual-derived candidates; simulation is
+not evidence of physical device behavior.
 
-Alternatively, start the published container:
+To run locally with Poetry, use `poetry run modsim up`. The default deployment
+binds all host interfaces when run directly. See [managed deployments](managed-deployments.md)
+for updates, logging, TD export, instance IDs and script permissions.
 
-```bash
-docker run --rm -p 5020:5020 topmaker/modsim:latest
-```
+## Unconfigured demo
 
-The default TCP listener uses port 5020. Coils and holding registers are
-writable; discrete inputs and input registers are read-only. Unsupported
-addresses return a Modbus exception.
+`modsim --comm tcp --port 5020` starts the legacy demonstration datastore; all
+Unit IDs share its four Modbus tables. TCP and UDP use socket framing; UDP
+listens on loopback. TLS uses `certificates/pymodbus.crt` and
+`certificates/pymodbus.key` relative to the working directory. It does not
+authenticate clients. Serial supports RTU and ASCII; physical serial hardware
+has not been validated by the local regression suite.
 
-## Transports and options
+The CLI rejects non-default `--store` and the unsupported `--slaves` and
+`--context` options. Run `modsim --help` for available options.
 
-TCP and UDP use socket framing; UDP listens on loopback. TLS uses TLS framing
-and expects `certificates/pymodbus.crt` and `pymodbus.key` relative
-to the working directory. The TLS server does not authenticate clients. Serial
-supports RTU and ASCII framing; physical serial devices have not been
-validated in the local regression suite.
+## More information
 
-Only the sequential datastore is implemented. The CLI rejects non-default
-`--store` values and the unsupported `--slaves` and `--context` options. Run
-`modsim --help` for the full option list.
-
-The local TCP, UDP and temporary-certificate TLS tests cover startup, reads and
-shutdown. SIGINT and SIGTERM handling on Windows has not been verified.
+- [Model-driven simulation](model-validation.md): TM/TD, codecs and scenarios.
+- [Managed deployments](managed-deployments.md): YAML, lifecycle and export.
+- [Preview release process](release-process.md): published artifact validation.
+- [Modules](modules.md): API reference.
