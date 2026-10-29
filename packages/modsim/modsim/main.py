@@ -2,6 +2,7 @@
 """Modbus simulator server and process lifecycle."""
 
 import os
+import json
 import ssl
 import asyncio
 import signal
@@ -36,6 +37,14 @@ def setup_server(args: Any) -> Any:
     # If you initialize a DataBlock to addresses of 0x00 to 0xFF, a request to
     # 0x100 will respond with an invalid address exception.
     # This is because many devices exhibit this kind of behavior (but not all)
+    if getattr(args, "config", None):
+        from .wot import configure
+
+        args.context = configure(args)
+        _logger.info(
+            "Model initialization: %s",
+            json.dumps(args.model_initialization, sort_keys=True),
+        )
     if not args.context:
         _logger.info("Create datastore")
         # build your payload
@@ -110,13 +119,21 @@ async def run_async_server(args: Any) -> Any:
     _logger.info(txt)
     server: Any
     if args.comm == "tcp":
-        address: tuple[str, int] = ("", args.port)
+        address: tuple[str, int] = (
+            getattr(args, "bind", None)
+            or ("127.0.0.1" if getattr(args, "config", None) else ""),
+            args.port,
+        )
         server = ModbusTcpServer(
             context=args.context,
             identity=args.identity,
             address=address,
             framer=args.framer,
         )
+        if hasattr(args, "model_access"):
+            from .wot import GuardedContext
+
+            server.context = GuardedContext(server.context, args.model_access)
         try:
             if not await server.listen():
                 raise OSError(
@@ -195,7 +212,11 @@ def app() -> None:
         f"Starting modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
     )
 
-    run_args = setup_server(args)
+    try:
+        run_args = setup_server(args)
+    except ValueError as exc:
+        _logger.error("Invalid model configuration: %s", exc)
+        raise SystemExit(2) from exc
     asyncio.run(_run_server_with_signals(run_args), debug=True)
 
     _logger.info("exiting.")

@@ -8,6 +8,7 @@ repo_name: top-maker/modsim
 
 nav:
   - Home: index.md
+  - Model validation: model-validation.md
   - Modules: modules.md
 plugins:
   - search

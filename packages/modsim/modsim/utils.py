@@ -21,6 +21,20 @@ def get_parser() -> argparse.ArgumentParser:
         "-v", "--version", action="version", version=f"{__package__} v{__version__}"
     )
     parser.add_argument(
+        "--config", help="Optional profile 0.2 TM/TD (candidate shared tool required)"
+    )
+    parser.add_argument("--unit-id", type=int, help="Instance Unit ID for --config")
+    parser.add_argument(
+        "--bind", help="Listener address; configured TCP devices default to 127.0.0.1"
+    )
+    parser.add_argument("--param", action="append", default=[], metavar="NAME=JSON")
+    parser.add_argument(
+        "--initial", action="append", default=[], metavar="PROPERTY=JSON"
+    )
+    parser.add_argument(
+        "--initial-file", help="Property-name/value JSON initialization file"
+    )
+    parser.add_argument(
         "--comm",
         choices=["tcp", "udp", "serial", "tls"],
         help="set communication, default is tcp",
@@ -71,6 +85,16 @@ def get_commandline() -> argparse.Namespace:
     parser = get_parser()
     args = parser.parse_args()
 
+    if not args.config and (
+        args.initial or args.initial_file or args.param or args.unit_id is not None
+    ):
+        parser.error(
+            "--initial, --initial-file, --param and --unit-id require --config"
+        )
+    if args.bind and args.comm != "tcp":
+        parser.error("--bind currently supports --comm tcp only")
+    if args.config and args.comm != "tcp":
+        parser.error("model-driven simulation currently supports --comm tcp")
     if args.store != "sequential":
         parser.error("only --store sequential is supported")
     if args.slaves != 0:

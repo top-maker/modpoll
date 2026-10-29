@@ -47,3 +47,8 @@ markers = ["integration: local protocol integration test"]
 
 [tool.poetry.scripts]
 modsim = "modsim.main:app"
+
+[tool.deptry]
+# Example generation is a developer tool using the separate candidate SDK env.
+# Do not turn its unpublished SDK into a runtime dependency before publication.
+extend_exclude = ["examples"]
