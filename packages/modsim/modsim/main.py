@@ -34,7 +34,7 @@ def setup_server(args: Any) -> Any:
     # If you initialize a DataBlock to addresses of 0x00 to 0xFF, a request to
     # 0x100 will respond with an invalid address exception.
     # This is because many devices exhibit this kind of behavior (but not all)
-    if getattr(args, "config", None) or getattr(args, "deployment", None):
+    if getattr(args, "config", None):
         from .deployment import configure_devices
 
         args.context = configure_devices(args)

@@ -191,6 +191,11 @@ def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment
             raise ValueError(
                 "use HOST and PORT; AUTHORITY is derived by the interpreter"
             )
+        # A TM need not declare a Thing ID. An explicit instance binding may
+        # provide it without changing the reusable model or inventing identity.
+        if "THING_ID" in parameters and "id" not in document:
+            document = copy.deepcopy(document)
+            document["id"] = "{{THING_ID}}"
         host = parameters.pop("HOST", None)
         if host is None:
             if bind in ("0.0.0.0", "::", "*"):

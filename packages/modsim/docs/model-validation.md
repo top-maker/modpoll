@@ -46,30 +46,15 @@ channels. Profile 0.2 is required; the unconfigured demonstration is unchanged.
 For repeatable startup and runtime updates, use deployment version 2 and
 `modsim up`. See [managed deployments](managed-deployments.md) for the YAML
 contract, TM parameters, dynamic device lifecycle and TD export.
-The following flag-based entry point retains its version 1 contract.
-
-## Multiple devices on one listener
+The ADAM lab example starts two independent devices on one listener:
 
 ```bash
-poetry run modsim --deployment examples/lab.sim.json
+poetry run modsim up -f examples/lab.sim.json
 ```
 
-Deployment version `"1"` has one optional `server` object and a nonempty `devices`
-list. Server fields are `comm` (currently `tcp`), `bind` (default `127.0.0.1`) and
-`port` (default `5020`). `--bind` and `--port` override these listener settings.
-Each device requires unique `name` and `unitId` (1–254), plus `model` (local path
-or HTTPS URL). Optional fields: `scenario`, `script`, `initial`, `parameters`.
-Parameters instantiate model placeholders. A concrete TD with a conflicting
-Unit ID is rejected by the shared interpreter. A TD's remote endpoint never
-selects the listener bind address.
-
-Deployment files are local. Relative model/scenario/script paths are resolved
-against the deployment directory. Script paths inside a scenario are relative to
-that scenario. CLI paths are relative to the working directory. Device state,
-script module state and random generators are independent even when the same TM
-is instantiated repeatedly. Duplicate names/Unit IDs, unsupported fields and
-invalid initial values fail before the listener opens. Unconfigured Unit IDs
-return an error and never inherit another device's state.
+Paths in deployment files are relative to the deployment directory; scenario
+script paths are relative to the scenario file. Unit IDs and TD identities must
+be unique. Unknown addresses or Unit IDs never inherit another device's state.
 
 ## Scenarios
 
@@ -96,7 +81,7 @@ satisfy the model's schema and raw encoding bounds. Unknown properties are error
 Binding chains and cycles are rejected; use a script for ordered dependencies.
 
 Initialization order: model defaults/type fallback → scenario initial →
-deployment/CLI initial → script `initialize` → first dynamic update at elapsed 0.
+CLI initial → script `initialize` → first dynamic update at elapsed 0.
 `--initial` and `--initial-file` remain available for single-device runs. Startup
 logs include the final initialized values; raw values are synthetic unless the
 contribution explicitly documents their source.

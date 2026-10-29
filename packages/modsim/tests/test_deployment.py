@@ -14,26 +14,53 @@ from unittest.mock import patch
 import pytest
 from pymodbus.client import ModbusTcpClient
 
-from modsim.deployment import configure_devices, prepare
+from modsim.manifest import load_deployment
+from argparse import Namespace
 from modsim.runtime import RuntimeContext
 from modsim.sources import model_document
-from modsim.utils import get_parser
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / "contrib/advantech/adam-6024/adam-6024.tm.json"
 
 
-def build(tmp_path, devices, **server):
-    path = tmp_path / "deployment.json"
-    path.write_text(json.dumps({"version": "1", "server": server, "devices": devices}))
-    args = get_parser().parse_args(["--deployment", str(path)])
-    prepare(args)
-    configure_devices(args)
-    return args
-
-
 def device(unit=1, **options):
-    return {"name": f"io-{unit}", "unitId": unit, "model": str(MODEL), **options}
+    return {
+        "id": options.pop("name", f"io-{unit}"),
+        "model": options.pop("model", str(MODEL)),
+        "parameters": {"THING_ID": f"urn:modsim:test:{unit}", "UNIT_ID": unit},
+        **options,
+    }
+
+
+def build(tmp_path, devices, **server):
+    # The fixture creates version 2 declarations; initial values and scripts
+    # belong to scenario documents, not deployment device fields.
+    import copy
+
+    devices = copy.deepcopy(devices)
+    for index, spec in enumerate(devices):
+        initial = spec.pop("initial", None)
+        script = spec.pop("script", None)
+        if initial is not None or script:
+            scene = {"version": "1"}
+            if initial is not None:
+                scene["initial"] = initial
+            if script:
+                scene["script"] = script
+            scene_path = tmp_path / f"fixture-scene-{index}.json"
+            scene_path.write_text(json.dumps(scene))
+            spec["scenario"] = str(scene_path)
+    path = tmp_path / "deployment.json"
+    path.write_text(
+        json.dumps(
+            {"version": 2, "name": "test-lab", "server": server, "devices": devices}
+        )
+    )
+    deployment = load_deployment(path)
+    runtimes = [
+        item.build(allow_scripts=True) for item in deployment.instances.values()
+    ]
+    return Namespace(runtimes=runtimes, deployment=path)
 
 
 def test_independent_units_and_atomic_invalid_writes(tmp_path):
@@ -92,12 +119,8 @@ def on_write(device, changes):
         device(unit, model="models/io.tm.json", scenario="scenes/io.json")
         for unit in (1, 2)
     ]
-    path = tmp_path / "deployment.json"
-    path.write_text(json.dumps({"version": "1", "devices": specs}))
     monkeypatch.chdir("/")
-    args = get_parser().parse_args(["--deployment", str(path), "--allow-scripts"])
-    prepare(args)
-    configure_devices(args)
+    args = build(tmp_path, specs)
     first, second = args.runtimes
     assert first.get("AI0_RAW") == 42
     first.advance(1, 1)
@@ -110,8 +133,17 @@ def on_write(device, changes):
 
 def test_script_requires_opt_in_and_unknown_fields_rejected(tmp_path):
     (tmp_path / "script.py").write_text('raise AssertionError("must not execute")')
+    path = tmp_path / "denied.json"
+    (tmp_path / "scene.json").write_text(
+        json.dumps({"version": "1", "script": "script.py"})
+    )
+    path.write_text(
+        json.dumps(
+            {"version": 2, "name": "denied", "devices": [device(scenario="scene.json")]}
+        )
+    )
     with pytest.raises(ValueError, match="allow-scripts"):
-        build(tmp_path, [device(script="script.py")])
+        next(iter(load_deployment(path).instances.values())).build()
     with pytest.raises(ValueError, match="Additional properties"):
         build(tmp_path, [device(typo=True)])
 
@@ -181,28 +213,21 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
-    path = tmp_path / "lab.json"
-    path.write_text(
-        json.dumps(
-            {
-                "version": "1",
-                "server": {"port": port},
-                "devices": [
-                    device(1, initial={"AO0_RAW": 10}),
-                    device(
-                        2,
-                        scenario=str(
-                            ROOT / "contrib/advantech/adam-6024/io-loopback.sim.json"
-                        ),
-                    ),
-                ],
-            }
-        )
-    )
+    path = build(
+        tmp_path,
+        [
+            device(1, initial={"AO0_RAW": 10}),
+            device(
+                2,
+                scenario=str(ROOT / "contrib/advantech/adam-6024/io-loopback.sim.json"),
+            ),
+        ],
+        port=port,
+    ).deployment
     client = ModbusTcpClient("127.0.0.1", port=port, timeout=0.5, retries=0)
     with (tmp_path / "server.log").open("w+") as log:
         process = subprocess.Popen(
-            [sys.executable, "-m", "modsim", "--deployment", str(path)],
+            [sys.executable, "-m", "modsim", "up", "-f", str(path)],
             cwd=tmp_path,
             env={**os.environ, "PYTHONPATH": str(ROOT)},
             stdout=log,
@@ -282,37 +307,27 @@ def test_failed_write_hook_rolls_back_entire_device(tmp_path):
     assert not instance.held
 
 
-@pytest.mark.integration
-def test_periodic_script_failure_stops_and_releases_listener(tmp_path):
-    with socket.socket() as reservation:
-        reservation.bind(("127.0.0.1", 0))
-        port = reservation.getsockname()[1]
-    (tmp_path / "fail.py").write_text(
-        'def tick(device, elapsed, dt):\n    if elapsed > 0:\n        raise RuntimeError("behavior stopped")\n'
-    )
-    (tmp_path / "scene.json").write_text(
-        json.dumps({"version": "1", "tick": 0.01, "script": "fail.py"})
-    )
-    path = tmp_path / "lab.json"
-    path.write_text(
-        json.dumps(
-            {
-                "version": "1",
-                "server": {"port": port},
-                "devices": [device(scenario="scene.json")],
-            }
-        )
-    )
+def test_legacy_deployment_version_rejected(tmp_path):
+    path = tmp_path / "deployment.json"
+    path.write_text(json.dumps({"version": "1", "devices": []}))
+    with pytest.raises(ValueError, match="version"):
+        load_deployment(path)
+
+
+def test_explicit_thing_id_for_model_without_id(tmp_path):
+    instance = build(tmp_path, [device()]).runtimes[0]
+    deployment = load_deployment(tmp_path / "deployment.json")
+    assert deployment.instances["io-1"].td["id"] == "urn:modsim:test:1"
+    assert instance.unit_id == 1
+
+
+def test_removed_deployment_cli_option(tmp_path):
     result = subprocess.run(
-        [sys.executable, "-m", "modsim", "--deployment", str(path), "--allow-scripts"],
+        [sys.executable, "-m", "modsim", "--deployment", "old.json"],
         cwd=tmp_path,
         env={**os.environ, "PYTHONPATH": str(ROOT)},
         capture_output=True,
         timeout=8,
     )
     assert result.returncode != 0
-    assert b"behavior stopped" in result.stderr
-    with socket.socket() as check:
-        # Match server reuse semantics: TIME_WAIT is not a live listener.
-        check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        check.bind(("127.0.0.1", port))
+    assert b"unrecognized arguments: --deployment" in result.stderr

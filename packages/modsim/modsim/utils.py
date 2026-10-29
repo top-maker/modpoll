@@ -23,7 +23,6 @@ def get_parser() -> argparse.ArgumentParser:
     )
     sources = parser.add_mutually_exclusive_group()
     sources.add_argument("--config", help="Profile 0.2 TM/TD local path or HTTPS URL")
-    sources.add_argument("--deployment", help="Local single-listener deployment JSON")
     parser.add_argument("--scenario", help="Local scenario JSON for --config")
     parser.add_argument("--script", help="Local Python behavior for --config")
     parser.add_argument(
@@ -93,22 +92,6 @@ def get_commandline() -> argparse.Namespace:
     parser = get_parser()
     args = parser.parse_args()
 
-    if args.deployment:
-        if (
-            args.initial
-            or args.initial_file
-            or args.param
-            or args.unit_id is not None
-            or args.scenario
-            or args.script
-        ):
-            parser.error("put per-device settings in the deployment devices list")
-        from .deployment import prepare
-
-        try:
-            prepare(args)
-        except (ValueError, OSError) as exc:
-            parser.error(str(exc))
     args.comm = args.comm or "tcp"
     if not args.config and (
         args.initial

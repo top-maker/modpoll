@@ -64,4 +64,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-poetry
       - run: poetry run mkdocs build -s
-      - run: poetry run python examples/generate-td.py --check
+      - run: poetry run python tools/generate-td.py --check

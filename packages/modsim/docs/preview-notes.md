@@ -14,6 +14,7 @@ be exact; constraints also apply after IEEE quantization.
 Install: `pip install modsim==2.0.0a1`.
 Image: `topmaker/modsim:2.0.0a1` (amd64/arm64).
 Documentation: <https://top-maker.github.io/modsim/v2/>.
-The repository and image include contrib ADAM models and `examples/lab.sim.json`.
+The published 2.0.0a1 image includes contrib ADAM models and its original
+`examples/lab.sim.json` version 1 deployment. Current development uses version 2.
 Models are manual-derived and synthetic-tested; no hardware certification is
 claimed. This preview leaves stable latest aliases unchanged.

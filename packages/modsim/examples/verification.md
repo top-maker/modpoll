@@ -20,7 +20,7 @@ ADAM device was connected and no manufacturer address/range claim was verified.
   the written values. These values are test data, not legal physical AO ranges.
 - Every vendor PDF's bytes still matched the hashes in its sources.json.
 
-Generation is reproducibly checked with `examples/generate-td.py --check` in
+Generation is reproducibly checked with `tools/generate-td.py --check` in
 the candidate tool environment. Each product's generated.json links the exact
 TM hash, target, tool version, instance parameters and TD artifact hashes.
 These are generated views of a single maintained TM, not separate source models.

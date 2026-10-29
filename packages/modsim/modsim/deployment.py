@@ -1,10 +1,8 @@
 """Local deployment and scenario contracts for a single listener."""
 
-from argparse import Namespace
 import math
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
 
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
 from modpoll_wot.loading import load_document  # type: ignore[import-untyped]
@@ -25,32 +23,6 @@ STRING = {"type": "string", "minLength": 1}
 NUMBER = {"type": "number"}
 POSITIVE = {"type": "number", "exclusiveMinimum": 0}
 INITIAL = {"type": "object"}
-DEVICE = obj(
-    {
-        "name": STRING,
-        "unitId": {"type": "integer", "minimum": 1, "maximum": 254},
-        "model": STRING,
-        "scenario": STRING,
-        "script": STRING,
-        "initial": INITIAL,
-        "parameters": INITIAL,
-    },
-    ("name", "unitId", "model"),
-)
-DEPLOYMENT = obj(
-    {
-        "version": {"const": "1"},
-        "server": obj(
-            {
-                "comm": {"const": "tcp"},
-                "bind": STRING,
-                "port": {"type": "integer", "minimum": 1, "maximum": 65535},
-            }
-        ),
-        "devices": {"type": "array", "minItems": 1, "maxItems": 254, "items": DEVICE},
-    },
-    ("version", "devices"),
-)
 GENERATOR = {
     "oneOf": [
         obj({"kind": {"const": "constant"}, "value": {}}, ("kind", "value")),
@@ -105,22 +77,6 @@ def document(path: str, schema: dict) -> dict:
         error = errors[0]
         raise ValueError(f"{source}: {'/'.join(map(str, error.path))}: {error.message}")
     return value  # type: ignore[no-any-return]
-
-
-def prepare(args: Any) -> None:
-    """Read deployment before normal CLI listener defaults are applied."""
-    spec = document(args.deployment, DEPLOYMENT)
-    names = [d["name"] for d in spec["devices"]]
-    units = [d["unitId"] for d in spec["devices"]]
-    if len(set(names)) != len(names) or len(set(units)) != len(units):
-        raise ValueError("deployment contains duplicate device names or Unit IDs")
-    server = spec.get("server", {})
-    if args.comm and args.comm != "tcp":
-        raise ValueError("deployments currently support --comm tcp")
-    args.comm = "tcp"
-    args.bind = args.bind or server.get("bind", "127.0.0.1")
-    args.port = args.port or server.get("port", 5020)
-    args.deployment_spec = spec
 
 
 def apply_scenario(args: Any) -> None:
@@ -222,43 +178,10 @@ def apply_scenario(args: Any) -> None:
 
 
 def configure_devices(args: Any) -> list:
+    """Configure a single --config device."""
     from .wot import configure
 
-    if not args.deployment:
-        sim = configure(args)
-        apply_scenario(args)
-        args.runtimes = [args.runtime]
-        return [sim]
-    base = Path(args.deployment).resolve().parent
-    devices = []
-    args.runtimes = []
-    reports = []
-    import json
-
-    for spec in args.deployment_spec["devices"]:
-        source = spec["model"]
-        instance = Namespace(**vars(args))
-        instance.config = (
-            source if urlparse(source).scheme else local_path(base, source)
-        )
-        instance.unit_id = spec["unitId"]
-        instance.param = [
-            f"{k}={json.dumps(v)}" for k, v in spec.get("parameters", {}).items()
-        ]
-        instance.initial = [
-            f"{k}={json.dumps(v)}" for k, v in spec.get("initial", {}).items()
-        ]
-        instance.initial_file = None
-        instance.scenario = (
-            local_path(base, spec["scenario"]) if spec.get("scenario") else None
-        )
-        instance.script = (
-            local_path(base, spec["script"]) if spec.get("script") else None
-        )
-        devices.append(configure(instance))
-        instance.runtime.name = spec["name"]
-        apply_scenario(instance)
-        args.runtimes.append(instance.runtime)
-        reports.append(instance.model_initialization)
-    args.model_initialization = reports
-    return devices
+    sim = configure(args)
+    apply_scenario(args)
+    args.runtimes = [args.runtime]
+    return [sim]

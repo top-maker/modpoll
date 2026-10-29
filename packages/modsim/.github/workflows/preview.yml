@@ -153,7 +153,13 @@ jobs:
           TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           docker run --rm "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --version
-          docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
+          # The immutable a1 image predates managed deployments. Its own
+          # historical fixture and CLI remain available for re-acceptance.
+          if [ "$TAG" = "v2.0.0a1" ]; then
+            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
+          else
+            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f examples/container-lab.json
+          fi
           "$RUNNER_TEMP/installed/bin/python" tools/preview-acceptance.py
       - if: always()
         run: docker rm -f modsim-preview || true

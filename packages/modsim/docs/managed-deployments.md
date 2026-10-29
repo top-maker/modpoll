@@ -55,7 +55,7 @@ for repeatable runs.
 
 Each device contains only `id`, `model`, optional `parameters` and optional
 `scenario`. A model must be a profile 0.2 TM. Its instantiated TD must have a
-stable URI `id`, normally supplied through a TM placeholder such as `{{THING_ID}}`.
+stable URI `id`. Supply `THING_ID` when the TM declares that placeholder or has no `id`.
 The deployment device ID selects management operations; the TD ID identifies the
 Thing; Unit ID selects the device in Modbus requests. A device's TD ID cannot
 change during an update: remove it in one successful `up`, then recreate it.
@@ -65,6 +65,7 @@ change during an update: remove it in one successful `up`, then recreate it.
 * `HOST`, `PORT` and `UNIT_ID` are reserved instance arguments, passed to the
   interpreter's host, port and unit-id API. They can also satisfy its corresponding
   reserved placeholders. `AUTHORITY` is derived; use `HOST` and `PORT` instead.
+* `THING_ID` supplies an explicit TD identity when the TM has no `id`.
 * Other keys must match TM placeholders. Missing or unused bindings are errors.
 * HOST and PORT default to the concrete listener bind address and listener port.
   A wildcard bind requires explicit HOST. An advertised endpoint can differ from
@@ -147,10 +148,10 @@ advertised endpoints, not current register values or a runtime snapshot.
 
 ## Compatibility and scope
 
-`modsim --config ...` and `modsim --deployment examples/lab.sim.json` retain their
-existing behavior. Deployment version `"1"` remains accepted by the latter.
-Managed commands require version `2`; they do not silently reinterpret old
-`name`, `unitId`, `initial` or `script` device fields. YAML support is an explicit
+`modsim --config ...` remains available for single-device operation.
+Managed deployments require version `2`; version `"1"` and the former
+`--deployment` entry point are no longer supported.
+YAML support is an explicit
 runtime dependency.
 
 Management uses private per-user Unix sockets and locks under the OS temporary

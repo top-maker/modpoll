@@ -23,7 +23,7 @@ For a local Python behavior use `scripted.sim.json` and `--allow-scripts`.
 ## Two Unit IDs on one TCP listener
 
 ```bash
-poetry run modsim --deployment examples/lab.sim.json
+poetry run modsim up -f examples/lab.sim.json
 ```
 
 Unit 1 exposes the ADAM-5017UH raw input mapping. Unit 2 exposes the ADAM-6024
@@ -37,8 +37,8 @@ commit/tag for reproducible models. See [configuration](../docs/model-validation
 ## Generated TD maintenance
 
 ```bash
-poetry run python examples/generate-td.py
-poetry run python examples/generate-td.py --check
+poetry run python tools/generate-td.py
+poetry run python tools/generate-td.py --check
 ```
 
 TMs are maintained in contrib; generated TDs and manifests remain beside each

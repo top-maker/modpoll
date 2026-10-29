@@ -54,7 +54,7 @@ No HTTP cache or background acquisition service is implied.
 See [the tool setup and generation guide](../../README.md). To validate generation:
 
 ```sh
-poetry run python examples/generate-td.py --check
+poetry run python tools/generate-td.py --check
 ```
 
 To export a real endpoint for an external Consumer:

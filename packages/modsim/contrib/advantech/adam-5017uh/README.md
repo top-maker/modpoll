@@ -44,7 +44,7 @@ No transformation or custom decoding is required for these raw words.
 Use the profile 0.2 shared tool environment described in [the examples guide](../../README.md):
 
 ```sh
-poetry run python examples/generate-td.py --check
+poetry run python tools/generate-td.py --check
 ```
 
 A modpoll 2.0.0a2 can use the TM as its configuration source:

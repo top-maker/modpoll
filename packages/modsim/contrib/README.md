@@ -3,7 +3,7 @@
 Organize contributions as `contrib/<vendor>/<model>/`. Maintain one profile 0.2
 TM as the register mapping source. Scenarios and scripts reference property names
 and do not duplicate addresses. Generated TDs are derived by
-`poetry run python examples/generate-td.py`; do not edit them by hand.
+`poetry run python tools/generate-td.py`; do not edit them by hand.
 
 Include a README with model/firmware scope, public mapping sources, startup
 commands, author/license attribution and verification status: hardware-tested,
