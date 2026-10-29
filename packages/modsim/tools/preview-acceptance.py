@@ -3,6 +3,7 @@
 import time
 
 from pymodbus.client import ModbusTcpClient
+from pymodbus.exceptions import ModbusException
 
 
 def main():
@@ -10,10 +11,15 @@ def main():
     deadline = time.monotonic() + 30
     try:
         while True:
-            if client.connect():
-                response = client.read_input_registers(1, count=8, device_id=1)
-                if not response.isError():
-                    break
+            try:
+                if client.connect():
+                    response = client.read_input_registers(1, count=8, device_id=1)
+                    if not response.isError():
+                        break
+            except (OSError, ModbusException):
+                # Docker's proxy may accept a socket before the application is
+                # listening. Reconnect until an actual Modbus response arrives.
+                client.close()
             if time.monotonic() >= deadline:
                 raise RuntimeError("published container failed protocol readiness")
             time.sleep(0.1)
