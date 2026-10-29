@@ -1,0 +1,177 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "title": "adam5017uh_slot0_raw",
+  "description": "ADAM-5017UH in ADAM-5000L/TCP slot 0. Manual-derived raw-word diagnostic TM; slot confirmed by operator, range/data format and physical responses pending verification.",
+  "modpoll:version": "0.2",
+  "properties": {
+    "AI0_RAW": {
+      "type": "integer",
+      "description": "Channel 0: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI1_RAW": {
+      "type": "integer",
+      "description": "Channel 1: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 2,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI2_RAW": {
+      "type": "integer",
+      "description": "Channel 2: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 3,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI3_RAW": {
+      "type": "integer",
+      "description": "Channel 3: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 4,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI4_RAW": {
+      "type": "integer",
+      "description": "Channel 4: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 5,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI5_RAW": {
+      "type": "integer",
+      "description": "Channel 5: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 6,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI6_RAW": {
+      "type": "integer",
+      "description": "Channel 6: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 7,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI7_RAW": {
+      "type": "integer",
+      "description": "Channel 7: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 8,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "InputRegister",
+      "modv:address": 1,
+      "modv:quantity": 8,
+      "modpoll:members": [
+        "AI0_RAW",
+        "AI1_RAW",
+        "AI2_RAW",
+        "AI3_RAW",
+        "AI4_RAW",
+        "AI5_RAW",
+        "AI6_RAW",
+        "AI7_RAW"
+      ]
+    }
+  ],
+  "@type": "tm:ThingModel"
+}

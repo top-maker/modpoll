@@ -1,0 +1,23 @@
+{
+  "source": "adam-6024-raw.tm.json",
+  "source_sha256": "c5c4faac54a68e1b9ff4bdc8bd630201c557e6e5df32656b200ea1ba6517e9d3",
+  "generator": {
+    "package": "modpoll-wot",
+    "version": "0.2.0a1"
+  },
+  "instance": {
+    "host": "127.0.0.1",
+    "port": 5020,
+    "unit_id": 1
+  },
+  "artifacts": {
+    "adam-6024-raw.td.json": {
+      "target": "project",
+      "sha256": "9adfaaf251f80b312d0099c39cb0907c9280d30fd75697c4684c0f5a8f06d2de"
+    },
+    "adam-6024-raw.node-wot.td.json": {
+      "target": "node-wot-0.9.2",
+      "sha256": "45419c91ff5e08a7be4199abe93afd806d36b75702f642de7d8e0f2a0938c5e8"
+    }
+  }
+}

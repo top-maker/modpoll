@@ -1,0 +1,172 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "title": "adam5017uh_slot0_raw",
+  "description": "ADAM-5017UH in ADAM-5000L/TCP slot 0. Manual-derived raw-word diagnostic TM; slot confirmed by operator, range/data format and physical responses pending verification.",
+  "properties": {
+    "AI0_RAW": {
+      "type": "integer",
+      "description": "Channel 0: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/1?quantity=1"
+        }
+      ]
+    },
+    "AI1_RAW": {
+      "type": "integer",
+      "description": "Channel 1: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 2,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/2?quantity=1"
+        }
+      ]
+    },
+    "AI2_RAW": {
+      "type": "integer",
+      "description": "Channel 2: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 3,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/3?quantity=1"
+        }
+      ]
+    },
+    "AI3_RAW": {
+      "type": "integer",
+      "description": "Channel 3: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 4,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/4?quantity=1"
+        }
+      ]
+    },
+    "AI4_RAW": {
+      "type": "integer",
+      "description": "Channel 4: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 5,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/5?quantity=1"
+        }
+      ]
+    },
+    "AI5_RAW": {
+      "type": "integer",
+      "description": "Channel 5: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 6,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/6?quantity=1"
+        }
+      ]
+    },
+    "AI6_RAW": {
+      "type": "integer",
+      "description": "Channel 6: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 7,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/7?quantity=1"
+        }
+      ]
+    },
+    "AI7_RAW": {
+      "type": "integer",
+      "description": "Channel 7: unscaled unsigned wire word. This preserves all 16 bits; it does not assert an unsigned physical measurement or V/mA conversion.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 8,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/8?quantity=1"
+        }
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc"
+}

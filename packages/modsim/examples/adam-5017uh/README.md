@@ -1,13 +1,16 @@
 # ADAM-5017UH through ADAM-5000L/TCP
 
-This is the first hardware-reference candidate for the planned TD-driven modsim v2.
+This is the first hardware-reference candidate for the planned TM-driven modsim v2.
 The operator confirmed **slot 0** and that no other I/O modules are installed.
 The selected per-channel ranges, current data format and actual response captures
 are still unknown. The files do not claim completed hardware verification.
 
 ## Files
 
-- [Raw TD](adam-5017uh-slot-0-raw.td.json): eight input words in one block.
+- [Source TM](adam-5017uh-slot-0-raw.tm.json): the maintained mapping, eight raw input properties in one block.
+- [Generated project TD](adam-5017uh-slot-0-raw.td.json): loopback instance, retaining acquisition policy.
+- [Generated node-wot TD](adam-5017uh-slot-0-raw.node-wot.td.json): standard Forms only, without project acquisition fields.
+- [Generation manifest](generated.json): source/artifact hashes, tool version and example instance parameters. Never edit generated TDs by hand.
 - [Rack/protocol manual, edition 1](adam-5000-tcp-user-manual-ed1.pdf): slot mapping
   in section 3.5, printed page 26 (PDF page 34); explicit request/response in
   section 6.3.1, printed page 61 (PDF page 69).
@@ -20,7 +23,8 @@ are still unknown. The files do not claim completed hardware verification.
 
 The rack manual's Figure 6.1 sends Unit ID 1, FC4, PDU start **1**, count 2 for
 slot-0 channel words 40001/40002. Figure 3.10 assigns eight words to slot 0.
-The TD consequently uses FC4/start 1/count 8, with offsets 0–7. This is based on
+The TM consequently uses FC4/start 1/count 8. Each property Form declares its
+actual PDU address (1–8); acquisition only lists the block and its members. This is based on
 that explicit packet, not the usual assumption that 40001 always means PDU 0.
 Confirm it against this rack/firmware before treating the TD as authoritative.
 
@@ -31,21 +35,38 @@ milliamps, measured ADC resolution or a configured channel's engineering range.
 Engineering-value properties will be added after the selected ranges and wire
 format are known. In particular, do not infer a scaling denominator from ADC bits.
 
-Forms point to `127.0.0.1:5020`, a local simulator endpoint. Modpoll selects the
-real host/port using its CLI. The Unit ID must agree with the TD.
+The source TM has no deployed host, port or Unit ID. Generated TDs demonstrate
+`127.0.0.1:5020`, Unit ID 1; this is a loopback example, not the physical rack.
+Both generated variants come from the same TM. Generic bindings use the
+property Forms; they do not implement `modpoll:acquisition`. The node-wot 0.9.2
+variant adds that client's required binary media parameters and removes project
+fields. No transformation or custom decoding is required for these raw words.
 
-Validate using the published shared interpreter:
-
-    python -m modpoll_wot examples/adam-5017uh/adam-5017uh-slot-0-raw.td.json
-
-For a read-only physical comparison from the modpoll development environment:
+Use the profile 0.2 candidate tool environment described in [the examples guide](../README.md):
 
 ```sh
-modpoll --once --tcp "$ADAM_HOST" --tcp-port 502 \
-  --config /path/to/modsim/examples/adam-5017uh/adam-5017uh-slot-0-raw.td.json
+mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
+```
+
+A candidate-enabled modpoll can use the TM as its configuration source:
+
+```sh
+modpoll --once --tcp "$ADAM_HOST" --tcp-port 502 --unit-id 1 \
+  --config /path/to/modsim/examples/adam-5017uh/adam-5017uh-slot-0-raw.tm.json
+```
+
+For an external Consumer, generate a separate instance with its actual endpoint:
+
+```sh
+mise exec -- /tmp/modsim-wot-tools/bin/python -m modpoll_wot \
+  --config examples/adam-5017uh/adam-5017uh-slot-0-raw.tm.json \
+  --host "$ADAM_HOST" --port 502 --unit-id 1 --target node-wot-0.9.2 \
+  --output /tmp/adam-5017uh-instance.td.json
 ```
 
 Record raw words and compare against the vendor utility before assigning physical
 units. This fixture does not change range, calibration or module settings.
-The current modsim 1.x CLI has no `--config` option; this TD is prepared for the
+The current modsim 1.x CLI has no `--config` option; these models are prepared for the
 shared configuration contract and modpoll, ahead of modsim v2 implementation.
+
+Synthetic read/write compatibility is recorded in [the verification report](../verification.md); it does not establish hardware correctness.

@@ -1,0 +1,270 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "title": "adam6024_raw",
+  "description": "ADAM-6024 core I/O raw-word draft. Manual-derived mapping with conventional zero-based address candidates, DO start 16 corroborated by official LabVIEW example. Not hardware-verified. Analog range, normalization and firmware-specific behavior require confirmation.",
+  "modpoll:version": "0.2",
+  "properties": {
+    "AI0_RAW": {
+      "type": "integer",
+      "description": "AI channel 0 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 0,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI1_RAW": {
+      "type": "integer",
+      "description": "AI channel 1 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI2_RAW": {
+      "type": "integer",
+      "description": "AI channel 2 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 2,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI3_RAW": {
+      "type": "integer",
+      "description": "AI channel 3 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 3,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI4_RAW": {
+      "type": "integer",
+      "description": "AI channel 4 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 4,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AI5_RAW": {
+      "type": "integer",
+      "description": "AI channel 5 raw wire word; no V/mA conversion or physical ADC resolution is inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 5,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AO0_RAW": {
+      "type": "integer",
+      "description": "AO channel 0 raw wire word. The uint16 bounds describe the transport type, not a verified legal DAC output range; do not assume all values are accepted by hardware.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 10,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "AO1_RAW": {
+      "type": "integer",
+      "description": "AO channel 1 raw wire word. The uint16 bounds describe the transport type, not a verified legal DAC output range; do not assume all values are accepted by hardware.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 11,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "DI0": {
+      "type": "boolean",
+      "description": "Digital input channel 0; raw boolean at literal PDU address 0.",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 0,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "DI1": {
+      "type": "boolean",
+      "description": "Digital input channel 1; raw boolean at literal PDU address 1.",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "DO0": {
+      "type": "boolean",
+      "description": "Digital output channel 0; raw boolean at literal PDU address 16.",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:address": 16,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "DO1": {
+      "type": "boolean",
+      "description": "Digital output channel 1; raw boolean at literal PDU address 17.",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:address": 17,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "InputRegister",
+      "modv:address": 0,
+      "modv:quantity": 6,
+      "modpoll:members": [
+        "AI0_RAW",
+        "AI1_RAW",
+        "AI2_RAW",
+        "AI3_RAW",
+        "AI4_RAW",
+        "AI5_RAW"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 10,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "AO0_RAW",
+        "AO1_RAW"
+      ]
+    },
+    {
+      "modv:entity": "DiscreteInput",
+      "modv:address": 0,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "DI0",
+        "DI1"
+      ]
+    },
+    {
+      "modv:entity": "Coil",
+      "modv:address": 16,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "DO0",
+        "DO1"
+      ]
+    }
+  ],
+  "@type": "tm:ThingModel"
+}

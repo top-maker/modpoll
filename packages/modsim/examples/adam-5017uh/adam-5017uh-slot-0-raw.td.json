@@ -8,9 +8,8 @@
     }
   ],
   "title": "adam5017uh_slot0_raw",
-  "description": "ADAM-5017UH in ADAM-5000L/TCP slot 0. Manual-derived raw-word diagnostic TD; slot confirmed by operator, range/data format and physical responses pending verification. Loopback Forms identify a local simulator endpoint, not the physical rack.",
-  "modpoll:version": "0.1",
-  "modv:unitID": 1,
+  "description": "ADAM-5017UH in ADAM-5000L/TCP slot 0. Manual-derived raw-word diagnostic TM; slot confirmed by operator, range/data format and physical responses pending verification.",
+  "modpoll:version": "0.2",
   "properties": {
     "AI0_RAW": {
       "type": "integer",
@@ -21,15 +20,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/1?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/1?quantity=1"
         }
       ]
     },
@@ -42,15 +39,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/2?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 2,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/2?quantity=1"
         }
       ]
     },
@@ -63,15 +58,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/3?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 3,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/3?quantity=1"
         }
       ]
     },
@@ -84,15 +77,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/4?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 4,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/4?quantity=1"
         }
       ]
     },
@@ -105,15 +96,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/5?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 5,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/5?quantity=1"
         }
       ]
     },
@@ -126,15 +115,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/6?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 6,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/6?quantity=1"
         }
       ]
     },
@@ -147,15 +134,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/7?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 7,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/7?quantity=1"
         }
       ]
     },
@@ -168,15 +153,13 @@
       "readOnly": true,
       "forms": [
         {
-          "href": "modbus+tcp://127.0.0.1:5020/1/8?quantity=1",
-          "op": [
-            "readproperty"
-          ],
+          "op": "readproperty",
           "contentType": "application/octet-stream",
           "modv:entity": "InputRegister",
-          "modv:mostSignificantByte": true,
-          "modv:mostSignificantWord": true,
-          "modv:type": "xsd:unsignedShort"
+          "modv:address": 8,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/8?quantity=1"
         }
       ]
     }
@@ -186,49 +169,15 @@
       "modv:entity": "InputRegister",
       "modv:address": 1,
       "modv:quantity": 8,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true,
       "modpoll:members": [
-        {
-          "modpoll:property": "AI0_RAW",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI1_RAW",
-          "modpoll:offset": 1,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI2_RAW",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI3_RAW",
-          "modpoll:offset": 3,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI4_RAW",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI5_RAW",
-          "modpoll:offset": 5,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI6_RAW",
-          "modpoll:offset": 6,
-          "modpoll:dataType": "uint16"
-        },
-        {
-          "modpoll:property": "AI7_RAW",
-          "modpoll:offset": 7,
-          "modpoll:dataType": "uint16"
-        }
+        "AI0_RAW",
+        "AI1_RAW",
+        "AI2_RAW",
+        "AI3_RAW",
+        "AI4_RAW",
+        "AI5_RAW",
+        "AI6_RAW",
+        "AI7_RAW"
       ]
     }
   ],

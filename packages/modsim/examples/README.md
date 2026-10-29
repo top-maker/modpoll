@@ -1,14 +1,61 @@
 # Device examples and vendor references
 
 - [ADAM-5017UH through ADAM-5000L/TCP](adam-5017uh/): first physical-reference
-  candidate, confirmed slot 0, eight raw analog input words.
-- [ADAM-6024](adam-6024/): second core I/O candidate, raw AI/AO and grouped DI/DO.
-- `modsim.csv`: existing modpoll 1.x client mapping for the built-in simulator.
+  candidate, confirmed slot 0, eight raw analog input properties.
+- [ADAM-6024](adam-6024/): second core I/O candidate, six raw AI, two raw AO,
+  two scalar DI and two scalar DO properties in four acquisition blocks.
+- `modsim.csv`: existing modpoll 1.x mapping for the built-in simulator.
 
-Each product directory keeps its TD beside the original vendor PDFs, source URLs,
-SHA-256 hashes and assumptions. Raw TDs preserve register words while physical
-scaling and device-specific addressing are being confirmed. A successful offline
-validation is evidence of the configuration contract, not hardware correctness.
-The current modsim 1.x runtime still uses its built-in datastore; TD runtime loading
-is planned for v2. Offline validation uses the independently published
-`modpoll-wot==0.1.0a1` package; it does not connect to a device.
+## One maintained source
+
+Each product folder contains its canonical profile 0.2 `*.tm.json`, vendor PDFs,
+source URLs, PDF hashes and assumptions. TDs are generated artifacts:
+
+| File | Purpose |
+| --- | --- |
+| `*.tm.json` | Maintained source; no deployed endpoint |
+| `*.td.json` | Generated project instance with standard Forms and acquisition policy |
+| `*.node-wot.td.json` | Generated external Consumer instance with standard Forms/media parameters and no project acquisition fields |
+| `generated.json` | Source/artifact hashes, generator version and loopback instance parameters |
+
+Register addresses and raw types are in property Forms. Group boundaries remain
+explicit in the project acquisition extension. Putting modv fields inside an
+extension object does not make that object understandable by standard bindings.
+Third-party Consumers use concrete property Forms; they do not need or execute
+project grouping for these raw, natively representable properties.
+
+The two TD targets are generated views of one TM, not independently maintained
+server/client descriptions. Pure external TDs lack the project's execution
+profile and are intended for third-party Consumers; use the TM or project TD
+with the project's shared interpreter. Grouping/cache behavior is not promised
+for an external Consumer. Physical scaling/address verification remains separate.
+
+## Generate and verify
+
+These examples require the `modpoll-wot==0.2.0a1` candidate tool environment.
+The previously released `0.1.0a1` interpreter cannot load profile 0.2. The new
+producer has not been published as part of this examples change; use its built
+wheel in an isolated developer environment. No local-path or unpublished runtime
+dependency is added to modsim.
+
+From this repository, after setting MODPOLL_WOT_WHEEL to the built wheel path:
+
+```sh
+mise exec -- python -m venv /tmp/modsim-wot-tools
+mise exec -- /tmp/modsim-wot-tools/bin/python -m pip install "$MODPOLL_WOT_WHEEL"
+mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py
+mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
+```
+
+The generator delegates all instantiation/export to the common package. It uses
+only the documented loopback instance (127.0.0.1:5020, Unit ID 1). For real
+endpoints use the common CLI with `--config`, `--host`, `--port`, `--unit-id`,
+`--target` and a new output path; do not commit site-specific TDs as product sources.
+
+Current modsim 1.x still uses its built-in datastore and has no --config option.
+Providing these TM/TD artifacts does not implement modsim v2. Vendor PDF originals
+and their licensing remain unchanged; offline/wire tests do not prove hardware
+mapping or engineering ranges.
+
+See [the manual transport verification record](verification.md) for the
+independent fixture and actual node-wot read/write evidence.
