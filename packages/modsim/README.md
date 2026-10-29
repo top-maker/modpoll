@@ -77,6 +77,81 @@ successfully applied configuration instead of pending file edits. For TDs inside
 the Compose container, run `docker compose exec modsim python -m modsim export
 -f /app/deployment.yaml --output-dir /tmp/td`; the output is inside the container.
 
+## Test modpoll against modsim
+
+This example uses the **modsim v2 development source** and modpoll v2 with
+profile 0.2 (`modpoll==2.0.0a2` or a compatible v2 checkout). The published
+modsim `2.0.0a1` image predates the managed commands used here. Run these
+commands from the modsim repository root; install modpoll separately. The
+simulator and broker run locally, and no physical device is needed.
+
+Start the simulator and check its status:
+
+```bash
+docker compose up -d --build
+docker compose exec -T modsim python -m modsim ps
+```
+
+Wait until `ps` reports `"running": true` before exporting the TD of the
+running ADAM-6024 instance:
+
+```bash
+docker compose exec -T modsim python -m modsim export --running \
+  --device io-loopback -o /tmp/adam-6024.td.json
+docker compose cp modsim:/tmp/adam-6024.td.json ./adam-6024.td.json
+```
+
+In another terminal, still in the modsim directory, poll the TD and save a
+snapshot using the modpoll executable from your v2 installation:
+
+```bash
+modpoll --once --interval 0 --tcp 127.0.0.1 --tcp-port 5020 \
+  --config ./adam-6024.td.json --export ./adam-6024-snapshot.json
+```
+
+On a fresh deployment the snapshot contains `adam6024_raw` with `AO0_RAW: 100`
+and `AI0_RAW: 100`; previously written values may differ. The exported TD
+contains Unit ID 2, so the command targets the second device. The TD preserves
+the actual Modbus Forms and project profile 0.2 acquisition metadata.
+
+### Optional: write via a local MQTT broker
+
+Start a temporary local broker and a continuously running modpoll process:
+
+```bash
+docker run --rm -d --name modpoll-demo-mqtt -p 127.0.0.1:1883:1883 \
+  eclipse-mosquitto:2 mosquitto -c /mosquitto-no-auth.conf
+modpoll --interval 0 --rate 1 --tcp 127.0.0.1 --tcp-port 5020 \
+  --config ./adam-6024.td.json --mqtt-host 127.0.0.1 --mqtt-port 1883
+```
+
+After modpoll reports its MQTT connection, open another terminal and send a
+non-retained write command to the topic named for the TD's `title`:
+
+```bash
+docker exec modpoll-demo-mqtt mosquitto_pub -h 127.0.0.1 \
+  -t modpoll/adam6024_raw/set \
+  -m '{"object_type":"holding_register","address":10,"value":432}'
+```
+
+Run the one-shot polling command again. `AO0_RAW` and the simulated loopback
+`AI0_RAW` should both read `432`. This is a raw Modbus value in a synthetic
+scenario, not a verified electrical range or behavior of a physical ADAM device.
+The broker example has no authentication and is published only on host loopback.
+
+Stop the continuous modpoll process with Ctrl+C, then clean up the processes
+started for this example:
+
+```bash
+docker stop modpoll-demo-mqtt
+docker compose down
+```
+
+The TD and JSON snapshot remain in the current directory for inspection. The
+modsim v2 source and modpoll v2 use the independently published
+`modpoll-wot==0.2.0a1`; their application versions are not required to match.
+The two repositories have separate release and test lifecycles.
+
 ## Models and scenarios
 
 A deployment has a stable ID per device, a TM path, instance parameters and an
