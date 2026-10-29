@@ -7,9 +7,8 @@ are still unknown. The files do not claim completed hardware verification.
 
 ## Files
 
-- [Source TM](adam-5017uh-slot-0-raw.tm.json): the maintained mapping, eight raw input properties in one block.
-- [Generated project TD](adam-5017uh-slot-0-raw.td.json): loopback instance, retaining acquisition policy.
-- [Generated node-wot TD](adam-5017uh-slot-0-raw.node-wot.td.json): standard Forms only, without project acquisition fields.
+- [Source TM](adam-5017uh-slot-0.tm.json): the maintained mapping, eight raw input properties in one block.
+- [Generated project TD](adam-5017uh-slot-0.generated.td.json): loopback instance, retaining acquisition policy.
 - [Generation manifest](generated.json): source/artifact hashes, tool version and example instance parameters. Never edit generated TDs by hand.
 - [Rack/protocol manual, edition 1](adam-5000-tcp-user-manual-ed1.pdf): slot mapping
   in section 3.5, printed page 26 (PDF page 34); explicit request/response in
@@ -37,10 +36,10 @@ format are known. In particular, do not infer a scaling denominator from ADC bit
 
 The source TM has no deployed host, port or Unit ID. Generated TDs demonstrate
 `127.0.0.1:5020`, Unit ID 1; this is a loopback example, not the physical rack.
-Both generated variants come from the same TM. Generic bindings use the
-property Forms; they do not implement `modpoll:acquisition`. The node-wot 0.9.2
-variant adds that client's required binary media parameters and removes project
-fields. No transformation or custom decoding is required for these raw words.
+The generated TD retains acquisition metadata and explicitly describes unsigned
+binary values in its Forms. Generic bindings such as node-wot ignore
+`modpoll:acquisition`; they use the same property Forms without a separate TD.
+No transformation or custom decoding is required for these raw words.
 
 Use the profile 0.2 candidate tool environment described in [the examples guide](../README.md):
 
@@ -52,21 +51,22 @@ A candidate-enabled modpoll can use the TM as its configuration source:
 
 ```sh
 modpoll --once --tcp "$ADAM_HOST" --tcp-port 502 --unit-id 1 \
-  --config /path/to/modsim/examples/adam-5017uh/adam-5017uh-slot-0-raw.tm.json
+  --config /path/to/modsim/examples/adam-5017uh/adam-5017uh-slot-0.tm.json
 ```
 
 For an external Consumer, generate a separate instance with its actual endpoint:
 
 ```sh
 mise exec -- /tmp/modsim-wot-tools/bin/python -m modpoll_wot \
-  --config examples/adam-5017uh/adam-5017uh-slot-0-raw.tm.json \
-  --host "$ADAM_HOST" --port 502 --unit-id 1 --target node-wot-0.9.2 \
+  --config examples/adam-5017uh/adam-5017uh-slot-0.tm.json \
+  --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-5017uh-instance.td.json
 ```
 
 Record raw words and compare against the vendor utility before assigning physical
 units. This fixture does not change range, calibration or module settings.
-The current modsim 1.x CLI has no `--config` option; these models are prepared for the
-shared configuration contract and modpoll, ahead of modsim v2 implementation.
+The `v2` development branch has a candidate native raw-I/O `--config` path.
+See [model validation](../../docs/model-validation.md) for its isolated SDK environment
+and supported subset. The released modsim 1.x CLI does not load these models.
 
 Synthetic read/write compatibility is recorded in [the verification report](../verification.md); it does not establish hardware correctness.

@@ -5,9 +5,8 @@ two DI and two DO channels. This fixture has not been checked against hardware.
 
 ## Files
 
-- [Source TM](adam-6024-raw.tm.json): the maintained mapping, four groups and twelve native per-channel properties.
-- [Generated project TD](adam-6024-raw.td.json): loopback instance, including project acquisition policy.
-- [Generated node-wot TD](adam-6024-raw.node-wot.td.json): standard Forms without project acquisition fields.
+- [Source TM](adam-6024.tm.json): the maintained mapping, four groups and twelve native per-channel properties.
+- [Generated project TD](adam-6024.generated.td.json): loopback instance, including project acquisition policy.
 - [Generation manifest](generated.json): source/artifact hashes, tool version and instance parameters. Never hand-edit generated TDs.
 - [ADAM-6000 manual, edition 12](adam-6000-user-manual-ed12.pdf): specifications
   in section 4.6, printed pages 28–29; ADAM-6024 mapping in appendix B.2,
@@ -46,11 +45,11 @@ member names. DI0/DI1 and DO0/DO1 are scalar booleans at physical bit addresses
 bindings can address every channel, while the project's two-bit block reads are
 preserved. There are now twelve properties for twelve channels.
 
-Generated instances use loopback `127.0.0.1:5020`, Unit ID 1. The project TD is an
-executable profile 0.2 instance; the node-wot 0.9.2 target contains standard
-Forms/media parameters and no acquisition extension. External bindings ignore
-project grouping and may issue individual property reads. No HTTP cache or
-background acquisition service is implied.
+The generated TD uses loopback `127.0.0.1:5020`, Unit ID 1. It retains the
+profile 0.2 acquisition extension and includes explicit binary media parameters
+in its standard Forms. The same TD is used by the project and node-wot 0.9.2;
+external bindings ignore project grouping and may read properties individually.
+No HTTP cache or background acquisition service is implied.
 
 See [the tool setup and generation guide](../README.md). To validate generation:
 
@@ -62,8 +61,8 @@ To export a real endpoint for an external Consumer:
 
 ```sh
 mise exec -- /tmp/modsim-wot-tools/bin/python -m modpoll_wot \
-  --config examples/adam-6024/adam-6024-raw.tm.json \
-  --host "$ADAM_HOST" --port 502 --unit-id 1 --target node-wot-0.9.2 \
+  --config examples/adam-6024/adam-6024.tm.json \
+  --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-6024-instance.td.json
 ```
 

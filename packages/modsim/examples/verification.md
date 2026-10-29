@@ -28,3 +28,20 @@ These are generated views of a single maintained TM, not separate source models.
 Hardware work remains: confirm the 5017UH range/data format and actual responses;
 verify the candidate 6024 tables, addresses, normalization and output limits.
 The current modsim runtime still does not load these TM/TD files.
+
+## Shared TD follow-up (2026-10-29)
+
+The examples now generate one `*.generated.td.json` per TM, retaining
+`modpoll:version` and `modpoll:acquisition`. Source Forms explicitly state
+unsigned binary media parameters. Filenames no longer contain `raw`; analog
+property identifiers and unscaled value semantics are unchanged.
+
+The same synthetic server procedure was repeated with the project TD, without
+using the node-wot export target. Both the project interpreter and unchanged
+node-wot 0.9.2 read all 8/12 properties correctly, including unsigned words above
+32767. node-wot wrote AO0_RAW=321 and DO0=true on the virtual 6024; independent
+Python reads confirmed both writes. Project TM/TD block mappings were identical,
+and FC4 block reads remained unchanged. The shared package's 41 tests passed,
+including rejection of conflicting, duplicate and unknown media parameters.
+The earlier separate-target verification above is historical; those separate TD
+artifacts have been removed. No physical device was connected.

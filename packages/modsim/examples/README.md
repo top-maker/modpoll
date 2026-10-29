@@ -14,8 +14,7 @@ source URLs, PDF hashes and assumptions. TDs are generated artifacts:
 | File | Purpose |
 | --- | --- |
 | `*.tm.json` | Maintained source; no deployed endpoint |
-| `*.td.json` | Generated project instance with standard Forms and acquisition policy |
-| `*.node-wot.td.json` | Generated external Consumer instance with standard Forms/media parameters and no project acquisition fields |
+| `*.generated.td.json` | Generated project instance with standard Forms and acquisition policy |
 | `generated.json` | Source/artifact hashes, generator version and loopback instance parameters |
 
 Register addresses and raw types are in property Forms. Group boundaries remain
@@ -24,11 +23,12 @@ extension object does not make that object understandable by standard bindings.
 Third-party Consumers use concrete property Forms; they do not need or execute
 project grouping for these raw, natively representable properties.
 
-The two TD targets are generated views of one TM, not independently maintained
-server/client descriptions. Pure external TDs lack the project's execution
-profile and are intended for third-party Consumers; use the TM or project TD
-with the project's shared interpreter. Grouping/cache behavior is not promised
-for an external Consumer. Physical scaling/address verification remains separate.
+Each TM generates one TD, shared by the project and external Consumers. Its
+standard Forms explicitly describe unsigned binary values; node-wot 0.9.2
+preserves project extensions but does not execute them. There is no node-wot
+specific TD. Grouping/cache behavior is not promised for external Consumers.
+Analog values remain unscaled; removing `raw` from filenames does not change
+property names, value semantics or the pending physical verification.
 
 ## Generate and verify
 
@@ -50,7 +50,7 @@ mise exec -- /tmp/modsim-wot-tools/bin/python examples/generate-td.py --check
 The generator delegates all instantiation/export to the common package. It uses
 only the documented loopback instance (127.0.0.1:5020, Unit ID 1). For real
 endpoints use the common CLI with `--config`, `--host`, `--port`, `--unit-id`,
-`--target` and a new output path; do not commit site-specific TDs as product sources.
+`--target project` and a new output path; do not commit site-specific TDs as product sources.
 
 Current modsim 1.x still uses its built-in datastore and has no --config option.
 Providing these TM/TD artifacts does not implement modsim v2. Vendor PDF originals

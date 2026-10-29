@@ -21,7 +21,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 1,
           "modv:quantity": 1,
@@ -39,7 +39,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 2,
           "modv:quantity": 1,
@@ -57,7 +57,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 3,
           "modv:quantity": 1,
@@ -75,7 +75,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 4,
           "modv:quantity": 1,
@@ -93,7 +93,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 5,
           "modv:quantity": 1,
@@ -111,7 +111,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 6,
           "modv:quantity": 1,
@@ -129,7 +129,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 7,
           "modv:quantity": 1,
@@ -147,7 +147,7 @@
       "forms": [
         {
           "op": "readproperty",
-          "contentType": "application/octet-stream",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
           "modv:entity": "InputRegister",
           "modv:address": 8,
           "modv:quantity": 1,

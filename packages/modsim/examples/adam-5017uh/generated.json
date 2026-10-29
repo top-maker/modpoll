@@ -1,6 +1,6 @@
 {
-  "source": "adam-5017uh-slot-0-raw.tm.json",
-  "source_sha256": "cc0c6cd4a7f97fb0b85b86fe56b3bfb42815d22ee26ca3012dc1b452d1db4a64",
+  "source": "adam-5017uh-slot-0.tm.json",
+  "source_sha256": "35e5a3aa30f961ae394d46a6c27565b69d86a217fd8a1a61ab9685b7034dcc6a",
   "generator": {
     "package": "modpoll-wot",
     "version": "0.2.0a1"
@@ -11,13 +11,9 @@
     "unit_id": 1
   },
   "artifacts": {
-    "adam-5017uh-slot-0-raw.td.json": {
+    "adam-5017uh-slot-0.generated.td.json": {
       "target": "project",
-      "sha256": "7871d045d71cc0e2eb114362c9c61b24a3d462d5d97e395538c65696652b7077"
-    },
-    "adam-5017uh-slot-0-raw.node-wot.td.json": {
-      "target": "node-wot-0.9.2",
-      "sha256": "08b7d7f6550570ef6d9940bd9d7fb07f003772925b74814616f8f6d46d601b5f"
+      "sha256": "5a645620aa145122740a1339b2c32dddf83400f418888b7c87a0557a508632e7"
     }
   }
 }
