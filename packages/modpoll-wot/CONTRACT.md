@@ -82,14 +82,15 @@ this acquisition extension or its transforms. In particular, a direct Modbus For
 identifies raw device access; engineering-value interpretation requires the project
 transform metadata. No HTTP endpoint or cache service is declared.
 
-`examples/modsim.tm.json` is an authored mapping of `examples/modsim.csv`, retaining
-four groups and 37 properties; it is not generated from CSV at runtime.
-`examples/modsim.td.json` binds the same mapping to the documented local TCP
-endpoint. Their mappings are checked against the CSV in tests. Runtime equivalence
-checks additionally compare independently known initial values, complete JSON
-snapshots, rendered tables, and the exact four requests against modsim. Shared
-remote modsim state may have been written by others, so remote checks compare
-successive read-only snapshots rather than assuming fixed initial values.
+The profile 0.1 compatibility fixtures (`modsim-0.1.tm.json` and
+`modsim-0.1.td.json`) live under this package's tests. They preserve the original
+CSV mapping for compatibility checks; they are not the current user examples.
+The canonical v2 example uses profile 0.2 in `examples/modsim.tm.json` and is
+covered by the profile 0.2 tests. Runtime equivalence checks compare independently
+known initial values, complete JSON snapshots, rendered tables, and the exact
+four requests against modsim. Shared remote modsim state may have been written by
+others, so remote checks compare successive read-only snapshots rather than
+assuming fixed initial values.
 
 The shared interpreter is independently versioned and published as
 `modpoll-wot`. Application previews pin an exact registry version.

@@ -1,0 +1,888 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "title": "modsim01",
+  "modpoll:version": "0.1",
+  "properties": {
+    "coil01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/0?quantity=8",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "coil09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/8?quantity=8",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "di01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/10000?quantity=8",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "di09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/10008?quantity=8",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "input_reg01": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30000?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg02": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30001?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg03": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30002?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg04": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30003?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg05": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30004?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg06": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30005?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg07": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30006?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg08": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30007?quantity=1",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg09": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30008?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "input_reg10": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30010?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "input_reg11": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30012?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "input_reg12": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30014?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "input_reg13": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30016?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "input_reg14": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/30018?quantity=2",
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg01": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40000?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg02": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40001?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg03": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40002?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg04": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40003?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg05": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40004?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg06": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40005?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg07": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40006?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg08": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40007?quantity=1",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg09": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40008?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "holding_reg10": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40010?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "holding_reg11": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40012?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "holding_reg12": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40014?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "holding_reg13": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40016?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg14": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40018?quantity=2",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg15": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40020?quantity=4",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:unsignedLong"
+        }
+      ]
+    },
+    "holding_reg16": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40024?quantity=4",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:long"
+        }
+      ]
+    },
+    "holding_reg17": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40028?quantity=4",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "holding_reg18": {
+      "type": "number",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40032?quantity=4",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "holding_reg19": {
+      "type": "string",
+      "forms": [
+        {
+          "href": "modbus+tcp://127.0.0.1:5020/1/40036?quantity=8",
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:mostSignificantByte": true,
+          "modv:mostSignificantWord": true,
+          "modv:type": "xsd:string"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "coil01-08",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "bool8"
+        },
+        {
+          "modpoll:property": "coil09-16",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "bool8"
+        }
+      ],
+      "modv:entity": "Coil",
+      "modv:address": 0,
+      "modv:quantity": 16,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "di01-08",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "bool8"
+        },
+        {
+          "modpoll:property": "di09-16",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "bool8"
+        }
+      ],
+      "modv:entity": "DiscreteInput",
+      "modv:address": 10000,
+      "modv:quantity": 16,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "input_reg01",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg02",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg03",
+          "modpoll:offset": 2,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg04",
+          "modpoll:offset": 3,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg05",
+          "modpoll:offset": 4,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg06",
+          "modpoll:offset": 5,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg07",
+          "modpoll:offset": 6,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg08",
+          "modpoll:offset": 7,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg09",
+          "modpoll:offset": 8,
+          "modpoll:dataType": "uint32"
+        },
+        {
+          "modpoll:property": "input_reg10",
+          "modpoll:offset": 10,
+          "modpoll:dataType": "uint32",
+          "modpoll:multiplier": "0.001"
+        },
+        {
+          "modpoll:property": "input_reg11",
+          "modpoll:offset": 12,
+          "modpoll:dataType": "int32"
+        },
+        {
+          "modpoll:property": "input_reg12",
+          "modpoll:offset": 14,
+          "modpoll:dataType": "int32",
+          "modpoll:multiplier": "1000"
+        },
+        {
+          "modpoll:property": "input_reg13",
+          "modpoll:offset": 16,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "input_reg14",
+          "modpoll:offset": 18,
+          "modpoll:dataType": "float32"
+        }
+      ],
+      "modv:entity": "InputRegister",
+      "modv:address": 30000,
+      "modv:quantity": 20,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "holding_reg01",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg02",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg03",
+          "modpoll:offset": 2,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg04",
+          "modpoll:offset": 3,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg05",
+          "modpoll:offset": 4,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg06",
+          "modpoll:offset": 5,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg07",
+          "modpoll:offset": 6,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg08",
+          "modpoll:offset": 7,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg09",
+          "modpoll:offset": 8,
+          "modpoll:dataType": "uint32"
+        },
+        {
+          "modpoll:property": "holding_reg10",
+          "modpoll:offset": 10,
+          "modpoll:dataType": "uint32",
+          "modpoll:multiplier": "0.001"
+        },
+        {
+          "modpoll:property": "holding_reg11",
+          "modpoll:offset": 12,
+          "modpoll:dataType": "int32"
+        },
+        {
+          "modpoll:property": "holding_reg12",
+          "modpoll:offset": 14,
+          "modpoll:dataType": "int32",
+          "modpoll:multiplier": "1000"
+        },
+        {
+          "modpoll:property": "holding_reg13",
+          "modpoll:offset": 16,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "holding_reg14",
+          "modpoll:offset": 18,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "holding_reg15",
+          "modpoll:offset": 20,
+          "modpoll:dataType": "uint64"
+        },
+        {
+          "modpoll:property": "holding_reg16",
+          "modpoll:offset": 24,
+          "modpoll:dataType": "int64"
+        },
+        {
+          "modpoll:property": "holding_reg17",
+          "modpoll:offset": 28,
+          "modpoll:dataType": "float64"
+        },
+        {
+          "modpoll:property": "holding_reg18",
+          "modpoll:offset": 32,
+          "modpoll:dataType": "float64"
+        },
+        {
+          "modpoll:property": "holding_reg19",
+          "modpoll:offset": 36,
+          "modpoll:dataType": "string16"
+        }
+      ],
+      "modv:entity": "HoldingRegister",
+      "modv:address": 40000,
+      "modv:quantity": 44,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    }
+  ],
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc"
+}

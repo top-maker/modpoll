@@ -56,8 +56,10 @@ class ProfileTests(unittest.TestCase):
                     instantiate(source, host="localhost")
 
     def test_full_modsim_fixture_preserves_groups_types_and_transforms(self):
-        old = load_model(ROOT / "examples/modsim.tm.json")
-        new = load_model(ROOT / "examples/modsim-standard.tm.json")
+        old = load_model(
+            ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json"
+        )
+        new = load_model(ROOT / "examples/modsim.tm.json")
         self.assertEqual(
             [(g.table, g.start, g.quantity) for g in old.groups],
             [(g.table, g.start, g.quantity) for g in new.groups],
@@ -72,7 +74,7 @@ class ProfileTests(unittest.TestCase):
                 self.assertEqual(
                     a.data_type, b.data_type if not b.physical_bits else "bool8"
                 )
-        d = json.loads((ROOT / "examples/modsim-standard.tm.json").read_text())
+        d = json.loads((ROOT / "examples/modsim.tm.json").read_text())
         model, td = instantiate(d, host="127.0.0.1", port=5020, unit_id=7)
         self.assertEqual(model.groups, instantiate(td)[0].groups)
         self.assertEqual(model.properties_json, instantiate(td)[0].properties_json)

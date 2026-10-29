@@ -6,7 +6,7 @@ import unittest
 from modpoll_wot import AcquisitionError
 from modpoll_wot.loading import load_model, parse_model
 
-FIXTURE = Path(__file__).resolve().parents[3] / "examples/modsim.tm.json"
+FIXTURE = Path(__file__).parent / "fixtures/modsim-0.1.tm.json"
 
 
 class LoadingTests(unittest.TestCase):
@@ -114,7 +114,7 @@ class ContentDetectionTests(unittest.TestCase):
             parse_model(json.loads(FIXTURE.read_text()), kind="td")
 
     def test_td_with_or_without_application_type(self):
-        path = FIXTURE.with_name("modsim.td.json")
+        path = FIXTURE.with_name("modsim-0.1.td.json")
         for types in (None, "urn:example:meter", ["urn:example:meter"]):
             document = json.loads(path.read_text())
             if types is not None:

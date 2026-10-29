@@ -4,10 +4,11 @@ An independently versioned TM/TD configuration interpreter for Modpoll and futur
 compatible consumers. No Modbus execution, scheduler or MQTT service is included.
 
 ```sh
-pip install modpoll-wot==0.1.0a1
+pip install modpoll-wot==0.2.0a1
 python -m modpoll_wot meter.tm.json
 ```
-See CONTRACT.md for the executable 0.1 subset and 1.x field mapping.
+See [profile.md](profile.md) for the current 0.2 profile and
+[CONTRACT.md](CONTRACT.md) for retained 0.1 compatibility.
 
 The loader validates bundled W3C TM/TD 1.1 schemas, the project extension
 schema, and acquisition semantics. It does not execute Modbus requests.
@@ -28,6 +29,6 @@ https://www.w3.org/2022/wot/td-schema/v1.1 and
 https://www.w3.org/2022/wot/tm-schema/v1.1. Standard validation does not
 establish device correctness.
 
-The source candidate 0.2.0a1 supports [profile 0.2](profile.md): standard Form
-mappings, explicit blocks, per-property decoding and TM-to-TD export. The app
-registry pin remains unchanged until the producer is published.
+Version 0.2.0a1 supports [profile 0.2](profile.md): standard Form mappings,
+explicit blocks, per-property decoding and TM-to-TD export. Profile 0.1 remains
+available for existing configurations.

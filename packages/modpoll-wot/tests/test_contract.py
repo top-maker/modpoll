@@ -171,8 +171,8 @@ class ContractTests(unittest.TestCase):
         with patch(
             "socket.create_connection", side_effect=AssertionError("network used")
         ):
-            load_model(ROOT / "examples/modsim.tm.json")
-            load_model(ROOT / "examples/modsim.td.json")
+            load_model(ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json")
+            load_model(ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json")
         for text in (
             '{"a":1,"a":2}',
             "NaN",
@@ -188,7 +188,11 @@ class ContractTests(unittest.TestCase):
             parse_model(d)
 
     def test_td_forms_cannot_disagree_with_acquisition(self):
-        source = json.loads((ROOT / "examples/modsim.td.json").read_text())
+        source = json.loads(
+            (
+                ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json"
+            ).read_text()
+        )
         changes = [
             lambda f: f.update(
                 {"href": "modbus+tcp://localhost:5020/1/999?quantity=8"}

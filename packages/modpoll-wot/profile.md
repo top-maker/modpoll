@@ -1,9 +1,8 @@
 # Executable profile 0.2
 
-This source candidate is `modpoll-wot==0.2.0a1`. It replaces the unpublished
-`0.2-pilot` experiment. The application still pins released `0.1.0a1` until the
-producer passes CI, is published and independently installed from the registry.
-No local-path dependency is introduced. Contract 0.1 semantics remain unchanged.
+This profile is published as `modpoll-wot==0.2.0a1` and used by the Modpoll
+`2.0.0a2` preview. It replaces the unpublished `0.2-pilot` experiment. No
+local-path dependency is introduced. Contract 0.1 semantics remain unchanged.
 
 ## Source and instances
 
@@ -101,7 +100,7 @@ From the repository (omit PYTHONPATH with an installed candidate wheel):
 
 ```sh
 PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
-  --config examples/modsim-standard.tm.json --host 127.0.0.1 --port 5020 \
+  --config examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
   --unit-id 7 --output /tmp/modsim-instance.td.json
 PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
   --config /tmp/modsim-instance.td.json
@@ -157,8 +156,9 @@ actual reads/writes, not just successful TD parsing.
 
 ## Promotion order
 
-The old fixture is retained for compatibility. examples/modsim-standard.tm.json
-is the new four-block/37-property source; generated TDs are artifacts. Tests cover
+Contract 0.1 compatibility fixtures live under the package tests. The canonical
+examples/modsim.tm.json is the four-block/37-property source; generated TDs are
+artifacts. Tests cover
 value/request equivalence, mixed orders, aliases, holes, UTF-8 byte capacities,
 physical bit offsets, parameters and external read/write round trips.
 

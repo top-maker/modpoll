@@ -1,0 +1,380 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "modsim01",
+  "modpoll:version": "0.1",
+  "properties": {
+    "coil01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      }
+    },
+    "coil09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      }
+    },
+    "di01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true
+    },
+    "di09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true
+    },
+    "input_reg01": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg02": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg03": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg04": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg05": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg06": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg07": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg08": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg09": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg10": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg11": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg12": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg13": {
+      "type": "number",
+      "readOnly": true
+    },
+    "input_reg14": {
+      "type": "number",
+      "readOnly": true
+    },
+    "holding_reg01": {
+      "type": "number"
+    },
+    "holding_reg02": {
+      "type": "number"
+    },
+    "holding_reg03": {
+      "type": "number"
+    },
+    "holding_reg04": {
+      "type": "number"
+    },
+    "holding_reg05": {
+      "type": "number"
+    },
+    "holding_reg06": {
+      "type": "number"
+    },
+    "holding_reg07": {
+      "type": "number"
+    },
+    "holding_reg08": {
+      "type": "number"
+    },
+    "holding_reg09": {
+      "type": "number"
+    },
+    "holding_reg10": {
+      "type": "number"
+    },
+    "holding_reg11": {
+      "type": "number"
+    },
+    "holding_reg12": {
+      "type": "number"
+    },
+    "holding_reg13": {
+      "type": "number"
+    },
+    "holding_reg14": {
+      "type": "number"
+    },
+    "holding_reg15": {
+      "type": "number"
+    },
+    "holding_reg16": {
+      "type": "number"
+    },
+    "holding_reg17": {
+      "type": "number"
+    },
+    "holding_reg18": {
+      "type": "number"
+    },
+    "holding_reg19": {
+      "type": "string"
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "coil01-08",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "bool8"
+        },
+        {
+          "modpoll:property": "coil09-16",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "bool8"
+        }
+      ],
+      "modv:entity": "Coil",
+      "modv:address": 0,
+      "modv:quantity": 16,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "di01-08",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "bool8"
+        },
+        {
+          "modpoll:property": "di09-16",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "bool8"
+        }
+      ],
+      "modv:entity": "DiscreteInput",
+      "modv:address": 10000,
+      "modv:quantity": 16,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "input_reg01",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg02",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg03",
+          "modpoll:offset": 2,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg04",
+          "modpoll:offset": 3,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "input_reg05",
+          "modpoll:offset": 4,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg06",
+          "modpoll:offset": 5,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg07",
+          "modpoll:offset": 6,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg08",
+          "modpoll:offset": 7,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "input_reg09",
+          "modpoll:offset": 8,
+          "modpoll:dataType": "uint32"
+        },
+        {
+          "modpoll:property": "input_reg10",
+          "modpoll:offset": 10,
+          "modpoll:dataType": "uint32",
+          "modpoll:multiplier": "0.001"
+        },
+        {
+          "modpoll:property": "input_reg11",
+          "modpoll:offset": 12,
+          "modpoll:dataType": "int32"
+        },
+        {
+          "modpoll:property": "input_reg12",
+          "modpoll:offset": 14,
+          "modpoll:dataType": "int32",
+          "modpoll:multiplier": "1000"
+        },
+        {
+          "modpoll:property": "input_reg13",
+          "modpoll:offset": 16,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "input_reg14",
+          "modpoll:offset": 18,
+          "modpoll:dataType": "float32"
+        }
+      ],
+      "modv:entity": "InputRegister",
+      "modv:address": 30000,
+      "modv:quantity": 20,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    },
+    {
+      "modpoll:members": [
+        {
+          "modpoll:property": "holding_reg01",
+          "modpoll:offset": 0,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg02",
+          "modpoll:offset": 1,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg03",
+          "modpoll:offset": 2,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg04",
+          "modpoll:offset": 3,
+          "modpoll:dataType": "uint16"
+        },
+        {
+          "modpoll:property": "holding_reg05",
+          "modpoll:offset": 4,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg06",
+          "modpoll:offset": 5,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg07",
+          "modpoll:offset": 6,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg08",
+          "modpoll:offset": 7,
+          "modpoll:dataType": "int16"
+        },
+        {
+          "modpoll:property": "holding_reg09",
+          "modpoll:offset": 8,
+          "modpoll:dataType": "uint32"
+        },
+        {
+          "modpoll:property": "holding_reg10",
+          "modpoll:offset": 10,
+          "modpoll:dataType": "uint32",
+          "modpoll:multiplier": "0.001"
+        },
+        {
+          "modpoll:property": "holding_reg11",
+          "modpoll:offset": 12,
+          "modpoll:dataType": "int32"
+        },
+        {
+          "modpoll:property": "holding_reg12",
+          "modpoll:offset": 14,
+          "modpoll:dataType": "int32",
+          "modpoll:multiplier": "1000"
+        },
+        {
+          "modpoll:property": "holding_reg13",
+          "modpoll:offset": 16,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "holding_reg14",
+          "modpoll:offset": 18,
+          "modpoll:dataType": "float32"
+        },
+        {
+          "modpoll:property": "holding_reg15",
+          "modpoll:offset": 20,
+          "modpoll:dataType": "uint64"
+        },
+        {
+          "modpoll:property": "holding_reg16",
+          "modpoll:offset": 24,
+          "modpoll:dataType": "int64"
+        },
+        {
+          "modpoll:property": "holding_reg17",
+          "modpoll:offset": 28,
+          "modpoll:dataType": "float64"
+        },
+        {
+          "modpoll:property": "holding_reg18",
+          "modpoll:offset": 32,
+          "modpoll:dataType": "float64"
+        },
+        {
+          "modpoll:property": "holding_reg19",
+          "modpoll:offset": 36,
+          "modpoll:dataType": "string16"
+        }
+      ],
+      "modv:entity": "HoldingRegister",
+      "modv:address": 40000,
+      "modv:quantity": 44,
+      "modv:mostSignificantByte": true,
+      "modv:mostSignificantWord": true
+    }
+  ]
+}
