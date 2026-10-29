@@ -12,7 +12,7 @@ import stat
 import tempfile
 from typing import Any
 
-from pymodbus.datastore import ModbusDeviceContext, ModbusServerContext
+from pymodbus.simulator import DataType, SimData, SimDevice
 from pymodbus.server import ModbusTcpServer
 
 from .manifest import Deployment, Instance, load_deployment
@@ -203,7 +203,10 @@ async def serve(
         manager = RuntimeManager(allow_scripts)
         stop = asyncio.Event()
         server: Any = ModbusTcpServer(
-            context=ModbusServerContext(devices=ModbusDeviceContext(), single=True),
+            context=SimDevice(
+                id=0,
+                simdata=[SimData(0, datatype=DataType.INVALID)],
+            ),
             address=(desired.bind, desired.port),
         )
         server.context = manager.context

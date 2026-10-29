@@ -11,11 +11,6 @@ import logging
 from contextlib import suppress
 from typing import Any
 
-from pymodbus.datastore import (
-    ModbusDeviceContext,
-    ModbusSequentialDataBlock,
-    ModbusServerContext,
-)
 from pymodbus.pdu.device import ModbusDeviceIdentification
 from pymodbus.server import (
     StartAsyncSerialServer,
@@ -24,6 +19,7 @@ from pymodbus.server import (
     ModbusUdpServer,
     ServerAsyncStop,
 )
+from pymodbus.simulator import DataType, SimData, SimDevice
 
 from . import __version__
 from .compat import BinaryPayloadBuilder, Endian
@@ -89,16 +85,15 @@ def setup_server(args: Any) -> Any:
         # use that payload in the data store
         co_values = co_builder.to_coils()
         hr_values = hr_builder.to_registers()
-        # Note: In PyModbus 3.16.1+, ModbusSequentialDataBlock uses address - 1 internally
-        # to convert to SimData. To maintain address ranges, we use address + 1 here.
-        # This maps Modbus addresses the same way as zero_mode=True did in older versions.
-        device_context = ModbusDeviceContext(
-            co=ModbusSequentialDataBlock(1, co_values),
-            di=ModbusSequentialDataBlock(10001, co_values),
-            ir=ModbusSequentialDataBlock(30001, hr_values),
-            hr=ModbusSequentialDataBlock(40001, hr_values),
+        args.context = SimDevice(
+            id=0,
+            simdata=(
+                [SimData(0, values=co_values, datatype=DataType.BITS)],
+                [SimData(10000, values=co_values, datatype=DataType.BITS)],
+                [SimData(40000, values=hr_values, datatype=DataType.REGISTERS)],
+                [SimData(30000, values=hr_values, datatype=DataType.REGISTERS)],
+            ),
         )
-        args.context = ModbusServerContext(devices=device_context, single=True)
 
     # initialize the server information
     # If you don't set this or any fields, they are defaulted to empty strings.
