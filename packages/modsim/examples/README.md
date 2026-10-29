@@ -58,3 +58,6 @@ Export both TDs with
 `modsim export -f examples/deployment.yaml --output-dir /tmp/modsim-td`.
 The managed commands require the v2 development source; see the
 [contract](../docs/managed-deployments.md).
+
+The root `deployment.yaml` and `docker-compose.yaml` provide the corresponding
+Docker-managed example. See [Docker Compose instructions](../README.md#docker-compose-managed-deployment).

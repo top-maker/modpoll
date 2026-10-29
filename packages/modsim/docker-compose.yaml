@@ -1,0 +1,11 @@
+services:
+  modsim:
+    build: .
+    init: true
+    restart: unless-stopped
+    command: ["python", "-m", "modsim", "up", "-f", "/app/deployment.yaml"]
+    ports:
+      - "127.0.0.1:5020:5020"
+    volumes:
+      - ./deployment.yaml:/app/deployment.yaml:ro
+      - ./examples:/app/examples:ro
