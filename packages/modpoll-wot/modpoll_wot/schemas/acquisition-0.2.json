@@ -79,7 +79,8 @@
                   "minLength": 1
                 },
                 "contentType": {
-                  "const": "application/octet-stream"
+                  "type": "string",
+                  "pattern": "^application/octet-stream(?:;[^\\r\\n]+)*$"
                 },
                 "op": {
                   "oneOf": [

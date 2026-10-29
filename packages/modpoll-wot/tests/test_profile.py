@@ -22,6 +22,39 @@ def numeric():
 
 
 class ProfileTests(unittest.TestCase):
+    def test_shared_td_preserves_consistent_binary_media_parameters(self):
+        source = numeric()
+        form = source["properties"]["counter"]["forms"][0]
+        form["contentType"] = (
+            "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN"
+        )
+        expected = instantiate(numeric(), host="localhost")[0].groups
+        model, td = instantiate(source, host="localhost")
+        self.assertEqual(model.groups, expected)
+        self.assertEqual(instantiate(td)[0].groups, expected)
+        self.assertEqual(
+            td["properties"]["counter"]["forms"][0]["contentType"], form["contentType"]
+        )
+        self.assertIn("modpoll:acquisition", td)
+
+    def test_binary_media_cannot_conflict_with_modbus_mapping(self):
+        for parameters in (
+            "length=4",
+            "signed=true",
+            "byteSeq=LITTLE_ENDIAN",
+            "length=2;length=2",
+            "unknown=value",
+            "length",
+            "",
+        ):
+            with self.subTest(parameters=parameters):
+                source = numeric()
+                source["properties"]["counter"]["forms"][0]["contentType"] = (
+                    "application/octet-stream;" + parameters
+                )
+                with self.assertRaises((AcquisitionError, ValueError)):
+                    instantiate(source, host="localhost")
+
     def test_full_modsim_fixture_preserves_groups_types_and_transforms(self):
         old = load_model(ROOT / "examples/modsim.tm.json")
         new = load_model(ROOT / "examples/modsim-standard.tm.json")

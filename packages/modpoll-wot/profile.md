@@ -111,6 +111,20 @@ Existing output files are never overwritten. The original positional validator
 path remains supported. The shared package supplies models/metadata, not a
 Modbus client/server, scheduler or MQTT service.
 
+## Shared TD and binary media parameters
+
+Project TDs may retain acquisition metadata when consumed by third-party tools.
+node-wot 0.9.2 preserves unknown project fields without executing them; removing
+those fields is not a prerequisite for consumption. Prefer one generated TD per
+TM, shared by project tools and external Consumers.
+
+Native scalar Forms may specify octet-stream `length`, `signed` and `byteSeq`
+parameters. The interpreter checks them against the raw type, quantity and
+byte/word order and rejects conflicts, duplicates and unknown parameters.
+Parameterized custom codecs, arrays and transformed values are not supported.
+The ADAM examples in modsim use this shared representation; filenames mark
+outputs as `*.generated.td.json` and only TMs are maintained by hand.
+
 ## Actual external Consumer
 
 The `node-wot-0.9.2` export target is verified with pinned @node-wot/core and

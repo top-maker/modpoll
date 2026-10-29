@@ -133,6 +133,56 @@ def _codec(form, prop, count, bits, path):
     return dtype, scalar
 
 
+def _validate_media(form, prop, dtype, scalar, bits, endian, path):
+    """Accept explicit binary parameters only when they match the raw mapping."""
+    media = form.get("contentType", "application/octet-stream")
+    if media == "application/octet-stream":
+        return
+    if not isinstance(media, str):
+        raise AcquisitionError(f"{path}: invalid contentType")
+    parts = [part.strip() for part in media.split(";")]
+    if parts[0] != "application/octet-stream":
+        raise AcquisitionError(
+            f"{path}: source media type must be application/octet-stream"
+        )
+    native_bit = bits and scalar and form.get("modv:type") == "xsd:boolean"
+    if (
+        prop.get("type") == "array"
+        or any(
+            key in form
+            for key in ("modpoll:codec", "modpoll:bit", "modpoll:multiplier")
+        )
+        or (bits and not native_bit)
+        or (not native_bit and dtype not in TYPES.values())
+    ):
+        raise AcquisitionError(
+            f"{path}: binary media parameters require native scalar values"
+        )
+    length = 1 if native_bit else type_width(dtype) * 2
+    order = {
+        (True, True): "BIG_ENDIAN",
+        (False, False): "LITTLE_ENDIAN",
+        (False, True): "BIG_ENDIAN_BYTE_SWAP",
+        (True, False): "LITTLE_ENDIAN_BYTE_SWAP",
+    }[endian]
+    if length == 2:
+        order = "BIG_ENDIAN" if endian[0] else "LITTLE_ENDIAN"
+    expected = {
+        "length": str(length),
+        "signed": "false" if native_bit or dtype.startswith("uint") else "true",
+        "byteSeq": order,
+    }
+    seen = set()
+    for part in parts[1:]:
+        key, sep, value = part.partition("=")
+        key, value = key.strip(), value.strip()
+        if not sep or key in seen or key not in expected or value != expected[key]:
+            raise AcquisitionError(
+                f"{path}: conflicting or unsupported binary media parameter: {part}"
+            )
+        seen.add(key)
+
+
 def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None):
     """Return a validated execution Model and effective TD, preserving the input.
 
@@ -220,13 +270,6 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
         ops_seen, mapping = set(), None
         bound_forms = []
         for form in forms:
-            if (
-                form.get("contentType", "application/octet-stream")
-                != "application/octet-stream"
-            ):
-                raise AcquisitionError(
-                    f"{path}: source media type must be application/octet-stream"
-                )
             entity = form.get("modv:entity")
             if entity not in (
                 "Coil",
@@ -275,6 +318,7 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
             if any(type(flag) is not bool for flag in endian):
                 raise AcquisitionError(f"{path}: invalid byte order")
             dtype, scalar = _codec(form, prop, count, bits, path)
+            _validate_media(form, prop, dtype, scalar, bits, endian, path)
             allowed = ([] if prop.get("writeOnly") else ["readproperty"]) + (
                 [] if prop.get("readOnly") else ["writeproperty"]
             )
