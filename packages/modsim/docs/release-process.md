@@ -18,3 +18,9 @@ two-device deployment. Do not mark a release accepted until all jobs pass. Recor
 SHA/tag, run URL, registry hashes and acceptance results in the project log.
 Never replace tags or PyPI versions. If a later job fails, retry that failed job;
 if publication itself needs recovery, reuse the original saved distributions.
+
+To repeat acceptance for an existing immutable tag after fixing validation tools,
+run the preview workflow manually on v2 with its `tag` input. This skips all
+publishing jobs, installs the existing PyPI wheel, uses fixtures from that exact
+tag and runs the current acceptance tooling. It does not replace packages or
+images. Record the separate validation run and tooling SHA.

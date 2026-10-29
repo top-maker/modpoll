@@ -3,6 +3,13 @@ name: preview
 on:
   push:
     tags: ['v2.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing preview tag to validate without publishing again'
+        type: string
+        required: true
+        default: v2.0.0a1
 
 concurrency:
   group: modsim-preview
@@ -13,6 +20,7 @@ permissions:
 
 jobs:
   publish:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -103,18 +111,30 @@ jobs:
           keep_files: true
 
   acceptance:
+    if: ${{ always() && (github.event_name == 'workflow_dispatch' || (needs.publish.result == 'success' && needs.image.result == 'success' && needs.docs.result == 'success')) }}
     needs: [publish, image, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          path: release
+      - name: Verify release fixture version
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          cd release
+          python .github/scripts/check_release_version.py "$TAG"
+          git rev-parse HEAD
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Install published wheel and test dependencies
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           python .github/scripts/preview-release.py download "${TAG#v}" "$RUNNER_TEMP/distributions"
           python -m venv "$RUNNER_TEMP/installed"
@@ -123,14 +143,14 @@ jobs:
       - name: Test without application source
         run: |
           mkdir -p "$RUNNER_TEMP/acceptance"
-          cp -r tests contrib examples "$RUNNER_TEMP/acceptance/"
+          cp -r release/tests release/contrib release/examples "$RUNNER_TEMP/acceptance/"
           cd "$RUNNER_TEMP/acceptance"
           "$RUNNER_TEMP/installed/bin/python" -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
       - name: Verify published image and contributed deployment
         env:
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
           USERNAME: ${{ vars.DOCKER_USERNAME }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           docker run --rm "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --version
           docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
