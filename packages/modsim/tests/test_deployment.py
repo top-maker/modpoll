@@ -329,6 +329,17 @@ def test_explicit_thing_id_for_model_without_id(tmp_path):
     assert instance.unit_id == 1
 
 
+@pytest.mark.parametrize("name", ["deployment.yaml", "deployment-lab.yaml"])
+def test_shared_example_deployments(name):
+    deployment = load_deployment(ROOT / "examples" / name)
+    assert deployment.bind == "0.0.0.0"
+    assert [item.model.unit_id for item in deployment.instances.values()] == [1, 2]
+    assert all(
+        item.model.endpoint == ("127.0.0.1", 5020)
+        for item in deployment.instances.values()
+    )
+
+
 def test_removed_deployment_cli_option(tmp_path):
     result = subprocess.run(
         [sys.executable, "-m", "modsim", "--deployment", "old.json"],

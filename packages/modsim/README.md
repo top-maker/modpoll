@@ -99,7 +99,7 @@ enabled local Python behaviors. TM sources may be local files or HTTPS URLs.
 Install the source dependencies with `poetry install`, then run:
 
 ```bash
-poetry run modsim up -f examples/lab.yaml
+poetry run modsim up -f examples/deployment-lab.yaml
 ```
 
 See [examples](examples/README.md), [community device contributions](contrib/README.md)
@@ -124,22 +124,24 @@ These additions are source-only and are not part of the published `2.0.0a1`.
 ## Docker Compose managed deployment
 
 Build and start the current checkout with `docker compose up --build -d`.
-The repository's `deployment.yaml` describes two synthetic devices and binds
-the Modbus port to `127.0.0.1:5020` on the host. View logs with
+The repository's `examples/deployment.yaml` describes two synthetic devices.
+Its listener binds `0.0.0.0` inside the container; Compose publishes it at
+`127.0.0.1:5020` on the host. Running the same deployment directly on the host
+listens on all interfaces unless `server.bind` is changed to `127.0.0.1`. View logs with
 `docker compose logs -f` and stop the container with `docker compose down`.
 Docker's `unless-stopped` policy restarts the container after a crash or Docker
 restart; simulator values are initialized from the scenario on each restart.
 
-Edit `deployment.yaml` or the mounted files under `examples/` and apply device
+Edit `examples/deployment.yaml` or other mounted files under `examples/` and apply device
 changes without restarting the container using:
 
 ```bash
-docker compose exec modsim python -m modsim up -f /app/deployment.yaml -d
+docker compose exec modsim python -m modsim up -f /app/examples/deployment.yaml -d
 ```
 
 Changing the listener requires recreating the container with `docker compose up
 --build -d`. Export TDs inside the container using `docker compose exec modsim
-python -m modsim export -f /app/deployment.yaml --output-dir /tmp/td`; these
+python -m modsim export -f /app/examples/deployment.yaml --output-dir /tmp/td`; these
 files are inside the container. The advertised TD host is `127.0.0.1`, suitable
 for clients on the Docker host; change HOST when clients connect remotely and
 configure the published port accordingly.
