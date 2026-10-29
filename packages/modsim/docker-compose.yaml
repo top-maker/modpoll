@@ -1,7 +1,6 @@
 services:
   modsim:
     build: .
-    init: true
     restart: unless-stopped
     command: ["python", "-m", "modsim", "up", "-f", "/app/deployment.yaml"]
     ports:
