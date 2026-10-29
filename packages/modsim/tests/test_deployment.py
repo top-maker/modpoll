@@ -12,6 +12,7 @@ import time
 from unittest.mock import patch
 
 import pytest
+import yaml
 from pymodbus.client import ModbusTcpClient
 
 from modsim.manifest import load_deployment
@@ -50,9 +51,9 @@ def build(tmp_path, devices, **server):
             scene_path = tmp_path / f"fixture-scene-{index}.json"
             scene_path.write_text(json.dumps(scene))
             spec["scenario"] = str(scene_path)
-    path = tmp_path / "deployment.json"
+    path = tmp_path / "deployment.yaml"
     path.write_text(
-        json.dumps(
+        yaml.safe_dump(
             {"version": 2, "name": "test-lab", "server": server, "devices": devices}
         )
     )
@@ -133,12 +134,12 @@ def on_write(device, changes):
 
 def test_script_requires_opt_in_and_unknown_fields_rejected(tmp_path):
     (tmp_path / "script.py").write_text('raise AssertionError("must not execute")')
-    path = tmp_path / "denied.json"
+    path = tmp_path / "denied.yaml"
     (tmp_path / "scene.json").write_text(
         json.dumps({"version": "1", "script": "script.py"})
     )
     path.write_text(
-        json.dumps(
+        yaml.safe_dump(
             {"version": 2, "name": "denied", "devices": [device(scenario="scene.json")]}
         )
     )
@@ -308,15 +309,22 @@ def test_failed_write_hook_rolls_back_entire_device(tmp_path):
 
 
 def test_legacy_deployment_version_rejected(tmp_path):
-    path = tmp_path / "deployment.json"
+    path = tmp_path / "deployment.yaml"
     path.write_text(json.dumps({"version": "1", "devices": []}))
     with pytest.raises(ValueError, match="version"):
         load_deployment(path)
 
 
+def test_json_deployment_file_rejected(tmp_path):
+    path = tmp_path / "deployment.json"
+    path.write_text(json.dumps({"version": 2, "devices": []}))
+    with pytest.raises(ValueError, match="must use .yaml or .yml"):
+        load_deployment(path)
+
+
 def test_explicit_thing_id_for_model_without_id(tmp_path):
     instance = build(tmp_path, [device()]).runtimes[0]
-    deployment = load_deployment(tmp_path / "deployment.json")
+    deployment = load_deployment(tmp_path / "deployment.yaml")
     assert deployment.instances["io-1"].td["id"] == "urn:modsim:test:1"
     assert instance.unit_id == 1
 

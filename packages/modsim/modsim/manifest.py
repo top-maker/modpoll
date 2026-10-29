@@ -162,6 +162,8 @@ class Deployment:
 def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment:
     """Resolve and validate every instance before the runtime can be changed."""
     path = path.resolve()
+    if path.suffix.lower() not in (".yaml", ".yml"):
+        raise ValueError("deployment file must use .yaml or .yml")
     spec = read_yaml(path)
     validate(spec, MANIFEST)
     name = spec.get("name", path.parent.name)

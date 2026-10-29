@@ -84,7 +84,7 @@ scenario documents are accepted by managed deployments. There is no duplicate
 initial-value field in deployment v2. Omitting a scenario produces valid static
 initial values from the model. Scenario state is not exported as TD defaults.
 
-YAML uses safe loading with a 1 MiB document limit, bounded nesting and JSON
+Deployment files must use the `.yaml` or `.yml` extension. YAML uses safe loading with a 1 MiB document limit, bounded nesting and JSON
 compatible values; aliases, duplicate keys, implicit dates and non-finite numbers
 are rejected. Use quoted strings where YAML scalar inference is inappropriate.
 

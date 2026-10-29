@@ -10,6 +10,7 @@ import sys
 import uuid
 
 import pytest
+import yaml
 from modpoll_wot import parse_model, validate_standard
 from pymodbus.client import ModbusTcpClient
 
@@ -56,8 +57,7 @@ def device(unit):
 
 
 def write(path, spec):
-    # JSON is a valid YAML document; a separate test exercises YAML syntax.
-    path.write_text(json.dumps(spec))
+    path.write_text(yaml.safe_dump(spec, allow_unicode=True, sort_keys=False))
 
 
 def cli(path, *args, check=True):

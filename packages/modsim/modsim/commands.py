@@ -43,6 +43,8 @@ def parser() -> argparse.ArgumentParser:
 
 
 def identity(path: Path) -> str:
+    if path.suffix.lower() not in (".yaml", ".yml"):
+        raise ValueError("deployment file must use .yaml or .yml")
     spec = read_yaml(path)
     name = spec.get("name", path.parent.name)
     if not isinstance(name, str) or not name:

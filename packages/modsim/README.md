@@ -99,7 +99,7 @@ enabled local Python behaviors. TM sources may be local files or HTTPS URLs.
 Install the source dependencies with `poetry install`, then run:
 
 ```bash
-poetry run modsim up -f examples/lab.sim.json
+poetry run modsim up -f examples/lab.yaml
 ```
 
 See [examples](examples/README.md), [community device contributions](contrib/README.md)
