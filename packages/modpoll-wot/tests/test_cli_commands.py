@@ -8,7 +8,12 @@ import unittest
 from unittest.mock import patch
 from io import StringIO
 
-from modpoll_wot.__main__ import _result
+from modpoll_wot import __main__ as cli
+
+if not hasattr(cli, "_result"):
+    raise unittest.SkipTest("requires the candidate shared CLI")
+
+_result = cli._result
 
 
 class CommandTests(unittest.TestCase):

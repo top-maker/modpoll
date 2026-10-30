@@ -106,8 +106,7 @@ PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
   validate /tmp/modsim-instance.td.json --profile
 ```
 
-Existing output files are never overwritten. These subcommands require the
-next shared package release; 0.2.0a1 does not provide them. The shared package supplies models/metadata, not a
+Existing output files are never overwritten. These subcommands require shared package 0.2.0a2 or newer. The shared package supplies models/metadata, not a
 Modbus client/server, scheduler or MQTT service.
 
 ## Shared TD and binary media parameters

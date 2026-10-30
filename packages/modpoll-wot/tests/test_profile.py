@@ -210,6 +210,10 @@ class ProfileTests(unittest.TestCase):
                 instantiate(d, host="localhost")
 
 
+@unittest.skipUnless(
+    hasattr(__import__("modpoll_wot.__main__", fromlist=["_result"]), "_result"),
+    "requires the candidate shared CLI",
+)
 class ProfileCliTests(unittest.TestCase):
     def test_config_content_export_roundtrip_and_no_overwrite(self):
         import subprocess

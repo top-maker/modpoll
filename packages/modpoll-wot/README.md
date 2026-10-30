@@ -3,7 +3,7 @@
 An independently versioned TM/TD configuration interpreter for Modpoll and future
 compatible consumers. No Modbus execution, scheduler or MQTT service is included.
 
-The following CLI is available in the next release; it is not in 0.2.0a1.
+The CLI below is included in `modpoll-wot==0.2.0a2`.
 
 ```sh
 modpoll-wot new --title "meter"
