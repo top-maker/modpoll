@@ -1,0 +1,395 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "schema": "https://schema.org/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "Siemens 7kn11110mc00 read-only numeric subset",
+  "description": "Partial model derived from Siemens FW-V7.3 TM. Address and byte/word order assumptions require hardware verification; see README.",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "modpoll:version": "0.2",
+  "properties": {
+    "OPERATING_HOURS": {
+      "title": "Operating Hours over all",
+      "type": "number",
+      "unit": "s",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=8;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2577,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "CNT_POC_DATAPOINTS_WRITTEN": {
+      "title": "Number of Powercenter Datapoints written over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2697,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_POC_DATAPOINTS_DROPPED": {
+      "title": "Number of Powercenter Datapoints dropped over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2699,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_PRIO_REPORTS_WRITTEN": {
+      "title": "Number of End Device prioritized reports written over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2701,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_PRIO_REPORTS_DROPPED": {
+      "title": "Number of End Device prioritized reports dropped over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2703,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_NONPRIO_REPORTS_WRITTEN": {
+      "title": "Number of End Device non-prioritized reports written over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2705,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_NONPRIO_REPORTS_DROPPED": {
+      "title": "Number of End Device non-prioritized reports dropped over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2707,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_PARAMETERS_WRITTEN": {
+      "title": "Number of End Device parameters written over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2709,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZED_PARAMETERS_DROPPED": {
+      "title": "Number of End Device parameters dropped over Modbus RTU",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2711,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_MODBUS_PENDING_REQUESTS": {
+      "title": "Number of pending Modbus RTU requests",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2713,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZIGBEE_FREE_BUFFER": {
+      "title": "Number of Free Buffer over Zigbee",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2715,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "CNT_ZIGBEE_TX_ERROR": {
+      "title": "Number of Tx errors",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2717,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "TEMP": {
+      "title": "Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3071,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "TEMP_AVERAGE": {
+      "title": "Average Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3073,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "title": "Last OID Diagnosis Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3592,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "title": "Last OID Message Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3671,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2577,
+      "modv:quantity": 4,
+      "modpoll:members": [
+        "OPERATING_HOURS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2697,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_POC_DATAPOINTS_WRITTEN"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2699,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_POC_DATAPOINTS_DROPPED"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2701,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_PRIO_REPORTS_WRITTEN"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2703,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_PRIO_REPORTS_DROPPED"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2705,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_NONPRIO_REPORTS_WRITTEN"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2707,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_NONPRIO_REPORTS_DROPPED"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2709,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_PARAMETERS_WRITTEN"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2711,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZED_PARAMETERS_DROPPED"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2713,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_MODBUS_PENDING_REQUESTS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2715,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZIGBEE_FREE_BUFFER"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2717,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_ZIGBEE_TX_ERROR"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3071,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3073,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP_AVERAGE"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3592,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_DIAGNOSIS_LOG"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3671,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_MESSAGE_LOG"
+      ]
+    }
+  ]
+}

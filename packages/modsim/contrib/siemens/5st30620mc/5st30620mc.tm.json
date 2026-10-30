@@ -1,0 +1,188 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "schema": "https://schema.org/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "Siemens 5st30620mc read-only numeric subset",
+  "description": "Partial model derived from Siemens FW-V7.3 TM. Address and byte/word order assumptions require hardware verification; see README.",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "modpoll:version": "0.2",
+  "properties": {
+    "OPERATING_HOURS": {
+      "title": "Operating Hours over all",
+      "type": "number",
+      "unit": "s",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=8;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2577,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "CNT_MECH_OPERATING_CYCLES": {
+      "title": "Number of Mechanical Operations",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2592,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "CNT_TRIP_CYCLES": {
+      "title": "Trip Counter",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2601,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "TEMP": {
+      "title": "Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3071,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "TEMP_AVERAGE": {
+      "title": "Average Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3073,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "title": "Last OID Diagnosis Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3592,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "title": "Last OID Message Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3671,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2577,
+      "modv:quantity": 4,
+      "modpoll:members": [
+        "OPERATING_HOURS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2592,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_MECH_OPERATING_CYCLES"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2601,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_TRIP_CYCLES"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3071,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3073,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP_AVERAGE"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3592,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_DIAGNOSIS_LOG"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3671,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_MESSAGE_LOG"
+      ]
+    }
+  ]
+}

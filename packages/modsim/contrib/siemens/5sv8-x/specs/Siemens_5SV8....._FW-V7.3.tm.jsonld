@@ -1,0 +1,2788 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "schema": "https://schema.org/",
+      "om": "http://www.ontology-of-units-of-measure.org/resource/om-2/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "version": {
+    "model": "1.0.0",
+    "schema:model": "CPCOM_7.3.0.0_52.0.0.0"
+  },
+  "title": "5SV8{{MLFB1}}{{MLFB2}}{{MLFB3}}{{MLFB4}}M{{MLFB5}}",
+  "id": "{{ID}}",
+  "description": "{{DESCRIPTION}}",
+  "base": "modbus+tcp://{{IP}}:{{PORT}}/{{UNITID}}/",
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightYear": 2026,
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "schema:author": {
+    "schema:name": "Siemens"
+  },
+  "schema:manufacturer": {
+    "schema:name": "Siemens"
+  },
+  "schema:mpn": "5SV8{{MLFB1}}{{MLFB2}}{{MLFB3}}{{MLFB4}}M{{MLFB5}}",
+  "properties": {
+    "IDENT_IM0_MANUFACTURER_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Manufacturer ID",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_ORDER_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3?quantity=10",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Article number",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SERIAL_NUMBER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "13?quantity=8",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Serial Number",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_HARDWARE_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "21?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hardware Revision",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SOFTWARE_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "22?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Software Revision",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_REVISION_COUNTER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "24?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Revision Counter",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_PROFILE_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "25?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Profibus Profile",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_PROFILE_SPECIFIC_TYPE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "26?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Profibus Profile Type",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_VERSION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "27?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "IM0 Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SUPPORTED": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "28?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Supported IM Profiles",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM1_FUNCTION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "29?quantity=16",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Plant Identifier",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM1_LOCATION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "45?quantity=11",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Location Identifier",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM2_INSTALLATION_DATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "56?quantity=8",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Installation Date",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_APP_BOT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "64?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Application Controller Bootloader",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_APP": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "69?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Application Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_COM_BOT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "74?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller Bootloader",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "79?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZIGBEE_STACK_VERSION_INFO": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "90?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Stack Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_MARKET": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "94?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Target Market ",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_SET_BLINKING": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "97?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Blinking Mode",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "IDENT_DEVICE_VARIANT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "112?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Device Variant",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZERO_CURRENT_TRANSFORMER_TYPE_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "129?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Zero Current Transformer type",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZERO_CURRENT_TRANSFORMER_TYPE_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "130?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Zero Current Transformer type (Instance 2)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZERO_CURRENT_TRANSFORMER_TYPE_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "131?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Zero Current Transformer type (Instance 3)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZERO_CURRENT_TRANSFORMER_TYPE_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "132?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Zero Current Transformer type (Instance 4)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZCL_FULL_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "170?quantity=4",
+          "modv:type": "xsd:unsignedLong",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Full Version of the ZCL",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "string"
+    },
+    "IDENT_ZCL_SHORT_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "174?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Main part of the ZCL version ",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_TX_POWER_LEVEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1050?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio TX Power Level",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array",
+      "unit": "dBm"
+    },
+    "FW_UPDATE_TARGET_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2056?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Update status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_FW_UPDATE": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "2058?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Control FW Update",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "FW_UPDATE_IDENT_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2059?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Update Version COM Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "ALARM_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2560?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Alarm State",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "OPERATING_HOURS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2578?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Operating Hours over all",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_OPERATING_HOURS_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2582?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Operating Hours Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_OPERATING_HOURS_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2583?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Operating Hours",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "PARAM_RSSI_ZIGBEE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2622?quantity=1",
+          "modv:type": "xsd:int",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Radio Signal Strength RSSI",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "dBm"
+    },
+    "CNT_SWITCH_CYCLES_RELAY1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2646?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Number of Relais 1 switching cycles",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CNT_SWITCH_CYCLES_RELAY2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2647?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Number of Relais 2 switching cycles",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "RCM_ALARM_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2648?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "RCM Alarm State",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_RESET_PARAMETER_DEFAULT": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "2650?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Reset of parameters",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    },
+    "PARAMETER_CHANGE_COUNTER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2651?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Parameter change counter",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "PARAM_RCM_TEST_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2652?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "RCM test status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "COMMAND_OPERATION_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2720?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Command operation state",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "COMMAND_OPERATION_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2721?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Command operation identifier",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "TEMP": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3072?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "TEMP_AVERAGE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3074?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Average Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3340?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "AC Residual Current Low Pass",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3342?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RMS Residual Current Low Pass",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_DC_PEAK_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3344?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "DC Residual Current",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3346?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "AC Residual Current Low Pass (Instance 2)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3348?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RMS Residual Current Low Pass (Instance 2)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_DC_PEAK_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3350?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "DC Residual Current (Instance 2)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3352?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "AC Residual Current Low Pass (Instance 3)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3354?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RMS Residual Current Low Pass (Instance 3)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_DC_PEAK_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3356?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "DC Residual Current (Instance 3)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3358?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "AC Residual Current Low Pass (Instance 4)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3360?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RMS Residual Current Low Pass (Instance 4)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RESIDUAL_CURRENT_DC_PEAK_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3362?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "DC Residual Current (Instance 4)",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "MEASURING_ZERO_CURRENT_TRANSFORMER_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3364?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Measuring Zero Current Transformer Status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "RESIDUAL_CURRENT_METERING_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3365?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Metering range status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "RELAY_IO_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3366?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Relay Input and Output status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "RCM_RMS_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3367?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Effective Threshold RCM RMS Alarm",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "RCM_RMS_ALARM_THRESHOLD_CH1_DKSPOS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3369?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RCS config status: Threshold RCM RMS Alarm",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "RCM_ALARM_ON_TIME_DELAY_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3370?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Effective Activation Delay RCM Alarm",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "RCM_ALARM_ON_TIME_DELAY_CH1_DKSPOS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3372?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "RCS config status: Activation Delay RCM Alarm",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "LAST_OID_TEST_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3584?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Test Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CONF_TEMP_AVERAGE_PERIOD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3586?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Time period to calculate the average temperature",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "s"
+    },
+    "CONF_TEMP_AVERAGE_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3588?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Temperature Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_TEMP_AVERAGE_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3589?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "CONF_TEMP_AVERAGE_HYSTERESIS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3591?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hysteresis Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3593?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Diagnosis Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "LAST_OID_TRIP_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3671?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Trip Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3672?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Message Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CONF_RCM_ALARM_STARTUP_TIME_DELAY": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5124?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "General RCM Alarm Startup Time Delay",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_HYSTERESIS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5128?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hysteresis RCM Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_ALARM_ON_TIME_DELAY_CH1_REMOTE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5130?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Activation Delay RCM Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_OFF_TIME_DELAY_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5132?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Deactivation Delay RCM Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_AUTO_RESET_ENABLE_DISABLE_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5134?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Automatic Reset RCM Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RCM_AC_PRE_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5137?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Pre-Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_AC_ALARM_THRESHOLD_CH1_REMOTE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5139?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_RMS_PRE_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5143?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Pre-Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_RMS_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5145?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_DC_PRE_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5149?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Pre-Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_DC_ALARM_THRESHOLD_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5151?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_ALARM_ON_TIME_DELAY_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5153?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Activation Delay RCM Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_OFF_TIME_DELAY_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5155?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Deactivation Delay RCM Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_AUTO_RESET_ENABLE_DISABLE_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5157?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Automatic Reset RCM Alarm on/off  (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RCM_AC_PRE_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5158?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Pre-Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_AC_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5160?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_RMS_PRE_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5162?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Pre-Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_RMS_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5164?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_DC_PRE_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5166?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Pre-Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_DC_ALARM_THRESHOLD_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5168?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Alarm (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_ALARM_ON_TIME_DELAY_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5170?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Activation Delay RCM Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_OFF_TIME_DELAY_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5172?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Deactivation Delay RCM Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_AUTO_RESET_ENABLE_DISABLE_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5174?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Automatic Reset RCM Alarm on/off  (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RCM_AC_PRE_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5175?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Pre-Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_AC_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5177?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_RMS_PRE_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5179?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Pre-Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_RMS_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5181?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_DC_PRE_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5183?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Pre-Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_DC_ALARM_THRESHOLD_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5185?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Alarm (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_ALARM_ON_TIME_DELAY_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5187?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Activation Delay RCM Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_OFF_TIME_DELAY_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5189?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Deactivation Delay RCM Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_RCM_ALARM_AUTO_RESET_ENABLE_DISABLE_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5191?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Automatic Reset RCM Alarm on/off  (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RCM_AC_PRE_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5192?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Pre-Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_AC_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5194?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM AC Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_RMS_PRE_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5196?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Pre-Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_RMS_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5198?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM RMS Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_RCM_DC_PRE_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5200?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Pre-Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "CONF_RCM_DC_ALARM_THRESHOLD_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5202?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold RCM DC Alarm (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "A"
+    },
+    "CONF_MEASURING_ZERO_CURRENT_TRANSFORMER_STATUS_MONITORING_4CH": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5205?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Measuring Zero Current Transformer Status Monitoring ",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY1_PROPERTIES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5206?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Common Relay 1 properties",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY1_4CH": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5208?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Relay 1 Alarm Assignment",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY2_PROPERTIES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5209?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Common Relay 2 properties",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY2_4CH": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5211?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Relay 2 Alarm Assignment",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_DIGITALOUT1_PROPERTIES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5212?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Common Digital Output 1 properties",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_DIGITALOUT1_4CH": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5214?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Digital Output 1 Alarm Assignment",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_DIGITALOUT2_PROPERTIES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5215?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Common Digital Output 2 properties",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_DIGITALOUT2_4CH": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5217?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Digital Output 2 Alarm Assignment",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RESIDUAL_CURRENT_FILTER_CH1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5218?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Filter configuration",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RESIDUAL_CURRENT_FILTER_CH2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5219?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Filter configuration (Instance 2)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RESIDUAL_CURRENT_FILTER_CH3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5220?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Filter configuration (Instance 3)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RESIDUAL_CURRENT_FILTER_CH4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5221?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Filter configuration (Instance 4)",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY1_TEST_CONTROL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5222?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Relay 1 test",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY2_TEST_CONTROL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "5223?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Relay 2 test",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_START_CALIBRATION": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "5224?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Start of DC offset calibration",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "CMD_ACKNOWLEDGE_RCM_ALARM": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "5225?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "RCM Alarm Acknowledge",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    },
+    "CMD_START_RCM_TEST": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "5226?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Start of RCM test",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    },
+    "CMD_SET_FACTORY_DEFAULT": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "19458?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Set Default Factory Parameter",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    }
+  },
+  "actions": {},
+  "events": {}
+}

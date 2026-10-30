@@ -1,0 +1,1886 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "schema": "https://schema.org/",
+      "om": "http://www.ontology-of-units-of-measure.org/resource/om-2/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "version": {
+    "model": "1.0.0",
+    "schema:model": "CPCOM_7.3.0.0_52.0.0.0"
+  },
+  "title": "5TT43222MC",
+  "id": "{{ID}}",
+  "description": "{{DESCRIPTION}}",
+  "base": "modbus+tcp://{{IP}}:{{PORT}}/{{UNITID}}/",
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightYear": 2026,
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "schema:author": {
+    "schema:name": "Siemens"
+  },
+  "schema:manufacturer": {
+    "schema:name": "Siemens"
+  },
+  "schema:mpn": "5TT43222MC",
+  "properties": {
+    "IDENT_IM0_MANUFACTURER_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Manufacturer ID",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_ORDER_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3?quantity=10",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Article number",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SERIAL_NUMBER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "13?quantity=8",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Serial Number",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_HARDWARE_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "21?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hardware Revision",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SOFTWARE_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "22?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Software Revision",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_REVISION_COUNTER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "24?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Revision Counter",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_PROFILE_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "25?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Profibus Profile",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_PROFILE_SPECIFIC_TYPE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "26?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Profibus Profile Type",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_VERSION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "27?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "IM0 Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM0_SUPPORTED": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "28?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Supported IM Profiles",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM1_FUNCTION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "29?quantity=16",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Plant Identifier",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM1_LOCATION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "45?quantity=11",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Location Identifier",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_IM2_INSTALLATION_DATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "56?quantity=8",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Installation Date",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_COM_BOT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "74?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller Bootloader",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "79?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZIGBEE_STACK_VERSION_INFO": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "90?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Stack Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_MARKET": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "94?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Target Market ",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_SET_BLINKING": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "97?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Blinking Mode",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "IDENT_HW_APCB_VERSION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "109?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hardware Revision",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_VARIANT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "112?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Device Variant",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZCL_FULL_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "170?quantity=4",
+          "modv:type": "xsd:unsignedLong",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Full Version of the ZCL",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "string"
+    },
+    "IDENT_ZCL_SHORT_REVISION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "174?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Main part of the ZCL version ",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_TX_POWER_LEVEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1050?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio TX Power Level",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array",
+      "unit": "dBm"
+    },
+    "FW_UPDATE_TARGET_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2056?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Update status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_FW_UPDATE": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "2058?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Control FW Update",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "FW_UPDATE_IDENT_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2059?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Update Version COM Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_PRODUCTION_LOCK_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2177?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Status of Production Mode",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "ALARM_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2560?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Alarm State",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "OPERATING_HOURS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2578?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Operating Hours over all",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_OPERATING_HOURS_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2582?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Operating Hours Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_OPERATING_HOURS_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2583?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Operating Hours",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "PARAM_RSSI_ZIGBEE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2622?quantity=1",
+          "modv:type": "xsd:int",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Radio Signal Strength RSSI",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "dBm"
+    },
+    "CMD_RESET_PARAMETER_DEFAULT": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "2650?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Reset of parameters",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    },
+    "PARAMETER_CHANGE_COUNTER": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2651?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Parameter change counter",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CNT_OUTPUT_1_CYCLES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2681?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Number of Operations Output 1",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CNT_OUTPUT_2_CYCLES": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2683?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Number of Operations Output 2",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CONF_CNT_OUTPUT_1_CYCLES_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2689?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Operations Output 1 Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_CNT_OUTPUT_1_CYCLES_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2690?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Operations Output 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CONF_CNT_OUTPUT_2_CYCLES_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2692?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Operations Output 2 Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_CNT_OUTPUT_2_CYCLES_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2693?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Operations Output 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "COMMAND_OPERATION_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2720?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Command operation state",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "COMMAND_OPERATION_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2721?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Command operation identifier",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "TEMP": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3072?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "TEMP_AVERAGE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3074?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Average Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "INPUTS_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3115?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "State of inputs",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "OUTPUTS_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3116?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "State of outputs",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "LOCAL_DATE_TIME": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3138?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Local time information",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FORCE_OUTPUT_1_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3140?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "State output 1 forcing",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FORCE_OUTPUT_2_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "3142?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "State output 2 forcing",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_TEMP_AVERAGE_PERIOD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3586?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Time period to calculate the average temperature",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "s"
+    },
+    "CONF_TEMP_AVERAGE_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3588?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Temperature Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_TEMP_AVERAGE_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3589?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "CONF_TEMP_AVERAGE_HYSTERESIS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3591?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hysteresis Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3593?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Diagnosis Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3672?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Message Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "CMD_FORCE_OUTPUT": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "3698?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Command to force an output",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "CMD_SWITCH_DST": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "3700?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Command for DST",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    },
+    "CONF_TIME_SETTING": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3701?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Configuration local time",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_FORCE_OUTPUT_VIA_BUTTON_TIME": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3702?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Configuration time force output via button in seconds [s]",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "s"
+    },
+    "CONF_ZERO_CROSSING_DETECTION": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3708?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Detection for zero crossing",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_RELAY_TYPE_OUTPUTS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3709?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Type of relay of outputs",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_FORCE_OUTPUT_VIA_BUTTON_PERMANENT_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3712?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Force output via button on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_OUTPUT_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18432?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Signal for Output 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_OUTPUT_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18433?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Signal for Output 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_LOGIC_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18434?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Logic Block 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_LOGIC_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18436?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Logic Block 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_LOGIC_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18438?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Logic Block 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_LOGIC_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18440?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Logic Block 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_LOGIC_3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18442?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Logic Block 3",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_LOGIC_3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18444?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Logic Block 3",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_LOGIC_4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18446?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Logic Block 4",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_LOGIC_4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18448?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Logic Block 4",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_PULSE_RELAY_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18450?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Pulse Relay 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_PULSE_RELAY_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18452?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Pulse Relay 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_INPUT_PULSE_RELAY_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18453?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Inputs of Pulse Relay 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_PULSE_RELAY_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18455?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Pulse Relay 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18456?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18462?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18468?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 3",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18474?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 4",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_5": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18480?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 5",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_6": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18486?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 6",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_7": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18492?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 7",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_8": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18498?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 8",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_9": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18504?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 9",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_TIMER_10": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18510?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Timer 10",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_EXTERN_1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18516?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Extern 1",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "FB_PARAM_EXTERN_2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "18517?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Parameter for Extern 2",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_SET_FACTORY_DEFAULT": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "19458?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Set Default Factory Parameter",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "integer"
+    }
+  },
+  "actions": {},
+  "events": {}
+}

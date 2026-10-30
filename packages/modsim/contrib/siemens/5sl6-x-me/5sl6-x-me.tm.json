@@ -1,0 +1,857 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "schema": "https://schema.org/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "Siemens 5sl6-x-me read-only numeric subset",
+  "description": "Partial model derived from Siemens FW-V7.3 TM. Address and byte/word order assumptions require hardware verification; see README.",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "modpoll:version": "0.2",
+  "properties": {
+    "IDENT_RATED_AC_RESIDUAL_CURRENT": {
+      "title": "AC rated residual operating current",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 132,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "IDENT_RATED_DC_RESIDUAL_CURRENT": {
+      "title": "DC Rated residual operating current",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 134,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "IDENT_SHORT_CIRCUIT_BREAKING_CAPACITY": {
+      "title": "Rated short-circuit capacity",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 139,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "OPERATING_HOURS_LOADED": {
+      "title": "Operating Hours with Load Current",
+      "type": "number",
+      "unit": "s",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=8;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2561,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "OPERATING_HOURS": {
+      "title": "Operating Hours over all",
+      "type": "number",
+      "unit": "s",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=8;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2577,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "CNT_MECH_OPERATING_CYCLES": {
+      "title": "Number of Mechanical Operations",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2592,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "CNT_TRIP_CYCLES": {
+      "title": "Trip Counter",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2601,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "CNT_SHORT_CIRCUIT_TRIP_CYCLES": {
+      "title": "Short circuit trip counter",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2623,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "TEMP": {
+      "title": "Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3071,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "TEMP_AVERAGE": {
+      "title": "Average Temperature",
+      "type": "number",
+      "unit": "°C",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3073,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_HARMONIC": {
+      "title": "AC Residual Current Harmonic",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3327,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_HIGH_PASS": {
+      "title": "AC Residual Current High Pass",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3331,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_BAND_PASS": {
+      "title": "AC Residual Current Band Pass",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3333,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_OF_BASIC_FREQUENCY": {
+      "title": "AC Residual Current Basic Frequency",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3337,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH1": {
+      "title": "AC Residual Current Low Pass",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3339,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH1": {
+      "title": "RMS Residual Current Low Pass",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3341,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "RESIDUAL_CURRENT_DC_PEAK_CH1": {
+      "title": "DC Residual Current",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3343,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "LAST_OID_TEST_LOG": {
+      "title": "Last OID Test Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3583,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "title": "Last OID Diagnosis Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3592,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "title": "Last OID Message Log",
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 3671,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "I_L1_MP": {
+      "title": "Current {a}",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5631,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "I_L2_MP": {
+      "title": "Current {b}",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5633,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "I_L3_MP": {
+      "title": "Current {c}",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5635,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "I_N_MP": {
+      "title": "Neutral conductor current",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5637,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "I_GF_MP": {
+      "title": "Ground-fault current",
+      "type": "number",
+      "unit": "A",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5639,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L1_MP": {
+      "title": "Voltage between phase conductor {a} and neutral conductor",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5673,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L2_MP": {
+      "title": "Voltage between phase conductor {b} and neutral conductor",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5675,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L3_MP": {
+      "title": "Voltage between phase conductor {c} and neutral conductor",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5677,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L12_MP": {
+      "title": "Voltage between phase conductor {a} and phase conductor {b}",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5679,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L23_MP": {
+      "title": "Voltage between phase conductor {b} and phase conductor {c}",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5681,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "V_L31_MP": {
+      "title": "Voltage between phase conductor {c} and phase conductor {a}",
+      "type": "number",
+      "unit": "V",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5683,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "P_TOT_MP": {
+      "title": "Active Power",
+      "type": "number",
+      "unit": "W",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5691,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "VA_S_TOT_MP": {
+      "title": "Total apparent power",
+      "type": "number",
+      "unit": "VA",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5693,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "VAR_Q_TOT_MP": {
+      "title": "Total reactive power Q<sub>tot</sub>",
+      "type": "number",
+      "unit": "var",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5695,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "PF_TOT": {
+      "title": "Total power factor",
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=4;signed=true;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 5697,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 132,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "IDENT_RATED_AC_RESIDUAL_CURRENT"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 134,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "IDENT_RATED_DC_RESIDUAL_CURRENT"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 139,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "IDENT_SHORT_CIRCUIT_BREAKING_CAPACITY"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2561,
+      "modv:quantity": 4,
+      "modpoll:members": [
+        "OPERATING_HOURS_LOADED"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2577,
+      "modv:quantity": 4,
+      "modpoll:members": [
+        "OPERATING_HOURS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2592,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_MECH_OPERATING_CYCLES"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2601,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_TRIP_CYCLES"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 2623,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "CNT_SHORT_CIRCUIT_TRIP_CYCLES"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3071,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3073,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "TEMP_AVERAGE"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3327,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_AC_PEAK_HARMONIC"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3331,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_AC_PEAK_HIGH_PASS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3333,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_AC_PEAK_BAND_PASS"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3337,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_AC_PEAK_OF_BASIC_FREQUENCY"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3339,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_AC_PEAK_LOW_PASS_CH1"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3341,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_RMS_PEAK_LOW_PASS_CH1"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3343,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "RESIDUAL_CURRENT_DC_PEAK_CH1"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3583,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_TEST_LOG"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3592,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_DIAGNOSIS_LOG"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 3671,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "LAST_OID_MESSAGE_LOG"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5631,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "I_L1_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5633,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "I_L2_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5635,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "I_L3_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5637,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "I_N_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5639,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "I_GF_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5673,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L1_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5675,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L2_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5677,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L3_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5679,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L12_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5681,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L23_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5683,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "V_L31_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5691,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "P_TOT_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5693,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "VA_S_TOT_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5695,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "VAR_Q_TOT_MP"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 5697,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "PF_TOT"
+      ]
+    }
+  ]
+}

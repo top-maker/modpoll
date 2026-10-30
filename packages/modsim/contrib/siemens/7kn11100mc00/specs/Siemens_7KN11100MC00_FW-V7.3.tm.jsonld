@@ -1,0 +1,2754 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "schema": "https://schema.org/",
+      "om": "http://www.ontology-of-units-of-measure.org/resource/om-2/"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "version": {
+    "model": "1.0.0",
+    "schema:model": "CPCOM_7.3.0.0_52.0.0.0"
+  },
+  "title": "7KN11100MC00",
+  "id": "{{ID}}",
+  "description": "{{DESCRIPTION}}",
+  "base": "modbus+tcp://{{IP}}:{{PORT}}/{{UNITID}}/",
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc",
+  "schema:license": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+  "schema:copyrightYear": 2026,
+  "schema:copyrightHolder": {
+    "@type": "Organization",
+    "name": "Siemens"
+  },
+  "schema:author": {
+    "schema:name": "Siemens"
+  },
+  "schema:manufacturer": {
+    "schema:name": "Siemens"
+  },
+  "schema:mpn": "7KN11100MC00",
+  "properties": {
+    "IDENT_FW_COM_BOT": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "74?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller Bootloader",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_FW_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "79?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Version Communication Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_BLE_STACK_VERSION_INFO": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "84?quantity=6",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "BLE Stack Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_ZIGBEE_STACK_VERSION_INFO": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "90?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Stack Version",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_BLE_FUNCTION_CTRL": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "768?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Bluetooth Control\n",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "IDENT_BLE_FUNCTION_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "769?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Bluetooth State",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_BLE_TX_POWER_LEVEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "770?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Bluetooth TX Power Level",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array",
+      "unit": "dBm"
+    },
+    "IDENT_BLE_DEVICE_ADDRESS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "771?quantity=3",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Bluetooth Device Address",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_BLE_PASSKEY": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "774?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Bluetooth Passkey",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_DATE_TIME": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1024?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Date/Time",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1026?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (1)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1027?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (2)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1028?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (3)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1029?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (4)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID5": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1030?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (5)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID6": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1031?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (6)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID7": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1032?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (7)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID8": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1033?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (8)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID9": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1034?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (9)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID10": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1035?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (10)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID11": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1036?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (11)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID12": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1037?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (12)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID13": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1038?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (13)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID14": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1039?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (14)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID15": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1040?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (15)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID16": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1041?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (16)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID17": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1042?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (17)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID18": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1043?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (18)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID19": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1044?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (19)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID20": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1045?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (20)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID21": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1046?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (21)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID22": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1047?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (22)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID23": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1048?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (23)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_PAIRING_STATUS_UNIT_ID24": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1049?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Pairing Status (24)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_TX_POWER_LEVEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1050?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio TX Power Level",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array",
+      "unit": "dBm"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1051?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (1)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1052?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (2)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1053?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (3)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1054?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (4)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID5": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1055?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (5)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID6": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1056?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (6)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID7": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1057?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (7)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID8": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1058?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (8)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID9": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1059?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (9)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID10": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1060?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (10)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID11": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1061?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (11)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID12": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1062?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (12)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID13": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1063?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (13)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID14": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1064?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (14)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID15": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1065?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (15)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID16": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1066?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (16)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID17": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1067?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (17)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID18": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1068?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (18)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID19": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1069?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (19)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID20": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1070?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (20)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID21": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1071?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (21)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID22": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1072?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (22)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID23": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1073?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (23)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "IDENT_DEVICE_STATUS_UNIT_ID24": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "1074?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Device Status (24)",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID1": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1536?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID1": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1545?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID2": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1549?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID2": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1558?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID3": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1562?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID3": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1571?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID4": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1575?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID4": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1584?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID5": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1588?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID5": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1597?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID6": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1601?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID6": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1610?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID7": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1614?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID7": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1623?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID8": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1627?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID8": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1636?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID9": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1640?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID9": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1649?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID10": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1653?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID10": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1662?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID11": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1666?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID11": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1675?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID12": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1679?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID12": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1688?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID13": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1692?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID13": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1701?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID14": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1705?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID14": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1714?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID15": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1718?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID15": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1727?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID16": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1731?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID16": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1740?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID17": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1744?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID17": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1753?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID18": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1757?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID18": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1766?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID19": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1770?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID19": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1779?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID20": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1783?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID20": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1792?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID21": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1796?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID21": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1805?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID22": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1809?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID22": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1818?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID23": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1822?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID23": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1831?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_ZIGBEE_INSTALLATION_CODE_UNIT_ID24": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1835?quantity=9",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Installation Code",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_MAC_ADDRESS_UNIT_ID24": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1844?quantity=4",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "MAC Address",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_PAIR_UNPAIR": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "1848?quantity=12",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Pair/Unpair the End Device",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "PARAM_PAIR_ZIGBEE_CHANNEL_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1860?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Manual radio channel selection on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_PAIR_ZIGBEE_CHANNEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "1861?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio channel selection",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "FW_UPDATE_TARGET_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2056?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Update status",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CMD_FW_UPDATE": {
+      "forms": [
+        {
+          "op": [
+            "writeproperty"
+          ],
+          "href": "2058?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Command",
+      "title": "Control FW Update",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": true,
+      "type": "array"
+    },
+    "FW_UPDATE_IDENT_COM": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2059?quantity=5",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "FW Update Version COM Controller",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_PRODUCTION_LOCK_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2177?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Status of Production Mode",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "ALARM_STATE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2560?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Alarm State",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "OPERATING_HOURS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "2578?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Operating Hours over all",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "CONF_OPERATING_HOURS_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2582?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Operating Hours Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_OPERATING_HOURS_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "2583?quantity=4",
+          "modv:type": "xsd:double",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Operating Hours",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "s"
+    },
+    "PARAM_RSSI_BLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2621?quantity=1",
+          "modv:type": "xsd:int",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "BLE Signal Strength RSSI",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "dBm"
+    },
+    "PARAM_ZIGBEE_CHANNEL": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2633?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Radio Channel",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "NETWORK_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2668?quantity=1",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Network ID",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "EXTENDED_NETWORK_ID": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "2669?quantity=4",
+          "modv:type": "xsd:unsignedLong",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Extended Network ID",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "string"
+    },
+    "TEMP": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3072?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "TEMP_AVERAGE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3074?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Average Temperature",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "CONF_TEMP_AVERAGE_PERIOD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3586?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Time period to calculate the average temperature",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "integer",
+      "unit": "s"
+    },
+    "CONF_TEMP_AVERAGE_ENABLE_DISABLE": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3588?quantity=1",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Temperature Alarm on/off",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "CONF_TEMP_AVERAGE_THRESHOLD": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3589?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Threshold Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "°C"
+    },
+    "CONF_TEMP_AVERAGE_HYSTERESIS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "3591?quantity=2",
+          "modv:type": "xsd:float",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Hysteresis Temperature Alarm",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "LAST_OID_DIAGNOSIS_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3593?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Diagnosis Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "LAST_OID_MESSAGE_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "observeproperty"
+          ],
+          "href": "3672?quantity=2",
+          "modv:type": "xsd:unsignedInt",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "MeteringValue",
+      "title": "Last OID Message Log",
+      "observable": true,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "integer"
+    },
+    "PARAM_DELAYED_ACKNOWLEDGE_COMMAND_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "4096?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Status of currently active delayed acknowledge command",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_DELAYED_ACKNOWLEDGE_RESPONSE_LOG": {
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "href": "4098?quantity=121",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Parameter",
+      "title": "Delayed Response Log information",
+      "observable": false,
+      "readOnly": true,
+      "writeOnly": false,
+      "type": "array"
+    },
+    "PARAM_DELAYED_ACKNOWLEDGE_READ_LOG_STATUS": {
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "href": "4219?quantity=2",
+          "modv:type": "xsd:hexBinary",
+          "modv:entity": "HoldingRegister",
+          "modv:zeroBasedAddressing": false,
+          "modv:pollingTime": 200
+        }
+      ],
+      "schema:category": "Status",
+      "title": "Status of currently active delayed acknowledge read log",
+      "observable": false,
+      "readOnly": false,
+      "writeOnly": false,
+      "type": "array"
+    }
+  },
+  "actions": {},
+  "events": {}
+}

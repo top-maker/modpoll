@@ -1,0 +1,11 @@
+[
+  {
+    "file": "sentron-system-manual-2023.pdf",
+    "url": "https://cache.industry.siemens.com/dl/files/806/109791806/att_1158672/v1/MAN_L1V30827018B-04_en_en-US.pdf",
+    "retrieved": "2026-10-30",
+    "sha256": "e91410af19c683c006dd3a20cc88952bc8950f48be277534599a112b1fb3cb62",
+    "bytes": 10379012,
+    "copyright": "Siemens; see original PDF. Vendor documents are not covered by the repository MIT license.",
+    "scope": "2023 system manual; may not cover FW 7.3 or this exact variant."
+  }
+]
