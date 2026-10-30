@@ -86,17 +86,19 @@ def export_documents(tds: dict, args: argparse.Namespace) -> None:
     output_is_directory = output is not None and (
         output.is_dir() or not output.suffix.lower() == ".json"
     )
-    if output_is_directory:
+    if output_is_directory and output is not None:
         output.mkdir(parents=True, exist_ok=True)
     if args.output_dir and output is None:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     for key, td in tds.items():
         target = (
             output / f"{key}.td.json"
-            if output_is_directory
-            else output
-            if output is not None
-            else Path(args.output_dir) / f"{key}.td.json"
+            if output_is_directory and output is not None
+            else (
+                output
+                if output is not None
+                else Path(args.output_dir) / f"{key}.td.json"
+            )
         )
         target.write_text(
             json.dumps(td, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

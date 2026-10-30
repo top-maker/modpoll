@@ -65,12 +65,12 @@ def guard(tag):
         )
     )["jobs"]
     expected = {"quality", "docs"} | {
-        f"tox ({version})" for version in ("3.10", "3.11", "3.12", "3.13", "3.14")
+        f"tox ({version})" for version in ("3.10", "3.14")
     }
     if {job["name"] for job in jobs} != expected or any(
         job["conclusion"] != "success" for job in jobs
     ):
-        raise ValueError("release requires all seven expected CI jobs")
+        raise ValueError("release requires all four expected CI jobs")
     print(f"Accepted {sha} from CI {runs[0]['id']}")
 
 

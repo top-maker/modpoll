@@ -1,0 +1,287 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "title": "Advantech ADAM-6024 Ethernet Remote I/O Module",
+  "description": "Thing Model for the Advantech ADAM-6024 remote I/O module: six analog inputs, two analog outputs, two digital inputs and two digital outputs. Analog channels are exposed as raw 16-bit Modbus words; digital channels are booleans. Register addresses are manual-derived candidates and are not hardware-verified. Confirm address tables, firmware behavior, analog ranges and wire normalization before using with physical equipment.",
+  "modpoll:version": "0.2",
+  "properties": {
+    "AI0_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 0 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 0,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/0?quantity=1"
+        }
+      ]
+    },
+    "AI1_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 1 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/1?quantity=1"
+        }
+      ]
+    },
+    "AI2_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 2 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 2,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/2?quantity=1"
+        }
+      ]
+    },
+    "AI3_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 3 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 3,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/3?quantity=1"
+        }
+      ]
+    },
+    "AI4_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 4 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 4,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/4?quantity=1"
+        }
+      ]
+    },
+    "AI5_RAW": {
+      "type": "integer",
+      "description": "Analog input channel 5 raw Modbus input-register word. No voltage/current scaling, signedness or engineering units are inferred.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "InputRegister",
+          "modv:address": 5,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/5?quantity=1"
+        }
+      ]
+    },
+    "AO0_RAW": {
+      "type": "integer",
+      "description": "Analog output channel 0 raw Modbus holding-register word. Writable through Modbus; permitted values and conversion to physical output depend on device range configuration and firmware and must be verified before hardware writes.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 10,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/10?quantity=1"
+        }
+      ]
+    },
+    "AO1_RAW": {
+      "type": "integer",
+      "description": "Analog output channel 1 raw Modbus holding-register word. Writable through Modbus; permitted values and conversion to physical output depend on device range configuration and firmware and must be verified before hardware writes.",
+      "unit": "count",
+      "minimum": 0,
+      "maximum": 65535,
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream;length=2;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 11,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "href": "modbus+tcp://127.0.0.1:5020/1/11?quantity=1"
+        }
+      ]
+    },
+    "DI0": {
+      "type": "boolean",
+      "description": "Digital input channel 0 state.",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=1;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 0,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean",
+          "href": "modbus+tcp://127.0.0.1:5020/1/0?quantity=1"
+        }
+      ]
+    },
+    "DI1": {
+      "type": "boolean",
+      "description": "Digital input channel 1 state.",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "contentType": "application/octet-stream;length=1;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 1,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean",
+          "href": "modbus+tcp://127.0.0.1:5020/1/1?quantity=1"
+        }
+      ]
+    },
+    "DO0": {
+      "type": "boolean",
+      "description": "Digital output channel 0 state; writable through Modbus. Verify physical wiring and permitted operation before controlling hardware.",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream;length=1;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "Coil",
+          "modv:address": 16,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean",
+          "href": "modbus+tcp://127.0.0.1:5020/1/16?quantity=1"
+        }
+      ]
+    },
+    "DO1": {
+      "type": "boolean",
+      "description": "Digital output channel 1 state; writable through Modbus. Verify physical wiring and permitted operation before controlling hardware.",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream;length=1;signed=false;byteSeq=BIG_ENDIAN",
+          "modv:entity": "Coil",
+          "modv:address": 17,
+          "modv:quantity": 1,
+          "modv:type": "xsd:boolean",
+          "href": "modbus+tcp://127.0.0.1:5020/1/17?quantity=1"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "InputRegister",
+      "modv:address": 0,
+      "modv:quantity": 6,
+      "modpoll:members": [
+        "AI0_RAW",
+        "AI1_RAW",
+        "AI2_RAW",
+        "AI3_RAW",
+        "AI4_RAW",
+        "AI5_RAW"
+      ]
+    },
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 10,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "AO0_RAW",
+        "AO1_RAW"
+      ]
+    },
+    {
+      "modv:entity": "DiscreteInput",
+      "modv:address": 0,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "DI0",
+        "DI1"
+      ]
+    },
+    {
+      "modv:entity": "Coil",
+      "modv:address": 16,
+      "modv:quantity": 2,
+      "modpoll:members": [
+        "DO0",
+        "DO1"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": "nosec_sc"
+}

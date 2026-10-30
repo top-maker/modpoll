@@ -220,7 +220,9 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
             device(1, initial={"AO0_RAW": 10}),
             device(
                 2,
-                scenario=str(ROOT / "contrib/advantech/adam-6024/simulation/io-loopback.sim.json"),
+                scenario=str(
+                    ROOT / "contrib/advantech/adam-6024/simulation/adam-6024.sim.json"
+                ),
             ),
         ],
         port=port,

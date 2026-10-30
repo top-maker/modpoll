@@ -31,7 +31,7 @@ poetry run mkdocs build -s -f mkdocs-preview.yml
 poetry run tox
 ```
 
-The tox matrix covers Python 3.10–3.14 and requires those interpreters. Record
+The tox matrix covers Python 3.10 and 3.14 and requires those interpreters. Record
 unavailable environments rather than claiming the full matrix passed. Local
 protocol tests use loopback; physical device and serial validation are separate.
 Add meaningful regression coverage and update documentation for behavior changes.

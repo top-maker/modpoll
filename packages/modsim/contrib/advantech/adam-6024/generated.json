@@ -1,0 +1,19 @@
+{
+  "source": "adam-6024.tm.json",
+  "source_sha256": "4c2aee3334faf6622f4ee34a23108fa0ec100a6b3110a78200eee79da8935596",
+  "generator": {
+    "package": "modpoll-wot",
+    "version": "0.2.0a1"
+  },
+  "instance": {
+    "host": "127.0.0.1",
+    "port": 5020,
+    "unit_id": 1
+  },
+  "artifacts": {
+    "adam-6024.generated.td.json": {
+      "target": "project",
+      "sha256": "7362621b233d323f231c838c62f7a768f040a9b296edb513991ea044baebc458"
+    }
+  }
+}

@@ -3,7 +3,9 @@
 
 def initialize(device):
     initial = device.parameters.get("initial", 200)
-    device.set_many({f"AI{channel}_RAW": initial + channel * 1000 for channel in range(8)})
+    device.set_many(
+        {f"AI{channel}_RAW": initial + channel * 1000 for channel in range(8)}
+    )
 
 
 def tick(device, elapsed, dt):
