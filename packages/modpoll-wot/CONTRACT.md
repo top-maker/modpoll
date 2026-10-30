@@ -7,8 +7,8 @@ Its entity, address, quantity and byte/word-order vocabulary is reused. Ordered
 acquisition groups, offsets, precise decoding and multipliers are project extensions.
 They do not claim standard W3C acquisition or transformation semantics.
 
-Use `python -m modpoll_wot MODEL [--unit-id N]` to validate and inspect a
-model without opening a device connection. Schemas are bundled locally; the
+Use `modpoll-wot validate MODEL --profile [--unit-id N]` to validate a
+model without opening a device connection (available in the next release). Schemas are bundled locally; the
 loader does not dereference contexts or remote schema dependencies. The official
 TD/TM schemas identify themselves as `1.1-12-March-2025` (Draft 7).
 

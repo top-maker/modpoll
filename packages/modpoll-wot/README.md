@@ -3,33 +3,27 @@
 An independently versioned TM/TD configuration interpreter for Modpoll and future
 compatible consumers. No Modbus execution, scheduler or MQTT service is included.
 
-```sh
-pip install modpoll-wot==0.2.0a1
-python -m modpoll_wot meter.tm.json
-```
-See [profile.md](profile.md) for the current 0.2 profile and
-[CONTRACT.md](CONTRACT.md) for retained 0.1 compatibility.
-
-The installed `modpoll-wot` command offers separate structure and executable
-profile checks. These commands are included in the next release, not 0.2.0a1:
+The following CLI is available in the next release; it is not in 0.2.0a1.
 
 ```sh
-modpoll-wot generate tm --title "Meter" --output meter.tm.json
-modpoll-wot validate meter.tm.json --kind tm
+modpoll-wot generate --title "Meter" -o meter.tm.json
+modpoll-wot validate meter.tm.json
 modpoll-wot validate meter.tm.json --kind tm --profile
-modpoll-wot generate td --input meter.tm.json --host 127.0.0.1 --port 5020 --unit-id 7 --output meter.td.json
-modpoll-wot validate meter.td.json --kind td
+modpoll-wot export meter.tm.json --host 127.0.0.1 --port 5020 --unit-id 7 -o meter.td.json
+modpoll-wot validate meter.td.json
 ```
 
-The starter TM contains no Modbus mappings and is not executable until edited
-to conform to profile 0.2. TD generation requires an executable profile 0.2 TM
-and any needed `--param NAME=JSON` bindings. Output files are never overwritten.
-Validation is offline; schema success only checks structure, not JSON-LD,
-references, device correctness or complete W3C conformance. `--kind auto`
-detects TM via its top-level `tm:ThingModel` type and otherwise selects TD;
-use `--kind tm` when checking a known TM. `--profile` adds project constraints
-and accepts `--host`, `--port`, `--unit-id`, and `--param`. The original
-`python -m modpoll_wot --config ...` interface remains supported.
+Use `modpoll-wot --help` and `modpoll-wot validate --help` for options.
+Structure validation is offline and rejects duplicate JSON keys; it does not
+check JSON-LD, references, device behavior or complete W3C conformance. Type is
+detected from the document, so use `--kind tm` for a known TM whose type might
+be missing. `--profile` checks the executable subset, accepting instance options
+and `--param NAME=JSON` when needed. The starter is a standard TM skeleton;
+add profile 0.2 mappings before executable validation or export. Export accepts
+`--target node-wot-0.9.2` for the documented subset and never overwrites files.
+
+See [profile.md](profile.md) for the current profile and
+[CONTRACT.md](CONTRACT.md) for retained 0.1 profile support.
 
 The loader validates bundled W3C TM/TD 1.1 schemas, the project extension
 schema, and acquisition semantics. It does not execute Modbus requests.

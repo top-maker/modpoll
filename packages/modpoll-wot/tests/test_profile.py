@@ -220,10 +220,11 @@ class ProfileCliTests(unittest.TestCase):
             source = Path(temp) / "source.td.json"
             output = Path(temp) / "instance.tm.json"
             source.write_text(json.dumps(numeric()))
-            command = [sys.executable, "-m", "modpoll_wot", "--config"]
+            command = [sys.executable, "-m", "modpoll_wot"]
             result = subprocess.run(
                 command
                 + [
+                    "export",
                     str(source),
                     "--host",
                     "127.0.0.1",
@@ -236,14 +237,24 @@ class ProfileCliTests(unittest.TestCase):
                 text=True,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(json.loads(result.stdout)["kind"], "tm")
+            self.assertIn("Exported TD", result.stdout)
             reread = subprocess.run(
-                command + [str(output)], capture_output=True, text=True
+                command + ["validate", str(output), "--profile"],
+                capture_output=True,
+                text=True,
             )
             self.assertEqual(reread.returncode, 0, reread.stderr)
-            self.assertEqual(json.loads(reread.stdout)["kind"], "td")
+            self.assertIn("TD structure", reread.stdout)
             duplicate = subprocess.run(
-                command + [str(source), "--host", "localhost", "--output", str(output)],
+                command
+                + [
+                    "export",
+                    str(source),
+                    "--host",
+                    "localhost",
+                    "--output",
+                    str(output),
+                ],
                 capture_output=True,
                 text=True,
             )
@@ -265,7 +276,7 @@ class ProfileCliTests(unittest.TestCase):
             for text in ('{"title":"a","title":"b"}', "[]", "NaN"):
                 source.write_text(text)
                 result = subprocess.run(
-                    [sys.executable, "-m", "modpoll_wot", "--config", str(source)],
+                    [sys.executable, "-m", "modpoll_wot", "validate", str(source)],
                     capture_output=True,
                     text=True,
                 )

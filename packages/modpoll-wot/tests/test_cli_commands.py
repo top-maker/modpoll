@@ -21,7 +21,7 @@ class CommandTests(unittest.TestCase):
             path = Path(directory) / "starter.tm.json"
             self.assertEqual(
                 self.run_cli(
-                    "generate", "tm", "--title", "Meter", "--output", path
+                    "generate", "--title", "Meter", "--output", path
                 ).returncode,
                 0,
             )
@@ -34,21 +34,27 @@ class CommandTests(unittest.TestCase):
             )
             self.assertNotEqual(
                 self.run_cli(
-                    "generate", "tm", "--title", "Meter", "--output", path
+                    "generate", "--title", "Meter", "--output", path
                 ).returncode,
                 0,
             )
             path.write_text('{"x": 1, "x": 2}', encoding="utf-8")
             self.assertNotEqual(self.run_cli("validate", path).returncode, 0)
 
+    def test_subcommands_are_discoverable_and_old_interface_is_rejected(self):
+        help_text = self.run_cli("--help")
+        self.assertEqual(help_text.returncode, 0)
+        for command in ("validate", "generate", "export"):
+            self.assertIn(command, help_text.stdout)
+        self.assertNotEqual(self.run_cli("--config", "model.json").returncode, 0)
+        self.assertNotEqual(self.run_cli("model.json").returncode, 0)
+
     def test_td_generation_and_validation(self):
         source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "instance.td.json"
             result = self.run_cli(
-                "generate",
-                "td",
-                "--input",
+                "export",
                 source,
                 "--host",
                 "127.0.0.1",
@@ -69,9 +75,7 @@ class CommandTests(unittest.TestCase):
             )
             self.assertNotEqual(
                 self.run_cli(
-                    "generate",
-                    "td",
-                    "--input",
+                    "export",
                     path,
                     "--output",
                     Path(directory) / "other.json",

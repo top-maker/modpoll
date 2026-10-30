@@ -100,14 +100,14 @@ From the repository (omit PYTHONPATH with an installed candidate wheel):
 
 ```sh
 PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
-  --config examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
-  --unit-id 7 --output /tmp/modsim-instance.td.json
+  export examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
+  --unit-id 7 -o /tmp/modsim-instance.td.json
 PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
-  --config /tmp/modsim-instance.td.json
+  validate /tmp/modsim-instance.td.json --profile
 ```
 
-Existing output files are never overwritten. The original positional validator
-path remains supported. The shared package supplies models/metadata, not a
+Existing output files are never overwritten. These subcommands require the
+next shared package release; 0.2.0a1 does not provide them. The shared package supplies models/metadata, not a
 Modbus client/server, scheduler or MQTT service.
 
 ## Shared TD and binary media parameters
