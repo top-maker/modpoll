@@ -1,6 +1,6 @@
 # Model-driven simulation
 
-The v2 source uses the published, exact `modpoll-wot==0.2.0a1` dependency.
+The v2 source uses the published, exact `modpoll-wot==0.2.0a2` dependency.
 Install with `poetry install`. Model parsing and TM instantiation belong to that
 shared package; Modsim owns state and protocol execution.
 

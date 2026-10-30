@@ -3,7 +3,7 @@
   "source_sha256": "4c2aee3334faf6622f4ee34a23108fa0ec100a6b3110a78200eee79da8935596",
   "generator": {
     "package": "modpoll-wot",
-    "version": "0.2.0a1"
+    "version": "0.2.0a2"
   },
   "instance": {
     "host": "127.0.0.1",

@@ -978,13 +978,13 @@ mkdocstrings = ">=0.25"
 
 [[package]]
 name = "modpoll-wot"
-version = "0.2.0a1"
+version = "0.2.0a2"
 description = "Shared WoT Modbus configuration interpreter"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "modpoll_wot-0.2.0a1-py3-none-any.whl", hash = "sha256:3e52e6aec0700ccea55b8d07905777244b39ab60610c7151e9618fc570b4d886"},
-    {file = "modpoll_wot-0.2.0a1.tar.gz", hash = "sha256:d352d65ffcf7e382abd393c2126a555e72543d17969b189563204ace99412d68"},
+    {file = "modpoll_wot-0.2.0a2-py3-none-any.whl", hash = "sha256:4d5a4e67b40de9367afa20715b420f3b63ceef45c8b8d0ca05bc6a9ea75e8c29"},
+    {file = "modpoll_wot-0.2.0a2.tar.gz", hash = "sha256:42df645c38638408a9de72b0f80c4186b33872bc1511598239984d88fd07245f"},
 ]
 
 [package.dependencies]
@@ -1771,4 +1771,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "20caeb4cee5230d482227e4d39d29f7f8dbef3e35fe41cff9bb3f13b0be27427"
+content-hash = "7dba00f088729e258b063cf418c715e8dca6428be85a39535fe879722f03d0c6"

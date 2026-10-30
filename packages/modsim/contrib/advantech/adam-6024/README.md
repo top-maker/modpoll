@@ -59,8 +59,7 @@ poetry run python tools/generate-td.py --check
 To export a real endpoint for an external Consumer:
 
 ```sh
-poetry run python -m modpoll_wot \
-  --config contrib/advantech/adam-6024/adam-6024.tm.json \
+poetry run modpoll-wot export contrib/advantech/adam-6024/adam-6024.tm.json \
   --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-6024-instance.td.json
 ```

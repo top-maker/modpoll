@@ -23,7 +23,7 @@ def main():
         from modpoll_wot import export_td
         from modpoll_wot.loading import load_document
     except ImportError:
-        parser.error("requires modpoll-wot==0.2.0a1; see README.md")
+        parser.error("requires modpoll-wot==0.2.0a2; see README.md")
     changed = []
     for product, stem in PRODUCTS.items():
         directory = ROOT.parent / "contrib" / "advantech" / product

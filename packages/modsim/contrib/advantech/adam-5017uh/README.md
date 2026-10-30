@@ -55,8 +55,7 @@ The source TM has no deployed host, port or Unit ID. To export a TD for an
 external consumer using the project's pinned `modpoll-wot` dependency:
 
 ```sh
-poetry run python -m modpoll_wot \
-  --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+poetry run modpoll-wot export contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --host 127.0.0.1 --port 5020 --unit-id 1 --target project \
   --output /tmp/adam-5017uh-instance.td.json
 ```

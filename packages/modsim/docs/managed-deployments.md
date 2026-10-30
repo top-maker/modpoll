@@ -75,7 +75,7 @@ change during an update: remove it in one successful `up`, then recreate it.
   Declare it explicitly when creating multiple instances of an unbound TM.
 
 The deployment format is a Modsim contract, not a standard TD object. TD generation
-uses `modpoll-wot==0.2.0a1` and its bundled TD/Modbus/profile validation. There is
+uses `modpoll-wot==0.2.0a2` and its bundled TD/Modbus/profile validation. There is
 no private TD parser or arbitrary TD patch mechanism.
 
 Scenarios keep their existing version `"1"` schema, including `initial`, generators,
