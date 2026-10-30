@@ -10,6 +10,9 @@ documentation = "https://top-maker.github.io/modpoll/v2/"
 packages = [{ include = "modpoll_wot" }]
 include = ["CONTRACT.md", "profile.md", "modpoll_wot/schemas/*.json", "modpoll_wot/schemas/*.txt", "modpoll_wot/schemas/SOURCES.md"]
 
+[tool.poetry.scripts]
+modpoll-wot = "modpoll_wot.__main__:main"
+
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 jsonschema = ">=4.18,<5"
