@@ -124,7 +124,7 @@ def _wait_for_pypi(fetch, label, deadline):
 
 
 def download(version, directory):
-    # Avoid stale index and file caches immediately after publication.
+    # Retry delayed metadata and wheel visibility after publication.
     deadline = time.monotonic() + 600
 
     def find_wheel():

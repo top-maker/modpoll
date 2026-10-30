@@ -20,8 +20,9 @@ Never replace tags or PyPI versions. If a later job fails, retry that failed job
 if publication itself needs recovery, reuse the original saved distributions.
 
 Registry acceptance waits up to ten minutes in total for version metadata and
-the wheel, retrying HTTP 404 and missing wheel metadata with fresh cache-busting
-URLs. Other HTTP errors and hash mismatches fail immediately. If the wait times
+the wheel, retrying HTTP 404 and missing wheel metadata with changing query
+strings, which do not guarantee a cache bypass. Other HTTP errors and hash
+mismatches fail immediately. If the wait times
 out, keep the original artifacts for recovery; do not replace a tag or version.
 
 To repeat acceptance for an existing immutable tag after fixing validation tools,
