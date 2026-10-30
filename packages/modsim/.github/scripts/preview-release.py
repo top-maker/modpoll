@@ -96,19 +96,55 @@ def immutable(version):
         output.write(f"exists={result}\n")
 
 
+def _wait_for_pypi(fetch, label, deadline):
+    """Wait for a newly published resource, without masking other failures."""
+    attempts = 0
+    while True:
+        attempts += 1
+        try:
+            value = fetch()
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+            value = None
+        if value is not None:
+            return value
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError(
+                f"PyPI {label} still unavailable after {attempts} attempts"
+            )
+        delay = min(20, remaining)
+        print(
+            f"PyPI {label} not yet available (attempt {attempts}); retrying in {delay:.0f}s",
+            file=sys.stderr,
+            flush=True,
+        )
+        time.sleep(delay)
+
+
 def download(version, directory):
-    # Avoid a stale simple index immediately after successful publication.
-    data = None
-    for attempt in range(6):
+    # Avoid stale index and file caches immediately after publication.
+    deadline = time.monotonic() + 600
+
+    def find_wheel():
         data = metadata(version)
-        if data is not None:
-            break
-        time.sleep(5)
-    if data is None:
-        raise ValueError("published version is not available in PyPI metadata")
-    item = next(item for item in data["urls"] if item["filename"].endswith(".whl"))
-    with urllib.request.urlopen(item["url"], timeout=30) as response:
-        payload = response.read()
+        if data is None:
+            return None
+        wheels = [item for item in data["urls"] if item["filename"].endswith(".whl")]
+        if len(wheels) > 1:
+            raise ValueError("expected exactly one published wheel")
+        return wheels[0] if wheels else None
+
+    item = _wait_for_pypi(find_wheel, "wheel metadata", deadline)
+
+    def fetch_wheel():
+        separator = "&" if "?" in item["url"] else "?"
+        url = f"{item['url']}{separator}release_check={time.time_ns()}"
+        with urllib.request.urlopen(url, timeout=30) as response:
+            return response.read()
+
+    payload = _wait_for_pypi(fetch_wheel, "wheel file", deadline)
     if hashlib.sha256(payload).hexdigest() != item["digests"]["sha256"]:
         raise ValueError("published wheel SHA256 mismatch")
     destination = Path(directory)

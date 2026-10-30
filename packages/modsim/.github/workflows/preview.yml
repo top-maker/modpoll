@@ -133,6 +133,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install published wheel and test dependencies
+        timeout-minutes: 15
         env:
           TAG: ${{ inputs.tag || github.ref_name }}
         run: |
