@@ -6,7 +6,7 @@ compatible consumers. No Modbus execution, scheduler or MQTT service is included
 The following CLI is available in the next release; it is not in 0.2.0a1.
 
 ```sh
-modpoll-wot generate --title "Meter" -o meter.tm.json
+modpoll-wot new --title "meter"
 modpoll-wot validate meter.tm.json
 modpoll-wot validate meter.tm.json --kind tm --profile
 modpoll-wot export meter.tm.json --host 127.0.0.1 --port 5020 --unit-id 7 -o meter.td.json
@@ -21,7 +21,8 @@ Structure validation is offline and rejects duplicate JSON keys; it does not
 check JSON-LD, references, device behavior or complete W3C conformance. Type is
 detected from the document, so use `--kind tm` for a known TM whose type might
 be missing. `--profile` checks the executable subset, accepting instance options
-and `--param NAME=JSON` when needed. The starter is a standard TM skeleton;
+and `--param NAME=JSON` when needed. `new` writes `<title>.tm.json` in the current directory by default; use `-o`
+to choose another path. It never overwrites a file. The starter is a standard TM skeleton;
 add profile 0.2 mappings before executable validation or export. Export accepts
 `--target node-wot-0.9.2` for the documented subset and never overwrites files.
 

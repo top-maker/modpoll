@@ -48,9 +48,9 @@ def main():
         "--profile", action="store_true", help="Also check executable profile"
     )
     _instance_options(check)
-    generate = commands.add_parser("generate", help="Generate a starter TM")
-    generate.add_argument("--title", required=True)
-    generate.add_argument("-o", "--output", required=True)
+    new = commands.add_parser("new", help="Create a starter TM")
+    new.add_argument("--title", required=True)
+    new.add_argument("-o", "--output", help="Output path (default: <title>.tm.json)")
     export = commands.add_parser("export", help="Export a concrete TD from a TM")
     export.add_argument("input", help="Source TM file")
     export.add_argument("-o", "--output", required=True)
@@ -61,18 +61,25 @@ def main():
     args = parser.parse_args()
     phase = "Input"
     try:
-        if args.command == "generate":
+        if args.command == "new":
+            if not args.title.strip():
+                raise AcquisitionError("title cannot be empty")
+            if args.output is None and (
+                args.title in (".", "..") or "/" in args.title or "\\" in args.title
+            ):
+                raise AcquisitionError(
+                    "title cannot contain path separators; use --output"
+                )
+            output = args.output or f"{args.title}.tm.json"
             document = {
                 "@context": "https://www.w3.org/2022/wot/td/v1.1",
-                "@type": "tm:ThingModel",
                 "title": args.title,
+                "@type": "tm:ThingModel",
                 "properties": {},
             }
             validate_standard(document, kind="tm")
-            _write_json(args.output, document)
-            print(
-                f"Generated starter TM: {args.output} (no executable Modbus mappings)"
-            )
+            _write_json(output, document)
+            print(f"Generated starter TM: {output} (no executable Modbus mappings)")
         else:
             document = load_document(args.input)
             if not isinstance(document, dict):

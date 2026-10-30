@@ -24,9 +24,7 @@ class CommandTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "starter.tm.json"
             self.assertEqual(
-                self.run_cli(
-                    "generate", "--title", "Meter", "--output", path
-                ).returncode,
+                self.run_cli("new", "--title", "Meter", "--output", path).returncode,
                 0,
             )
             self.assertEqual(
@@ -37,21 +35,56 @@ class CommandTests(unittest.TestCase):
                 0,
             )
             self.assertNotEqual(
-                self.run_cli(
-                    "generate", "--title", "Meter", "--output", path
-                ).returncode,
+                self.run_cli("new", "--title", "Meter", "--output", path).returncode,
                 0,
             )
             path.write_text('{"x": 1, "x": 2}', encoding="utf-8")
             self.assertNotEqual(self.run_cli("validate", path).returncode, 0)
 
+    def test_default_output_and_no_overwrite(self):
+        with tempfile.TemporaryDirectory() as directory:
+            environment = os.environ.copy()
+            environment["PYTHONPATH"] = os.pathsep.join(
+                [
+                    str(Path(__file__).resolve().parents[1]),
+                    environment.get("PYTHONPATH", ""),
+                ]
+            )
+            result = subprocess.run(
+                [sys.executable, "-m", "modpoll_wot", "new", "--title", "Meter"],
+                cwd=directory,
+                text=True,
+                capture_output=True,
+                env=environment,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            path = Path(directory) / "Meter.tm.json"
+            original = path.read_bytes()
+            self.assertEqual(json.loads(original)["title"], "Meter")
+            self.assertEqual(
+                self.run_cli("validate", path, "--kind", "tm").returncode, 0
+            )
+            again = subprocess.run(
+                [sys.executable, "-m", "modpoll_wot", "new", "--title", "Meter"],
+                cwd=directory,
+                text=True,
+                capture_output=True,
+                env=environment,
+            )
+            self.assertNotEqual(again.returncode, 0)
+            self.assertEqual(path.read_bytes(), original)
+            self.assertNotEqual(
+                self.run_cli("new", "--title", "../escape").returncode, 0
+            )
+
     def test_subcommands_are_discoverable_and_old_interface_is_rejected(self):
         help_text = self.run_cli("--help")
         self.assertEqual(help_text.returncode, 0)
-        for command in ("validate", "generate", "export"):
+        for command in ("validate", "new", "export"):
             self.assertIn(command, help_text.stdout)
         self.assertNotEqual(self.run_cli("--config", "model.json").returncode, 0)
         self.assertNotEqual(self.run_cli("model.json").returncode, 0)
+        self.assertNotEqual(self.run_cli("generate", "--title", "Meter").returncode, 0)
 
     def test_validation_reports_checks_and_failure_stage(self):
         source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
@@ -66,7 +99,7 @@ class CommandTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "starter.json"
             self.assertEqual(
-                self.run_cli("generate", "--title", "Meter", "-o", path).returncode, 0
+                self.run_cli("new", "--title", "Meter", "-o", path).returncode, 0
             )
             failure = self.run_cli("validate", path, "--profile")
             self.assertEqual(failure.returncode, 1)
