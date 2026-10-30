@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -13,6 +14,21 @@ from .profile import parse_parameters
 def _write_json(path, document):
     with Path(path).open("x", encoding="utf-8") as stream:
         stream.write(json.dumps(document, indent=2, ensure_ascii=False) + "\n")
+
+
+def _result(passed, message, *, stream):
+    marker = "✓" if passed else "✗"
+    try:
+        marker.encode(stream.encoding or "utf-8")
+    except (UnicodeEncodeError, LookupError):
+        marker = "[PASS]" if passed else "[FAIL]"
+    if (
+        stream.isatty()
+        and "NO_COLOR" not in os.environ
+        and os.environ.get("TERM") != "dumb"
+    ):
+        marker = f"\033[{'32' if passed else '31'}m{marker}\033[0m"
+    print(f"{marker} {message}", file=stream, flush=True)
 
 
 def _instance_options(parser):
@@ -43,6 +59,7 @@ def main():
     )
     _instance_options(export)
     args = parser.parse_args()
+    phase = "Input"
     try:
         if args.command == "generate":
             document = {
@@ -61,9 +78,20 @@ def main():
             if not isinstance(document, dict):
                 raise AcquisitionError(f"{args.input}: document: expected object")
             if args.command == "validate":
+                if not args.profile and (
+                    args.host is not None
+                    or args.port is not None
+                    or args.unit_id is not None
+                    or args.param
+                ):
+                    phase = "Options"
+                    raise AcquisitionError("instance options require --profile")
                 kind = _document_kind(document) if args.kind == "auto" else args.kind
+                phase = f"{kind.upper()} structure (WoT 1.1)"
                 validate_standard(document, kind=kind)
+                _result(True, f"{phase}: passed", stream=sys.stdout)
                 if args.profile:
+                    phase = "Executable profile"
                     model = load_model(
                         args.input,
                         kind=kind,
@@ -72,18 +100,16 @@ def main():
                         unit_id=args.unit_id,
                         parameters=parse_parameters(args.param),
                     )
-                    print(
-                        f"{kind.upper()} structure and executable profile passed: {model.title}"
+                    _result(
+                        True,
+                        f"{phase} {model.profile_version}: passed ({model.title})",
+                        stream=sys.stdout,
                     )
+                    print("  Device behavior and register mappings were not tested.")
                 else:
-                    if (
-                        args.host is not None
-                        or args.port is not None
-                        or args.unit_id is not None
-                        or args.param
-                    ):
-                        raise AcquisitionError("instance options require --profile")
-                    print(f"{kind.upper()} 1.1 schema passed (structure only)")
+                    print(
+                        "  JSON Schema only; use --profile to check project compatibility."
+                    )
             else:
                 if _document_kind(document) != "tm":
                     raise AcquisitionError("TD export requires a TM input")
@@ -98,7 +124,11 @@ def main():
                 _write_json(args.output, td)
                 print(f"Exported TD: {args.output}")
     except (ValueError, OSError, TypeError, RecursionError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        if args.command == "validate":
+            _result(False, f"{phase}: failed", stream=sys.stderr)
+            print(f"  {exc}", file=sys.stderr)
+        else:
+            print(f"error: {exc}", file=sys.stderr)
         return 1
     return 0
 

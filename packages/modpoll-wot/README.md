@@ -14,6 +14,9 @@ modpoll-wot validate meter.td.json
 ```
 
 Use `modpoll-wot --help` and `modpoll-wot validate --help` for options.
+Validation reports each check separately with a tick or cross and an error
+detail on failure. Terminal markers are colored; redirected output has no ANSI
+colors, and `NO_COLOR` disables colors. The exit status is zero only on success.
 Structure validation is offline and rejects duplicate JSON keys; it does not
 check JSON-LD, references, device behavior or complete W3C conformance. Type is
 detected from the document, so use `--kind tm` for a known TM whose type might

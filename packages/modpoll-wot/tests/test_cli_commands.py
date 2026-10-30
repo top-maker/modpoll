@@ -5,6 +5,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+from io import StringIO
+
+from modpoll_wot.__main__ import _result
 
 
 class CommandTests(unittest.TestCase):
@@ -48,6 +52,44 @@ class CommandTests(unittest.TestCase):
             self.assertIn(command, help_text.stdout)
         self.assertNotEqual(self.run_cli("--config", "model.json").returncode, 0)
         self.assertNotEqual(self.run_cli("model.json").returncode, 0)
+
+    def test_validation_reports_checks_and_failure_stage(self):
+        source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
+        basic = self.run_cli("validate", source)
+        self.assertEqual(basic.returncode, 0)
+        self.assertIn("TM structure (WoT 1.1): passed", basic.stdout)
+        self.assertIn("use --profile", basic.stdout)
+        self.assertNotIn("\x1b[", basic.stdout)
+        profile = self.run_cli("validate", source, "--profile")
+        self.assertEqual(profile.returncode, 0, profile.stderr)
+        self.assertIn("Executable profile 0.2: passed", profile.stdout)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "starter.json"
+            self.assertEqual(
+                self.run_cli("generate", "--title", "Meter", "-o", path).returncode, 0
+            )
+            failure = self.run_cli("validate", path, "--profile")
+            self.assertEqual(failure.returncode, 1)
+            self.assertIn("TM structure (WoT 1.1): passed", failure.stdout)
+            self.assertIn("Executable profile: failed", failure.stderr)
+            path.write_text('{"@type": 42}', encoding="utf-8")
+            invalid = self.run_cli("validate", path, "--kind", "tm")
+            self.assertEqual(invalid.returncode, 1)
+            self.assertIn("TM structure (WoT 1.1): failed", invalid.stderr)
+
+    def test_color_only_on_terminal_and_respects_no_color(self):
+        stream = StringIO()
+        with patch.object(stream, "isatty", return_value=True), patch.dict(
+            os.environ, {"TERM": "xterm"}, clear=True
+        ):
+            _result(True, "passed", stream=stream)
+            self.assertIn("\x1b[32m", stream.getvalue())
+            stream.seek(0)
+            stream.truncate()
+            with patch.dict(os.environ, {"NO_COLOR": "1"}):
+                _result(False, "failed", stream=stream)
+            self.assertNotIn("\x1b[", stream.getvalue())
+            self.assertIn("✗", stream.getvalue())
 
     def test_td_generation_and_validation(self):
         source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
