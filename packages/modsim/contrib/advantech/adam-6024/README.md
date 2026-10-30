@@ -53,13 +53,13 @@ No HTTP cache or background acquisition service is implied.
 See [the tool setup and generation guide](../../README.md). To validate generation:
 
 ```sh
-poetry run python tools/generate-td.py --check
+uv run python tools/generate-td.py --check
 ```
 
 To export a real endpoint for an external Consumer:
 
 ```sh
-poetry run modpoll-wot export contrib/advantech/adam-6024/adam-6024.tm.json \
+uv run modpoll-wot export contrib/advantech/adam-6024/adam-6024.tm.json \
   --host "$ADAM_HOST" --port 502 --unit-id 1 --target project \
   --output /tmp/adam-6024-instance.td.json
 ```

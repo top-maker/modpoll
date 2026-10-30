@@ -11,7 +11,7 @@ byte/word orders, inverse multipliers and bit selectors. Partial writes validate
 overlapping properties and roll back on failure. Integer inverse transforms must
 be exact; constraints also apply after IEEE quantization.
 
-Install: `pip install modsim==2.0.0a1`.
+Install the CLI: `uv tool install modsim==2.0.0a1`.
 Image: `topmaker/modsim:2.0.0a1` (amd64/arm64).
 Documentation: <https://top-maker.github.io/modsim/v2/>.
 The published 2.0.0a1 image includes contrib ADAM models and its original

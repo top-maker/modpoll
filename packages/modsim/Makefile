@@ -1,31 +1,31 @@
 PROJECT_NAME ?= modsim
 
 .PHONY: install
-install: ## Install the poetry environment and install the pre-commit hooks
+install: ## Install the uv environment and install the pre-commit hooks
 	@echo "🚀 Installing the project and pre-commit hooks"
-	@poetry install
-	@poetry run pre-commit install --allow-missing-config
+	@uv sync --all-groups
+	@uv run pre-commit install --allow-missing-config
 
 .PHONY: check
 check: ## Run code quality tools.
-	@echo "🚀 Checking Poetry lock file consistency with 'pyproject.toml': Running poetry check --lock"
-	@poetry check --lock
+	@echo "🚀 Checking uv lock file consistency with 'pyproject.toml': Running uv lock --check"
+	@uv lock --check
 	@echo "🚀 Linting code: Running pre-commit"
-	@poetry run pre-commit run -a
+	@uv run pre-commit run -a
 	@echo "🚀 Static type checking: Running mypy"
-	@poetry run mypy
+	@uv run mypy
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
-	@poetry run deptry .
+	@uv run deptry .
 
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@poetry run pytest --doctest-modules
+	@uv run pytest --doctest-modules
 
 .PHONY: build
-build: clean-build ## Build wheel file using poetry
+build: clean-build ## Build wheel file using uv
 	@echo "🚀 Creating wheel file"
-	@poetry build
+	@uv build
 
 .PHONY: clean-build
 clean-build: ## clean build artifacts
@@ -34,10 +34,9 @@ clean-build: ## clean build artifacts
 .PHONY: publish
 publish: ## Publish a release to PyPI.
 	@echo "🚀 Publishing: Dry run."
-	@poetry config pypi-token.pypi ${PYPI_TOKEN}
-	@if poetry publish --dry-run; then \
+	@if uv publish --dry-run --token ${PYPI_TOKEN}; then \
 		echo "Dry run successful. Proceeding with publishing..."; \
-		poetry publish; \
+		uv publish --token ${PYPI_TOKEN}; \
 	else \
 		echo "Dry run failed. Version might already exist or other error occurred."; \
 		exit 1; \
@@ -58,11 +57,11 @@ docker-run-dev: docker-build-dev ## Run docker for local dev
 
 .PHONY: docs-test
 docs-test: ## Test if documentation can be built without warnings or errors
-	@poetry run mkdocs build -s
+	@uv run --group docs mkdocs build -s
 
 .PHONY: docs
 docs: ## Build and serve the documentation
-	@poetry run mkdocs serve
+	@uv run --group docs mkdocs serve
 
 .PHONY: help
 help:

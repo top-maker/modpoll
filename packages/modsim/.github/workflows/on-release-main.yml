@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-poetry
+        uses: ./.github/actions/setup-uv
 
       - name: Export tag
         id: vars
@@ -78,7 +78,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-poetry
+        uses: ./.github/actions/setup-uv
 
       - name: Deploy documentation
-        run: poetry run mkdocs gh-deploy --force
+        run: uv run --locked --no-sync --group docs mkdocs gh-deploy --force

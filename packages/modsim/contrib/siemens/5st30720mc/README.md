@@ -9,9 +9,9 @@ The source declares `zeroBasedAddressing: false`; the model interprets the sourc
 Validate and export with `modpoll-wot==0.2.0a2`:
 
 ```sh
-poetry run python -m modpoll_wot validate contrib/siemens/5st30720mc/5st30720mc.tm.json --kind tm --profile
-poetry run python -m modpoll_wot export contrib/siemens/5st30720mc/5st30720mc.tm.json --host 127.0.0.1 --port 15020 --unit-id 1 -o /tmp/5st30720mc.td.json
-poetry run python -m modpoll_wot validate /tmp/5st30720mc.td.json --kind td --profile
+uv run python -m modpoll_wot validate contrib/siemens/5st30720mc/5st30720mc.tm.json --kind tm --profile
+uv run python -m modpoll_wot export contrib/siemens/5st30720mc/5st30720mc.tm.json --host 127.0.0.1 --port 15020 --unit-id 1 -o /tmp/5st30720mc.td.json
+uv run python -m modpoll_wot validate /tmp/5st30720mc.td.json --kind td --profile
 ```
 
 The loopback endpoint is a simulation example. Profile validation does not verify device behavior or wire data.

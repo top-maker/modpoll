@@ -1,38 +1,50 @@
-[tool.poetry]
+[project]
 name = "modsim"
 version = "2.0.0a1"
 description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
-authors = ["Ying Shaodong <helloysd@gmail.com>"]
-repository = "https://github.com/top-maker/modsim"
-documentation = "https://top-maker.github.io/modsim/"
+authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
-packages = [{ include = "modsim" }]
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "pymodbus~=3.16.1",
+    "modpoll-wot==0.2.0a2",
+    "jsonschema>=4.21,<5",
+    "PyYAML>=6,<7",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-pymodbus = "~3.16.1"
-modpoll-wot = "==0.2.0a2"
-jsonschema = ">=4.21,<5"
-PyYAML = ">=6,<7"
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^3.5.0"
-pytest = "^8.2.2"
-deptry = "^0.16.1"
-mypy = "^1.10.1"
-tox = "^4.16.0"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.6.0"
-mkdocs-material = "^9.5.28"
-mkdocstrings = {extras = ["python"], version = "^0.25.1"}
-mkdocs-autorefs = ">=1.2,<1.4"
-markdown = ">=3.7,<3.8"
-pymdown-extensions = ">=10.11,<11"
+[dependency-groups]
+dev = [
+    "pre-commit>=3.5.0,<4.0.0",
+    "pytest>=8.2.2,<9.0.0",
+    "deptry>=0.16.1,<0.17.0",
+    "mypy>=1.10.1,<2.0.0",
+    "tox>=4.16.0,<5.0.0",
+    "tomli>=2,<3; python_version < '3.11'",
+]
+docs = [
+    "mkdocs>=1.6.0,<2.0.0",
+    "mkdocs-material>=9.5.28,<10.0.0",
+    "mkdocstrings[python]>=0.25.1,<0.26.0",
+    "mkdocs-autorefs>=1.2,<1.4",
+    "markdown>=3.7,<3.8",
+    "pymdown-extensions>=10.11,<11",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.11.19,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "modsim"
+module-root = ""
+
+[tool.uv]
+# The CI matrix currently covers Python 3.10 through 3.14.
+environments = ["python_version < '3.15'"]
+
+[project.urls]
+Repository = "https://github.com/top-maker/modsim"
+Documentation = "https://top-maker.github.io/modsim/"
 
 [tool.mypy]
 files = ["modsim"]
@@ -48,5 +60,5 @@ show_error_codes = true
 testpaths = ["tests"]
 markers = ["integration: local protocol integration test"]
 
-[tool.poetry.scripts]
+[project.scripts]
 modsim = "modsim.main:app"

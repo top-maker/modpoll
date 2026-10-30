@@ -1,23 +1,20 @@
 """Reject a release if its tag and checked-out package metadata differ."""
 
-import re
 import sys
 from pathlib import Path
 
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
+
 
 def package_version():
-    section = ""
-    for line in Path("pyproject.toml").read_text(encoding="utf-8").splitlines():
-        stripped = line.strip()
-        if stripped.startswith("[") and stripped.endswith("]"):
-            section = stripped
-        elif section == "[tool.poetry]":
-            match = re.fullmatch(
-                r'version\s*=\s*["\']([^"\']+)["\']\s*(?:#.*)?', stripped
-            )
-            if match:
-                return match.group(1)
-    raise ValueError("project version is missing from pyproject.toml")
+    metadata = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    try:
+        return metadata["project"]["version"]
+    except KeyError as exc:
+        raise ValueError("project version is missing from pyproject.toml") from exc
 
 
 def main():

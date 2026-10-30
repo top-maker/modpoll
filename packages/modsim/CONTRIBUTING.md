@@ -10,8 +10,8 @@ Clone the repository, select the appropriate branch, and install dependencies:
 
 ```bash
 git checkout v2
-poetry install
-poetry run pre-commit install
+uv sync --all-groups
+uv run pre-commit install
 ```
 
 `main` is the stable v1 line while `v2` is the development line. Choose the PR
@@ -26,9 +26,9 @@ Run the relevant tests and quality checks before submitting:
 ```bash
 make check
 make test
-poetry run python tools/generate-td.py --check
-poetry run mkdocs build -s -f mkdocs-preview.yml
-poetry run tox
+uv run python tools/generate-td.py --check
+uv run mkdocs build -s -f mkdocs-preview.yml
+uv run tox
 ```
 
 The tox matrix covers Python 3.10 and 3.14 and requires those interpreters. Record

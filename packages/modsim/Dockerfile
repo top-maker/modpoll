@@ -2,18 +2,14 @@
 
 FROM python:3.12-slim-bookworm
 
-ENV POETRY_VERSION=1.8.3
+COPY --from=ghcr.io/astral-sh/uv:0.11.19 /uv /uvx /bin/
 
-# Install poetry and disable virtualenv creation
-RUN pip install "poetry==$POETRY_VERSION"
-RUN poetry config virtualenvs.create false
-
-# Copy only requirements to cache them in docker layer
+# Copy dependency metadata first to cache the install layer.
 WORKDIR /app
-COPY poetry.lock pyproject.toml /app/
+COPY uv.lock pyproject.toml README.md /app/
 
 # Project initialization:
-RUN poetry install --no-interaction --no-ansi --no-root --only main
+RUN uv sync --locked --no-dev --no-install-project
 
 # Copy Python app to the Docker image
 COPY modsim /app/modsim/

@@ -24,13 +24,13 @@ Observe operations and the source polling interval are not represented.
 Validate with the repository's pinned `modpoll-wot==0.2.0a2`:
 
 ```sh
-poetry run python -m modpoll_wot validate \
+uv run python -m modpoll_wot validate \
   contrib/siemens/5sl60-x-mc/5sl60-x-mc.tm.json --kind tm --profile
-poetry run python -m modpoll_wot export \
+uv run python -m modpoll_wot export \
   contrib/siemens/5sl60-x-mc/5sl60-x-mc.tm.json \
   --host 127.0.0.1 --port 5020 --unit-id 1 \
   -o /tmp/5sl60-x-mc-instance.td.json
-poetry run python -m modpoll_wot validate /tmp/5sl60-x-mc-instance.td.json \
+uv run python -m modpoll_wot validate /tmp/5sl60-x-mc-instance.td.json \
   --kind td --profile
 ```
 

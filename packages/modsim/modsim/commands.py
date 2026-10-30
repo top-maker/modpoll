@@ -135,7 +135,7 @@ def run(argv: list[str]) -> None:
                 except FileNotFoundError as exc:
                     raise ValueError(
                         "no managed deployment found in this environment; "
-                        "start it with `poetry run modsim up -d`, or run export "
+                        "start it with `uv run modsim up -d`, or run export "
                         "inside the Docker Compose container"
                     ) from exc
             else:

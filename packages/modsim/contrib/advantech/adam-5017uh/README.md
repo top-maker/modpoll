@@ -46,7 +46,7 @@ calibration and rack management are outside this raw-input model.
 From the repository root, start the complete module with synthetic input:
 
 ```sh
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
   --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
@@ -55,7 +55,7 @@ The source TM has no deployed host, port or Unit ID. To export a TD for an
 external consumer using the project's pinned `modpoll-wot` dependency:
 
 ```sh
-poetry run modpoll-wot export contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modpoll-wot export contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --host 127.0.0.1 --port 5020 --unit-id 1 --target project \
   --output /tmp/adam-5017uh-instance.td.json
 ```

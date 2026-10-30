@@ -26,7 +26,7 @@ def prop(
     kind="integer",
     address=0,
     entity="HoldingRegister",
-    **extra
+    **extra,
 ):
     value = {
         "type": kind,

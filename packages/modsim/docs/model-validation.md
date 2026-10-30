@@ -1,13 +1,13 @@
 # Model-driven simulation
 
 The v2 source uses the published, exact `modpoll-wot==0.2.0a2` dependency.
-Install with `poetry install`. Model parsing and TM instantiation belong to that
+Install with `uv sync --all-groups`. Model parsing and TM instantiation belong to that
 shared package; Modsim owns state and protocol execution.
 
 ## One device
 
 ```bash
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
   --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
@@ -49,7 +49,7 @@ contract, TM parameters, dynamic device lifecycle and TD export.
 The ADAM lab example starts two independent devices on one listener:
 
 ```bash
-poetry run modsim up -f examples/deployment.yaml
+uv run modsim up -f examples/deployment.yaml
 ```
 
 Paths in deployment files are relative to the deployment directory; scenario
@@ -103,7 +103,7 @@ response and may deliberately overwrite values.
 ## Local Python behaviors
 
 ```bash
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json --allow-scripts
 ```
 

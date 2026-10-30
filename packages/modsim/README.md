@@ -15,12 +15,12 @@ and [release process](docs/release-process.md).
 
 The v2 managed deployment commands are available in the development source;
 they are not included in the published `2.0.0a1` release. Clone the `v2`
-branch and install its dependencies with Poetry:
+branch and install its dependencies with uv:
 
 ```bash
 git clone --branch v2 https://github.com/top-maker/modsim.git
 cd modsim
-poetry install
+uv sync --all-groups
 ```
 
 ## Run locally
@@ -28,8 +28,8 @@ poetry install
 From the root directory, start the example deployment and check its status:
 
 ```bash
-poetry run modsim up -d
-poetry run modsim ps
+uv run modsim up -d
+uv run modsim ps
 ```
 
 The commands use `examples/deployment.yaml` by default. The example starts two
@@ -44,11 +44,11 @@ The deployment binds to all interfaces by default; set `server.bind` to
 Useful commands for managing the deployment:
 
 ```bash
-poetry run modsim logs -f
-poetry run modsim up --dry-run
-poetry run modsim reset --device adam-5017uh
-poetry run modsim export
-poetry run modsim down
+uv run modsim logs -f
+uv run modsim up --dry-run
+uv run modsim reset --device adam-5017uh
+uv run modsim export
+uv run modsim down
 ```
 
 Export writes all TDs to `output/` in the root directory by default; this
@@ -66,8 +66,8 @@ process manager. Managed commands require POSIX (Linux/macOS/WSL); see
 `modsim export` reads the current deployment file and does not require a
 running simulator. Use `--running` only when you need the last successfully
 applied configuration instead of current file contents. That option connects to
-the managed runtime in the same environment, so a Poetry command can only read
-a Poetry-started deployment; for Docker Compose, run it inside the container.
+the managed runtime in the same project environment; for Docker Compose, run it
+inside the container.
 
 ## Run with Docker Compose
 
@@ -114,7 +114,7 @@ Export all TDs from the current deployment file. Run from the root directory;
 modsim does not need to be running:
 
 ```bash
-poetry run modsim export
+uv run modsim export
 ```
 
 In another terminal, from the root directory, read the exported TD:
@@ -158,7 +158,7 @@ device's range or behavior. The example broker has no authentication and is
 published only on host loopback; port 1883 must be available.
 
 Stop modpoll with Ctrl+C, stop the broker if used (`docker stop
-modpoll-demo-mqtt`), then stop modsim with `poetry run modsim down` or stop the
+modpoll-demo-mqtt`), then stop modsim with `uv run modsim down` or stop the
 Compose deployment with `docker compose down`.
 
 ## Models and scenarios
@@ -173,7 +173,7 @@ codecs, constraints and behavior hooks.
 For a single device without a managed deployment:
 
 ```bash
-poetry run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
   --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
@@ -184,7 +184,7 @@ IDs. TLS loads `certificates/pymodbus.crt` and `certificates/pymodbus.key` from
 the working directory. See [transport details](docs/index.md#unconfigured-demo).
 
 The checked-in ADAM-6024 TD and its source hash can be checked with
-`poetry run python tools/generate-td.py --check`; omit `--check` to regenerate.
+`uv run python tools/generate-td.py --check`; omit `--check` to regenerate.
 
 ## Development
 

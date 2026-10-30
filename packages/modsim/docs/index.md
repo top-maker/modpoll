@@ -14,7 +14,7 @@ virtual ADAM-6024 with synthetic I/O loopback. Compose publishes port 5020 on
 host loopback. The ADAM mappings are manual-derived candidates; simulation is
 not evidence of physical device behavior.
 
-To run locally with Poetry, use `poetry run modsim up`. The default deployment
+To run locally with uv, use `uv run modsim up`. The default deployment
 binds all host interfaces when run directly. See [managed deployments](managed-deployments.md)
 for updates, logging, TD export, instance IDs and script permissions.
 

@@ -1,0 +1,21 @@
+name: "setup-uv"
+description: "Set up Python and install the locked uv environment."
+
+inputs:
+  python-version:
+    required: false
+    description: "The python version to use"
+    default: "3.12"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: astral-sh/setup-uv@v6
+      with:
+        version: 0.11.19
+        python-version: ${{ inputs.python-version }}
+        enable-cache: true
+        cache-dependency-glob: uv.lock
+    - name: Install dependencies
+      run: uv sync --locked --all-groups
+      shell: bash

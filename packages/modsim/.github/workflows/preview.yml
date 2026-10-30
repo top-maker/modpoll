@@ -29,28 +29,22 @@ jobs:
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
-      - uses: ./.github/actions/setup-poetry
+      - uses: ./.github/actions/setup-uv
       - name: Require accepted candidate
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: python .github/scripts/preview-release.py guard "$TAG"
-      - run: poetry build
+      - run: uv build --no-sources
       - uses: actions/upload-artifact@v4
         with:
           name: preview-distributions
           path: dist/*
       - name: Verify portable distributions
         run: |
-          python -m venv "$RUNNER_TEMP/wheel"
-          "$RUNNER_TEMP/wheel/bin/pip" install dist/*.whl
           cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/wheel/bin/python" -m modsim --version
-          "$RUNNER_TEMP/wheel/bin/pip" check
-          cd "$GITHUB_WORKSPACE"
-          "$RUNNER_TEMP/wheel/bin/pip" install --force-reinstall --no-deps dist/*.tar.gz
-          cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/wheel/bin/python" -m modsim --version
+          uv run --isolated --with "$GITHUB_WORKSPACE"/dist/*.whl modsim --version
+          uv run --isolated --with "$GITHUB_WORKSPACE"/dist/*.tar.gz modsim --version
       - name: Check immutable version
         id: registry
         env:
@@ -59,8 +53,8 @@ jobs:
       - name: Publish PyPI package
         if: steps.registry.outputs.exists == 'false'
         env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-        run: poetry publish --no-interaction
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish --no-progress
       - name: Publish GitHub prerelease
         env:
           GH_TOKEN: ${{ github.token }}
@@ -101,8 +95,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - uses: ./.github/actions/setup-poetry
-      - run: poetry run mkdocs build -s -f mkdocs-preview.yml --site-dir "$RUNNER_TEMP/site"
+      - uses: ./.github/actions/setup-uv
+      - run: uv run --locked --no-sync --group docs mkdocs build -s -f mkdocs-preview.yml --site-dir "$RUNNER_TEMP/site"
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ github.token }}
@@ -122,6 +116,11 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref }}
           path: release
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.11.19
+          python-version: '3.12'
+          enable-cache: true
       - name: Verify release fixture version
         env:
           TAG: ${{ inputs.tag || github.ref_name }}
@@ -129,18 +128,12 @@ jobs:
           cd release
           python .github/scripts/check_release_version.py "$TAG"
           git rev-parse HEAD
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
       - name: Install published wheel and test dependencies
         timeout-minutes: 15
         env:
           TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           python .github/scripts/preview-release.py download "${TAG#v}" "$RUNNER_TEMP/distributions"
-          python -m venv "$RUNNER_TEMP/installed"
-          "$RUNNER_TEMP/installed/bin/pip" install "$RUNNER_TEMP"/distributions/*.whl pytest
-          "$RUNNER_TEMP/installed/bin/pip" check
       - name: Test without application source
         run: |
           mkdir -p "$RUNNER_TEMP/acceptance"
@@ -148,7 +141,7 @@ jobs:
           if [ -d release/examples ]; then cp -r release/examples "$RUNNER_TEMP/acceptance/"; fi
           if [ -f release/deployment.yaml ]; then cp release/deployment.yaml "$RUNNER_TEMP/acceptance/"; fi
           cd "$RUNNER_TEMP/acceptance"
-          "$RUNNER_TEMP/installed/bin/python" -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
+          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl --with pytest python -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
       - name: Verify published image and contributed deployment
         env:
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
@@ -163,7 +156,8 @@ jobs:
           else
             docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f /app/examples/deployment.yaml
           fi
-          "$RUNNER_TEMP/installed/bin/python" tools/preview-acceptance.py
+          cd "$RUNNER_TEMP/acceptance"
+          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl python tools/preview-acceptance.py
       - if: always()
         run: docker rm -f modsim-preview || true
       - uses: actions/upload-artifact@v4

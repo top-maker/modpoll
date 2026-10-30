@@ -162,9 +162,11 @@ class Deployment:
 def deployment_root(path: Path) -> Path:
     """Use the repository root for checked-in examples, config directory otherwise."""
     for parent in path.parent.parents:
-        if (parent / ".git").exists():
+        marker = parent / ".git"
+        if marker.is_file() or (marker.is_dir() and any(marker.iterdir())):
             return parent
-    if (path.parent / ".git").exists():
+    marker = path.parent / ".git"
+    if marker.is_file() or (marker.is_dir() and any(marker.iterdir())):
         return path.parent
     return path.parent
 
