@@ -99,10 +99,10 @@ Modbus schema and project cross-field checks offline. See schemas/SOURCES.md.
 From the repository (omit PYTHONPATH with an installed candidate wheel):
 
 ```sh
-PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
+PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
   export examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
   --unit-id 7 -o /tmp/modsim-instance.td.json
-PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
+PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
   validate /tmp/modsim-instance.td.json --profile
 ```
 
@@ -148,7 +148,7 @@ consumer wheel with the candidate's exact registry pin and tests both installed
 wheels from outside the repository, with no source package imports. It never
 modifies the real consumer pin. Its report requires no skipped tests.
 
-Install locked interop tools with `mise exec -- npm ci --prefix tools/wot-interop
+Install locked interop tools with `npm ci --prefix tools/wot-interop
 --ignore-scripts --no-audit --no-fund`. Node is pinned in .tool-versions; lockfile
 integrities fix transitive dependencies. CI uses an isolated modsim and checks
 actual reads/writes, not just successful TD parsing.

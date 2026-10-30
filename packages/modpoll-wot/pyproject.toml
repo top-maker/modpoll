@@ -1,23 +1,38 @@
-[tool.poetry]
+[project]
 name = "modpoll-wot"
 version = "0.2.0a2"
 description = "Shared WoT Modbus configuration interpreter"
-authors = ["Ying Shaodong <helloysd@gmail.com>"]
+authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/top-maker/modpoll"
-documentation = "https://top-maker.github.io/modpoll/v2/"
-packages = [{ include = "modpoll_wot" }]
-include = ["CONTRACT.md", "profile.md", "modpoll_wot/schemas/*.json", "modpoll_wot/schemas/*.txt", "modpoll_wot/schemas/SOURCES.md"]
+license-files = ["LICENSE"]
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "jsonschema>=4.18,<5",
+    "referencing>=0.28.4,<1",
+]
 
-[tool.poetry.scripts]
+[project.urls]
+Repository = "https://github.com/top-maker/modpoll"
+Documentation = "https://top-maker.github.io/modpoll/v2/"
+
+[project.scripts]
 modpoll-wot = "modpoll_wot.__main__:main"
 
-[tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-jsonschema = ">=4.18,<5"
-referencing = ">=0.28.4,<1"
-
 [build-system]
-requires = ["poetry-core>=1.9.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["modpoll_wot"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"CONTRACT.md" = "CONTRACT.md"
+"profile.md" = "profile.md"
+
+[tool.hatch.build.targets.sdist]
+include = ["CONTRACT.md", "profile.md", "README.md", "LICENSE", "modpoll_wot/**", "tests/**"]
+
+[tool.hatch.build.targets.sdist.force-include]
+"CONTRACT.md" = "CONTRACT.md"
+"profile.md" = "profile.md"

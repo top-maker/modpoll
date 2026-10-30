@@ -67,8 +67,9 @@ class LoadingTests(unittest.TestCase):
             path = Path(temp) / "broken.json"
             for text in ('{"title":"a","title":"b"}', "{", "NaN"):
                 path.write_text(text)
-                with self.subTest(text=text), self.assertRaisesRegex(
-                    AcquisitionError, "broken.json"
+                with (
+                    self.subTest(text=text),
+                    self.assertRaisesRegex(AcquisitionError, "broken.json"),
                 ):
                     load_model(path, kind="tm")
             document = json.loads(FIXTURE.read_text())

@@ -117,8 +117,9 @@ class CommandTests(unittest.TestCase):
 
     def test_color_only_on_terminal_and_respects_no_color(self):
         stream = StringIO()
-        with patch.object(stream, "isatty", return_value=True), patch.dict(
-            os.environ, {"TERM": "xterm"}, clear=True
+        with (
+            patch.object(stream, "isatty", return_value=True),
+            patch.dict(os.environ, {"TERM": "xterm"}, clear=True),
         ):
             _result(True, "passed", stream=stream)
             self.assertIn("\x1b[32m", stream.getvalue())
