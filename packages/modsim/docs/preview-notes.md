@@ -1,20 +1,22 @@
-# Modsim 2.0.0a1 preview
+# Modsim 2.0.0a2 preview candidate
 
-Profile 0.2 TM/TD models now drive the simulator, using published
-`modpoll-wot==0.2.0a1`. A local deployment runs multiple isolated Unit IDs on one
-TCP listener. Models may be local or HTTPS URLs. Local scenarios support initial
-values, seeded generators and bindings; Python initialize/tick/on_write hooks
-require `--allow-scripts`.
+This candidate uses published modpoll-wot 0.2.0a2 and immutable modbus-models-v1
+inputs. Device mappings and contribution workflows now live in modbus-models;
+examples pin a full data commit and individual content hashes. Vendor originals
+are not copied. The tool and data releases remain independent.
 
-The property codec covers integers, IEEE floats, strings, native/legacy booleans,
-byte/word orders, inverse multipliers and bit selectors. Partial writes validate
-overlapping properties and roll back on failure. Integer inverse transforms must
-be exact; constraints also apply after IEEE quantization.
+Managed deployment version 2 supports local lifecycle and isolation on POSIX.
+Single-device foreground mode supports fixed HTTPS TMs and local scenarios;
+scripts require explicit --allow-scripts. Catalog acceptance compares raw Modbus
+bytes, public modpoll 2.0.0a2 and node-wot 0.9.2 with asymmetric uint16 inputs,
+and detects a deliberately wrong byte order. This is software evidence, not
+hardware or engineering-unit certification.
 
-Install the CLI: `uv tool install modsim==2.0.0a1`.
-Image: `topmaker/modsim:2.0.0a1` (amd64/arm64).
-Documentation: <https://top-maker.github.io/modsim/v2/>.
-The published 2.0.0a1 image includes contrib ADAM models and its original
-`examples/lab.sim.json` version 1 deployment. Current development uses version 2.
-Models are manual-derived and synthetic-tested; no hardware certification is
-claimed. This preview leaves stable latest aliases unchanged.
+Release gates cover independent wheel single-device startup/read/stop on Linux,
+macOS and Windows. Managed deployments remain POSIX-only; Windows uses foreground
+mode or WSL. A candidate is not accepted until its exact CI and preview publish,
+image, docs and source-independent acceptance jobs all pass.
+
+Expected install after publication: `uv tool install --prerelease allow modsim==2.0.0a2`.
+The explicit preview image is `topmaker/modsim:2.0.0a2`; stable latest aliases stay
+unchanged. Older 2.0.0a1 artifacts and historical contrib URLs remain immutable.

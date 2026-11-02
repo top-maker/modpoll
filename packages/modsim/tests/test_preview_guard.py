@@ -22,6 +22,16 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
         for name in ("quality", "docs", "tox (3.10)", "tox (3.14)")
     ]
 
+    platform_jobs = [
+        {"name": name, "conclusion": "success"}
+        for name in (
+            "catalog-interop",
+            "single-device (ubuntu-latest)",
+            "single-device (macos-latest)",
+            "single-device (windows-latest)",
+        )
+    ]
+
     def output(args, **kwargs):
         if args[:3] == ["git", "rev-parse", "HEAD"]:
             return "candidate\n"
@@ -33,21 +43,28 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
                             "head_branch": "v2",
                             "status": "completed",
                             "conclusion": "success",
-                            "id": 42,
+                            "id": 43 if "acceptance.yaml" in " ".join(args) else 42,
                         }
                     ]
                 }
             )
-        return json.dumps({"jobs": jobs})
+        return json.dumps(
+            {"jobs": platform_jobs if "/runs/43/" in " ".join(args) else jobs}
+        )
 
     monkeypatch.setattr(release.subprocess, "check_output", output)
-    release.guard("v2.0.0a1")
+    release.guard("v" + __import__("modsim").__version__)
     jobs.pop()
     with pytest.raises(ValueError, match="expected CI jobs"):
-        release.guard("v2.0.0a1")
+        release.guard("v" + __import__("modsim").__version__)
     jobs.append({"name": "tox (3.14)", "conclusion": "failure"})
     with pytest.raises(ValueError, match="expected CI jobs"):
-        release.guard("v2.0.0a1")
+        release.guard("v" + __import__("modsim").__version__)
+
+    jobs[-1]["conclusion"] = "success"
+    platform_jobs.pop()
+    with pytest.raises(ValueError, match="acceptance.yaml"):
+        release.guard("v" + __import__("modsim").__version__)
 
 
 def test_download_waits_for_pypi_and_checks_wheel_hash(monkeypatch, tmp_path, capsys):
@@ -112,3 +129,17 @@ def test_pypi_retry_times_out_and_does_not_hide_other_errors(monkeypatch):
     with pytest.raises(urllib.error.HTTPError, match="403"):
         release._wait_for_pypi(forbidden, "metadata", 600)
     assert clock[0] == 45
+
+
+def test_workflow_names_match_the_release_guard():
+    import yaml
+
+    workflow = yaml.safe_load(
+        (Path(__file__).resolve().parents[1] / ".github/workflows/main.yml").read_text()
+    )
+    job = workflow["jobs"]["tox"]
+    assert job["name"] == "tox (${{ matrix.python-version }})"
+    assert {row["python-version"] for row in job["strategy"]["matrix"]["include"]} == {
+        "3.10",
+        "3.14",
+    }
