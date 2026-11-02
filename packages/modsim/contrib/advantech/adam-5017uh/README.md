@@ -61,6 +61,6 @@ uv run modpoll-wot export contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
 ```
 
 For a physical device, substitute its verified endpoint and mapping. The
-loopback endpoint above is a simulator example. See [model validation](../../../docs/model-validation.md)
+loopback endpoint above is a simulator example. See [model validation](../../../docs/site/model-validation.md)
 for the supported profile 0.2 subset. modsim 1.x does not load these models.
 Synthetic interoperability checks do not establish hardware correctness.

@@ -61,7 +61,7 @@ default; `-d` runs it in the background. Ctrl+C stops a service started by a
 foreground `up`, but only detaches from an existing deployment or `logs -f`.
 Background services do not restart after a machine reboot unless managed by a
 process manager. Managed commands require POSIX (Linux/macOS/WSL); see
-[managed deployments](docs/managed-deployments.md).
+[managed deployments](docs/site/managed-deployments.md).
 
 `modsim export` reads the current deployment file and does not require a
 running simulator. Use `--running` only when you need the last successfully
@@ -167,7 +167,7 @@ A deployment has a stable ID per device, a TM path, instance parameters and an
 optional scenario. TD IDs and Modbus Unit IDs must be unique. Scenarios define
 initial values, seeded generators and bindings; local Python behavior requires
 `--allow-scripts`. They do not duplicate the model's register mapping. See
-[model configuration](docs/model-validation.md) for the supported profile,
+[model configuration](docs/site/model-validation.md) for the supported profile,
 codecs, constraints and behavior hooks.
 
 For a single device without a managed deployment:
@@ -181,7 +181,7 @@ uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
 The single-device model runtime currently supports TCP. The unconfigured demo
 also supports TCP, UDP, TLS, RTU and ASCII; its datastore is shared by all Unit
 IDs. TLS loads `certificates/pymodbus.crt` and `certificates/pymodbus.key` from
-the working directory. See [transport details](docs/index.md#unconfigured-demo).
+the working directory. See [transport details](docs/site/index.md#unconfigured-demo).
 
 The checked-in ADAM-6024 TD and its source hash can be checked with
 `uv run python tools/generate-td.py --check`; omit `--check` to regenerate.

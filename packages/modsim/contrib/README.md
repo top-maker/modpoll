@@ -10,7 +10,7 @@ information needed for publication. Do not include private device information.
 Maintain one profile 0.2 TM as the register mapping source. Scenarios reference
 property names and do not duplicate addresses. Prefer declarative scenarios;
 local Python requires explicit `--allow-scripts` and meaningful behavior tests.
-See [model-driven simulation](../docs/model-validation.md).
+See [model-driven simulation](../docs/site/model-validation.md).
 
 Keep models, original references and optional maintainer-reviewed `device.yaml`
 records together in each device directory. Contributors can use existing devices

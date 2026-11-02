@@ -121,7 +121,7 @@ prove a real register map correct; hardware communication does not establish
 engineering-unit accuracy or physical write behavior.
 
 For a local model smoke test, adapt the documented
-[one-device command](docs/model-validation.md#one-device) to the contributed TM.
+[one-device command](docs/site/model-validation.md#one-device) to the contributed TM.
 Check initialization and a real client read; state the expected synthetic values
 and stop the foreground simulator with Ctrl+C. Models can also be loaded from
 fixed HTTPS URLs. Only models are fetched remotely; follow the documented local
@@ -131,7 +131,7 @@ For mapping changes, exercise the affected addresses/types/conversions and keep
 expected values independent of the changed mapping where possible. Prefer
 declarative scenarios. Custom Python behavior needs a repeatable example and
 meaningful regression test; it runs locally only with explicit `--allow-scripts`.
-See [model-driven simulation](docs/model-validation.md).
+See [model-driven simulation](docs/site/model-validation.md).
 
 ## How review works, including AI assistance
 

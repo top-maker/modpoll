@@ -4,7 +4,7 @@ modsim runs simulated Modbus devices for development and integration testing.
 The current source supports profile 0.2 TM/TD input, scenarios and independent
 devices on a single managed Modbus TCP listener. The published `2.0.0a1`
 preview does not include all current managed commands; see
-[preview notes](preview-notes.md).
+[preview notes](https://github.com/top-maker/modsim/blob/v2/docs/preview-notes.md).
 
 ## Start a managed deployment
 
@@ -34,5 +34,4 @@ The CLI rejects non-default `--store` and the unsupported `--slaves` and
 
 - [Model-driven simulation](model-validation.md): TM/TD, codecs and scenarios.
 - [Managed deployments](managed-deployments.md): YAML, lifecycle and export.
-- [Preview release process](release-process.md): published artifact validation.
 - [Modules](modules.md): API reference.

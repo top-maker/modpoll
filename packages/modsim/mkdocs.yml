@@ -1,9 +1,10 @@
 site_name: modsim
+docs_dir: docs/site
 repo_url: https://github.com/top-maker/modsim
 site_url: https://top-maker.github.io/modsim
 site_description: A Simple Modbus TCP Device Simulator used for modpoll tool
 site_author: Ying Shaodong
-edit_uri: edit/main/docs/
+edit_uri: edit/main/docs/site/
 repo_name: top-maker/modsim
 
 nav:
@@ -11,8 +12,6 @@ nav:
   - Model validation: model-validation.md
   - Managed deployments: managed-deployments.md
   - Modules: modules.md
-  - Preview notes: preview-notes.md
-  - Preview release process: release-process.md
 plugins:
   - search
   - mkdocstrings:
