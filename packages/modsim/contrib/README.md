@@ -1,25 +1,31 @@
 # Community device models and behaviors
 
-Organize contributions as `contrib/<vendor>/<model>/`. Maintain one profile 0.2
-TM as the register mapping source. Scenarios and scripts reference property names
-and do not duplicate addresses. Generate deployment-specific TDs on demand;
-see each model README. The checked-in ADAM-6024 TD is derived by
-`uv run python tools/generate-td.py`; do not edit them by hand.
+Start with [Contributing to modsim](../CONTRIBUTING.md). For a new executable
+model, submit `contrib/<vendor>/<model>/<model>.tm.json` and identify the source,
+permission basis and known limits in the PR. A focused correction only needs the
+relevant change. README text, reference files, images, scenarios and hardware
+evidence are optional submission materials; maintainers can help complete the
+information needed for publication. Do not include private device information.
 
-Include a README with model/firmware scope, public mapping sources, startup
-commands, author/license attribution and verification status: hardware-tested,
-manual-derived, or synthetic. Existing ADAM mappings are manual-derived and
-have protocol validation, not a claim of physical hardware verification.
-Do not include credentials or deployment-specific network addresses.
+Maintain one profile 0.2 TM as the register mapping source. Scenarios reference
+property names and do not duplicate addresses. Prefer declarative scenarios;
+local Python requires explicit `--allow-scripts` and meaningful behavior tests.
+See [model-driven simulation](../docs/model-validation.md).
 
-Prefer declarative scenarios. Python scripts must be local and require explicit
-`--allow-scripts`; they run with the invoking user's permissions. Document hooks,
-parameters and assumptions. Keep callbacks synchronous and nonblocking. A script
-must use `device.get`, `set`, or `set_many`, rather than PyModbus internals.
-Include a repeatable read/write example and a meaningful test for custom behavior.
+Keep models, original references and optional maintainer-reviewed `device.yaml`
+records together in each device directory. Contributors can use existing devices
+as examples, but are not required to fill complete product records. Maintainers
+may help curate them. There is no separate `catalog/` contribution tree; generated
+website indexes/build outputs belong outside device directories. The convention
+does not imply implemented metadata schemas or website ingestion. Generate deployment-specific TDs on demand. The existing
+checked-in ADAM-6024 TD is derived by `uv run python tools/generate-td.py`; if its
+inputs change, regenerate it rather than editing it by hand.
+
+Evidence categories are configuration checks, software interoperability and
+hardware communication. Describe exactly what was tested, with versions and
+limitations. Existing ADAM mappings are manual-derived; loopback and generated
+raw counts do not establish real hardware behavior or calibrated engineering
+units. Device-specific evidence may document narrower hardware observations.
 
 - [ADAM-5017UH](advantech/adam-5017uh/): raw input mapping, bounded sine and Python example.
-- [ADAM-6024](advantech/adam-6024/): raw I/O mapping with synthetic AO→AI and DO→DI loopback.
-
-Loopback and generated raw counts demonstrate software behavior; they do not
-represent the internal behavior or calibrated engineering units of real hardware.
+- [ADAM-6024](advantech/adam-6024/): raw I/O mapping with synthetic AO-to-AI and DO-to-DI loopback.
