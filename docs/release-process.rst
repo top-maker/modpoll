@@ -45,3 +45,15 @@ releases update their line while preserving other directories; PRs only build.
 No preview is considered fully accepted until the published-package acceptance
 job succeeds. See `validation <validation.rst>`_ for the published preview acceptance and
 maintainer-confirmed Eastron physical RS485 result.
+
+Shared-package recovery
+-----------------------
+
+If the first publish stops after uploading ``core-distributions``, keep the tag
+and artifacts unchanged. Fix and CI-accept the release helper on v2, then manually
+run ``preview-core.yml`` at that v2 ref with ``tag`` and ``artifact_run_id``. The
+recovery checks the original run SHA and workflow, downloads its exact build
+artifacts, and uses the tested helper while checking out the immutable tag.
+It does not rebuild the package or relax the accepted-candidate gate. Registry
+bytes must be absent or identical. Non-distribution build sidecars such as
+``.gitignore`` do not count as artifacts; extra wheels or sdists still fail.

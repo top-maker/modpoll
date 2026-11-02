@@ -2,6 +2,16 @@ name: preview-core
 on:
   push:
     tags: ['modpoll-wot-v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing immutable producer tag to recover'
+        required: true
+        type: string
+      artifact_run_id:
+        description: 'Original preview-core run with core-distributions'
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -12,29 +22,56 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read
+      checks: read
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      RELEASE_HELPER_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.sha }}
+      - name: Retain the tested release helper
+        run: cp .github/scripts/preview-release.py "$RUNNER_TEMP/preview-release.py"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
       - uses: ./.github/actions/setup-uv
       - name: Require an accepted v2 candidate
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/v2
-          python .github/scripts/preview-release.py guard "$TAG"
+          candidate=$(git rev-parse HEAD)
+          git merge-base --is-ancestor "$candidate" origin/v2
+          GITHUB_SHA="$RELEASE_HELPER_SHA" python "$RUNNER_TEMP/preview-release.py" guard "$TAG"
+          GITHUB_SHA="$candidate" python "$RUNNER_TEMP/preview-release.py" guard "$TAG"
       - name: Verify interpreter source
+        if: github.event_name != 'workflow_dispatch'
         env:
           PYTHONPATH: packages/modpoll-wot
         run: uv run --locked --no-sync pytest -q packages/modpoll-wot/tests
       - name: Build independent interpreter artifacts
+        if: github.event_name != 'workflow_dispatch'
         run: uv build --no-sources --clear packages/modpoll-wot --out-dir packages/modpoll-wot/dist
       - uses: actions/upload-artifact@v4
+        if: github.event_name != 'workflow_dispatch'
         with:
           name: core-distributions
           path: packages/modpoll-wot/dist/*
+      - name: Recover original immutable build artifacts
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_RUN: ${{ inputs.artifact_run_id }}
+        run: |
+          python -c 'import os; assert os.environ["ARTIFACT_RUN"].isdigit()'
+          expected=$(git rev-parse HEAD)
+          actual=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN" --jq .head_sha)
+          test "$actual" = "$expected"
+          workflow=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN" --jq .path)
+          test "$workflow" = ".github/workflows/preview-core.yml"
+          gh run download "$ARTIFACT_RUN" --repo "$GITHUB_REPOSITORY" --name core-distributions --dir packages/modpoll-wot/dist
       - name: Verify portable wheel and bundled schemas
         run: |
           cd "$RUNNER_TEMP"
@@ -44,9 +81,7 @@ jobs:
           uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl python -c 'from modpoll_wot.metadata import device_schema; assert device_schema()["properties"]["schema-version"]["const"] == "1"'
       - name: Check immutable version
         id: pypi
-        env:
-          TAG: ${{ github.ref_name }}
-        run: python .github/scripts/preview-release.py pypi "$TAG"
+        run: python "$RUNNER_TEMP/preview-release.py" pypi "$TAG"
       - name: Publish interpreter to PyPI
         if: steps.pypi.outputs.state == 'absent'
         working-directory: packages/modpoll-wot
@@ -55,10 +90,8 @@ jobs:
         run: uv publish --no-progress
       - name: Verify registry installation
         timeout-minutes: 15
-        env:
-          TAG: ${{ github.ref_name }}
         run: |
-          python .github/scripts/preview-release.py download "$TAG" --directory "$RUNNER_TEMP/core-registry-artifacts"
+          python "$RUNNER_TEMP/preview-release.py" download "$TAG" --directory "$RUNNER_TEMP/core-registry-artifacts"
           cd "$RUNNER_TEMP"
           uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot validate "$GITHUB_WORKSPACE/examples/modsim.tm.json" --profile
           uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot export "$GITHUB_WORKSPACE/examples/modsim.tm.json" --host 127.0.0.1 --output "$RUNNER_TEMP/core-registry-instance.json"
@@ -67,7 +100,6 @@ jobs:
       - name: Record a separate prerelease
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --verify-tag --prerelease --latest=false --title "modpoll-wot ${TAG#modpoll-wot-v}" --notes "Versioned configuration interpreter for the executable profile 0.2 and device metadata schema 1 contracts. Validates the bundled WoT TD/TM 1.1 schemas and Modpoll acquisition subset; does not execute device requests. See packages/modpoll-wot/CONTRACT.md at this tag."

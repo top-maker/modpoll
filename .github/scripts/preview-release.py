@@ -70,6 +70,12 @@ def require_checks(checks, sha):
 
 
 def pypi_state(name, version, artifacts):
+    artifacts = [
+        path
+        for path in artifacts
+        if path.is_file()
+        and (path.name.endswith(".whl") or path.name.endswith(".tar.gz"))
+    ]
     expected = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in artifacts
     }

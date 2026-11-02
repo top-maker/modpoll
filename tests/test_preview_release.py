@@ -58,6 +58,9 @@ def test_registry_retries_require_exact_original_filenames_and_hashes(
             for p in files
         ]
     }
+    sidecar = tmp_path / ".gitignore"
+    sidecar.write_text("*\n")
+    files.append(sidecar)
     requests = []
 
     def get_json(url):
