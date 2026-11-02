@@ -210,3 +210,7 @@ use Unix sockets and require POSIX; native Windows should use single-device
 foreground mode or WSL. Independent-wheel CI verifies single-device remote-TM
 startup, raw reads and process shutdown on Linux, macOS and native Windows.
 It does not certify managed commands on Windows or every OS/Python combination.
+
+The pinned preparation also includes the scoped L2 product record and its data-owned
+schema, so its input hashes and limits can be inspected alongside the local models.
+These are verification metadata, not executable simulator instructions.
