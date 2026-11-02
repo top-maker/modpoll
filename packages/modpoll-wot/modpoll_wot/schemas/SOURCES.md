@@ -16,8 +16,8 @@ Upstream repository and licensing: https://github.com/w3c/wot-thing-description
   Repository/licensing: https://github.com/w3c/wot-binding-templates.
   This binding is a work in progress, not a W3C Recommendation.
 
-acquisition-0.1.json and acquisition-0.2.json are independently versioned project
-schemas. The Modbus schema's TD reference resolves only to bundled TD 1.1;
+acquisition-0.2.json is the executable project schema. Profile 0.1 is not
+bundled or executable in current development source. The Modbus schema's TD reference resolves only to bundled TD 1.1;
 other remote resolution remains disabled.
 
 The upstream binding notice is preserved in w3c-binding-license.txt; the project

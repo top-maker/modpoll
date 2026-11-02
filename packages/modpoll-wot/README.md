@@ -27,7 +27,7 @@ add profile 0.2 mappings before executable validation or export. Export accepts
 `--target node-wot-0.9.2` for the documented subset and never overwrites files.
 
 See [profile.md](profile.md) for the current profile and
-[CONTRACT.md](CONTRACT.md) for retained 0.1 profile support.
+[CONTRACT.md](CONTRACT.md) for the profile 0.2-only execution policy.
 
 The loader validates bundled W3C TM/TD 1.1 schemas, the project extension
 schema, and acquisition semantics. It does not execute Modbus requests.
@@ -49,5 +49,6 @@ https://www.w3.org/2022/wot/tm-schema/v1.1. Standard validation does not
 establish device correctness.
 
 Version 0.2.0a1 supports [profile 0.2](profile.md): standard Form mappings,
-explicit blocks, per-property decoding and TM-to-TD export. Profile 0.1 remains
-available for existing configurations.
+explicit blocks, per-property decoding and TM-to-TD export. Current development
+source rejects profile 0.1. This compatibility removal is not yet published; use
+a new immutable release version when promoting it, then update consumer pins.

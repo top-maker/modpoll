@@ -18,12 +18,11 @@ def _no_remote(uri):
     raise ModelValidationError(f"remote schema resolution is disabled: {uri}")
 
 
-@lru_cache(maxsize=5)
+@lru_cache(maxsize=4)
 def _validator(kind):
     names = {
         "tm": "tm-1.1.json",
         "td": "td-1.1.json",
-        "acquisition": "acquisition-0.1.json",
         "acquisition-0.2": "acquisition-0.2.json",
         "modbus": "modbus-binding.json",
     }
@@ -64,10 +63,9 @@ def validate_standard(document, *, kind):
     _validate(document, kind)
 
 
-def validate_extension(document, *, version="0.1"):
-    if version not in ("0.1", "0.2"):
-        raise ValueError("unsupported executable profile version")
-    _validate(document, "acquisition" if version == "0.1" else "acquisition-0.2")
+def validate_extension(document):
+    """Validate the single supported executable extension schema."""
+    _validate(document, "acquisition-0.2")
 
 
 def validate_modbus(document):

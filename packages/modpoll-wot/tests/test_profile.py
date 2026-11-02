@@ -7,10 +7,7 @@ import unittest
 
 from modpoll_wot import AcquisitionError, load_model, parse_model
 
-try:
-    from modpoll_wot.profile import instantiate, export_td
-except ImportError:
-    raise unittest.SkipTest("requires the 0.2 candidate wheel/source")
+from modpoll_wot.profile import instantiate, export_td
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -56,24 +53,17 @@ class ProfileTests(unittest.TestCase):
                     instantiate(source, host="localhost")
 
     def test_full_modsim_fixture_preserves_groups_types_and_transforms(self):
-        old = load_model(
-            ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json"
-        )
-        new = load_model(ROOT / "examples/modsim.tm.json")
+        model = load_model(ROOT / "examples/modsim.tm.json")
         self.assertEqual(
-            [(g.table, g.start, g.quantity) for g in old.groups],
-            [(g.table, g.start, g.quantity) for g in new.groups],
+            [(g.table, g.start, g.quantity) for g in model.groups],
+            [
+                ("coil", 0, 16),
+                ("discrete_input", 10000, 16),
+                ("input_register", 30000, 20),
+                ("holding_register", 40000, 44),
+            ],
         )
-        for before, after in zip(old.groups, new.groups):
-            for a, b in zip(before.members, after.members):
-                self.assertEqual(
-                    (a.property, a.multiplier, a.readable, a.writable, a.unit),
-                    (b.property, b.multiplier, b.readable, b.writable, b.unit),
-                )
-                self.assertEqual(a.offset * (8 if b.physical_bits else 1), b.offset)
-                self.assertEqual(
-                    a.data_type, b.data_type if not b.physical_bits else "bool8"
-                )
+        self.assertEqual(sum(len(g.members) for g in model.groups), 37)
         d = json.loads((ROOT / "examples/modsim.tm.json").read_text())
         model, td = instantiate(d, host="127.0.0.1", port=5020, unit_id=7)
         self.assertEqual(model.groups, instantiate(td)[0].groups)
@@ -116,6 +106,23 @@ class ProfileTests(unittest.TestCase):
             instantiate(numeric(), host="localhost", parameters={"TYPO": 1})
         with self.assertRaises(AcquisitionError):
             instantiate(d, host="localhost", parameters={"NAME": "one", "LIMIT": False})
+
+    def test_instantiation_and_result_mutation_preserve_source_and_parameters(self):
+        source = numeric()
+        source["properties"]["counter"]["enum"] = "{{VALUES}}"
+        parameters = {"VALUES": [1, 2, 3]}
+        original = copy.deepcopy(source)
+        _, td = instantiate(source, host="localhost", parameters=parameters)
+        self.assertEqual(source, original)
+        td["properties"]["counter"]["enum"].append(4)
+        td["properties"]["counter"]["forms"][0]["modv:address"] = 999
+        td["modpoll:acquisition"][0]["modpoll:members"].clear()
+        self.assertEqual(source, original)
+        self.assertEqual(parameters, {"VALUES": [1, 2, 3]})
+        with self.assertRaises(AcquisitionError):
+            instantiate(source, host="localhost", unit_id=0, parameters=parameters)
+        self.assertEqual(source, original)
+        self.assertEqual(parameters, {"VALUES": [1, 2, 3]})
 
     def test_unbound_tm_is_executable_but_cannot_export_tcp_td(self):
         self.assertIsNone(instantiate(numeric())[0].endpoint)
@@ -360,3 +367,43 @@ class UnitIdFormTests(unittest.TestCase):
         td["properties"]["counter"]["forms"][0]["modv:unitID"] = 8
         with self.assertRaisesRegex(AcquisitionError, "disagrees"):
             instantiate(td, unit_id=2)
+
+
+class SupportedProfileTests(unittest.TestCase):
+    def test_old_missing_and_unknown_profiles_are_rejected_at_every_entry(self):
+        from modpoll_wot import loads_model, parse_acquisition
+        from modpoll_wot.validation import validate_extension
+
+        for version in ("0.1", "0.2-pilot", "9.9", None):
+            document = numeric()
+            if version is None:
+                del document["modpoll:version"]
+            else:
+                document["modpoll:version"] = version
+            for operation in (parse_model, instantiate, export_td, parse_acquisition):
+                with self.subTest(version=version, entry=operation.__name__):
+                    with self.assertRaisesRegex(AcquisitionError, "expected.*0.2"):
+                        operation(document)
+            with self.assertRaisesRegex(AcquisitionError, "expected.*0.2"):
+                loads_model(json.dumps(document), source="old-device.tm.json")
+            with self.assertRaises(AcquisitionError):
+                validate_extension(document)
+
+
+class ProfileSemanticGuardsTests(unittest.TestCase):
+    def test_blank_title_is_rejected(self):
+        for title in ("", "   "):
+            document = numeric()
+            document["title"] = title
+            with (
+                self.subTest(title=title),
+                self.assertRaisesRegex(AcquisitionError, "device name cannot be empty"),
+            ):
+                instantiate(document)
+
+    def test_non_nosec_security_is_rejected_before_execution(self):
+        document = numeric()
+        document["securityDefinitions"] = {"basic": {"scheme": "basic"}}
+        document["security"] = "basic"
+        with self.assertRaisesRegex(AcquisitionError, "only nosec"):
+            instantiate(document)
