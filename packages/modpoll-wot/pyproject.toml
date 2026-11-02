@@ -1,6 +1,6 @@
 [project]
 name = "modpoll-wot"
-version = "0.2.0a2"
+version = "0.2.0a3"
 description = "Shared WoT Modbus configuration interpreter"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
@@ -10,6 +10,7 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
     "jsonschema>=4.18,<5",
     "referencing>=0.28.4,<1",
+    "PyYAML>=6.0.2,<7",
 ]
 
 [project.urls]
@@ -29,9 +30,10 @@ packages = ["modpoll_wot"]
 [tool.hatch.build.targets.wheel.force-include]
 "CONTRACT.md" = "CONTRACT.md"
 "profile.md" = "profile.md"
+"schemas/device-schema.yaml" = "modpoll_wot/schemas/device-schema.yaml"
 
 [tool.hatch.build.targets.sdist]
-include = ["CONTRACT.md", "profile.md", "README.md", "LICENSE", "modpoll_wot/**", "tests/**"]
+include = ["CONTRACT.md", "profile.md", "README.md", "LICENSE", "modpoll_wot/**", "tests/**", "schemas/**"]
 
 [tool.hatch.build.targets.sdist.force-include]
 "CONTRACT.md" = "CONTRACT.md"
