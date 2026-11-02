@@ -4,8 +4,7 @@ An independently versioned TM/TD configuration interpreter for Modpoll and futur
 compatible consumers. No Modbus execution, scheduler or MQTT service is included.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
-The source candidate `0.2.0a3` adds `validate-device device.yaml` and metadata
-schema 1; it is not yet a published release. See [CONTRACT.md](CONTRACT.md).
+Published `0.2.0a3` adds `validate-device device.yaml` and metadata schema 1. See [CONTRACT.md](CONTRACT.md).
 
 ```sh
 modpoll-wot new --title "meter"

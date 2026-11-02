@@ -1,10 +1,10 @@
 # Executable profile 0.2
 
-This profile is published as `modpoll-wot==0.2.0a1` and used by the Modpoll
-`2.0.0a2` preview. It replaces the unpublished `0.2-pilot` experiment. No
-local-path dependency is introduced. Current development source executes only profile 0.2;
-profile 0.1 is rejected and must be migrated before use. This removal has not
-yet been published; existing release artifacts keep their original behavior.
+The published Modpoll `2.0.0a2` preview uses `modpoll-wot==0.2.0a1`.
+Shared interpreter `0.2.0a3` and current development source execute only profile
+0.2; profile 0.1 must be migrated before use. Older immutable application and
+interpreter releases keep their original behavior. Package, profile and metadata
+schema versions are independent; no local-path dependency is introduced.
 
 ## Source and instances
 
