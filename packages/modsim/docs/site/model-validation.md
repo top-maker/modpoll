@@ -7,9 +7,9 @@ shared package; Modsim owns state and protocol execution.
 ## One device
 
 ```bash
-uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 `--config` also accepts HTTPS model URLs. GitHub `blob` links are converted to
@@ -103,8 +103,8 @@ response and may deliberately overwrite values.
 ## Local Python behaviors
 
 ```bash
-uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
-  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json --allow-scripts
+uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
+  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json --allow-scripts
 ```
 
 Optional synchronous hooks:
@@ -134,3 +134,6 @@ cancel updates and close the server.
 The sample loopback is an explicit synthetic assumption, not a claim that real
 ADAM hardware automatically connects AO to AI or DO to DI. No fault injection,
 recording/replay, multi-listener runtime or remote behavior execution is included.
+
+Prepare pinned example inputs from the repository root with
+`uv run python tools/fetch-models.py`; see `examples/model-source.yaml`.

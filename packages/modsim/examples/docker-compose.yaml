@@ -3,10 +3,10 @@ services:
   modsim:
     build: ..
     restart: unless-stopped
-    command: ["python", "-m", "modsim", "up", "-f", "/app/examples/deployment.yaml", "--allow-scripts"]
+    command: ["python", "-m", "modsim", "up", "-f", "/app/deployment.yaml", "--allow-scripts"]
     ports:
       - "127.0.0.1:5020:5020"
     volumes:
-      - ./deployment.yaml:/app/examples/deployment.yaml:ro
+      - ./deployment.yaml:/app/deployment.yaml:ro
       - ./td:/app/output
-      - ../contrib:/app/contrib:ro
+      - ./models:/app/examples/models:ro

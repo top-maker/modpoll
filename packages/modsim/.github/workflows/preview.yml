@@ -137,7 +137,8 @@ jobs:
       - name: Test without application source
         run: |
           mkdir -p "$RUNNER_TEMP/acceptance"
-          cp -r release/tests release/contrib "$RUNNER_TEMP/acceptance/"
+          cp -r release/tests release/tools "$RUNNER_TEMP/acceptance/"
+          if [ -d release/contrib ]; then cp -r release/contrib "$RUNNER_TEMP/acceptance/"; fi
           if [ -d release/examples ]; then cp -r release/examples "$RUNNER_TEMP/acceptance/"; fi
           if [ -f release/deployment.yaml ]; then cp release/deployment.yaml "$RUNNER_TEMP/acceptance/"; fi
           cd "$RUNNER_TEMP/acceptance"
@@ -154,7 +155,7 @@ jobs:
           if [ "$TAG" = "v2.0.0a1" ]; then
             docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim --deployment examples/lab.sim.json --bind 0.0.0.0
           else
-            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f /app/examples/deployment.yaml
+            docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:${TAG#v}" python -m modsim up -f /app/deployment.yaml
           fi
           cd "$RUNNER_TEMP/acceptance"
           uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl python tools/preview-acceptance.py

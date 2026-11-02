@@ -38,11 +38,11 @@ server:
   port: 5020
 devices:
   - id: adam-5017uh
-    model: contrib/advantech/adam-5017uh/adam-5017uh.tm.json
+    model: examples/models/advantech/adam-5017uh/adam-5017uh.tm.json
     parameters:
       THING_ID: urn:modsim:example:adam-5017uh
       UNIT_ID: 1
-    scenario: contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+    scenario: examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 `devices` may be empty. IDs and deployment names use lowercase letters, digits
@@ -164,3 +164,6 @@ be retried. SIGINT/SIGTERM and `down` close listeners, cancel device tasks and
 remove the socket. The lock and log files remain for safe locking and inspection.
 No remote API, multi-listener management, fault injection or state migration is
 included in this change.
+
+Prepare pinned example inputs from the repository root with
+`uv run python tools/fetch-models.py`; see `examples/model-source.yaml`.

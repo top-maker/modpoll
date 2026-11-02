@@ -1,0 +1,12 @@
+repository: top-maker/modbus-models
+release: modbus-models-v1
+revision: 2493526acc6645393b3ebb3f32279167a88d6f41
+profile: '0.2'
+interpreter: 0.2.0a2
+files:
+  advantech/adam-5017uh/adam-5017uh.tm.json: 9e1d6e38dbb4e2db2f30f8dfd3d9df90a349b2e9aeb60a168ae4d60ee709ead7
+  advantech/adam-5017uh/simulation/adam-5017uh-behavior.py: b1ec8ff3d0fe6e32127f587d5049523584adef479509f90c004c010f3ceeb789
+  advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json: efbd727d253febdb8e816e70a07e2314f2110f47e705eca8e942e0948c80417e
+  advantech/adam-5017uh/simulation/adam-5017uh.sim.json: 246e0eaf9234aaec6c85c63497a27bbd89c132e436345636c9cdba8969fd3c9f
+  advantech/adam-6024/adam-6024.tm.json: 4c2aee3334faf6622f4ee34a23108fa0ec100a6b3110a78200eee79da8935596
+  advantech/adam-6024/simulation/adam-6024.sim.json: 2beb25195324919b10710d24dbdad93d9e3d4a37e857824faedf9246296c1cc0
