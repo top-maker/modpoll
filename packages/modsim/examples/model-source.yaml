@@ -1,6 +1,6 @@
 repository: top-maker/modbus-models
-release: modbus-models-v1
-revision: 0a617aa4cdfef060b53bb9a821562f8da0f5e5b9
+release: modbus-models-v2
+revision: db8cf19a2b58bcfc3b45319caa2d386d5ab5cacd
 profile: '0.2'
 interpreter: 0.2.0a2
 files:

@@ -197,7 +197,7 @@ source change.
 
 Device data and optional scenarios are maintained only in
 [modbus-models](https://github.com/top-maker/modbus-models).
-`examples/model-source.yaml` pins data release `modbus-models-v1` to its full
+`examples/model-source.yaml` pins data release `modbus-models-v2` to its full
 commit and individual SHA-256 hashes. Prepare examples with
 `uv run python tools/fetch-models.py`; this downloads verified local inputs to
 ignored `examples/models/`, never executes downloaded Python, and does not copy
