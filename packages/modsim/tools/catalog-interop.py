@@ -4,6 +4,7 @@ import argparse
 import copy
 import hashlib
 from importlib.metadata import version
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -75,8 +76,17 @@ def run(args):
         port = reserve.getsockname()[1]
     with TemporaryDirectory(prefix="modsim-catalog-interop-") as temporary:
         work = Path(temporary)
-        scenario = work / "initial.sim.json"
-        scenario.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
+        if args.scenario:
+            scenario = args.scenario.resolve()
+            if json.loads(scenario.read_bytes()) != {
+                "version": "1",
+                "initial": EXPECTED,
+            }:
+                raise ValueError("Scenario differs from independent expected vector")
+        else:
+            scenario = work / "initial.sim.json"
+            scenario.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
+        scenario_digest = hashlib.sha256(scenario.read_bytes()).hexdigest()
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
         with (work / "simulator.log").open("w+") as log:
@@ -118,10 +128,10 @@ def run(args):
                         time.sleep(0.1)
                 with stream:
                     stream.sendall(struct.pack(">HHHBBHH", 7, 0, 6, 1, 4, 1, 8))
-                    assert receive(stream, 7) == struct.pack(">HHHB", 7, 0, 19, 1)
-                    assert receive(stream, 18) == bytes([4, 16]) + struct.pack(
-                        ">8H", *VALUES
-                    )
+                    raw_header = receive(stream, 7)
+                    raw_body = receive(stream, 18)
+                    assert raw_header == struct.pack(">HHHB", 7, 0, 19, 1)
+                    assert raw_body == bytes([4, 16]) + struct.pack(">8H", *VALUES)
                 output = work / "modpoll.json"
                 subprocess.run(
                     [
@@ -162,7 +172,9 @@ def run(args):
                 )
                 good = work / "correct.td.json"
                 good.write_text(json.dumps(td))
-                assert node_values(reader, good) == EXPECTED
+                td_digest = hashlib.sha256(good.read_bytes()).hexdigest()
+                node_actual = node_values(reader, good)
+                assert node_actual == EXPECTED
                 wrong = copy.deepcopy(td)
                 for prop in wrong["properties"].values():
                     for form in prop["forms"]:
@@ -192,7 +204,23 @@ def run(args):
             )
         )
     report = {
+        "executed-at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "data-revision": revision,
+        "scenario-sha256": scenario_digest,
+        "td-sha256": td_digest,
+        "td-endpoint": {
+            "host": "127.0.0.1",
+            "port": port,
+            "unit-id": 1,
+            "target": "node-wot-0.9.2",
+        },
+        "actual": {
+            "modpoll": next(iter(polled.values())),
+            "node-wot": node_actual,
+            "wrong-byte-order": incorrect,
+            "request-hex": struct.pack(">HHHBBHH", 7, 0, 6, 1, 4, 1, 8).hex(),
+            "response-hex": (raw_header + raw_body).hex(),
+        },
         "tm-sha256": digest,
         "profile": "0.2",
         "modsim": version("modsim"),
@@ -221,6 +249,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--lock", type=Path, default=ROOT / "examples/model-source.yaml"
+    )
+    parser.add_argument(
+        "--scenario",
+        type=Path,
+        help="Fixed local input with the independent known vector",
     )
     parser.add_argument("--modpoll-python", type=Path, required=True)
     parser.add_argument("--node-reader", type=Path, required=True)
