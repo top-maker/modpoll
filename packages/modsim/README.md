@@ -207,4 +207,6 @@ The application keeps its independent modpoll-wot 0.2.0a2 dependency.
 Single-device mode can read a fixed HTTPS TM URL directly. Optional scenarios
 remain local; scripts require explicit `--allow-scripts`. Managed deployments
 use Unix sockets and require POSIX; native Windows should use single-device
-foreground mode or WSL. Current CI validates Linux, not native Windows/macOS.
+foreground mode or WSL. Independent-wheel CI verifies single-device remote-TM
+startup, raw reads and process shutdown on Linux, macOS and native Windows.
+It does not certify managed commands on Windows or every OS/Python combination.

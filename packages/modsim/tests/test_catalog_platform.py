@@ -79,7 +79,16 @@ def test_remote_model_single_device_read_and_stop(tmp_path):
                     response += part
                 assert response == struct.pack(">HHHBBB8H", 7, 0, 19, 1, 4, 16, *values)
         finally:
-            process.terminate()
+            if os.name == "nt":
+                # A Windows venv executable can be a redirector with a child.
+                # Stop the owned tree so the test never leaves a listener behind.
+                subprocess.run(
+                    ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                    check=True,
+                    capture_output=True,
+                )
+            else:
+                process.terminate()
             try:
                 process.wait(timeout=10)
             except subprocess.TimeoutExpired:
@@ -87,8 +96,17 @@ def test_remote_model_single_device_read_and_stop(tmp_path):
                 process.wait()
         # Stop means the foreground child is gone and its endpoint is closed.
         assert process.poll() is not None
-        with pytest.raises(OSError):
-            socket.create_connection(("127.0.0.1", port), timeout=1)
+        deadline = time.monotonic() + 5
+        while True:
+            try:
+                with socket.create_connection(("127.0.0.1", port), timeout=0.2):
+                    pass
+            except OSError:
+                break
+            assert (
+                time.monotonic() < deadline
+            ), "Owned simulator listener remained after stop"
+            time.sleep(0.05)
 
 
 def test_native_absolute_paths_are_files_not_url_schemes(tmp_path):

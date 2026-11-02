@@ -1,6 +1,6 @@
 # Managed deployments
 
-The v2 development source adds two-level commands for a local, single-listener
+The 2.0.0a2 candidate adds two-level commands for a local, single-listener
 deployment. These commands are not included in the published `2.0.0a1` preview.
 Managed commands currently require POSIX (Linux, macOS or WSL); the existing
 flag-based server entry point remains available on other platforms.
