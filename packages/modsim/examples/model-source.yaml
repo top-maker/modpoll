@@ -11,3 +11,5 @@ files:
   advantech/adam-6024/adam-6024.tm.json: 4c2aee3334faf6622f4ee34a23108fa0ec100a6b3110a78200eee79da8935596
   advantech/adam-6024/simulation/adam-6024.sim.json: 2beb25195324919b10710d24dbdad93d9e3d4a37e857824faedf9246296c1cc0
   advantech/adam-5017uh/simulation/interop-inputs.sim.json: dd10b90523317122ea8b70cf21b7417bd60b688ea5b12e36fb798d9e2a6d5a58
+  advantech/adam-5017uh/evidence/l2-check.yaml: a5f83e77acb60bf2cd5359523ad3fe76b0fae4adb90703b8f09a9dddad9a883b
+  schemas/evidence-schema.yaml: ecfbecbd89ab599f842357994239c67097e92983e0ffacfef2fa3615b27c5837
