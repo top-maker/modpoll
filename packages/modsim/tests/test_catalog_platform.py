@@ -89,3 +89,14 @@ def test_remote_model_single_device_read_and_stop(tmp_path):
         assert process.poll() is not None
         with pytest.raises(OSError):
             socket.create_connection(("127.0.0.1", port), timeout=1)
+
+
+def test_native_absolute_paths_are_files_not_url_schemes(tmp_path):
+    from modsim.sources import local_path, model_document
+
+    path = tmp_path / "local-model.json"
+    path.write_text('{"fixture": true}')
+    assert local_path(tmp_path, str(path)) == str(path.resolve())
+    assert model_document(str(path)) == {"fixture": True}
+    with pytest.raises(ValueError, match="expected local path"):
+        local_path(tmp_path, "https://example.invalid/scenario.json")
