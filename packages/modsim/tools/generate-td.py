@@ -26,7 +26,7 @@ def main():
         parser.error("requires modpoll-wot==0.2.0a2; see README.md")
     changed = []
     for product, stem in PRODUCTS.items():
-        directory = ROOT.parent / "contrib" / "advantech" / product
+        directory = ROOT.parent / "tests" / "fixtures" / "io-module"
         source = directory / f"{stem}.tm.json"
         model = load_document(source)
         artifacts = {}

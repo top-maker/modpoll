@@ -36,7 +36,7 @@ The commands use `examples/deployment.yaml` by default. The example starts two
 virtual ADAM devices: Unit 1 exposes ADAM-5017UH raw inputs; Unit 2 exposes
 ADAM-6024 raw I/O with synthetic AO→AI and DO→DI loopback. These are simulation
 values, not verified physical measurements. Models, scenarios and source
-information are in [contrib](contrib/README.md).
+information are in [modbus-models](https://github.com/top-maker/modbus-models).
 
 The deployment binds to all interfaces by default; set `server.bind` to
 `127.0.0.1` in `examples/deployment.yaml` to restrict a direct local run.
@@ -173,9 +173,10 @@ codecs, constraints and behavior hooks.
 For a single device without a managed deployment:
 
 ```bash
-uv run modsim --config contrib/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run python tools/fetch-models.py
+uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario contrib/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 The single-device model runtime currently supports TCP. The unconfigured demo
@@ -191,3 +192,19 @@ The checked-in ADAM-6024 TD and its source hash can be checked with
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the v2 workflow and checks. The
 repository keeps v1 and v2 release lines separate; no release is implied by a
 source change.
+
+## Pinned public model inputs
+
+Device data and optional scenarios are maintained only in
+[modbus-models](https://github.com/top-maker/modbus-models).
+`examples/model-source.yaml` pins data release `modbus-models-v1` to its full
+commit and individual SHA-256 hashes. Prepare examples with
+`uv run python tools/fetch-models.py`; this downloads verified local inputs to
+ignored `examples/models/`, never executes downloaded Python, and does not copy
+an interpreter. Re-run after updating the lock through a reviewed PR.
+The application keeps its independent modpoll-wot 0.2.0a2 dependency.
+
+Single-device mode can read a fixed HTTPS TM URL directly. Optional scenarios
+remain local; scripts require explicit `--allow-scripts`. Managed deployments
+use Unix sockets and require POSIX; native Windows should use single-device
+foreground mode or WSL. Current CI validates Linux, not native Windows/macOS.

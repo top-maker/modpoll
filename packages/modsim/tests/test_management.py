@@ -18,7 +18,7 @@ from modsim.management import RuntimeManager
 from modsim.manifest import load_deployment, read_yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "contrib/advantech/adam-6024/adam-6024.tm.json"
+SOURCE = ROOT / "tests/fixtures/io-module/adam-6024.tm.json"
 
 
 def fixture(tmp_path):

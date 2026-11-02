@@ -21,7 +21,7 @@ from modsim.runtime import RuntimeContext
 from modsim.sources import model_document
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = ROOT / "contrib/advantech/adam-6024/adam-6024.tm.json"
+MODEL = ROOT / "tests/fixtures/io-module/adam-6024.tm.json"
 
 
 def device(unit=1, **options):
@@ -221,7 +221,7 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
             device(
                 2,
                 scenario=str(
-                    ROOT / "contrib/advantech/adam-6024/simulation/adam-6024.sim.json"
+                    ROOT / "tests/fixtures/io-module/simulation/adam-6024.sim.json"
                 ),
             ),
         ],
