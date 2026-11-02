@@ -33,7 +33,7 @@ publish the producer first, and only then change consumer pins. Package version
 and executable profile version are distinct. Existing profile 0.2 semantics are
 preserved; removing the older executable input does not redefine profile 0.2.
 
-## Device metadata schema 1 (candidate 0.2.0a3)
+## Device metadata schema 1 (modpoll-wot 0.2.0a3)
 
 The canonical definition is `schemas/device-schema.yaml`, bundled as
 `modpoll_wot/schemas/device-schema.yaml` in the wheel. Read it with
@@ -55,4 +55,4 @@ Release the producer first, then update the data repository's exact package and
 schema hash in a PR that validates its examples and records. A metadata-only
 release does not require Modpoll/Modsim to change their application pins. A later
 application dependency update still runs its normal regression checks.
-Candidate 0.2.0a3 is not a published contract until its release is verified.
+The verified immutable release for this schema is `modpoll-wot==0.2.0a3`.

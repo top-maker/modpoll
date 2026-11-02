@@ -1,6 +1,7 @@
-Current development source executes profile 0.2 only and rejects profile 0.1.
-This change is not yet published; the release snapshot below describes the
-original immutable artifacts, not every subsequent source change.
+Published shared interpreter 0.2.0a3 and current development source execute only
+profile 0.2 and reject profile 0.1. The application release snapshot below keeps
+its original dependencies and behavior; publishing the shared schema does not
+republish the application.
 
 Modpoll 2.0.0a2 is a functional preview using WoT TM/TD 1.1 profile 0.2 as its canonical configuration model. Existing polling blocks, CLI/JSON/MQTT output and raw address commands are retained. No platform service or device library is required.
 
