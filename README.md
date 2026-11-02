@@ -19,7 +19,7 @@ This tool can be easily deployed on a Raspberry Pi or similar embedded devices, 
 The MQTT broker can be set up either on the same Raspberry Pi or in the cloud. Once data is successfully published, users can subscribe to the relevant MQTT topics and conveniently view the data on their smartphones.
 
 <p align="center">
-  <img src="docs/assets/modpoll-usage.png">
+  <img src="docs/site/assets/modpoll-usage.png">
 </p>
 
 Moreover, you can also run this tool continuously on a server as a Modbus-MQTT gateway, i.e. polling from local Modbus devices and forwarding data to a centralized cloud service.
@@ -108,7 +108,7 @@ For a complete local simulator/MQTT demonstration, use the repository's
 The local example above uses the `adam6024_raw` TD title for its default topics:
 `modpoll/adam6024_raw/data` for samples and `modpoll/adam6024_raw/set` for
 write commands. The publish, subscribe and diagnostics topic patterns are
-configurable; see the [MQTT documentation](docs/usage.rst).
+configurable; see the [MQTT documentation](docs/site/usage.rst).
 
 Writes use literal Modbus PDU addresses and raw values. Holding-register arrays
 use FC16 and must contain 1–123 unsigned 16-bit values within the address range.

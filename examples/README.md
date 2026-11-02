@@ -23,4 +23,4 @@ demonstration only. Use an authenticated broker for a deployed application.
 
 The previous separate remote/local Compose examples and CSV template were
 removed from v2. Existing 1.x examples remain on `main`; see the
-[CSV migration guide](../docs/csv-migration.rst) for upgrading a configuration.
+[CSV migration guide](../docs/site/csv-migration.rst) for upgrading a configuration.

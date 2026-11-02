@@ -41,5 +41,5 @@ continues serving stable documentation, and ``vocab/`` is preserved independentl
 The initial 1.x tree is built from the pinned v1.6.1 release. Subsequent stable
 releases update their line while preserving other directories; PRs only build.
 No preview is considered fully accepted until the published-package acceptance
-job succeeds. See :doc:`validation` for the published preview acceptance and
+job succeeds. See `validation <validation.rst>`_ for the published preview acceptance and
 maintainer-confirmed Eastron physical RS485 result.

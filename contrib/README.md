@@ -2,7 +2,7 @@
 
 This directory retains vendor register documentation and contributed mappings.
 CSV files are v1 migration sources; modpoll 2.x accepts TM/TD JSON only. Use the
-[migration guide and AI prompt](../docs/csv-migration.rst), then validate the new
+[migration guide and AI prompt](../docs/site/csv-migration.rst), then validate the new
 file with `modpoll-wot validate MODEL --profile` and compare known device
 readings. This command requires the next shared package release or the candidate
 source; the published `modpoll-wot==0.2.0a1` does not include it.

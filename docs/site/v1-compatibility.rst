@@ -103,5 +103,4 @@ matrix remains Python 3.10–3.12 on Linux.
 
 The functional preview ``2.0.0a1`` and independent ``modpoll-wot==0.1.0a1`` are
 published. Application dependencies use the exact registry version; wheel/sdist,
-Docker and registry-installed acceptance have passed. See :doc:`release-process`
-and :doc:`validation` for the release and hardware evidence.
+Docker and registry-installed acceptance have passed. See the `validation record <https://github.com/top-maker/modpoll/blob/v2/docs/validation.rst>`_ for release and hardware evidence.

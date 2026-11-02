@@ -14,8 +14,6 @@ or `2.x / TM/TD <https://top-maker.github.io/modpoll/v2/>`_.
     quickstart
     usage
     configure
-    validation
-    release-process
     v1-compatibility
     csv-migration
     changelog

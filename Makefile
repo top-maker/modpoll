@@ -55,13 +55,13 @@ docker-run-dev: docker-build-dev ## Run docker compose for local dev
 
 .PHONY: docs
 docs: ## Build docs into html files
-	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/changelog.rst
-	@uv run --group docs sphinx-build docs/ docs/_build/html
+	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/site/changelog.rst
+	@uv run --group docs sphinx-build docs/site/ docs/_build/html
 
 .PHONY: docs-serve
 docs-serve: ## Build and serve the docs for local dev
-	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/changelog.rst
-	@uv run --group docs sphinx-autobuild docs/ docs/_build/html
+	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/site/changelog.rst
+	@uv run --group docs sphinx-autobuild docs/site/ docs/_build/html
 
 .PHONY: help
 help:
