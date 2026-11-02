@@ -27,6 +27,7 @@ jobs:
         run: uv run --locked --no-sync pytest -q packages/modpoll-wot/tests
 
   tox:
+    name: tox (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read

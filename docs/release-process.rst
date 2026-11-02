@@ -9,10 +9,12 @@ the Modpoll executable profile 0.2; it is not a device execution service.
    3.10/3.11/3.12, documentation and simulator interoperability CI.
 2. Set the interpreter version and metadata, build wheel/sdist and verify bundled
    schemas offline in an independent environment. Push the unique tag
-   ``modpoll-wot-v0.2.0a1``. ``preview-core.yml`` requires the accepted SHA,
+   ``modpoll-wot-v<version>`` (matching the producer metadata). ``preview-core.yml`` requires the accepted SHA,
    publishes both artifacts, verifies a registry installation and records a
    separate prerelease without changing the stable latest release.
-3. After registry installation succeeds, pin the application to that exact
+3. After registry installation succeeds, consumers needing the new capability
+   may update their exact dependency. Metadata-only releases do not require an
+   application release. When updating the application, pin it to that exact
    version. Refresh lock/requirements. Build wheel/sdist and Docker; the wheel
    guard rejects source URLs and non-exact interpreter requirements.
 4. Verify the application candidate and push ``v2.0.0a2`` at that accepted SHA.

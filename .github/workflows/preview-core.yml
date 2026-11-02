@@ -38,10 +38,10 @@ jobs:
       - name: Verify portable wheel and bundled schemas
         run: |
           cd "$RUNNER_TEMP"
-          uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl modpoll-wot validate "$GITHUB_WORKSPACE/packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json" --profile
-          uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl modpoll-wot validate "$GITHUB_WORKSPACE/packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json" --profile
+          uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl modpoll-wot validate "$GITHUB_WORKSPACE/examples/modsim.tm.json" --profile
           uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl modpoll-wot export "$GITHUB_WORKSPACE/examples/modsim.tm.json" --host 127.0.0.1 --port 5020 --output "$RUNNER_TEMP/core-check-instance.json"
           uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl modpoll-wot validate "$RUNNER_TEMP/core-check-instance.json" --profile
+          uv run --isolated --with "$GITHUB_WORKSPACE"/packages/modpoll-wot/dist/*.whl python -c 'from modpoll_wot.metadata import device_schema; assert device_schema()["properties"]["schema-version"]["const"] == "1"'
       - name: Check immutable version
         id: pypi
         env:
@@ -60,16 +60,16 @@ jobs:
         run: |
           python .github/scripts/preview-release.py download "$TAG" --directory "$RUNNER_TEMP/core-registry-artifacts"
           cd "$RUNNER_TEMP"
-          uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot validate "$GITHUB_WORKSPACE/packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json" --profile
-          uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot validate "$GITHUB_WORKSPACE/packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json" --profile
+          uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot validate "$GITHUB_WORKSPACE/examples/modsim.tm.json" --profile
           uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot export "$GITHUB_WORKSPACE/examples/modsim.tm.json" --host 127.0.0.1 --output "$RUNNER_TEMP/core-registry-instance.json"
           uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" modpoll-wot validate "$RUNNER_TEMP/core-registry-instance.json" --profile
+          uv run --isolated --with "$RUNNER_TEMP/core-registry-artifacts/modpoll_wot-${TAG#modpoll-wot-v}-py3-none-any.whl" python -c 'from modpoll_wot.metadata import device_schema; assert device_schema()["properties"]["schema-version"]["const"] == "1"'
       - name: Record a separate prerelease
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --verify-tag --prerelease --latest=false --title "modpoll-wot ${TAG#modpoll-wot-v}" --notes "Versioned configuration interpreter for the supported 0.1/0.2 contracts. Validates the bundled WoT TD/TM 1.1 schemas and Modpoll acquisition subset; does not execute device requests. See packages/modpoll-wot/CONTRACT.md at this tag."
+            gh release create "$TAG" --verify-tag --prerelease --latest=false --title "modpoll-wot ${TAG#modpoll-wot-v}" --notes "Versioned configuration interpreter for the executable profile 0.2 and device metadata schema 1 contracts. Validates the bundled WoT TD/TM 1.1 schemas and Modpoll acquisition subset; does not execute device requests. See packages/modpoll-wot/CONTRACT.md at this tag."
           fi
           gh release upload "$TAG" packages/modpoll-wot/dist/*
