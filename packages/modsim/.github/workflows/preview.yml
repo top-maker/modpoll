@@ -143,6 +143,7 @@ jobs:
           if [ -d release/examples ]; then cp -r release/examples "$RUNNER_TEMP/acceptance/"; fi
           if [ -f release/deployment.yaml ]; then cp release/deployment.yaml "$RUNNER_TEMP/acceptance/"; fi
           cd "$RUNNER_TEMP/acceptance"
+          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl python "$GITHUB_WORKSPACE/tools/prepare-acceptance.py" "$RUNNER_TEMP/acceptance"
           uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl --with pytest python -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
       - name: Verify published image and contributed deployment
         env:
