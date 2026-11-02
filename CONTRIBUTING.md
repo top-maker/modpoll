@@ -76,7 +76,8 @@ Install Git and uv. `main` maintains the stable CSV release; select `v2` for WoT
     Then, validate that all unit tests are passing:
 
     ```bash
-    uv run pytest -m "not integration"
+    uv run pytest tests -m "not integration"
+    uv run python tools/test-wot-source.py -m "not integration"
     ```
 
 6. Commit your changes and push your branch to GitHub:

@@ -1,6 +1,5 @@
 """Regression cases for legitimate v1 mappings and precise v2 failure reporting."""
 
-import copy
 import json
 
 import pytest
@@ -8,7 +7,7 @@ import pytest
 from modpoll.modbus_task import Device, Poller, Reference, ModbusHandler
 from modpoll.wot_config import create_devices
 from modpoll_wot import AcquisitionError, parse_model
-from tests.wot_helpers import meter_model
+from tests.wot_helpers import meter_model, raw_form
 
 
 class Result:
@@ -25,12 +24,16 @@ def test_numeric_bit_tables_decode_complete_bytes(entity, count):
     document = meter_model("bits", start=0, count=count)
     group = document["modpoll:acquisition"][0]
     group["modv:entity"] = entity
+    form = raw_form("uint16", 0, quantity=16, entity=entity)
+    form["modpoll:bitPacking"] = "legacy-msb"
+    document["properties"]["value"]["forms"] = [form]
 
     # Legacy fromCoils numeric decoding reverses bit order within each byte.
     class Client:
         def read_coils(self, *args, **kwargs):
             return Result(
                 bits=[True, False, True, False, False, False, False, True] * 2
+                + [False] * (count - 16)
             )
 
         read_discrete_inputs = read_coils
@@ -49,7 +52,9 @@ def test_bit_table_string_span_counts_bytes_not_registers():
     document["properties"]["value"]["type"] = "string"
     group = document["modpoll:acquisition"][0]
     group["modv:entity"] = "Coil"
-    group["modpoll:members"][0]["modpoll:dataType"] = "string3"
+    form = raw_form("string3", 0, quantity=24, entity="Coil")
+    form["modpoll:bitPacking"] = "legacy-msb"
+    document["properties"]["value"]["forms"] = [form]
     (device,) = create_devices(parse_model(document))
 
     class Client:
@@ -67,11 +72,12 @@ def test_bit_table_string_span_counts_bytes_not_registers():
 
 def test_aliases_decode_every_property_from_one_read():
     document = meter_model()
-    document["properties"]["signed"] = {"type": "integer", "readOnly": True}
-    group = document["modpoll:acquisition"][0]
-    alias = copy.deepcopy(group["modpoll:members"][0])
-    alias.update({"modpoll:property": "signed", "modpoll:dataType": "int16"})
-    group["modpoll:members"].append(alias)
+    document["properties"]["signed"] = {
+        "type": "integer",
+        "readOnly": True,
+        "forms": [raw_form("int16", 0)],
+    }
+    document["modpoll:acquisition"][0]["modpoll:members"].append("signed")
     (device,) = create_devices(parse_model(document))
 
     class Client:
@@ -138,15 +144,13 @@ def test_failed_attempts_update_diagnostic_counts(exception):
 
 def test_write_only_property_stays_out_of_decoded_output():
     document = meter_model()
-    document["properties"]["write_value"] = {"type": "integer", "writeOnly": True}
+    document["properties"]["write_value"] = {
+        "type": "integer",
+        "writeOnly": True,
+        "forms": [raw_form("uint16", 1)],
+    }
     document["modpoll:acquisition"][0]["modv:quantity"] = 2
-    document["modpoll:acquisition"][0]["modpoll:members"].append(
-        {
-            "modpoll:property": "write_value",
-            "modpoll:offset": 1,
-            "modpoll:dataType": "uint16",
-        }
-    )
+    document["modpoll:acquisition"][0]["modpoll:members"].append("write_value")
     (device,) = create_devices(parse_model(document))
 
     class Client:

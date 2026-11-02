@@ -90,7 +90,8 @@ With the baseline, simulator and private broker variables above, run::
 
     export MODPOLL_MQTT_INTEGRATION=1
     uv sync --locked --all-extras --all-groups
-    uv run pytest -q --junitxml=/tmp/modpoll-acceptance.xml
+    uv run pytest -q tests --junitxml=/tmp/modpoll-acceptance.xml
+    uv run python tools/test-wot-source.py -q --junitxml=/tmp/modpoll-source.xml
     uv run python tools/verify_modsim_equivalence.py --modpoll-1x "$MODPOLL_1X_SOURCE" --modsim "$MODSIM_SOURCE" --report /tmp/modpoll-equivalence.json
 
 The TLS tests create temporary certificates using OpenSSL and own an isolated

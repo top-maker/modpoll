@@ -1,13 +1,13 @@
-"""Contract 0.2 candidate: standard Forms, explicit blocks and TD instantiation."""
+"""Executable profile 0.2: standard Forms, explicit blocks and TD instantiation."""
 
 import copy
 from dataclasses import replace
 import json
 import re
 
-from .acquisition import AcquisitionError, Group, type_width
+from .acquisition import AcquisitionError, Group, type_width, validate_member, ENTITIES
 from .endpoint import _authority, _td_endpoint
-from .loading import _check_depth, _document_kind, parse_model
+from .loading import _check_depth, _document_kind
 from .validation import validate_standard, validate_extension, validate_modbus
 
 VERSION = "0.2"
@@ -194,6 +194,10 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
     if not isinstance(document, dict):
         raise AcquisitionError("document: expected object")
     _check_depth(document)
+    if document.get("modpoll:version") != VERSION:
+        raise AcquisitionError(
+            "unsupported executable profile; expected modpoll:version '0.2'"
+        )
     kind = _document_kind(document)
     if parameters and kind != "tm":
         raise AcquisitionError("parameters are only valid for TM input")
@@ -207,14 +211,20 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
         bindings["PORT"] = port
     if unit_id is not None:
         bindings["UNIT_ID"] = unit_id
-    td = _substitute(copy.deepcopy(document), bindings, used)
+    td = _substitute(document, bindings, used)
     if set(explicit) - used:
         raise AcquisitionError(f"unused TM parameters: {sorted(set(explicit) - used)}")
     _check_depth(td)
     validate_standard(td, kind=kind)
-    if td.get("modpoll:version") != VERSION:
-        raise AcquisitionError("expected contract 0.2")
-    validate_extension(td, version="0.2")
+    if not td["title"].strip():
+        raise AcquisitionError("/title: device name cannot be empty")
+    security = td.get("security", [])
+    if isinstance(security, str):
+        security = [security]
+    definitions = td.get("securityDefinitions", {})
+    if any(definitions.get(name, {}).get("scheme") != "nosec" for name in security):
+        raise AcquisitionError("this Modbus configuration subset supports only nosec")
+    validate_extension(td)
     for key in (
         "actions",
         "events",
@@ -373,58 +383,20 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
         actual_host, actual_port = effective.hostname, effective.port
     if authority is None and kind == "td":
         raise AcquisitionError("TD requires a concrete endpoint")
-    # Per-property legacy checks reuse established codec/access validation without
-    # forcing unrelated members to share a byte order or eight-bit-group address.
     validated = {}
     for name, (mapping, forms) in metadata.items():
         entity, address, count, dtype, endian, scalar, bit, multiplier = mapping
-        bits = entity in ("Coil", "DiscreteInput")
-        legacy_prop = copy.deepcopy(properties[name])
-        legacy_prop.pop("forms", None)
-        if scalar:
-            legacy_prop["type"] = "array" if bits else "integer"
-            if bits:
-                legacy_prop["items"] = {"type": "boolean"}
-        member = {
-            "modpoll:property": name,
-            "modpoll:offset": 0,
-            "modpoll:dataType": dtype,
-        }
-        if bit is not None:
-            member["modpoll:bit"] = bit
-        if multiplier is not None:
-            member["modpoll:multiplier"] = multiplier
-        check = {
-            "@context": td["@context"],
-            "@type": "tm:ThingModel",
-            "title": td["title"],
-            "modpoll:version": "0.1",
-            "securityDefinitions": td.get("securityDefinitions", {}),
-            "security": td.get("security", []),
-            "properties": {name: legacy_prop},
-            "modpoll:acquisition": [
-                {
-                    "modv:entity": entity,
-                    "modv:address": address,
-                    "modv:quantity": count,
-                    "modv:mostSignificantByte": endian[0],
-                    "modv:mostSignificantWord": endian[1],
-                    "modpoll:members": [member],
-                }
-            ],
-        }
-        for key in ("security", "securityDefinitions"):
-            if key not in td:
-                check.pop(key, None)
-        old = parse_model(check, unit_id=uid).groups[0].members[0]
-        validated[name] = replace(
-            old,
-            byte_order=("BE" if endian[0] else "LE")
-            + "_"
-            + ("BE" if endian[1] else "LE"),
-            physical_bits=bits,
-            bit_count=count if bits else None,
+        validated[name] = validate_member(
+            name,
+            properties[name],
+            dtype,
+            entity=entity,
+            bit=bit,
+            multiplier=multiplier,
+            endian=endian,
             scalar=scalar,
+            count=count,
+            path=f"/properties/{name}",
         )
         for form in forms:
             if "modv:unitID" in form:
@@ -436,12 +408,6 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
             else:
                 form.pop("href", None)
     groups, seen = [], set()
-    tables = {
-        "Coil": "coil",
-        "DiscreteInput": "discrete_input",
-        "InputRegister": "input_register",
-        "HoldingRegister": "holding_register",
-    }
     for index, group in enumerate(td["modpoll:acquisition"]):
         entity, start, count = (
             group["modv:entity"],
@@ -472,7 +438,7 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
                 )
             members.append(replace(validated[name], offset=mapping[1] - start))
             seen.add(name)
-        groups.append(Group(tables[entity], start, count, "BE_BE", tuple(members)))
+        groups.append(Group(ENTITIES[entity], start, count, "BE_BE", tuple(members)))
     if seen != properties.keys():
         raise AcquisitionError(
             "every property must belong to exactly one acquisition group"

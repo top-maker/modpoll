@@ -4,8 +4,9 @@ Migrating CSV configurations
 v1 remains available for existing CSV users. v2 accepts TM/TD JSON and provides
 an offline validator; it does not load CSV or invoke an AI service at runtime.
 Convert new configurations to profile 0.2 as described in
-``packages/modpoll-wot/profile.md``; profile 0.1 remains supported for existing
-files. Check the executable profile and bundled schemas before using a conversion.
+``packages/modpoll-wot/profile.md``. Current development source rejects profile
+0.1; migrate its member mapping into Forms and use physical bit addresses.
+Check the executable profile and bundled schemas before using a conversion.
 
 Migration procedure
 -------------------

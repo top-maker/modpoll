@@ -86,12 +86,12 @@ Use [examples/modsim.tm.json](examples/modsim.tm.json) for the simulator model o
 [examples/modsim.generated.td.json](examples/modsim.generated.td.json) for its
 generated local TCP instance.
 Both preserve the four original blocks and 37 output references. `--unit-id`
-overrides each model's optional root `modv:unitID` (fallback 1); a concrete TD's forms must agree with it.
+overrides the Unit ID declared consistently in Forms (fallback 1); a concrete TD's Forms must agree before overrides.
 The existing transport, polling, output and MQTT arguments remain available.
 
 See the [current profile](packages/modpoll-wot/profile.md) for field mapping,
 access flags, byte order, multiplier semantics and supported limits; the
-[0.1 contract](packages/modpoll-wot/CONTRACT.md) documents compatibility.
+[execution contract](packages/modpoll-wot/CONTRACT.md) defines the profile 0.2-only input policy.
 The configuration loader rejects CSV and reports invalid model fields before
 polling. Each model describes one device; use multiple `--config` paths for
 multiple devices. Give each model a unique `title`, which is the output device name.

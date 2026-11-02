@@ -5,12 +5,8 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
-from .acquisition import AcquisitionError, Group, parse_acquisition
-from .validation import validate_standard
-from .forms import validate_forms
+from .acquisition import AcquisitionError, Group
 
-CONTEXT = "https://top-maker.github.io/modpoll/vocab/wot-modbus#"
-MODBUS_CONTEXT = "https://www.w3.org/2019/wot/modbus"
 MAX_BYTES = 1048576
 MAX_DEPTH = 64
 
@@ -23,7 +19,7 @@ class Model:
     unit_id: int
     endpoint: tuple[str, int] | None = None
     properties_json: str | None = None
-    profile_version: str = "0.1"
+    profile_version: str = "0.2"
 
 
 def _pairs(pairs):
@@ -67,117 +63,53 @@ def _document_kind(document):
 def parse_model(
     document, *, kind=None, unit_id=None, host=None, port=None, parameters=None
 ):
-    if unit_id is not None and (type(unit_id) is not int or not 1 <= unit_id <= 254):
-        raise AcquisitionError("unit_id: expected integer between 1 and 254")
-    if not isinstance(document, dict):
-        raise AcquisitionError("document: expected object")
-    _check_depth(document)
-    detected = _document_kind(document)
-    if kind is None:
-        kind = detected
-    if kind != detected:
+    # Instantiation owns executable validation; kind is only a caller assertion.
+    if kind is not None and (
+        not isinstance(document, dict) or kind != _document_kind(document)
+    ):
         raise AcquisitionError("document kind disagrees with tm:ThingModel declaration")
-    if document.get("modpoll:version") == "0.2":
-        from .profile import instantiate
+    from .profile import instantiate
 
-        return instantiate(
-            document, host=host, port=port, unit_id=unit_id, parameters=parameters
-        )[0]
-    if parameters:
-        raise AcquisitionError("TM placeholder parameters require contract 0.2")
-    validate_standard(document, kind=kind)
-    contexts = document.get("@context", [])
-    mappings = {}
-    for context in contexts if isinstance(contexts, list) else []:
-        if isinstance(context, dict):
-            mappings.update(context)
-    if mappings.get("modpoll") != CONTEXT or mappings.get("modv") != MODBUS_CONTEXT:
-        raise AcquisitionError("@context: unsupported modpoll/modv vocabulary mapping")
+    return instantiate(
+        document, host=host, port=port, unit_id=unit_id, parameters=parameters
+    )[0]
+
+
+def _loads_document(payload):
     if (
-        document.get("actions")
-        or document.get("events")
-        or document.get("links")
-        or document.get("tm:extends")
+        len(payload.encode("utf-8") if isinstance(payload, str) else payload)
+        > MAX_BYTES
     ):
-        raise AcquisitionError(
-            "actions/events/links/TM inheritance are unsupported in contract 0.1"
-        )
-    for key in document:
-        if key.startswith("modpoll:") and key not in (
-            "modpoll:version",
-            "modpoll:acquisition",
-        ):
-            raise AcquisitionError(f"unsupported extension: {key}")
-    if (
-        document.get("forms")
-        or document.get("uriVariables")
-        or document.get("tm:optional")
-    ):
-        raise AcquisitionError(
-            "root operations, URI templates and optional members are unsupported"
-        )
-    security = document.get("security", [])
-    if isinstance(security, str):
-        security = [security]
-    definitions = document.get("securityDefinitions", {})
-    if any(definitions.get(name, {}).get("scheme") != "nosec" for name in security):
-        raise AcquisitionError("this Modbus configuration subset supports only nosec")
-    for name, prop in document.get("properties", {}).items():
-        if any(key.startswith(("modpoll:", "modv:")) for key in prop):
-            raise AcquisitionError(
-                f"/properties/{name}: executable metadata belongs in members/forms"
-            )
-    configured_id = document.get("modv:unitID", 1)
-    if type(configured_id) is not int or not 1 <= configured_id <= 254:
-        raise AcquisitionError("/modv:unitID: expected integer between 1 and 254")
-    if unit_id is None:
-        unit_id = configured_id
-    groups = parse_acquisition(document)
-    validate_forms(document, groups, unit_id, kind)
-    if not document["title"].strip():
-        raise AcquisitionError("/title: device name cannot be empty")
-    return Model(document["title"], kind, groups, unit_id)
+        raise AcquisitionError("configuration exceeds 1 MiB")
+    document = json.loads(
+        payload, object_pairs_hook=_pairs, parse_constant=_invalid_number
+    )
+    _check_depth(document)
+    return document
 
 
 def loads_model(payload, *, source="<memory>", kind=None, unit_id=None, **instance):
     try:
-        if (
-            len(payload.encode("utf-8") if isinstance(payload, str) else payload)
-            > MAX_BYTES
-        ):
-            raise AcquisitionError("configuration exceeds 1 MiB")
-        document = json.loads(
-            payload, object_pairs_hook=_pairs, parse_constant=_invalid_number
+        return parse_model(
+            _loads_document(payload), kind=kind, unit_id=unit_id, **instance
         )
-        return parse_model(document, kind=kind, unit_id=unit_id, **instance)
     except (ValueError, TypeError, RecursionError) as exc:
         raise AcquisitionError(f"{source}: {exc}") from exc
 
 
 def load_model(path, *, kind=None, unit_id=None, **instance):
-    path = Path(path)
+    document = load_document(path)
     try:
-        with path.open("rb") as stream:
-            payload = stream.read(MAX_BYTES + 1)
-    except OSError as exc:
+        return parse_model(document, kind=kind, unit_id=unit_id, **instance)
+    except (ValueError, TypeError, RecursionError) as exc:
         raise AcquisitionError(f"{path}: {exc}") from exc
-    return loads_model(
-        payload, source=str(path), kind=kind, unit_id=unit_id, **instance
-    )
 
 
 def load_document(path):
-    """Load bounded duplicate-free JSON for instantiation/export callers."""
+    """Load bounded duplicate-free JSON for execution, validation and export."""
     path = Path(path)
     try:
         with path.open("rb") as stream:
-            payload = stream.read(MAX_BYTES + 1)
-        if len(payload) > MAX_BYTES:
-            raise AcquisitionError("configuration exceeds 1 MiB")
-        document = json.loads(
-            payload, object_pairs_hook=_pairs, parse_constant=_invalid_number
-        )
-        _check_depth(document)
-        return document
+            return _loads_document(stream.read(MAX_BYTES + 1))
     except (ValueError, TypeError, OSError, RecursionError) as exc:
         raise AcquisitionError(f"{path}: {exc}") from exc

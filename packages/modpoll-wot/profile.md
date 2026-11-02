@@ -2,7 +2,9 @@
 
 This profile is published as `modpoll-wot==0.2.0a1` and used by the Modpoll
 `2.0.0a2` preview. It replaces the unpublished `0.2-pilot` experiment. No
-local-path dependency is introduced. Contract 0.1 semantics remain unchanged.
+local-path dependency is introduced. Current development source executes only profile 0.2;
+profile 0.1 is rejected and must be migrated before use. This removal has not
+yet been published; existing release artifacts keep their original behavior.
 
 ## Source and instances
 
@@ -33,8 +35,8 @@ This group object is a project extension, even though its fields reuse Modbus
 vocabulary. Group order, holes and boundaries are preserved without coalescing
 or splitting. Every property belongs to one group; explicit aliases may share
 addresses. Decoder metadata and offsets are derived from Forms. Offsets count
-words for register tables and physical bits for bit tables in 0.2; 0.1 retains
-its historical eight-bit-group convention. Mixed byte orders are per member.
+words for register tables and physical bits for bit tables. Mixed byte orders
+are per member.
 
 TM Forms can omit href. Standard TM placeholders are also supported. CLI binds
 host/port/Unit ID; TCP port defaults to 502 and Unit ID to 1 (range 1–254).
@@ -155,8 +157,7 @@ actual reads/writes, not just successful TD parsing.
 
 ## Promotion order
 
-Contract 0.1 compatibility fixtures live under the package tests. The canonical
-examples/modsim.tm.json is the four-block/37-property source; generated TDs are
+The canonical examples/modsim.tm.json is the four-block/37-property source; generated TDs are
 artifacts. Tests cover
 value/request equivalence, mixed orders, aliases, holes, UTF-8 byte capacities,
 physical bit offsets, parameters and external read/write round trips.

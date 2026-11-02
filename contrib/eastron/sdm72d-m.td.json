@@ -8,8 +8,7 @@
     }
   ],
   "title": "eastron001",
-  "modpoll:version": "0.1",
-  "modv:unitID": 1,
+  "modpoll:version": "0.2",
   "properties": {
     "PHASE_1_LINE_TO_NEUTRAL_VOLTS": {
       "type": "number",
@@ -749,280 +748,100 @@
   "modpoll:acquisition": [
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "PHASE_1_LINE_TO_NEUTRAL_VOLTS",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_LINE_TO_NEUTRAL_VOLTS",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_LINE_TO_NEUTRAL_VOLTS",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_1_CURRENT",
-          "modpoll:offset": 6,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_CURRENT",
-          "modpoll:offset": 8,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_CURRENT",
-          "modpoll:offset": 10,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_1_ACTIVE_POWER",
-          "modpoll:offset": 12,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_ACTIVE_POWER",
-          "modpoll:offset": 14,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_ACTIVE_POWER",
-          "modpoll:offset": 16,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_1_APPARENT_POWER",
-          "modpoll:offset": 18,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_APPARENT_POWER",
-          "modpoll:offset": 20,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_APPARENT_POWER",
-          "modpoll:offset": 22,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_1_REACTIVE_POWER",
-          "modpoll:offset": 24,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_REACTIVE_POWER",
-          "modpoll:offset": 26,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_REACTIVE_POWER",
-          "modpoll:offset": 28,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_1_POWER_FACTOR",
-          "modpoll:offset": 30,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_2_POWER_FACTOR",
-          "modpoll:offset": 32,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "PHASE_3_POWER_FACTOR",
-          "modpoll:offset": 34,
-          "modpoll:dataType": "float32"
-        }
+        "PHASE_1_LINE_TO_NEUTRAL_VOLTS",
+        "PHASE_2_LINE_TO_NEUTRAL_VOLTS",
+        "PHASE_3_LINE_TO_NEUTRAL_VOLTS",
+        "PHASE_1_CURRENT",
+        "PHASE_2_CURRENT",
+        "PHASE_3_CURRENT",
+        "PHASE_1_ACTIVE_POWER",
+        "PHASE_2_ACTIVE_POWER",
+        "PHASE_3_ACTIVE_POWER",
+        "PHASE_1_APPARENT_POWER",
+        "PHASE_2_APPARENT_POWER",
+        "PHASE_3_APPARENT_POWER",
+        "PHASE_1_REACTIVE_POWER",
+        "PHASE_2_REACTIVE_POWER",
+        "PHASE_3_REACTIVE_POWER",
+        "PHASE_1_POWER_FACTOR",
+        "PHASE_2_POWER_FACTOR",
+        "PHASE_3_POWER_FACTOR"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 0,
-      "modv:quantity": 36,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 36
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "AVERAGE_LINE_TO_NEUTRAL_VOLTS",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "AVERAGE_LINE_CURRENT",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "SUM_OF_LINE_CURRENTS",
-          "modpoll:offset": 6,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_SYSTEM_POWER",
-          "modpoll:offset": 10,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_SYSTEM_VOLT_AMPS",
-          "modpoll:offset": 14,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_SYSTEM_VAR",
-          "modpoll:offset": 18,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_SYSTEM_POWER_FACTOR",
-          "modpoll:offset": 20,
-          "modpoll:dataType": "float32"
-        }
+        "AVERAGE_LINE_TO_NEUTRAL_VOLTS",
+        "AVERAGE_LINE_CURRENT",
+        "SUM_OF_LINE_CURRENTS",
+        "TOTAL_SYSTEM_POWER",
+        "TOTAL_SYSTEM_VOLT_AMPS",
+        "TOTAL_SYSTEM_VAR",
+        "TOTAL_SYSTEM_POWER_FACTOR"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 42,
-      "modv:quantity": 22,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 22
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "FREQUENCY_OF_SUPPLY_VOLTAGES",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "IMPORT_ACTIVE_ENERGY",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "EXPORT_ACTIVE_ENERGY",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "float32"
-        }
+        "FREQUENCY_OF_SUPPLY_VOLTAGES",
+        "IMPORT_ACTIVE_ENERGY",
+        "EXPORT_ACTIVE_ENERGY"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 70,
-      "modv:quantity": 6,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 6
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "LINE_1_TO_LINE_2_VOLTS",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "LINE_2_TO_LINE_3_VOLTS",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "LINE_3_TO_LINE_1_VOLTS",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "AVERAGE_LINE_TO_LINE_VOLTS",
-          "modpoll:offset": 6,
-          "modpoll:dataType": "float32"
-        }
+        "LINE_1_TO_LINE_2_VOLTS",
+        "LINE_2_TO_LINE_3_VOLTS",
+        "LINE_3_TO_LINE_1_VOLTS",
+        "AVERAGE_LINE_TO_LINE_VOLTS"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 200,
-      "modv:quantity": 8,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 8
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "NEUTRAL_CURRENT",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        }
+        "NEUTRAL_CURRENT"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 224,
-      "modv:quantity": 2,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 2
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "TOTAL_ACTIVE_ENERGY",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_REACTIVE_ENERGY",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "float32"
-        }
+        "TOTAL_ACTIVE_ENERGY",
+        "TOTAL_REACTIVE_ENERGY"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 342,
-      "modv:quantity": 4,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 4
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "RESETTABLE_TOTAL_ACTIVE_ENERGY",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "RESETTABLE_IMPORT_ACTIVE_ENERGY",
-          "modpoll:offset": 4,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "RESETTABLE_EXPORT_ACTIVE_ENERGY",
-          "modpoll:offset": 6,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "NET_KWH",
-          "modpoll:offset": 12,
-          "modpoll:dataType": "float32"
-        }
+        "RESETTABLE_TOTAL_ACTIVE_ENERGY",
+        "RESETTABLE_IMPORT_ACTIVE_ENERGY",
+        "RESETTABLE_EXPORT_ACTIVE_ENERGY",
+        "NET_KWH"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 384,
-      "modv:quantity": 14,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 14
     },
     {
       "modpoll:members": [
-        {
-          "modpoll:property": "TOTAL_IMPORT_ACTIVE_POWER",
-          "modpoll:offset": 0,
-          "modpoll:dataType": "float32"
-        },
-        {
-          "modpoll:property": "TOTAL_EXPORT_ACTIVE_POWER",
-          "modpoll:offset": 2,
-          "modpoll:dataType": "float32"
-        }
+        "TOTAL_IMPORT_ACTIVE_POWER",
+        "TOTAL_EXPORT_ACTIVE_POWER"
       ],
       "modv:entity": "InputRegister",
       "modv:address": 1280,
-      "modv:quantity": 4,
-      "modv:mostSignificantByte": true,
-      "modv:mostSignificantWord": true
+      "modv:quantity": 4
     }
   ],
   "security": [

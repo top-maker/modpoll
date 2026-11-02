@@ -134,3 +134,81 @@ def test_remote_config_detects_response_content_at_opaque_url(monkeypatch, kind)
     model = read_model("https://example.test/config/42", timeout=1, unit_id=None)
     assert model.kind == kind
     assert len(model.groups) == 4
+
+
+@pytest.mark.parametrize("remote", [False, True], ids=["local", "https"])
+@pytest.mark.parametrize("kind", ["tm", "td"])
+def test_profile_01_is_rejected_before_device_execution(
+    tmp_path, monkeypatch, remote, kind
+):
+    from modpoll import wot_config
+
+    # A valid old-format model also exercises the guard with the registry wheel,
+    # which still understands 0.1 until the cleaned producer is published.
+    document = {
+        "@context": [
+            "https://www.w3.org/2022/wot/td/v1.1",
+            {
+                "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+                "modv": "https://www.w3.org/2019/wot/modbus",
+            },
+        ],
+        "title": "old-device",
+        "modpoll:version": "0.1",
+        "properties": {"value": {"type": "integer", "readOnly": True}},
+        "modpoll:acquisition": [
+            {
+                "modv:entity": "HoldingRegister",
+                "modv:address": 0,
+                "modv:quantity": 1,
+                "modv:mostSignificantByte": True,
+                "modv:mostSignificantWord": True,
+                "modpoll:members": [
+                    {
+                        "modpoll:property": "value",
+                        "modpoll:offset": 0,
+                        "modpoll:dataType": "uint16",
+                    }
+                ],
+            }
+        ],
+    }
+    if kind == "tm":
+        document["@type"] = "tm:ThingModel"
+    else:
+        document["securityDefinitions"] = {"none": {"scheme": "nosec"}}
+        document["security"] = "none"
+        document["properties"]["value"]["forms"] = [
+            {
+                "href": "modbus+tcp://localhost:5020/1/0?quantity=1",
+                "modv:entity": "HoldingRegister",
+                "op": "readproperty",
+            }
+        ]
+    payload = json.dumps(document).encode()
+    if remote:
+
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+            def raise_for_status(self):
+                pass
+
+            def iter_content(self, size):
+                yield payload
+
+        monkeypatch.setattr(wot_config.requests, "get", lambda *a, **kw: Response())
+        location = "https://example.test/old-device"
+    else:
+        path = tmp_path / "old-device.json"
+        path.write_bytes(payload)
+        location = str(path)
+    with pytest.raises(ValueError, match="expected.*0.2"):
+        read_model(location, timeout=1, unit_id=None)
+    handler = ModbusHandler(object(), location)
+    assert not handler.load_config()
+    assert handler.deviceList == []

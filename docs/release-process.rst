@@ -3,7 +3,7 @@ Preview release process
 
 The application and ``modpoll-wot`` interpreter are independently versioned in
 this repository. The interpreter validates bundled WoT TD/TM 1.1 schemas and
-Modpoll profiles 0.1/0.2; it is not a device execution service.
+the Modpoll executable profile 0.2; it is not a device execution service.
 
 1. On ``v2``, select a candidate whose exact commit passes quality, Python
    3.10/3.11/3.12, documentation and simulator interoperability CI.

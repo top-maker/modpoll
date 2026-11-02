@@ -15,7 +15,7 @@ from pymodbus.client import ModbusTcpClient
 
 from modpoll.arg_parser import get_parser
 from modpoll.modbus_task import setup_modbus_handlers
-from tests.wot_helpers import meter_model
+from tests.wot_helpers import meter_model, raw_form
 
 pytestmark = pytest.mark.integration
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,8 +44,6 @@ def test_all_numeric_types_bits_strings_and_multipliers(
     group.update(
         {
             "modv:address": 40000,
-            "modv:mostSignificantByte": byte_big,
-            "modv:mostSignificantWord": word_big,
             "modpoll:members": [],
         }
     )
@@ -54,17 +52,25 @@ def test_all_numeric_types_bits_strings_and_multipliers(
     def add(name, dtype, values, value, type_="number", multiplier=None, bit=None):
         offset = len(registers)
         registers.extend(values)
-        document["properties"][name] = {"type": type_, "readOnly": True, "unit": "test"}
-        member = {
-            "modpoll:property": name,
-            "modpoll:dataType": dtype,
-            "modpoll:offset": offset,
-        }
+        form = raw_form(
+            dtype, group["modv:address"] + offset, quantity=len(values), bit=bit
+        )
+        form.update(
+            {"modv:mostSignificantByte": byte_big, "modv:mostSignificantWord": word_big}
+        )
+        if dtype.startswith("string"):
+            form.update(
+                {"modv:mostSignificantByte": True, "modv:mostSignificantWord": True}
+            )
         if multiplier is not None:
-            member["modpoll:multiplier"] = multiplier
-        if bit is not None:
-            member["modpoll:bit"] = bit
-        group["modpoll:members"].append(member)
+            form["modpoll:multiplier"] = multiplier
+        document["properties"][name] = {
+            "type": type_,
+            "readOnly": True,
+            "unit": "test",
+            "forms": [form],
+        }
+        group["modpoll:members"].append(name)
         expected[name] = value
 
     cases = [
@@ -103,10 +109,10 @@ def test_all_numeric_types_bits_strings_and_multipliers(
         bit=0,
     )
     # A second bit view references the same raw register, with a distinct bit selector.
-    member = copy.deepcopy(group["modpoll:members"][-1])
-    member.update({"modpoll:property": "bit15", "modpoll:bit": 15})
-    group["modpoll:members"].append(member)
-    document["properties"]["bit15"] = {"type": "boolean", "readOnly": True}
+    document["properties"]["bit15"] = copy.deepcopy(document["properties"]["bit0"])
+    document["properties"]["bit15"].pop("unit", None)
+    document["properties"]["bit15"]["forms"][0]["modpoll:bit"] = 15
+    group["modpoll:members"].append("bit15")
     expected["bit15"] = True
     group["modv:quantity"] = len(registers)
     config = tmp_path / "vectors.tm.json"
@@ -241,8 +247,12 @@ def test_device_exception_produces_null_without_hiding_valid_group(
     document = meter_model("partial", start=40000)
     group = copy.deepcopy(document["modpoll:acquisition"][0])
     group["modv:address"] = 50000  # In Modbus range, outside the simulator datastore.
-    group["modpoll:members"][0]["modpoll:property"] = "unavailable"
-    document["properties"]["unavailable"] = {"type": "integer", "readOnly": True}
+    group["modpoll:members"] = ["unavailable"]
+    document["properties"]["unavailable"] = {
+        "type": "integer",
+        "readOnly": True,
+        "forms": [raw_form("uint16", 50000)],
+    }
     document["modpoll:acquisition"].append(group)
     config = tmp_path / "partial.tm.json"
     config.write_text(json.dumps(document))
@@ -280,10 +290,12 @@ def test_device_exception_produces_null_without_hiding_valid_group(
 @pytest.mark.parametrize("remote", [False, True], ids=["local-file", "http-url"])
 def test_invalid_point_fails_entire_configuration_before_network_poll(tmp_path, remote):
     document = meter_model()
-    document["properties"]["bad"] = {"type": "integer", "readOnly": True}
-    document["modpoll:acquisition"][0]["modpoll:members"].append(
-        {"modpoll:property": "bad", "modpoll:offset": 1, "modpoll:dataType": "uint64"}
-    )
+    document["properties"]["bad"] = {
+        "type": "integer",
+        "readOnly": True,
+        "forms": [raw_form("uint64", 1)],
+    }
+    document["modpoll:acquisition"][0]["modpoll:members"].append("bad")
     path = tmp_path / "invalid.tm.json"
     path.write_text(json.dumps(document))
     server = None
@@ -336,7 +348,8 @@ def test_multiple_models_send_their_own_unit_ids(live_modsim, tmp_path):
 
     first = meter_model("first", start=40000)
     second = meter_model("second", start=40000)
-    first["modv:unitID"], second["modv:unitID"] = 2, 7
+    first["properties"]["value"]["forms"][0]["modv:unitID"] = 2
+    second["properties"]["value"]["forms"][0]["modv:unitID"] = 7
     paths = [tmp_path / "first.tm.json", tmp_path / "second.tm.json"]
     for path, model in zip(paths, (first, second)):
         path.write_text(json.dumps(model))
@@ -416,21 +429,25 @@ def test_numeric_bit_table_csv_parity_uses_complete_bytes(
         ("label", "string3", 24, "string"),
     ]
     for name, dtype, count, type_ in cases:
-        document["properties"][name] = {"type": type_, "readOnly": True}
+        form = raw_form(dtype, 0, quantity=count, entity="Coil")
+        form.update(
+            {
+                "modv:mostSignificantByte": True,
+                "modv:mostSignificantWord": word_big,
+                "modpoll:bitPacking": "legacy-msb",
+            }
+        )
+        document["properties"][name] = {
+            "type": type_,
+            "readOnly": True,
+            "forms": [form],
+        }
         document["modpoll:acquisition"].append(
             {
                 "modv:entity": "Coil",
                 "modv:address": 0,
                 "modv:quantity": count,
-                "modv:mostSignificantByte": True,
-                "modv:mostSignificantWord": word_big,
-                "modpoll:members": [
-                    {
-                        "modpoll:property": name,
-                        "modpoll:offset": 0,
-                        "modpoll:dataType": dtype,
-                    }
-                ],
+                "modpoll:members": [name],
             }
         )
         rows += [

@@ -1,4 +1,4 @@
-"""Independent acceptance vectors for the configuration contract."""
+"""Independent acceptance vectors for the profile 0.2 configuration contract."""
 
 import copy
 import json
@@ -6,46 +6,74 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from modpoll_wot import AcquisitionError
+from modpoll_wot import AcquisitionError, export_td
 from modpoll_wot.loading import load_model, loads_model, parse_model
 
 ROOT = Path(__file__).resolve().parents[3]
+RAW_TYPES = {
+    "uint16": ("xsd:unsignedShort", 1),
+    "int16": ("xsd:short", 1),
+    "uint32": ("xsd:unsignedInt", 2),
+    "int32": ("xsd:int", 2),
+    "float32": ("xsd:float", 2),
+    "uint64": ("xsd:unsignedLong", 4),
+    "int64": ("xsd:long", 4),
+    "float64": ("xsd:double", 4),
+}
 
 
 def scalar(dtype="uint16", type_="integer"):
+    form = {
+        "modv:entity": "HoldingRegister",
+        "modv:address": 0,
+        "modv:quantity": 1,
+        "modv:type": "xsd:unsignedShort",
+    }
+    if dtype in RAW_TYPES:
+        form["modv:type"], form["modv:quantity"] = RAW_TYPES[dtype]
+    elif dtype.startswith("string"):
+        length = int(dtype[6:])
+        form.update(
+            {
+                "modv:type": "xsd:string",
+                "modv:quantity": (length + 1) // 2,
+                "modpoll:byteLength": length,
+            }
+        )
+    else:
+        form.update(
+            {
+                "modv:type": "xsd:hexBinary",
+                "modpoll:codec": dtype,
+                "modv:quantity": 2 if dtype == "bool16" else 1,
+            }
+        )
     return {
         "@context": [
             "https://www.w3.org/2022/wot/td/v1.1",
             {
                 "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
                 "modv": "https://www.w3.org/2019/wot/modbus",
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
             },
         ],
         "@type": "tm:ThingModel",
         "title": "test",
-        "modpoll:version": "0.1",
-        "properties": {"value": {"type": type_, "readOnly": True}},
+        "modpoll:version": "0.2",
+        "properties": {"value": {"type": type_, "readOnly": True, "forms": [form]}},
         "modpoll:acquisition": [
             {
                 "modv:entity": "HoldingRegister",
                 "modv:address": 0,
                 "modv:quantity": 125,
-                "modv:mostSignificantByte": True,
-                "modv:mostSignificantWord": True,
-                "modpoll:members": [
-                    {
-                        "modpoll:property": "value",
-                        "modpoll:offset": 0,
-                        "modpoll:dataType": dtype,
-                    }
-                ],
+                "modpoll:members": ["value"],
             }
         ],
     }
 
 
 class ContractTests(unittest.TestCase):
-    def test_all_legacy_numeric_and_string_types(self):
+    def test_numeric_and_string_types(self):
         for dtype, width in [
             ("uint16", 1),
             ("int16", 1),
@@ -60,34 +88,40 @@ class ContractTests(unittest.TestCase):
             ("string16", 8),
         ]:
             with self.subTest(dtype=dtype):
-                type_ = "string" if dtype.startswith("string") else "number"
-                member = parse_model(scalar(dtype, type_)).groups[0].members[0]
-                self.assertEqual(member.width, width)
+                prop_type = "string" if dtype.startswith("string") else "number"
+                self.assertEqual(
+                    parse_model(scalar(dtype, prop_type)).groups[0].members[0].width,
+                    width,
+                )
 
-    def test_bool_groups_and_register_bits(self):
+    def test_boolean_arrays_and_register_bits(self):
         for entity in ("Coil", "DiscreteInput", "HoldingRegister", "InputRegister"):
             for dtype in ("bool", "bool8", "bool16"):
                 with self.subTest(entity=entity, dtype=dtype):
                     d = scalar(dtype, "array")
-                    d["properties"]["value"]["items"] = {"type": "boolean"}
+                    prop = d["properties"]["value"]
+                    prop["items"] = {"type": "boolean"}
+                    form = prop["forms"][0]
+                    form["modv:entity"] = entity
                     d["modpoll:acquisition"][0]["modv:entity"] = entity
+                    if entity in ("Coil", "DiscreteInput"):
+                        form.pop("modpoll:codec")
+                        form.update({"modv:type": "xsd:boolean", "modv:quantity": 16})
                     self.assertTrue(parse_model(d).groups[0].members[0].readable)
         for bit in (0, 15):
-            d = scalar("bool", "boolean")
-            d["modpoll:acquisition"][0]["modpoll:members"][0]["modpoll:bit"] = bit
+            d = scalar(type_="boolean")
+            d["properties"]["value"]["forms"][0]["modpoll:bit"] = bit
             self.assertEqual(parse_model(d).groups[0].members[0].bit, bit)
 
     def test_all_endian_combinations(self):
         for byte in (True, False):
             for word in (True, False):
                 d = scalar()
-                g = d["modpoll:acquisition"][0]
-                g["modv:mostSignificantByte"], g["modv:mostSignificantWord"] = (
-                    byte,
-                    word,
+                d["properties"]["value"]["forms"][0].update(
+                    {"modv:mostSignificantByte": byte, "modv:mostSignificantWord": word}
                 )
                 self.assertEqual(
-                    parse_model(d).groups[0].byte_order,
+                    parse_model(d).groups[0].members[0].byte_order,
                     ("BE" if byte else "LE") + "_" + ("BE" if word else "LE"),
                 )
 
@@ -97,50 +131,49 @@ class ContractTests(unittest.TestCase):
             ({"readOnly": True}, (True, False)),
             ({"writeOnly": True}, (False, True)),
         ]:
-            d = scalar()
-            d["properties"]["value"] = {"type": "number", **flags}
-            d["modpoll:acquisition"][0]["modpoll:members"][0][
-                "modpoll:multiplier"
-            ] = "0"
-            m = parse_model(d).groups[0].members[0]
-            self.assertEqual((m.readable, m.writable), expected)
-            self.assertEqual(m.multiplier, 0)
+            d = scalar(type_="number")
+            prop = d["properties"]["value"]
+            prop.pop("readOnly")
+            prop.update(flags)
+            prop["forms"][0]["modpoll:multiplier"] = "0"
+            member = parse_model(d).groups[0].members[0]
+            self.assertEqual((member.readable, member.writable), expected)
+            self.assertEqual(member.multiplier, 0)
         for factor in ("-2", "0.001", "1e3"):
             d = scalar(type_="number")
-            d["modpoll:acquisition"][0]["modpoll:members"][0][
-                "modpoll:multiplier"
-            ] = factor
+            d["properties"]["value"]["forms"][0]["modpoll:multiplier"] = factor
             self.assertIsNotNone(parse_model(d).groups[0].members[0].multiplier)
 
     def test_semantic_failures(self):
         mutations = [
-            lambda d, g, m: g.update({"modv:address": 65535}),
-            lambda d, g, m: g.update({"modv:quantity": 126}),
-            lambda d, g, m: g.update({"modv:quantity": 0}),
-            lambda d, g, m: g.update({"modv:quantity": True}),
-            lambda d, g, m: g.update({"modv:mostSignificantByte": "BE"}),
-            lambda d, g, m: m.update({"modpoll:offset": -1}),
-            lambda d, g, m: m.update({"modpoll:offset": 125}),
-            lambda d, g, m: m.update({"modpoll:property": "unknown"}),
-            lambda d, g, m: m.update({"modpoll:dataType": "unit32"}),
-            lambda d, g, m: m.update({"modpoll:dataType": "float32"}),
-            lambda d, g, m: m.update({"modpoll:bit": 1}),
-            lambda d, g, m: m.update({"modpoll:multiplier": "NaN"}),
-            lambda d, g, m: m.update({"modpoll:multiplier": "1e9999"}),
-            lambda d, g, m: m.update({"modpoll:multiplier": True}),
-            lambda d, g, m: m.update({"modpoll:scale": 1}),
-            lambda d, g, m: g["modpoll:members"].append(copy.deepcopy(m)),
-            lambda d, g, m: d["properties"].update({"missing": {"type": "number"}}),
-            lambda d, g, m: d["properties"]["value"].update({"writeOnly": True}),
-            lambda d, g, m: g.update({"modv:entity": "Coil", "modv:quantity": 8}),
-            lambda d, g, m: d.update({"modpoll:unknown": 1}),
+            lambda d, g, f: g.update({"modv:address": 65535}),
+            lambda d, g, f: g.update({"modv:quantity": 126}),
+            lambda d, g, f: g.update({"modv:quantity": 0}),
+            lambda d, g, f: g.update({"modv:quantity": True}),
+            lambda d, g, f: f.update({"modv:mostSignificantByte": "BE"}),
+            lambda d, g, f: f.update({"modv:address": -1}),
+            lambda d, g, f: f.update({"modv:address": 125}),
+            lambda d, g, f: g.update({"modpoll:members": ["unknown"]}),
+            lambda d, g, f: f.update({"modv:type": "unit32"}),
+            lambda d, g, f: f.update({"modv:type": "xsd:float"}),
+            lambda d, g, f: f.update({"modpoll:bit": 1}),
+            lambda d, g, f: f.update({"modpoll:multiplier": "NaN"}),
+            lambda d, g, f: f.update({"modpoll:multiplier": "1e9999"}),
+            lambda d, g, f: f.update({"modpoll:multiplier": True}),
+            lambda d, g, f: f.update({"modpoll:scale": 1}),
+            lambda d, g, f: g["modpoll:members"].append("value"),
+            lambda d, g, f: d["properties"].update(
+                {"missing": copy.deepcopy(d["properties"]["value"])}
+            ),
+            lambda d, g, f: d["properties"]["value"].update({"writeOnly": True}),
+            lambda d, g, f: d.update({"modpoll:unknown": 1}),
         ]
         for index, mutation in enumerate(mutations):
             with self.subTest(case=index):
                 d = scalar()
                 g = d["modpoll:acquisition"][0]
-                m = g["modpoll:members"][0]
-                mutation(d, g, m)
+                f = d["properties"]["value"]["forms"][0]
+                mutation(d, g, f)
                 with self.assertRaises(AcquisitionError):
                     parse_model(d)
 
@@ -151,9 +184,14 @@ class ContractTests(unittest.TestCase):
             ("Coil", 2000),
             ("DiscreteInput", 2000),
         ]:
-            d = scalar("bool8", "array") if count == 2000 else scalar()
+            d = scalar()
+            form = d["properties"]["value"]["forms"][0]
+            form.update({"modv:entity": entity, "modv:address": 65536 - count})
             if count == 2000:
-                d["properties"]["value"]["items"] = {"type": "boolean"}
+                d["properties"]["value"].update(
+                    {"type": "array", "items": {"type": "boolean"}}
+                )
+                form.update({"modv:type": "xsd:boolean", "modv:quantity": count})
             g = d["modpoll:acquisition"][0]
             g.update(
                 {
@@ -171,8 +209,8 @@ class ContractTests(unittest.TestCase):
         with patch(
             "socket.create_connection", side_effect=AssertionError("network used")
         ):
-            load_model(ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.tm.json")
-            load_model(ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json")
+            load_model(ROOT / "examples/modsim.tm.json")
+            load_model(ROOT / "examples/modsim.generated.td.json")
         for text in (
             '{"a":1,"a":2}',
             "NaN",
@@ -188,32 +226,18 @@ class ContractTests(unittest.TestCase):
             parse_model(d)
 
     def test_td_forms_cannot_disagree_with_acquisition(self):
-        source = json.loads(
-            (
-                ROOT / "packages/modpoll-wot/tests/fixtures/modsim-0.1.td.json"
-            ).read_text()
-        )
-        changes = [
-            lambda f: f.update(
-                {"href": "modbus+tcp://localhost:5020/1/999?quantity=8"}
-            ),
+        source = export_td(scalar(), host="localhost", port=5020)
+        for change in [
+            lambda f: f.update({"modv:address": 999}),
             lambda f: f.update({"modv:entity": "InputRegister"}),
-            lambda f: f.update({"modv:mostSignificantByte": False}),
             lambda f: f.update({"modv:function": "readHoldingRegisters"}),
             lambda f: f.update({"op": "invokeaction"}),
             lambda f: f.update({"href": "http://localhost/1/0"}),
-        ]
-        changes.extend(
-            [
-                lambda f: f.update({"modv:quantity": 999}),
-                lambda f: f.update({"modv:type": "xsd:string"}),
-                lambda f: f.update(
-                    {"href": "modbus+tcp://localhost:5020/1/0?quantity="}
-                ),
-            ]
-        )
-        for change in changes:
+            lambda f: f.update({"modv:quantity": 999}),
+            lambda f: f.update({"modv:type": "xsd:string"}),
+            lambda f: f.update({"href": "modbus+tcp://localhost:5020/1/0?quantity="}),
+        ]:
             d = copy.deepcopy(source)
-            change(d["properties"]["coil01-08"]["forms"][0])
+            change(d["properties"]["value"]["forms"][0])
             with self.assertRaises(AcquisitionError):
                 parse_model(d)
