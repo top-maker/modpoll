@@ -2,9 +2,10 @@
 
 Stable release-please stays on main. A v2 prerelease uses a unique PEP 440 version
 and `v2.*` tag from v2, with matching pyproject and module versions. Push the
-candidate first and wait for all seven main CI jobs (quality, docs, five Python
-versions). The preview guard requires successful CI on that exact SHA and v2
-ancestry before publishing.
+candidate first and wait for all four main CI jobs (quality, docs, Python 3.10 and 3.14). The preview guard requires successful CI on that exact SHA and v2
+ancestry before publishing. Catalog/platform acceptance must also pass on that
+exact v2 SHA: independent installed-wheel Linux/macOS/Windows single-device
+checks and the catalog-interop job.
 
 `preview.yml` checks out the tag, saves original wheel/sdist artifacts, verifies
 installation and immutable registry hashes, publishes PyPI and a GitHub prerelease,

@@ -9,14 +9,14 @@ from modpoll_wot.loading import MAX_BYTES, load_document  # type: ignore[import-
 
 
 def local_path(base: Path, value: str) -> str:
-    if urlparse(value).scheme:
+    if urlparse(value).scheme and not Path(value).is_absolute():
         raise ValueError(f"expected local path: {value}")
     return str((base / value).resolve())
 
 
 def model_document(source: str) -> dict:
     url = urlparse(source)
-    if not url.scheme:
+    if Path(source).is_absolute() or not url.scheme:
         return load_document(source)  # type: ignore[no-any-return]
     if url.scheme != "https":
         raise ValueError("model URLs must use HTTPS")

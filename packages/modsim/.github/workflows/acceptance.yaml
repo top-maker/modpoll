@@ -1,0 +1,73 @@
+name: Catalog and platform acceptance
+on:
+  push:
+    branches: [v2]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  single-device:
+    name: single-device (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.11.19
+          python-version: '3.12'
+      - name: Build and install isolated wheel
+        shell: bash
+        run: |
+          uv build --wheel --no-sources
+          uv venv "$RUNNER_TEMP/installed-modsim"
+          if [ "$RUNNER_OS" = Windows ]; then python_path="$RUNNER_TEMP/installed-modsim/Scripts/python.exe"; else python_path="$RUNNER_TEMP/installed-modsim/bin/python"; fi
+          uv pip install --python "$python_path" dist/*.whl pytest
+          echo "MODSIM_INSTALLED_PYTHON=$python_path" >> "$GITHUB_ENV"
+      - name: Verify installed CLI outside application source
+        shell: bash
+        env:
+          MODSIM_CATALOG_PLATFORM: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/cli-acceptance/tests" "$RUNNER_TEMP/cli-acceptance/examples"
+          cp tests/test_catalog_platform.py "$RUNNER_TEMP/cli-acceptance/tests/"
+          cp examples/model-source.yaml "$RUNNER_TEMP/cli-acceptance/examples/"
+          cd "$RUNNER_TEMP/cli-acceptance"
+          "$MODSIM_INSTALLED_PYTHON" -c 'import modsim; assert "site-packages" in modsim.__file__, modsim.__file__'
+          "$MODSIM_INSTALLED_PYTHON" -m pytest tests/test_catalog_platform.py -v
+  catalog-interop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-uv
+      - uses: actions/checkout@v4
+        with:
+          repository: top-maker/modpoll
+          ref: 93daa74bc859fe8a5704f3e94e4f6eb0df797ec2
+          path: .interop/modpoll
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --prefix .interop/modpoll/tools/wot-interop --ignore-scripts --no-audit --no-fund
+      - name: Install independent public modpoll
+        run: |
+          uv venv "$RUNNER_TEMP/modpoll"
+          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" 'modpoll==2.0.0a2'
+      - name: Test fixed public model with independent clients
+        run: |
+          uv build --wheel --no-sources
+          uv venv "$RUNNER_TEMP/modsim"
+          uv pip install --python "$RUNNER_TEMP/modsim/bin/python" dist/*.whl
+          mkdir -p "$RUNNER_TEMP/catalog-acceptance/tools" "$RUNNER_TEMP/catalog-acceptance/examples"
+          cp tools/catalog-interop.py "$RUNNER_TEMP/catalog-acceptance/tools/"
+          cp examples/model-source.yaml "$RUNNER_TEMP/catalog-acceptance/examples/"
+          cd "$RUNNER_TEMP/catalog-acceptance"
+          "$RUNNER_TEMP/modsim/bin/python" tools/catalog-interop.py --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$GITHUB_WORKSPACE/.interop/modpoll/tools/wot-interop/read-write.cjs" --output "$RUNNER_TEMP/catalog-interop.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: catalog-interop
+          path: ${{ runner.temp }}/catalog-interop.json

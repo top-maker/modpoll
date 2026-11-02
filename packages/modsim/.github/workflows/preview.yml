@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +36,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: python .github/scripts/preview-release.py guard "$TAG"
-      - run: uv build --no-sources
+      - run: uv build --no-sources --clear
       - uses: actions/upload-artifact@v4
         with:
           name: preview-distributions

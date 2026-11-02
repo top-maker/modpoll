@@ -37,12 +37,27 @@ def guard(tag):
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     subprocess.run(["git", "merge-base", "--is-ancestor", sha, "origin/v2"], check=True)
     repo = os.environ["GITHUB_REPOSITORY"]
+    require_ci(repo, sha, "main.yml", {"quality", "docs", "tox (3.10)", "tox (3.14)"})
+    require_ci(
+        repo,
+        sha,
+        "acceptance.yaml",
+        {"catalog-interop"}
+        | {
+            f"single-device ({platform})"
+            for platform in ("ubuntu-latest", "macos-latest", "windows-latest")
+        },
+    )
+    print(f"Accepted {sha}: main and catalog/platform CI passed")
+
+
+def require_ci(repo, sha, workflow, expected):
     listing = json.loads(
         subprocess.check_output(
             [
                 "gh",
                 "api",
-                f"repos/{repo}/actions/workflows/main.yml/runs?head_sha={sha}&event=push&per_page=100",
+                f"repos/{repo}/actions/workflows/{workflow}/runs?head_sha={sha}&event=push&per_page=100",
             ],
             text=True,
         )
@@ -53,7 +68,7 @@ def guard(tag):
         or runs[0]["status"] != "completed"
         or runs[0]["conclusion"] != "success"
     ):
-        raise ValueError("exact release SHA requires successful v2 CI")
+        raise ValueError(f"exact release SHA requires successful v2 CI: {workflow}")
     jobs = json.loads(
         subprocess.check_output(
             [
@@ -64,14 +79,10 @@ def guard(tag):
             text=True,
         )
     )["jobs"]
-    expected = {"quality", "docs"} | {
-        f"tox ({version})" for version in ("3.10", "3.14")
-    }
     if {job["name"] for job in jobs} != expected or any(
         job["conclusion"] != "success" for job in jobs
     ):
-        raise ValueError("release requires all four expected CI jobs")
-    print(f"Accepted {sha} from CI {runs[0]['id']}")
+        raise ValueError(f"release requires all expected CI jobs: {workflow}")
 
 
 def immutable(version):
@@ -85,7 +96,7 @@ def immutable(version):
         local = {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
             for p in Path("dist").iterdir()
-            if p.is_file()
+            if p.is_file() and (p.name.endswith(".whl") or p.name.endswith(".tar.gz"))
         }
         if local != published:
             raise ValueError(

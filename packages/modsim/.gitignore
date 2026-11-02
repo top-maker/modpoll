@@ -246,3 +246,6 @@ $RECYCLE.BIN/
 
 # Verified generated public example inputs
 /examples/models/
+
+# External CI consumer checkout
+/.interop/

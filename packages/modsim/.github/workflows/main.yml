@@ -25,6 +25,7 @@ jobs:
         run: make check
 
   tox:
+    name: tox (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
