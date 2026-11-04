@@ -56,3 +56,9 @@ schema hash in a PR that validates its examples and records. A metadata-only
 release does not require Modpoll/Modsim to change their application pins. A later
 application dependency update still runs its normal regression checks.
 The verified immutable release for this schema is `modpoll-wot==0.2.0a3`.
+
+The 0.2.0a4 candidate adds optional audit references and the publication APIs
+described in [profile.md](profile.md#publication-artifacts). Earlier packages
+can run existing profile 0.2 documents that omit the extension. They reject
+documents with the new audit extension. The shared package validates and
+derives configuration without contacting any device.
