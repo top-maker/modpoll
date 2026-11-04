@@ -27,13 +27,17 @@ class ProfileTests(unittest.TestCase):
             "status": ["measurement", "signed"],
         }
         model, td = instantiate(source, host="localhost")
-        self.assertEqual(model.audit, AuditPlan(("counter",), ("measurement", "signed")))
+        self.assertEqual(
+            model.audit, AuditPlan(("counter",), ("measurement", "signed"))
+        )
         self.assertEqual(instantiate(td)[0].audit, model.audit)
         self.assertNotIn(
-            "modpoll:audit", export_td(source, host="localhost", target="node-wot-0.9.2")
+            "modpoll:audit",
+            export_td(source, host="localhost", target="node-wot-0.9.2"),
         )
         self.assertEqual(
-            export_td(source, host="localhost")["modpoll:audit"], source["modpoll:audit"]
+            export_td(source, host="localhost")["modpoll:audit"],
+            source["modpoll:audit"],
         )
 
     def test_audit_rejects_invalid_or_unreadable_references(self):
