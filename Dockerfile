@@ -11,6 +11,7 @@ COPY uv.lock pyproject.toml README.md /app/
 COPY modpoll /app/modpoll
 
 # Project initialization:
-RUN uv sync --locked --no-dev --all-extras --no-install-project
+RUN uv sync --locked --no-dev --all-extras --no-editable
+ENV PATH="/app/.venv/bin:${PATH}"
 
 CMD ["modpoll", "--version"]

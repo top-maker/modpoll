@@ -1,5 +1,8 @@
 # Modpoll 2.0.0a3 preview
 
+Container users can select `topmaker/modpoll:2.0.0a3-r1` for the packaging
+correction. It runs the same application version.
+
 ### Local audit
 
 Modpoll 2.0.0a3 pins modpoll-wot 0.2.0a4. Run a single read-only sampling pass:
