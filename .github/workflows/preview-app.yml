@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}
+      image-version: ${{ steps.release.outputs.image-version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,7 +27,12 @@ jobs:
           fi
           git rev-parse --verify "refs/tags/$tag^{commit}"
           git merge-base --is-ancestor "refs/tags/$tag^{commit}" origin/v2
+          image_version="${tag#v}"
+          if [ "$GITHUB_REF_NAME" = v2 ]; then
+            image_version="$image_version-r1"
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "image-version=$image_version" >> "$GITHUB_OUTPUT"
   publish:
     needs: candidate
     if: startsWith(github.ref, 'refs/tags/')
@@ -78,7 +84,8 @@ jobs:
           fi
           gh release upload "$TAG" dist/*
   image:
-    needs: publish
+    needs: [candidate, publish]
+    if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -95,10 +102,18 @@ jobs:
         env:
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
           OWNER: ${{ vars.DOCKER_USERNAME }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ needs.candidate.outputs.tag }}
+          IMAGE_VERSION: ${{ needs.candidate.outputs.image-version }}
         run: |
           python .github/scripts/check_release_version.py "$TAG"
-          docker buildx build --platform linux/amd64,linux/arm64 -t "$REGISTRY/$OWNER/modpoll:${TAG#v}" --push .
+          image="$REGISTRY/$OWNER/modpoll:$IMAGE_VERSION"
+          if docker buildx imagetools inspect "$image" >/dev/null 2>&1; then
+            docker run --rm "$image" | grep -Fx "v${TAG#v}"
+          else
+            docker buildx build --load --platform linux/amd64 -t modpoll-preview-smoke .
+            docker run --rm modpoll-preview-smoke | grep -Fx "v${TAG#v}"
+            docker buildx build --platform linux/amd64,linux/arm64 -t "$image" --push .
+          fi
   docs:
     needs: [candidate, publish]
     if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
@@ -137,7 +152,7 @@ jobs:
           publish_dir: .site
   acceptance:
     needs: [candidate, publish, image, docs]
-    if: ${{ !cancelled() && needs.docs.result == 'success' && (needs.image.result == 'success' || (github.ref_name == 'v2' && needs.image.result == 'skipped')) }}
+    if: ${{ !cancelled() && needs.docs.result == 'success' && needs.image.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -186,11 +201,12 @@ jobs:
           TAG: ${{ needs.candidate.outputs.tag }}
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
           OWNER: ${{ vars.DOCKER_USERNAME }}
+          IMAGE_VERSION: ${{ needs.candidate.outputs.image-version }}
         run: |
           cd "$RUNNER_TEMP/acceptance"
           .venv/bin/python tools/verify_modsim_equivalence.py --modpoll-1x "$MODPOLL_1X_SOURCE" --modsim "$MODSIM_SOURCE" --report equivalence.json
           .venv/bin/python -m pytest -q tests/test_modsim_interop.py tests/test_mqtt_modsim_interop.py tests/test_mqtt_tls.py tests/test_transport_interop.py --junitxml=published-results.xml
-          docker run --rm "$REGISTRY/$OWNER/modpoll:${TAG#v}"
+          docker run --rm "$REGISTRY/$OWNER/modpoll:$IMAGE_VERSION" | grep -Fx "v${TAG#v}"
       - name: Remove acceptance broker
         if: always()
         run: docker rm -f preview-acceptance || true
