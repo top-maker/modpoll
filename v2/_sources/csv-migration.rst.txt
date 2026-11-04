@@ -4,8 +4,9 @@ Migrating CSV configurations
 v1 remains available for existing CSV users. v2 accepts TM/TD JSON and provides
 an offline validator; it does not load CSV or invoke an AI service at runtime.
 Convert new configurations to profile 0.2 as described in
-``packages/modpoll-wot/profile.md``; profile 0.1 remains supported for existing
-files. Check the executable profile and bundled schemas before using a conversion.
+``packages/modpoll-wot/profile.md``. Current development source rejects profile
+0.1; migrate its member mapping into Forms and use physical bit addresses.
+Check the executable profile and bundled schemas before using a conversion.
 
 Migration procedure
 -------------------
@@ -31,11 +32,12 @@ Migration procedure
    Review the report before using the file on a device. A successful schema check
    alone cannot certify a vendor register map.
 
-Commands from the development checkout::
+Commands from the development checkout (the validation command uses the
+candidate shared package; version 0.2.0a1 does not provide this subcommand)::
 
-    mise exec -- poetry run python -m modpoll_wot meter.tm.json
-    mise exec -- poetry run modpoll --once --config meter.tm.json --tcp HOST --tcp-port PORT --export data.json
-    mise exec -- poetry run modpoll --config first.tm.json second.tm.json --tcp HOST
+    PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot validate meter.tm.json --profile
+    uv run modpoll --once --config meter.tm.json --tcp HOST --tcp-port PORT --export data.json
+    uv run modpoll --config first.tm.json second.tm.json --tcp HOST
 
 The last command uses each file's Unit ID unless ``--unit-id`` is explicitly given.
 Each file creates its own client connection; connection pooling is not added.

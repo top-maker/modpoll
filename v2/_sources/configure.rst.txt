@@ -12,12 +12,12 @@ loader does not retry it as the other format. This preview supports the fixed
 It rejects CSV input. The canonical ``examples/modsim.tm.json`` uses profile
 0.2 standard property Forms and explicit acquisition blocks. The generated
 ``examples/modsim.generated.td.json`` binds that same 37-property model to local
-TCP at port 5020. The interpreter retains profile 0.1 compatibility for existing
-configurations; profile details are in ``packages/modpoll-wot/profile.md``.
+TCP at port 5020. Current development source accepts only profile 0.2; older
+profiles must be migrated. Details are in ``packages/modpoll-wot/profile.md``.
 
 Each file describes one device. Its ``title`` is the output device name;
 ``--unit-id`` overrides the instance Unit ID (range 1–254). Without it, each file
-uses its optional root ``modv:unitID`` default, falling back to 1. Different files
+uses the Unit ID declared consistently in its Forms, falling back to 1. Different files
 can therefore address different Unit IDs in one process.
 Multiple files may be supplied to ``--config``; titles must be unique.
 The existing transport CLI arguments explicitly select the connection endpoint.
@@ -30,8 +30,8 @@ nesting limit is 64. Duplicate JSON keys and non-finite numbers are rejected.
 
 Profile 0.2 places standard types, access flags and units on properties, and
 standard Modbus Forms carry each property's raw mapping. ``modpoll:acquisition``
-preserves declared block boundaries, order and holes. Profile 0.1 configurations
-remain readable; new examples and converted configurations should use 0.2.
+preserves declared block boundaries, order and holes. Profile 0.1 input is
+rejected rather than translated or silently accepted.
 These acquisition semantics are a project extension, not a W3C standard. The
 selected subset does not execute arbitrary TD protocol bindings.
 
@@ -42,8 +42,8 @@ Migration from CSV
 * Preserve every poll's table, literal start address, quantity and byte/word order.
 * Map each property to a Modbus Form with its raw table, literal address,
   quantity, type and byte/word order. List properties in the matching acquisition
-  group to preserve the original block boundaries and polling order. Profile 0.1
-  compatibility models retain their documented member-offset rules.
+  group to preserve the original block boundaries and polling order. Offsets
+  are derived from Forms and count physical bits for Coil/DiscreteInput.
 * Express read-only and write-only references through ``readOnly`` and
   ``writeOnly``. Neither flag means read/write. DI and IR are read-only tables;
   their historical ``rw`` sample flags must become ``readOnly: true``.

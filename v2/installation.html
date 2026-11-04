@@ -45,7 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install-with-pip-or-pipx">Install with pip or pipx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-with-uv">Install with uv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#uninstall">Uninstall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#run-with-docker">Run with docker</a></li>
 </ul>
@@ -53,8 +53,6 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configure.html">WoT TM/TD configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validation.html">Configuration replacement verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-process.html">Preview release process</a></li>
 <li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility and M3 acceptance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="csv-migration.html">Migrating CSV configurations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -87,46 +85,33 @@
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <p>This documentation describes the 2.x functional preview. Install the exact version:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="s2">&quot;modpoll[serial]==2.0.0a2&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">tool</span> <span class="n">install</span> <span class="o">--</span><span class="n">prerelease</span> <span class="n">allow</span> <span class="s1">&#39;modpoll[serial]==2.0.0a2&#39;</span>
 </pre></div>
 </div>
-<p>For existing CSV installations use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;modpoll&lt;2&quot;</span></code> and the
+<p>For existing CSV installations use <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">tool</span> <span class="pre">install</span> <span class="pre">'modpoll&lt;2'</span></code> and the
 <a class="reference external" href="https://top-maker.github.io/modpoll/1.x/">1.x documentation</a>.
 The preview image is <code class="docutils literal notranslate"><span class="pre">topmaker/modpoll:2.0.0a2</span></code>; stable <code class="docutils literal notranslate"><span class="pre">latest</span></code> stays on 1.x.
 See <a class="reference internal" href="v1-compatibility.html"><span class="doc">v1 compatibility and M3 acceptance</span></a> for tested platforms and hardware limitations.</p>
 <p>This program is tested on python 3.10+ (Ubuntu 22.04+ or equivalent). Ubuntu 20.04 and python 3.8 are no longer supported.</p>
-<section id="install-with-pip-or-pipx">
-<h2>Install with pip or pipx<a class="headerlink" href="#install-with-pip-or-pipx" title="Link to this heading"></a></h2>
+<section id="install-with-uv">
+<h2>Install with uv<a class="headerlink" href="#install-with-uv" title="Link to this heading"></a></h2>
 <p>The package is available in the <a class="reference external" href="https://pypi.org/">Python Package Index</a>,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;modpoll==2.0.0a2&quot;</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">&quot;modpoll==2.0.0a2&quot;</span>
 </pre></div>
 </div>
 <p>Optionally, pyserial library can be installed for Modbus-RTU communication,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;modpoll[serial]==2.0.0a2&#39;</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s1">&#39;modpoll[serial]==2.0.0a2&#39;</span>
 </pre></div>
 </div>
 <p>Run the following command to check if there is new version available,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>--pre<span class="w"> </span><span class="s2">&quot;modpoll&lt;3&quot;</span>
-</pre></div>
-</div>
-<p>On Windows, it’s recommended to use <code class="docutils literal notranslate"><span class="pre">pipx</span></code> for installing <em>modpoll</em>. Refer to <a class="reference external" href="https://pypa.github.io/pipx/installation/">pipx</a> installation guide for detailed instructions.</p>
-<p>To install <em>modpoll</em>, open a Command Prompt terminal and run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pipx<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;modpoll==2.0.0a2&quot;</span>
-</pre></div>
-</div>
-<p>To upgrade <em>modpoll</em> to the latest version, use the following command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pipx<span class="w"> </span>upgrade<span class="w"> </span>modpoll
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">&quot;modpoll&lt;3&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="uninstall">
 <h2>Uninstall<a class="headerlink" href="#uninstall" title="Link to this heading"></a></h2>
 <p>The program can be uninstalled by the following command,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>uninstall<span class="w"> </span>modpoll
-</pre></div>
-</div>
-<p>or,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pipx<span class="w"> </span>uninstall<span class="w"> </span>modpoll
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>uninstall<span class="w"> </span>modpoll
 </pre></div>
 </div>
 </section>

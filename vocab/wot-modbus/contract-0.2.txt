@@ -1,8 +1,10 @@
 # Executable profile 0.2
 
-This profile is published as `modpoll-wot==0.2.0a1` and used by the Modpoll
-`2.0.0a2` preview. It replaces the unpublished `0.2-pilot` experiment. No
-local-path dependency is introduced. Contract 0.1 semantics remain unchanged.
+The published Modpoll `2.0.0a2` preview uses `modpoll-wot==0.2.0a1`.
+Shared interpreter `0.2.0a3` and current development source execute only profile
+0.2; profile 0.1 must be migrated before use. Older immutable application and
+interpreter releases keep their original behavior. Package, profile and metadata
+schema versions are independent; no local-path dependency is introduced.
 
 ## Source and instances
 
@@ -33,8 +35,8 @@ This group object is a project extension, even though its fields reuse Modbus
 vocabulary. Group order, holes and boundaries are preserved without coalescing
 or splitting. Every property belongs to one group; explicit aliases may share
 addresses. Decoder metadata and offsets are derived from Forms. Offsets count
-words for register tables and physical bits for bit tables in 0.2; 0.1 retains
-its historical eight-bit-group convention. Mixed byte orders are per member.
+words for register tables and physical bits for bit tables. Mixed byte orders
+are per member.
 
 TM Forms can omit href. Standard TM placeholders are also supported. CLI binds
 host/port/Unit ID; TCP port defaults to 502 and Unit ID to 1 (range 1–254).
@@ -99,15 +101,14 @@ Modbus schema and project cross-field checks offline. See schemas/SOURCES.md.
 From the repository (omit PYTHONPATH with an installed candidate wheel):
 
 ```sh
-PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
-  --config examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
-  --unit-id 7 --output /tmp/modsim-instance.td.json
-PYTHONPATH=packages/modpoll-wot mise exec -- poetry run python -m modpoll_wot \
-  --config /tmp/modsim-instance.td.json
+PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
+  export examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
+  --unit-id 7 -o /tmp/modsim-instance.td.json
+PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
+  validate /tmp/modsim-instance.td.json --profile
 ```
 
-Existing output files are never overwritten. The original positional validator
-path remains supported. The shared package supplies models/metadata, not a
+Existing output files are never overwritten. These subcommands require shared package 0.2.0a2 or newer. The shared package supplies models/metadata, not a
 Modbus client/server, scheduler or MQTT service.
 
 ## Shared TD and binary media parameters
@@ -149,15 +150,14 @@ consumer wheel with the candidate's exact registry pin and tests both installed
 wheels from outside the repository, with no source package imports. It never
 modifies the real consumer pin. Its report requires no skipped tests.
 
-Install locked interop tools with `mise exec -- npm ci --prefix tools/wot-interop
+Install locked interop tools with `npm ci --prefix tools/wot-interop
 --ignore-scripts --no-audit --no-fund`. Node is pinned in .tool-versions; lockfile
 integrities fix transitive dependencies. CI uses an isolated modsim and checks
 actual reads/writes, not just successful TD parsing.
 
 ## Promotion order
 
-Contract 0.1 compatibility fixtures live under the package tests. The canonical
-examples/modsim.tm.json is the four-block/37-property source; generated TDs are
+The canonical examples/modsim.tm.json is the four-block/37-property source; generated TDs are
 artifacts. Tests cover
 value/request equivalence, mixed orders, aliases, holes, UTF-8 byte capacities,
 physical bit offsets, parameters and external read/write round trips.
@@ -168,3 +168,38 @@ consumer exact pins and CI. Project versions need not match. Until producer-firs
 publication completes, no consumer requires an unpublished version or local path.
 The modsim TD runtime and platform lifecycle remain separate implementation tasks;
 this contract does not claim those applications are implemented.
+
+
+### Optional audit plan
+
+A project TM or TD can declare `modpoll:audit` with an `identity` array, a
+`status` array, or both. Each supplied array contains one or more property names
+in reporting order. A name may occur only once in the plan and must resolve to a
+property with a read Form. Validation checks these references before any device
+I/O. The property Forms remain the authority for addresses and codecs.
+
+Project TD export retains the plan. The explicitly selected node-wot export
+omits project extensions. Audit references describe a local client operation
+and do not add WoT actions to a device.
+
+### Publication artifacts
+
+`derive_audit_tm(full_tm_bytes, title=approved_title)` builds an unbound,
+read-only TM from the reviewed audit selection. Treat selected property names,
+their mappings, and the supplied display title as public data. The generator
+retains only executable mapping and decoding fields. It drops source text,
+units, endpoint and Unit ID, security metadata, write Forms, unselected
+properties, and unused portions of acquisition blocks. Each generated block
+has the exact span of one selected read. The result contains the UTF-8 JSON
+bytes, their SHA-256, the input bytes' SHA-256, and format identifier
+`audit-tm-v1`. Inputs must be valid project TMs that resolve without external
+parameter bindings. An absent audit plan fails derivation.
+
+`project_point_table(tm_bytes)` produces rows in acquisition member order.
+Addresses are zero-based and quantities count the registers or bits read by
+the individual Form. Read function codes are null for write-only points.
+A writable flag records access without inferring a write function code.
+Multipliers are decimal strings when present. For the public preview, run
+projection on the derived bytes. For the full point table, run it on the
+approved source bytes. Keep the full projection under the same access
+controls as the full TM.

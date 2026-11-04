@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Configuration replacement verification" href="validation.html" />
+    <link rel="next" title="v1 compatibility and M3 acceptance" href="v1-compatibility.html" />
     <link rel="prev" title="Basic Usage" href="usage.html" /> 
 </head>
 
@@ -52,8 +52,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#standard-form-profile-0-2">Standard Form profile 0.2</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="validation.html">Configuration replacement verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-process.html">Preview release process</a></li>
 <li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility and M3 acceptance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="csv-migration.html">Migrating CSV configurations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -95,11 +93,11 @@ loader does not retry it as the other format. This preview supports the fixed
 <p>It rejects CSV input. The canonical <code class="docutils literal notranslate"><span class="pre">examples/modsim.tm.json</span></code> uses profile
 0.2 standard property Forms and explicit acquisition blocks. The generated
 <code class="docutils literal notranslate"><span class="pre">examples/modsim.generated.td.json</span></code> binds that same 37-property model to local
-TCP at port 5020. The interpreter retains profile 0.1 compatibility for existing
-configurations; profile details are in <code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot/profile.md</span></code>.</p>
+TCP at port 5020. Current development source accepts only profile 0.2; older
+profiles must be migrated. Details are in <code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot/profile.md</span></code>.</p>
 <p>Each file describes one device. Its <code class="docutils literal notranslate"><span class="pre">title</span></code> is the output device name;
 <code class="docutils literal notranslate"><span class="pre">--unit-id</span></code> overrides the instance Unit ID (range 1–254). Without it, each file
-uses its optional root <code class="docutils literal notranslate"><span class="pre">modv:unitID</span></code> default, falling back to 1. Different files
+uses the Unit ID declared consistently in its Forms, falling back to 1. Different files
 can therefore address different Unit IDs in one process.
 Multiple files may be supplied to <code class="docutils literal notranslate"><span class="pre">--config</span></code>; titles must be unique.
 The existing transport CLI arguments explicitly select the connection endpoint.
@@ -110,8 +108,8 @@ fetch context files or schemas. The local/URL input limit is 1 MiB and the JSON
 nesting limit is 64. Duplicate JSON keys and non-finite numbers are rejected.</p>
 <p>Profile 0.2 places standard types, access flags and units on properties, and
 standard Modbus Forms carry each property’s raw mapping. <code class="docutils literal notranslate"><span class="pre">modpoll:acquisition</span></code>
-preserves declared block boundaries, order and holes. Profile 0.1 configurations
-remain readable; new examples and converted configurations should use 0.2.
+preserves declared block boundaries, order and holes. Profile 0.1 input is
+rejected rather than translated or silently accepted.
 These acquisition semantics are a project extension, not a W3C standard. The
 selected subset does not execute arbitrary TD protocol bindings.</p>
 <section id="migration-from-csv">
@@ -121,8 +119,8 @@ selected subset does not execute arbitrary TD protocol bindings.</p>
 <li><p>Preserve every poll’s table, literal start address, quantity and byte/word order.</p></li>
 <li><p>Map each property to a Modbus Form with its raw table, literal address,
 quantity, type and byte/word order. List properties in the matching acquisition
-group to preserve the original block boundaries and polling order. Profile 0.1
-compatibility models retain their documented member-offset rules.</p></li>
+group to preserve the original block boundaries and polling order. Offsets
+are derived from Forms and count physical bits for Coil/DiscreteInput.</p></li>
 <li><p>Express read-only and write-only references through <code class="docutils literal notranslate"><span class="pre">readOnly</span></code> and
 <code class="docutils literal notranslate"><span class="pre">writeOnly</span></code>. Neither flag means read/write. DI and IR are read-only tables;
 their historical <code class="docutils literal notranslate"><span class="pre">rw</span></code> sample flags must become <code class="docutils literal notranslate"><span class="pre">readOnly:</span> <span class="pre">true</span></code>.</p></li>
@@ -159,7 +157,7 @@ necessary extensions and external Consumer limits. The source example is
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="usage.html" class="btn btn-neutral float-left" title="Basic Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="validation.html" class="btn btn-neutral float-right" title="Configuration replacement verification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="v1-compatibility.html" class="btn btn-neutral float-right" title="v1 compatibility and M3 acceptance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

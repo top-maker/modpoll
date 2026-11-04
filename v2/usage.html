@@ -54,8 +54,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configure.html">WoT TM/TD configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validation.html">Configuration replacement verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-process.html">Preview release process</a></li>
 <li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility and M3 acceptance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="csv-migration.html">Migrating CSV configurations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -87,7 +85,7 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a2 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a3 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
@@ -106,7 +104,7 @@
                <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">tls</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="n">tlsv1</span><span class="mf">.2</span><span class="p">,</span><span class="n">tlsv1</span><span class="mf">.1</span><span class="p">,</span><span class="n">tlsv1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">single</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">rate</span> <span class="n">DIAGNOSTICS_RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">autoremove</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">loglevel</span> <span class="p">{</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">INFO</span><span class="p">,</span><span class="n">WARNING</span><span class="p">,</span><span class="n">ERROR</span><span class="p">,</span><span class="n">CRITICAL</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">timestamp</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">delay</span> <span class="n">DELAY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">framer</span> <span class="p">{</span><span class="n">default</span><span class="p">,</span><span class="n">ascii</span><span class="p">,</span><span class="n">rtu</span><span class="p">,</span><span class="n">socket</span><span class="p">}]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">delay</span> <span class="n">DELAY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">framer</span> <span class="p">{</span><span class="n">default</span><span class="p">,</span><span class="n">ascii</span><span class="p">,</span><span class="n">rtu</span><span class="p">,</span><span class="n">socket</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">audit</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="Named Arguments">
@@ -256,6 +254,10 @@
 <dd><p>Possible choices: default, ascii, rtu, socket</p>
 <p>The type of framer for Modbus messages. Serial supports ascii/rtu; TCP/UDP use socket.</p>
 <p>Default: “default”</p>
+</dd>
+<dt><kbd>--audit</kbd></dt>
+<dd><p>Read the bounded TM identity and status sample once</p>
+<p>Default: False</p>
 </dd>
 </dl>
 </section>
