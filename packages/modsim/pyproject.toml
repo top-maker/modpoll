@@ -1,13 +1,13 @@
 [project]
 name = "modsim"
-version = "2.0.0a2"
+version = "2.0.0a3"
 description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "pymodbus~=3.16.1",
-    "modpoll-wot==0.2.0a2",
+    "modpoll-wot==0.2.0a4",
     "jsonschema>=4.21,<5",
     "PyYAML>=6,<7",
 ]
