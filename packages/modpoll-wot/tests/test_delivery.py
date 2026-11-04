@@ -29,7 +29,9 @@ def test_public_tm_projects_only_exact_approved_read_spans():
     for prop in source["properties"].values():
         form = prop["forms"][0]
         address, quantity = form["modv:address"], form["modv:quantity"]
-        form["href"] = f"modbus+tcp://private.example:1502/9/{address}?quantity={quantity}"
+        form["href"] = (
+            f"modbus+tcp://private.example:1502/9/{address}?quantity={quantity}"
+        )
         form["modv:unitID"] = 9
     payload = json.dumps(source).encode()
     artifact = derive_audit_tm(payload, title="Approved device")
@@ -56,7 +58,11 @@ def test_public_tm_projects_only_exact_approved_read_spans():
 
     rows = project_point_table(public)
     full_rows = project_point_table(payload)
-    assert [row["property"] for row in full_rows] == ["counter", "signed", "measurement"]
+    assert [row["property"] for row in full_rows] == [
+        "counter",
+        "signed",
+        "measurement",
+    ]
     assert full_rows[0]["writable"] and full_rows[0]["unit"] == "Private unit"
     assert [(r["property"], r["address"], r["quantity"]) for r in rows] == [
         ("counter", 40000, 1),

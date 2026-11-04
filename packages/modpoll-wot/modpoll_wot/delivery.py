@@ -69,7 +69,8 @@ def derive_audit_tm(payload: bytes, *, title: str) -> AuditArtifact:
                 form
                 for form in prop["forms"]
                 if form["op"] == "readproperty"
-                or isinstance(form["op"], list) and "readproperty" in form["op"]
+                or isinstance(form["op"], list)
+                and "readproperty" in form["op"]
             )
             form = {key: read_form[key] for key in FORM_FIELDS if key in read_form}
             form["op"] = "readproperty"
@@ -109,7 +110,9 @@ def derive_audit_tm(payload: bytes, *, title: str) -> AuditArtifact:
         allow_nan=False,
     ).encode("utf-8")
     _parse_tm(derived)
-    return AuditArtifact(derived, sha256(payload).hexdigest(), sha256(derived).hexdigest())
+    return AuditArtifact(
+        derived, sha256(payload).hexdigest(), sha256(derived).hexdigest()
+    )
 
 
 def project_point_table(payload: bytes) -> list[dict]:
@@ -135,7 +138,9 @@ def project_point_table(payload: bytes) -> list[dict]:
                     "bit": member.bit,
                     "bit_packing": form.get("modpoll:bitPacking"),
                     "multiplier": (
-                        str(member.multiplier) if member.multiplier is not None else None
+                        str(member.multiplier)
+                        if member.multiplier is not None
+                        else None
                     ),
                     "unit": member.unit,
                 }
