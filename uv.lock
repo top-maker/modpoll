@@ -418,7 +418,7 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a2"
+version = "2.0.0a3"
 source = { editable = "." }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
@@ -451,7 +451,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "modpoll-wot", specifier = "==0.2.0a2" },
+    { name = "modpoll-wot", specifier = "==0.2.0a4" },
     { name = "paho-mqtt", specifier = ">=2.1.0,<3.0.0" },
     { name = "prettytable", specifier = ">=3.9.0,<4.0.0" },
     { name = "pymodbus", specifier = "~=3.16.1" },
@@ -478,15 +478,16 @@ docs = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.2.0a2"
+version = "0.2.0a4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
+    { name = "pyyaml", marker = "python_full_version < '3.15'" },
     { name = "referencing", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/90/a9799454bcf39b73521400db64236e10b04d4b53feef0e39d7eb30b9e7ca/modpoll_wot-0.2.0a2.tar.gz", hash = "sha256:42df645c38638408a9de72b0f80c4186b33872bc1511598239984d88fd07245f", size = 34259, upload-time = "2026-10-30T04:47:03.162Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/ca/beb17dcdca9a1112d9d0f533988527bb49d32fb0a6986b2d247d2e90c063/modpoll_wot-0.2.0a4.tar.gz", hash = "sha256:dacf5de45d4dd987650cb085068bc0a3f028896a713946c929cc18f8046921d1", size = 44852, upload-time = "2026-11-04T05:38:14.015Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f0/a4/992a88d9ab6b83d5efb034820e4ff88cc71c77258e8a6fc89fdac780c0a1/modpoll_wot-0.2.0a2-py3-none-any.whl", hash = "sha256:4d5a4e67b40de9367afa20715b420f3b63ceef45c8b8d0ca05bc6a9ea75e8c29", size = 41328, upload-time = "2026-10-30T04:47:02.286Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/2f/d7287c8d4c7604d598139eaf13f6b086e54094fd996135f1fd814c5dbf74/modpoll_wot-0.2.0a4-py3-none-any.whl", hash = "sha256:27b7acc8036e01ab83f8e8ed06236dfd164edbeb96d54f61950adfdc144edac3", size = 40757, upload-time = "2026-11-04T05:38:12.879Z" },
 ]
 
 [[package]]

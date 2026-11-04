@@ -1,3 +1,23 @@
+# Modpoll 2.0.0a3 preview
+
+### Local audit
+
+Modpoll 2.0.0a3 pins modpoll-wot 0.2.0a4. Run a single read-only sampling pass:
+
+```sh
+modpoll --audit --config device.audit.tm.json --tcp DEVICE_HOST --unit-id 1
+modpoll --audit --config device.audit.tm.json --serial SERIAL_PORT --serial-baud 9600 --unit-id 1
+```
+
+Install the serial extra for RTU. Use the device's actual serial settings and
+Unit ID. Audit reads at most 16 selected properties, with no Modbus retries
+and at most five seconds of response timeout per point. Its JSON report
+separates identity and status, preserves per-point results, and exits nonzero
+on failure. A successful identity sample reports device values for inspection.
+A malformed plan is rejected before contacting the device.
+
+### Previous preview
+
 Published shared interpreter 0.2.0a3 and current development source execute only
 profile 0.2 and reject profile 0.1. The application release snapshot below keeps
 its original dependencies and behavior; publishing the shared schema does not
@@ -15,19 +35,3 @@ Acceptance includes 37 known simulator properties, exact block requests, indepen
 Intentional fixes include all same-address aliases, short-response validity, failed one-shot exit status and bounded MQTT shutdown. CSV has no runtime fallback; migrate and validate files explicitly. The shared interpreter currently executes no Modbus requests and supports only the documented Modbus subset; no inheritance/actions/general JSON-LD runtime or property-based inverse writes are added.
 
 Tested software matrix: Linux/Python 3.10–3.12. Automated serial tests use virtual terminals; the maintainer additionally confirmed Eastron physical RS485 polling on 2026-10-28. Windows/macOS serial hardware and other setups require their own validation. TLS retains an existing deprecated TLS-version selector. MQTT QoS does not make device writes idempotent; property access flags do not authorize raw MQTT address writes. Check the release workflow result and attached acceptance reports before deployment.
-
-### Local audit (development candidate)
-
-With a compatible shared interpreter, run a single read-only sampling pass:
-
-```sh
-modpoll --audit --config device.audit.tm.json --tcp DEVICE_HOST --unit-id 1
-modpoll --audit --config device.audit.tm.json --serial SERIAL_PORT --serial-baud 9600 --unit-id 1
-```
-
-Install the serial extra for RTU. Use the device's actual serial settings and
-Unit ID. Audit reads at most 16 selected properties, with no Modbus retries
-and at most five seconds of response timeout per point. Its JSON report
-separates identity and status, preserves per-point results, and exits nonzero
-on failure. A successful identity sample reports device values for inspection.
-A malformed plan is rejected before contacting the device.
