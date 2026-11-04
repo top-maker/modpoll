@@ -1,3 +1,23 @@
+# Modpoll 2.0.0a3 preview
+
+### Local audit
+
+Modpoll 2.0.0a3 pins modpoll-wot 0.2.0a4. Run a single read-only sampling pass:
+
+```sh
+modpoll --audit --config device.audit.tm.json --tcp DEVICE_HOST --unit-id 1
+modpoll --audit --config device.audit.tm.json --serial SERIAL_PORT --serial-baud 9600 --unit-id 1
+```
+
+Install the serial extra for RTU. Use the device's actual serial settings and
+Unit ID. Audit reads at most 16 selected properties, with no Modbus retries
+and at most five seconds of response timeout per point. Its JSON report
+separates identity and status, preserves per-point results, and exits nonzero
+on failure. A successful identity sample reports device values for inspection.
+A malformed plan is rejected before contacting the device.
+
+### Previous preview
+
 Published shared interpreter 0.2.0a3 and current development source execute only
 profile 0.2 and reject profile 0.1. The application release snapshot below keeps
 its original dependencies and behavior; publishing the shared schema does not
