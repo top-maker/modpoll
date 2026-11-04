@@ -847,6 +847,8 @@ def _create_serial_client(args, port, framer):
         "stopbits": 1,
         "timeout": args.timeout,
     }
+    if getattr(args, "audit", False):
+        client_args["retries"] = 0
     if framer:
         client_args["framer"] = framer
     return ModbusSerialClient(**client_args)
@@ -858,6 +860,8 @@ def _create_tcp_client(args, framer):
         "port": 502 if args.tcp_port is None else args.tcp_port,
         "timeout": args.timeout,
     }
+    if getattr(args, "audit", False):
+        client_args["retries"] = 0
     if framer:
         client_args["framer"] = framer
     return ModbusTcpClient(**client_args)
