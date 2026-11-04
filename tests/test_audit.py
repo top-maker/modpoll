@@ -57,6 +57,8 @@ def test_audit_reads_selected_points_over_serial(tmp_path, monkeypatch, capsys, 
 
 def test_audit_rejects_missing_plan_before_connecting(monkeypatch):
     args = get_parser().parse_args(["--audit", "-f", str(FIXTURE), "--tcp", "test"])
-    monkeypatch.setattr(audit, "_create_modbus_client", lambda _: pytest.fail("connected"))
+    monkeypatch.setattr(
+        audit, "_create_modbus_client", lambda _: pytest.fail("connected")
+    )
     with pytest.raises(ValueError, match="requires a modpoll:audit plan"):
         audit.run_audit(args)
