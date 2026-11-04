@@ -31,3 +31,16 @@ run the preview workflow manually on v2 with its `tag` input. This skips all
 publishing jobs, installs the existing PyPI wheel, uses fixtures from that exact
 tag and runs the current acceptance tooling. It does not replace packages or
 images. Record the separate validation run and tooling SHA.
+
+### Audit model compatibility
+
+Use the approved full TM or its public audit TM as the configuration for a
+local TCP simulator. Seed known values for the selected properties with
+`--initial PROPERTY=JSON` or `--initial-file`. Public audit TMs expose only the
+selected read spans. Use identical initial values for the shared properties
+when comparing full and public models.
+
+Stop a foreground simulator with Ctrl-C. Restart with the same TM and initial
+values to restore the original vector. A managed deployment can use
+`modsim down -f deployment.yaml` and `modsim up -f deployment.yaml` on POSIX.
+These checks verify software interoperability with the selected fixture.
