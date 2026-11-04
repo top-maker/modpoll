@@ -243,7 +243,7 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
         )
     if any(
         key.startswith("modpoll:")
-        and key not in ("modpoll:version", "modpoll:acquisition")
+        and key not in ("modpoll:version", "modpoll:acquisition", "modpoll:audit")
         for key in td
     ):
         raise AcquisitionError("unsupported root project extension")
@@ -456,7 +456,31 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
     if authority is not None:
         validate_standard(td, kind="td")
         validate_modbus(td)
-    from .loading import Model
+    from .loading import AuditPlan, Model
+
+    audit = None
+    if "modpoll:audit" in td:
+        raw_audit = td["modpoll:audit"]
+        seen_audit = set()
+        for section, names in raw_audit.items():
+            for name in names:
+                path = f"/modpoll:audit/{section}"
+                if name not in metadata:
+                    raise AcquisitionError(f"{path}: unknown property {name}")
+                if name in seen_audit:
+                    raise AcquisitionError(f"{path}: duplicate property {name}")
+                forms = metadata[name][1]
+                if not any(
+                    form["op"] == "readproperty"
+                    or (isinstance(form["op"], list) and "readproperty" in form["op"])
+                    for form in forms
+                ):
+                    raise AcquisitionError(f"{path}: property {name} is not readable")
+                seen_audit.add(name)
+        audit = AuditPlan(
+            identity=tuple(raw_audit.get("identity", ())),
+            status=tuple(raw_audit.get("status", ())),
+        )
 
     schemas = {
         name: {key: value for key, value in prop.items() if key != "forms"}
@@ -470,6 +494,7 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
         (actual_host, actual_port) if authority else None,
         json.dumps(schemas, sort_keys=True, ensure_ascii=False),
         VERSION,
+        audit=audit,
     )
     return model, td
 
@@ -573,6 +598,7 @@ def export_td(document, *, target="project", **instance):
         )
     td.pop("modpoll:version", None)
     td.pop("modpoll:acquisition", None)
+    td.pop("modpoll:audit", None)
     validate_standard(td, kind="td")
     validate_modbus(td)
     return td
