@@ -1,4 +1,13 @@
-# Modsim 2.0.0a2 preview candidate
+# Modsim 2.0.0a3 preview
+
+This preview pins modpoll-wot 0.2.0a4. A local TCP simulator can load a full
+profile 0.2 TM with an audit plan or its independently derived public audit TM.
+Tests seed the same known values and verify the public model exposes only the
+selected read spans.
+
+### Previous preview
+
+#### Modsim 2.0.0a2
 
 This candidate uses published modpoll-wot 0.2.0a2 and immutable modbus-models-v1
 inputs. Device mappings and contribution workflows now live in modbus-models;

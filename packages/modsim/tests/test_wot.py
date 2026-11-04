@@ -196,3 +196,32 @@ def test_defaults_and_constraints_are_respected(tmp_path):
         args.model_initialization["origins"]["AI0_RAW"]
         == "synthetic type/constraint fallback"
     )
+
+
+@pytest.mark.integration
+def test_full_and_public_audit_models_share_selected_vectors(server):
+    import modpoll_wot
+
+    derive = getattr(modpoll_wot, "derive_audit_tm", None)
+    if derive is None:
+        pytest.skip("requires the independently built audit producer candidate")
+    source = model("HoldingRegister", 10, ["identity", "private_point", "status"])
+    source["modpoll:audit"] = {"identity": ["identity"], "status": ["status"]}
+    artifact = derive(json.dumps(source).encode(), title="Audit vector")
+    full = server(source, "--initial", "identity=4660", "--initial", "status=43981")
+    public = server(
+        json.loads(artifact.payload),
+        "--initial",
+        "identity=4660",
+        "--initial",
+        "status=43981",
+    )
+    for client in (full, public):
+        assert client.read_holding_registers(10, count=1, device_id=1).registers == [
+            4660
+        ]
+        assert client.read_holding_registers(12, count=1, device_id=1).registers == [
+            43981
+        ]
+    assert public.read_holding_registers(11, count=1, device_id=1).isError()
+    assert public.write_register(12, 7, device_id=1).isError()
