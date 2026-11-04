@@ -168,3 +168,38 @@ consumer exact pins and CI. Project versions need not match. Until producer-firs
 publication completes, no consumer requires an unpublished version or local path.
 The modsim TD runtime and platform lifecycle remain separate implementation tasks;
 this contract does not claim those applications are implemented.
+
+
+### Optional audit plan
+
+A project TM or TD can declare `modpoll:audit` with an `identity` array, a
+`status` array, or both. Each supplied array contains one or more property names
+in reporting order. A name may occur only once in the plan and must resolve to a
+property with a read Form. Validation checks these references before any device
+I/O. The property Forms remain the authority for addresses and codecs.
+
+Project TD export retains the plan. The explicitly selected node-wot export
+omits project extensions. Audit references describe a local client operation
+and do not add WoT actions to a device.
+
+### Publication artifacts
+
+`derive_audit_tm(full_tm_bytes, title=approved_title)` builds an unbound,
+read-only TM from the reviewed audit selection. Treat selected property names,
+their mappings, and the supplied display title as public data. The generator
+retains only executable mapping and decoding fields. It drops source text,
+units, endpoint and Unit ID, security metadata, write Forms, unselected
+properties, and unused portions of acquisition blocks. Each generated block
+has the exact span of one selected read. The result contains the UTF-8 JSON
+bytes, their SHA-256, the input bytes' SHA-256, and format identifier
+`audit-tm-v1`. Inputs must be valid project TMs that resolve without external
+parameter bindings. An absent audit plan fails derivation.
+
+`project_point_table(tm_bytes)` produces rows in acquisition member order.
+Addresses are zero-based and quantities count the registers or bits read by
+the individual Form. Read function codes are null for write-only points.
+A writable flag records access without inferring a write function code.
+Multipliers are decimal strings when present. For the public preview, run
+projection on the derived bytes. For the full point table, run it on the
+approved source bytes. Keep the full projection under the same access
+controls as the full TM.

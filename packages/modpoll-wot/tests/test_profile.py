@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import unittest
 
-from modpoll_wot import AcquisitionError, load_model, parse_model
+from modpoll_wot import AcquisitionError, AuditPlan, load_model, parse_model
 
 from modpoll_wot.profile import instantiate, export_td
 
@@ -19,6 +19,53 @@ def numeric():
 
 
 class ProfileTests(unittest.TestCase):
+    def test_audit_references_are_preserved_in_project_td(self):
+        source = numeric()
+        self.assertIsNone(instantiate(source)[0].audit)
+        source["modpoll:audit"] = {
+            "identity": ["counter"],
+            "status": ["measurement", "signed"],
+        }
+        model, td = instantiate(source, host="localhost")
+        self.assertEqual(
+            model.audit, AuditPlan(("counter",), ("measurement", "signed"))
+        )
+        self.assertEqual(instantiate(td)[0].audit, model.audit)
+        self.assertNotIn(
+            "modpoll:audit",
+            export_td(source, host="localhost", target="node-wot-0.9.2"),
+        )
+        self.assertEqual(
+            export_td(source, host="localhost")["modpoll:audit"],
+            source["modpoll:audit"],
+        )
+
+    def test_audit_rejects_invalid_or_unreadable_references(self):
+        for audit in (
+            None,
+            {},
+            {"status": []},
+            {"status": ["missing"]},
+            {"status": ["counter", "counter"]},
+            {"identity": ["counter"], "status": ["counter"]},
+            {"unknown": ["counter"]},
+        ):
+            with self.subTest(audit=audit):
+                source = numeric()
+                source["modpoll:audit"] = audit
+                with self.assertRaises((AcquisitionError, ValueError)):
+                    instantiate(source)
+
+        source = numeric()
+        prop = source["properties"]["counter"]
+        del prop["readOnly"]
+        prop["writeOnly"] = True
+        prop["forms"][0]["op"] = "writeproperty"
+        instantiate(source)
+        source["modpoll:audit"] = {"status": ["counter"]}
+        with self.assertRaisesRegex(AcquisitionError, "not readable"):
+            instantiate(source)
+
     def test_shared_td_preserves_consistent_binary_media_parameters(self):
         source = numeric()
         form = source["properties"]["counter"]["forms"][0]
