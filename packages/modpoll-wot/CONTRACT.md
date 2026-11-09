@@ -33,6 +33,13 @@ publish the producer first, and only then change consumer pins. Package version
 and executable profile version are distinct. Existing profile 0.2 semantics are
 preserved; removing the older executable input does not redefine profile 0.2.
 
+## Version 0.3.0a1
+
+Version 0.3.0a1 adds [point and model fingerprints and verification reports](profile.md#point-and-model-fingerprints).
+It removes `derive_audit_tm`, `AuditArtifact` and the `audit-tm-v1`
+publication format, which existed only for restricted preview models. Point
+tables now include fingerprints. The `modpoll:audit` plan is unchanged.
+
 ## Device metadata
 
 Version 0.3.0a1 removes the device metadata schema 1, `validate-device` and
@@ -41,7 +48,7 @@ and their schema belong to [Open Modbus Catalog](https://github.com/top-maker/op
 No current consumer uses the removed API.
 
 Version 0.2.0a4 adds optional audit references and the publication APIs
-described in [profile.md](profile.md#publication-artifacts). Earlier packages
+removed again in 0.3.0a1. Earlier packages
 can run existing profile 0.2 documents that omit the extension. They reject
 documents with the new audit extension. The shared package validates and
 derives configuration without contacting any device.

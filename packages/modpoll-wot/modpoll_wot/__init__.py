@@ -4,12 +4,20 @@ from .acquisition import AcquisitionError, Group, Member, parse_acquisition
 from .loading import AuditPlan, Model, load_model, loads_model, parse_model
 from .validation import ModelValidationError, validate_standard
 from .profile import instantiate, export_td, parse_parameters
-from .delivery import AuditArtifact, derive_audit_tm, project_point_table
+from .delivery import project_point_table
+from .verification import (
+    ReportError,
+    model_fingerprint,
+    point_fingerprints,
+    validate_report,
+)
 
 __all__ = [
     "parse_parameters",
-    "AuditArtifact",
-    "derive_audit_tm",
+    "ReportError",
+    "model_fingerprint",
+    "point_fingerprints",
+    "validate_report",
     "project_point_table",
     "instantiate",
     "export_td",

@@ -6,9 +6,17 @@ import os
 from pathlib import Path
 import sys
 
-from . import AcquisitionError, export_td, load_model, validate_standard
+from . import (
+    AcquisitionError,
+    export_td,
+    load_model,
+    point_fingerprints,
+    validate_report,
+    validate_standard,
+)
 from .loading import _document_kind, load_document
 from .profile import parse_parameters
+from .verification import combine_fingerprints
 
 
 def _write_json(path, document):
@@ -58,6 +66,17 @@ def main():
         "--target", choices=["project", "node-wot-0.9.2"], default="project"
     )
     _instance_options(export)
+    prints = commands.add_parser(
+        "fingerprint", help="Print model and point fingerprints of a TM or TD as JSON"
+    )
+    prints.add_argument("input", help="Local JSON file")
+    report = commands.add_parser(
+        "validate-report", help="Validate a hardware verification report"
+    )
+    report.add_argument("input", help="Local report JSON file")
+    report.add_argument(
+        "--model", help="Exact TM bytes the report claims; checks hash and fingerprints"
+    )
     args = parser.parse_args()
     phase = "Input"
     try:
@@ -80,6 +99,17 @@ def main():
             validate_standard(document, kind="tm")
             _write_json(output, document)
             print(f"Generated starter TM: {output} (no executable Modbus mappings)")
+        elif args.command == "fingerprint":
+            points = point_fingerprints(Path(args.input).read_bytes())
+            result = {"model": combine_fingerprints(points.values()), "points": points}
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        elif args.command == "validate-report":
+            phase = "Verification report"
+            document = load_document(args.input)
+            model = None if args.model is None else Path(args.model).read_bytes()
+            validate_report(document, model=model)
+            scope = "schema, hash and fingerprints" if model else "schema only"
+            _result(True, f"{phase}: passed ({scope})", stream=sys.stdout)
         else:
             document = load_document(args.input)
             if not isinstance(document, dict):
@@ -131,7 +161,7 @@ def main():
                 _write_json(args.output, td)
                 print(f"Exported TD: {args.output}")
     except (ValueError, OSError, TypeError, RecursionError) as exc:
-        if args.command == "validate":
+        if args.command in ("validate", "validate-report"):
             _result(False, f"{phase}: failed", stream=sys.stderr)
             print(f"  {exc}", file=sys.stderr)
         else:

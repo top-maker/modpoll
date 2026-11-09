@@ -21,9 +21,13 @@ depends = ["test", "build"]
 run = '''
 set -eu
 fixture="$PWD/tests/fixtures/modsim.tm.json"
+numeric="$PWD/tests/fixtures/numeric.tm.json"
+report="$PWD/tests/fixtures/numeric.report.json"
 wheel=$(ls "$PWD"/dist/*.whl)
 cd "$(mktemp -d)"
 uv run --isolated --no-project --with "$wheel" modpoll-wot validate "$fixture" --profile
 uv run --isolated --no-project --with "$wheel" modpoll-wot export "$fixture" --host 127.0.0.1 --port 5020 -o instance.td.json
 uv run --isolated --no-project --with "$wheel" modpoll-wot validate instance.td.json --profile
+uv run --isolated --no-project --with "$wheel" modpoll-wot fingerprint "$fixture" > /dev/null
+uv run --isolated --no-project --with "$wheel" modpoll-wot validate-report "$report" --model "$numeric"
 '''

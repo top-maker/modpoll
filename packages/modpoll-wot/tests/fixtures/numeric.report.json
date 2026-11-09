@@ -1,0 +1,37 @@
+{
+  "reportVersion": 1,
+  "device": "example/numeric-pilot",
+  "model": {
+    "sha256": "b59cd8b5d53ccfa89c88ef579beca81f3ac38da3e8f5a49f1d7f99ab64e2e356",
+    "fingerprint": "mf1:2953dba3f1a8a578194267d1759bdb7f2c5b9c99ac511ff82fb8298e939fe367",
+    "source": "catalog",
+    "ref": "ffffffffffffffffffffffffffffffffffffffff",
+    "path": "models/numeric-pilot.tm.json"
+  },
+  "tool": {
+    "name": "modpoll",
+    "version": "2.1.0a1",
+    "interpreter": "0.3.0a1"
+  },
+  "transport": "tcp",
+  "date": "2026-11-09",
+  "environment": {
+    "firmware": "A2.15",
+    "configuration": "range 0x07 on AI0"
+  },
+  "points": [
+    {
+      "property": "counter",
+      "fingerprint": "pf1:69702f42bfedb8903c107d1885afd14b662f02c1ba41f299f5ed8bcca9cbbe1f",
+      "read": "ok",
+      "expected": "confirmed"
+    },
+    {
+      "property": "signed",
+      "fingerprint": "pf1:0b086c37129e62fc8632706ab4b1ad69c68f7500d855add0095de4e3f36c1b6d",
+      "read": "exception",
+      "exceptionCode": 2,
+      "expected": "unchecked"
+    }
+  ]
+}

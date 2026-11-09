@@ -9,7 +9,8 @@ Releases up to `0.2.0a4` were developed in the Modpoll repository under
 `packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
-Version `0.3.0a1` removes the device metadata schema; see [CONTRACT.md](CONTRACT.md).
+Version `0.3.0a1` adds point and model fingerprints and the verification report schema,
+and removes the device metadata schema; see [CONTRACT.md](CONTRACT.md).
 
 ```sh
 modpoll-wot new --title "meter"
@@ -17,6 +18,8 @@ modpoll-wot validate meter.tm.json
 modpoll-wot validate meter.tm.json --kind tm --profile
 modpoll-wot export meter.tm.json --host 127.0.0.1 --port 5020 --unit-id 7 -o meter.td.json
 modpoll-wot validate meter.td.json
+modpoll-wot fingerprint meter.tm.json
+modpoll-wot validate-report report.json --model meter.tm.json
 ```
 
 Use `modpoll-wot --help` and `modpoll-wot validate --help` for options.

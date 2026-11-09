@@ -172,24 +172,89 @@ Project TD export retains the plan. The explicitly selected node-wot export
 omits project extensions. Audit references describe a local client operation
 and do not add WoT actions to a device.
 
-### Publication artifacts
-
-`derive_audit_tm(full_tm_bytes, title=approved_title)` builds an unbound,
-read-only TM from the reviewed audit selection. Treat selected property names,
-their mappings, and the supplied display title as public data. The generator
-retains only executable mapping and decoding fields. It drops source text,
-units, endpoint and Unit ID, security metadata, write Forms, unselected
-properties, and unused portions of acquisition blocks. Each generated block
-has the exact span of one selected read. The result contains the UTF-8 JSON
-bytes, their SHA-256, the input bytes' SHA-256, and format identifier
-`audit-tm-v1`. Inputs must be valid project TMs that resolve without external
-parameter bindings. An absent audit plan fails derivation.
+### Point tables
 
 `project_point_table(tm_bytes)` produces rows in acquisition member order.
 Addresses are zero-based and quantities count the registers or bits read by
 the individual Form. Read function codes are null for write-only points.
 A writable flag records access without inferring a write function code.
-Multipliers are decimal strings when present. For the public preview, run
-projection on the derived bytes. For the full point table, run it on the
-approved source bytes. Keep the full projection under the same access
-controls as the full TM.
+Multipliers are decimal strings when present. Each readable row carries its
+point fingerprint; write-only rows carry null.
+
+## Point and model fingerprints
+
+A point fingerprint identifies how one readable property is acquired and
+decoded, independently of the file that contains it. A model fingerprint
+identifies the set of readable point mappings of a whole model. Verification
+statistics are keyed by the model fingerprint: titles, descriptions, units,
+property names and member order do not change it, so an unmodified fork shares
+its parent's statistics, while any change to a read mapping, or adding or
+removing a readable point, starts a new one.
+
+`point_fingerprints(model)` accepts a TM or TD, as a parsed document or exact
+bytes, and returns `{property: fingerprint}` for every readable property.
+`model_fingerprint(model)` returns the model fingerprint.
+`modpoll-wot fingerprint FILE` prints both as JSON
+(`{"model": ..., "points": {...}}`). The model is
+instantiated without instance arguments, then each property's read Form is
+reduced to this canonical object:
+
+| Key | Value |
+| --- | --- |
+| `type` | Property DataSchema type |
+| `modv:entity`, `modv:address`, `modv:quantity`, `modv:type` | From the Form; quantity is filled with its default |
+| `modv:mostSignificantByte`, `modv:mostSignificantWord` | From the Form, defaulting to true |
+| `modpoll:codec`, `modpoll:bit`, `modpoll:bitPacking` | Only when present |
+| `modpoll:multiplier` | Only when present, as a plain decimal string without exponent or trailing zeros (`0.1`, `100`) |
+| `modpoll:byteLength` | Always for `xsd:string`, filled with the full span capacity by default; never otherwise |
+
+The fingerprint is `pf1:` followed by the lowercase SHA-256 hex digest of the
+object serialized as UTF-8 JSON with sorted keys, no whitespace and non-ASCII
+characters unescaped. Property names, titles, descriptions, units, ranges,
+write Forms, endpoints and Unit IDs do not contribute. Flags that a type cannot
+use, such as word order for a single register, are kept as written: equivalent
+spellings may split statistics but never merge different mappings.
+The model fingerprint is `mf1:` followed by the SHA-256 hex digest of the
+sorted, deduplicated point fingerprints serialized as a JSON array without
+whitespace. Aliases with identical mappings count once; write-only properties
+do not contribute.
+[tests/fixtures/modsim.fingerprints.json](tests/fixtures/modsim.fingerprints.json)
+pins the canonical strings, point fingerprints and model fingerprint of the
+37-property fixture for other implementations. Changing either canonical form
+requires a new prefix.
+
+## Verification reports
+
+A verification report records one hardware reading of a model. Its schema is
+[schemas/verification-report-1.json](modpoll_wot/schemas/verification-report-1.json)
+(JSON Schema 2020-12). A report carries:
+
+- `device`: the catalog device ID `vendor/model`.
+- `model`: the SHA-256 of the exact TM bytes, its model fingerprint and its
+  source. Catalog models add
+  the 40-character catalog commit and package-relative `models/*.tm.json`
+  path. Workspace models add an opaque version reference. Local models add
+  neither.
+- `tool`: the reporting tool's name and version, and the modpoll-wot version.
+- `transport` (`tcp` or `rtu`) and the reading `date`.
+- Optional `environment`: carrier device ID, firmware and a short
+  configuration note, such as an input range code.
+- `points`: per property, its fingerprint, the read result (`ok`,
+  `exception` with its exception code, `no-response` or `not-tested`) and
+  the user's judgment of the value (`confirmed`, `rejected` or `unchecked`).
+  Only a successful read can be judged.
+
+A report is a full read when its points cover every readable property of the
+model and every read is `ok`, so that executing the whole
+`modpoll:acquisition` plan raised no error. Receiving services derive this
+from the stored per-point results.
+
+The schema rejects every other field. Endpoints, Unit IDs, serial numbers and
+read values therefore cannot be sent. Configuration notes are free text, so
+the reporting tool shows the report for review before upload. Review
+markers and account data belong to the receiving service, not the report.
+
+`validate_report(report, model=tm_bytes)` and
+`modpoll-wot validate-report REPORT [--model TM]` check the schema and unique
+properties. With the model, they also check its hash and model fingerprint, and that
+every point names a readable property with a matching fingerprint.
