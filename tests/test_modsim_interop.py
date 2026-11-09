@@ -75,17 +75,17 @@ def test_four_table_reads_and_fc5_fc6_fc16_writes(tmp_path):
         handler.poll()
         device = handler.get_device_list()[0]
         bits = [True, False, True, False, False, False, False, True]
-        assert device.references["coil01-08"].val == bits
-        assert device.references["coil09-16"].val == bits
-        assert device.references["di01-08"].val == bits
-        assert device.references["input_reg01"].val == 1
-        assert device.references["holding_reg01"].val == 1
+        assert device.points["coil01-08"].val == bits
+        assert device.points["coil09-16"].val == bits
+        assert device.points["di01-08"].val == bits
+        assert device.points["input_reg01"].val == 1
+        assert device.points["holding_reg01"].val == 1
         assert handler.write_coil("meter", 1, True)
         assert handler.write_register("meter", 40000, 123)
         assert handler.write_register("meter", 40001, [12, 13, 14])
         handler.poll()
-        assert device.references["coil01-08"].val[1] is True
-        assert device.references["holding_reg01"].val == 123
+        assert device.points["coil01-08"].val[1] is True
+        assert device.points["holding_reg01"].val == 123
         assert handler.connect()
         result = handler.modbus_client.read_holding_registers(
             40000, count=4, device_id=7

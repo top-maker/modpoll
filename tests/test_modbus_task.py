@@ -24,11 +24,11 @@ def test_modbus_task_poll_modsim():
 
     # Check if any data was collected
     assert len(modbus_handler.deviceList) > 0
-    assert len(modbus_handler.deviceList[0].references) > 0
+    assert len(modbus_handler.deviceList[0].points) > 0
 
     # Check if at least one reference has a non-None value
     assert any(
-        ref.val is not None for ref in modbus_handler.deviceList[0].references.values()
+        point.val is not None for point in modbus_handler.deviceList[0].points.values()
     )
 
     modbus_handler.disconnect()

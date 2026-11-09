@@ -53,7 +53,7 @@ def test_url_model_loader_keeps_timeout_and_streams(monkeypatch):
     ]
 
 
-def test_adapter_preserves_all_modsim_reference_addresses():
+def test_adapter_preserves_all_modsim_point_addresses():
     path = Path(__file__).resolve().parents[1] / "examples/modsim.tm.json"
     (device,) = create_devices(read_model(str(path), timeout=1, unit_id=7))
     assert device.name == "modsim01" and device.devid == 7
@@ -63,13 +63,13 @@ def test_adapter_preserves_all_modsim_reference_addresses():
         (4, 30000, 20),
         (3, 40000, 44),
     ]
-    assert len(device.references) == 37
-    assert device.references["coil09-16"].address == 8
-    assert device.references["di09-16"].address == 10008
-    assert device.references["holding_reg19"].dtype == "string16"
-    assert device.references["holding_reg10"].scale == 0.001
-    assert device.references["input_reg01"].rw == "r"
-    assert device.references["holding_reg01"].rw == "rw"
+    assert len(device.points) == 37
+    assert device.points["coil09-16"].address == 8
+    assert device.points["di09-16"].address == 10008
+    assert device.points["holding_reg19"].dtype == "string16"
+    assert device.points["holding_reg10"].scale == 0.001
+    assert device.points["input_reg01"].rw == "r"
+    assert device.points["holding_reg01"].rw == "rw"
 
 
 def test_unit_id_validation_fails_before_connect(tmp_path):
@@ -98,7 +98,7 @@ def test_single_config_option_loads_content_regardless_of_filename(
     handler = ModbusHandler(object(), args.config[0])
     assert handler.load_config()
     (device,) = handler.deviceList
-    assert len(device.references) == 37
+    assert len(device.points) == 37
     assert [(p.fc, p.start_address, p.size) for p in device.pollerList] == [
         (1, 0, 16),
         (2, 10000, 16),

@@ -115,8 +115,8 @@ def export_modbus_handlers(handlers, file, timestamp=None) -> bool:
                 handler.logger.error("Cannot export duplicate device name %s", dev.name)
                 return False
             dev_data = {
-                ref.name: ref.val if ref.valid_this_poll else None
-                for ref in dev.references.values()
+                point.name: point.val if point.valid_this_poll else None
+                for point in dev.points.values()
             }
             if timestamp is not None:
                 dev_data["timestamp"] = timestamp
@@ -152,13 +152,13 @@ class Device:
         self.name = device_name
         self.devid = device_id
         self.pollerList: List[Poller] = []
-        self.references: dict = {}
+        self.points: dict = {}
         self.errorCount = 0
         self.pollCount = 0
         self.pollSuccess = False
 
-    def add_reference_mapping(self, ref):
-        self.references[ref.name] = ref
+    def add_point_mapping(self, point):
+        self.points[point.name] = point
 
 
 class Poller:
@@ -175,7 +175,7 @@ class Poller:
         self.start_address = start_address
         self.size = size
         self.endian = endian.lower()
-        self.readableReferences: List[Reference] = []
+        self.readablePoints: List[Point] = []
         self.disabled = False
         self.failcounter = 0
         self.logger = logging.getLogger(__name__)
@@ -206,12 +206,12 @@ class Poller:
                     # CSV addresses for bit tables identify eight-bit groups,
                     # relative to the poll start, as in the documented examples.
                     group_count = math.ceil(self.size / 8)
-                    for ref in self.readableReferences:
-                        offset = ref.address - self.start_address
-                        span = ref.bit_group_width
-                        if getattr(ref, "physical_bits", False):
+                    for point in self.readablePoints:
+                        offset = point.address - self.start_address
+                        span = point.bit_group_width
+                        if getattr(point, "physical_bits", False):
                             try:
-                                count = ref.bit_count
+                                count = point.bit_count
                                 if (
                                     offset < 0
                                     or offset + count > self.size
@@ -219,21 +219,21 @@ class Poller:
                                 ):
                                     raise ValueError("short physical bit response")
                                 bits = data[offset : offset + count]
-                                if ref.dtype.startswith("bool"):
-                                    ref.update_value(
-                                        bool(bits[0]) if ref.scalar else list(bits)
+                                if point.dtype.startswith("bool"):
+                                    point.update_value(
+                                        bool(bits[0]) if point.scalar else list(bits)
                                     )
                                 else:
-                                    decoder = self._get_decoder(bits, ref)
-                                    self._decode_and_update_reference(ref, decoder)
-                                if not ref.valid_this_poll:
+                                    decoder = self._get_decoder(bits, point)
+                                    self._decode_and_update_point(point, decoder)
+                                if not point.valid_this_poll:
                                     decode_success = False
                             except Exception:
-                                ref.update_value(None, valid=False)
+                                point.update_value(None, valid=False)
                                 decode_success = False
                                 self.logger.exception(
-                                    "Failed to decode physical bit reference %s",
-                                    ref.name,
+                                    "Failed to decode physical bit point %s",
+                                    point.name,
                                 )
                             continue
                         if (
@@ -241,24 +241,24 @@ class Poller:
                             or offset + span > group_count
                             or len(data) < min((offset + span) * 8, self.size)
                         ):
-                            ref.update_value(None, valid=False)
+                            point.update_value(None, valid=False)
                             decode_success = False
                             self.logger.error(
-                                "Reference %s is outside the polled bit groups",
-                                ref.name,
+                                "Point %s is outside the polled bit groups",
+                                point.name,
                             )
                             continue
                         try:
                             if (
-                                ref.dtype in ("bool", "bool8", "bool16")
-                                and ref.bit is None
+                                point.dtype in ("bool", "bool8", "bool16")
+                                and point.bit is None
                             ):
                                 start = offset * 8
-                                ref.update_value(
+                                point.update_value(
                                     list(
                                         data[
                                             start : min(
-                                                start + ref.ref_width * 8, self.size
+                                                start + point.point_width * 8, self.size
                                             )
                                         ]
                                     )
@@ -269,52 +269,50 @@ class Poller:
                                         "numeric/string bit span exceeds requested bits"
                                     )
                                 decoder = self._get_decoder(
-                                    data[: (self.size // 8) * 8], ref
+                                    data[: (self.size // 8) * 8], point
                                 )
                                 decoder.skip_bytes(offset)
-                                self._decode_and_update_reference(ref, decoder)
-                            if not ref.valid_this_poll:
+                                self._decode_and_update_point(point, decoder)
+                            if not point.valid_this_poll:
                                 decode_success = False
                         except Exception:
-                            ref.update_value(None, valid=False)
+                            point.update_value(None, valid=False)
                             decode_success = False
                             self.logger.exception(
-                                "Failed to decode value for reference: %s", ref.name
+                                "Failed to decode value for point: %s", point.name
                             )
                 else:  # Function codes 3 and 4
                     data = result.registers
                     # Sort refs by address to ensure predictable decoding order
-                    sorted_refs = sorted(
-                        self.readableReferences, key=lambda r: r.address
-                    )
-                    for ref in sorted_refs:
-                        # Create and position a new decoder for each reference for robustness
-                        decoder = self._get_decoder(data, ref)
-                        offset_bytes = (ref.address - self.start_address) * 2
+                    sorted_points = sorted(self.readablePoints, key=lambda r: r.address)
+                    for point in sorted_points:
+                        # Create and position a new decoder for each point for robustness
+                        decoder = self._get_decoder(data, point)
+                        offset_bytes = (point.address - self.start_address) * 2
                         if offset_bytes < 0:
                             self.logger.warning(
-                                f"Reference {ref.name} address {ref.address} is outside of poller range starting at {self.start_address}"
+                                f"Point {point.name} address {point.address} is outside of poller range starting at {self.start_address}"
                             )
-                            ref.update_value(None, valid=False)
+                            point.update_value(None, valid=False)
                             decode_success = False
                             continue
-                        if offset_bytes // 2 + ref.ref_width > len(data):
-                            ref.update_value(None, valid=False)
+                        if offset_bytes // 2 + point.point_width > len(data):
+                            point.update_value(None, valid=False)
                             decode_success = False
                             self.logger.error(
-                                "Short register response for %s", ref.name
+                                "Short register response for %s", point.name
                             )
                             continue
                         decoder.skip_bytes(offset_bytes)
                         try:
-                            self._decode_and_update_reference(ref, decoder)
-                            if not ref.valid_this_poll:
+                            self._decode_and_update_point(point, decoder)
+                            if not point.valid_this_poll:
                                 decode_success = False
                         except Exception as e:
-                            ref.update_value(None, valid=False)
+                            point.update_value(None, valid=False)
                             decode_success = False
                             self.logger.error(
-                                f"Failed to decode value for reference: {ref.name} - {e}"
+                                f"Failed to decode value for point: {point.name} - {e}"
                             )
                 self.update_statistics(decode_success)
                 return decode_success
@@ -324,12 +322,12 @@ class Poller:
             )
 
         self.update_statistics(False)
-        for ref in self.readableReferences:
-            ref.update_value(None)
+        for point in self.readablePoints:
+            point.update_value(None)
         return False
 
-    def _get_decoder(self, data, ref=None):
-        endian = getattr(ref, "endian", None) or self.endian
+    def _get_decoder(self, data, point=None):
+        endian = getattr(point, "endian", None) or self.endian
         byteorder = "little" if endian.upper().startswith("LE_") else "big"
         wordorder = "little" if endian.upper().endswith("_LE") else "big"
         return _PayloadDecoder(
@@ -339,15 +337,15 @@ class Poller:
             coils=self.fc in (1, 2),
         )
 
-    def _decode_and_update_reference(self, ref: "Reference", decoder: _PayloadDecoder):
-        if getattr(ref, "scalar", False) and ref.dtype == "uint16":
-            ref.update_value(bool(decoder.decode_16bit_uint()))
+    def _decode_and_update_point(self, point: "Point", decoder: _PayloadDecoder):
+        if getattr(point, "scalar", False) and point.dtype == "uint16":
+            point.update_value(bool(decoder.decode_16bit_uint()))
             return
-        if ref.dtype == "bool" and ref.bit is not None:
-            # Bit references read a 16-bit register and extract one bit.
+        if point.dtype == "bool" and point.bit is not None:
+            # Bit points read a 16-bit register and extract one bit.
             register_value = decoder.decode_16bit_uint()
-            bit_value = (register_value >> ref.bit) & 1
-            ref.update_value(bool(bit_value))
+            bit_value = (register_value >> point.bit) & 1
+            point.update_value(bool(bit_value))
             return
 
         decode_methods = {
@@ -365,21 +363,21 @@ class Poller:
             "bool16": lambda: decoder.decode_bits() + decoder.decode_bits(),
         }
 
-        if ref.dtype in decode_methods:
-            ref.update_value(decode_methods[ref.dtype]())
-        elif ref.dtype.startswith("string"):
-            count = int(ref.dtype[6:])
+        if point.dtype in decode_methods:
+            point.update_value(decode_methods[point.dtype]())
+        elif point.dtype.startswith("string"):
+            count = int(point.dtype[6:])
             payload = (
                 decoder.decode_string_ordered(count)
-                if getattr(ref, "endian", None) is not None
-                and not getattr(ref, "physical_bits", False)
+                if getattr(point, "endian", None) is not None
+                and not getattr(point, "physical_bits", False)
                 else decoder.decode_string(count)
             )
-            ref.update_value(payload.decode("utf-8").rstrip("\x00"))
+            point.update_value(payload.decode("utf-8").rstrip("\x00"))
 
-    def add_readable_reference(self, ref: "Reference"):
-        if not any(existing is ref for existing in self.readableReferences):
-            self.readableReferences.append(ref)
+    def add_readable_point(self, point: "Point"):
+        if not any(existing is point for existing in self.readablePoints):
+            self.readablePoints.append(point)
 
     def update_statistics(self, success: bool):
         self.device.pollCount += 1
@@ -392,39 +390,39 @@ class Poller:
             self.device.pollSuccess = False
 
 
-class Reference:
+class Point:
     def __init__(
         self,
         device: Device,
-        ref_name: str,
-        ref_addr: str,
+        point_name: str,
+        point_addr: str,
         dtype: str,
         rw: str,
         unit: str,
         scale: float,
     ):
         self.device = device
-        self.name = ref_name
+        self.name = point_name
         self.bit: Optional[int] = None
         try:
-            if ":" in ref_addr:
-                addr, bit = ref_addr.split(":")
+            if ":" in point_addr:
+                addr, bit = point_addr.split(":")
                 self.address = int(addr, 0)
                 self.bit = int(bit)
                 if not 0 <= self.bit <= 15:
                     raise ValueError("Bit index must be between 0 and 15")
             else:
-                self.address = int(ref_addr, 0)
+                self.address = int(point_addr, 0)
         except ValueError as e:
-            raise ValueError(f"Invalid address format for {ref_name}: {e}") from e
+            raise ValueError(f"Invalid address format for {point_name}: {e}") from e
         self.dtype = dtype.lower()
         # Validate that bit syntax is only used with bool dtype
         if self.bit is not None and self.dtype != "bool":
             raise ValueError(
                 f"Bit index syntax (address:bit) can only be used with dtype 'bool', "
-                f"but reference {ref_name} has dtype '{self.dtype}'"
+                f"but point {point_name} has dtype '{self.dtype}'"
             )
-        self.ref_width = type_width(self.dtype)
+        self.point_width = type_width(self.dtype)
         self.rw = rw.lower()
         self.unit = unit
         self.scale = scale
@@ -434,7 +432,7 @@ class Reference:
 
     def __repr__(self):
         addr = f"{self.address}:{self.bit}" if self.bit is not None else self.address
-        return f"<Reference {self.name}@{addr}>"
+        return f"<Point {self.name}@{addr}>"
 
     @property
     def bit_group_width(self):
@@ -448,7 +446,7 @@ class Reference:
                 pass
         if isinstance(v, float) and not math.isfinite(v):
             logging.getLogger(__name__).warning(
-                "Non-finite value for reference %s on device %s",
+                "Non-finite value for point %s on device %s",
                 self.name,
                 self.device.name,
             )
@@ -547,13 +545,13 @@ class ModbusHandler:
     def poll(self):
         for dev in self.deviceList:
             dev.pollSuccess = False
-            for ref in dev.references.values():
-                ref.valid_this_poll = False
+            for point in dev.points.values():
+                point.valid_this_poll = False
         if not self.connect():
             self.logger.error("Failed to connect to Modbus client")
             for dev in self.deviceList:
-                for ref in dev.references.values():
-                    ref.update_value(None, valid=False)
+                for point in dev.points.values():
+                    point.update_value(None, valid=False)
                 for poller in dev.pollerList:
                     if not poller.disabled:
                         previous_failures = poller.failcounter
@@ -575,8 +573,8 @@ class ModbusHandler:
                         self.logger.exception("Unexpected polling error")
                         succeeded = False
                         poll_success = False
-                        for ref in p.readableReferences:
-                            ref.update_value(None, valid=False)
+                        for point in p.readablePoints:
+                            point.update_value(None, valid=False)
                     if dev.pollCount == previous_polls:
                         dev.pollCount += 1
                         if not succeeded:
@@ -671,18 +669,22 @@ class ModbusHandler:
     def print_results(self):
         for dev in self.deviceList:
             table = PrettyTable()
-            table.field_names = ["Reference", "Value", "Unit"]
-            table.align["Reference"] = "l"
+            table.field_names = ["Point", "Value", "Unit"]
+            table.align["Point"] = "l"
             table.align["Value"] = "r"
             table.align["Unit"] = "l"
-            for ref in dev.references.values():
+            for point in dev.points.values():
                 value = (
-                    round(ref.val, FLOAT_TYPE_PRECISION)
-                    if ref.valid_this_poll and isinstance(ref.val, float)
-                    else ref.val
+                    round(point.val, FLOAT_TYPE_PRECISION)
+                    if point.valid_this_poll and isinstance(point.val, float)
+                    else point.val
                 )
                 table.add_row(
-                    [ref.name, value if ref.valid_this_poll else None, ref.unit or ""]
+                    [
+                        point.name,
+                        value if point.valid_this_poll else None,
+                        point.unit or "",
+                    ]
                 )
             print(f"\nDevice: {dev.name}")
             print(table)
@@ -693,25 +695,25 @@ class ModbusHandler:
 
         for dev in self.deviceList:
             payload = {}
-            for ref in dev.references.values():
-                if not ref.valid_this_poll:
+            for point in dev.points.values():
+                if not point.valid_this_poll:
                     continue
-                if not on_change or ref.val != ref.last_val:
-                    ref_val = (
-                        round(ref.val, FLOAT_TYPE_PRECISION)
-                        if isinstance(ref.val, float)
-                        else ref.val
+                if not on_change or point.val != point.last_val:
+                    point_val = (
+                        round(point.val, FLOAT_TYPE_PRECISION)
+                        if isinstance(point.val, float)
+                        else point.val
                     )
-                    key = f"{ref.name}|{ref.unit}" if ref.unit else ref.name
-                    payload[key] = ref_val
+                    key = f"{point.name}|{point.unit}" if point.unit else point.name
+                    payload[key] = point_val
 
                     if self.mqtt_single_publish:
-                        topic = f"{self.mqtt_publish_topic_pattern.replace('{{device_name}}', dev.name)}/{ref.name}"
-                        if isinstance(ref_val, list):
-                            for i, entry in enumerate(ref_val):
+                        topic = f"{self.mqtt_publish_topic_pattern.replace('{{device_name}}', dev.name)}/{point.name}"
+                        if isinstance(point_val, list):
+                            for i, entry in enumerate(point_val):
                                 self.mqtt_handler.publish(f"{topic}/{i}", entry)
                         else:
-                            self.mqtt_handler.publish(topic, ref_val)
+                            self.mqtt_handler.publish(topic, point_val)
 
             if payload and not self.mqtt_single_publish:
                 if timestamp is not None:

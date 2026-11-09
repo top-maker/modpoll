@@ -103,7 +103,7 @@ def test_device_stop_and_restart_resets_quality_and_counts(live_modsim, tmp_path
         (handler,) = handlers
         (device,) = handler.deviceList
         handler.poll()
-        assert device.references["value"].val == 1 and device.pollSuccess
+        assert device.points["value"].val == 1 and device.pollSuccess
         stop_simulator(process)
         process = None
         handler.poll()
@@ -122,8 +122,7 @@ def test_device_stop_and_restart_resets_quality_and_counts(live_modsim, tmp_path
         handler.poll()
         assert (device.pollCount, device.errorCount, device.pollSuccess) == (3, 1, True)
         assert (
-            device.references["value"].val == 1
-            and device.references["value"].valid_this_poll
+            device.points["value"].val == 1 and device.points["value"].valid_this_poll
         )
     finally:
         for handler in handlers:

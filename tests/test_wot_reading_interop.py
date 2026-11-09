@@ -144,7 +144,7 @@ def test_all_numeric_types_bits_strings_and_multipliers(
         handler.poll()
         (device,) = handler.deviceList
         assert device.pollSuccess
-        actual = {name: ref.val for name, ref in device.references.items()}
+        actual = {name: point.val for name, point in device.points.items()}
         assert actual == expected
         assert type(actual["unsigned64"]) is int
         assert type(actual["signed64"]) is int
@@ -275,8 +275,8 @@ def test_device_exception_produces_null_without_hiding_valid_group(
         handler.poll()
         (device,) = handler.deviceList
         assert not device.pollSuccess
-        assert device.references["value"].valid_this_poll
-        assert not device.references["unavailable"].valid_this_poll
+        assert device.points["value"].valid_this_poll
+        assert not device.points["unavailable"].valid_this_poll
         output = tmp_path / "partial.json"
         assert handler.export(output)
         assert json.loads(output.read_text()) == {

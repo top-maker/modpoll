@@ -106,6 +106,22 @@ def assert_values(snapshot):
         assert data[f"holding_reg{index:02}"] == value
 
 
+def table_cells(text):
+    """Compare terminal tables by cell values; 1.x says Reference where 2.x says Point."""
+    rows = []
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("+"):
+            continue
+        if line.startswith("|"):
+            cells = tuple(cell.strip() for cell in line.strip("|").split("|"))
+            if cells[0] not in ("Reference", "Point"):
+                rows.append(cells)
+        elif line:
+            rows.append(line)
+    return rows
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--modpoll-1x", type=Path, required=True)
@@ -211,9 +227,9 @@ def main():
                                 "label": label,
                                 "snapshot": snapshot,
                                 "requests": list(proxy.requests),
-                                "table": result.stdout[
-                                    result.stdout.index("Device:") :
-                                ].strip(),
+                                "table": table_cells(
+                                    result.stdout[result.stdout.index("Device:") :]
+                                ),
                             }
                         )
                     finally:

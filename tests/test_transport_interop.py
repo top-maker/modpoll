@@ -233,7 +233,7 @@ def test_serial_actual_frames_and_values(tmp_path, framer):
             )
             if framer == "rtu":
                 bridge.reset()
-                reference = run_client(
+                point = run_client(
                     baseline,
                     baseline / "examples/modsim.csv",
                     ["--serial", bridge.client_path, "--serial-baud", "19200"],
@@ -263,7 +263,7 @@ def test_serial_actual_frames_and_values(tmp_path, framer):
                 assert (
                     result.returncode != 0 and "Only RTU/ASCII allowed" in result.stderr
                 )
-                reference = None
+                point = None
             bridge.reset()
             result = run_client(
                 ROOT,
@@ -278,8 +278,8 @@ def test_serial_actual_frames_and_values(tmp_path, framer):
                 ],
                 tmp_path / "tm.json",
             )
-            if reference is not None:
-                assert result == reference
+            if point is not None:
+                assert result == point
             assert bridge.captured() == expected_serial(framer)
         finally:
             stop_simulator(process)

@@ -4,7 +4,7 @@ from modpoll import modbus_task
 from modpoll.modbus_task import (
     Device,
     ModbusHandler,
-    Reference,
+    Point,
     export_modbus_handlers,
 )
 
@@ -26,15 +26,17 @@ class FakeClient:
 
 
 class FakePoller:
-    def __init__(self, succeeds, refs):
+    def __init__(self, succeeds, points):
         self.succeeds = succeeds
-        self.readableReferences = refs
+        self.readablePoints = points
         self.disabled = False
         self.failcounter = 0
 
     def poll(self, master):
-        for ref in self.readableReferences:
-            ref.update_value(ref.val if self.succeeds else None, valid=self.succeeds)
+        for point in self.readablePoints:
+            point.update_value(
+                point.val if self.succeeds else None, valid=self.succeeds
+            )
         return self.succeeds
 
 
@@ -46,32 +48,32 @@ class FakeMqtt:
         self.messages.append((topic, payload))
 
 
-def make_ref(device, name, value):
-    ref = Reference(device, name, "0", "uint16", "r", None, None)
-    ref.update_value(value)
-    return ref
+def make_point(device, name, value):
+    point = Point(device, name, "0", "uint16", "r", None, None)
+    point.update_value(value)
+    return point
 
 
 def test_failed_connection_invalidates_old_sample(monkeypatch):
     device = Device("meter", 1)
-    ref = make_ref(device, "voltage", 230)
-    device.add_reference_mapping(ref)
+    point = make_point(device, "voltage", 230)
+    device.add_point_mapping(point)
     handler = ModbusHandler(FakeClient(connected=False), "unused.tm.json", daemon=True)
     handler.deviceList = [device]
 
     handler.poll()
 
-    assert ref.val is None
-    assert not ref.valid_this_poll
+    assert point.val is None
+    assert not point.valid_this_poll
     assert not device.pollSuccess
 
 
-def test_partial_poll_does_not_publish_a_stale_reference(monkeypatch):
+def test_partial_poll_does_not_publish_a_stale_point(monkeypatch):
     device = Device("meter", 1)
-    fresh = make_ref(device, "fresh", 12)
-    stale = make_ref(device, "stale", 34)
-    device.add_reference_mapping(fresh)
-    device.add_reference_mapping(stale)
+    fresh = make_point(device, "fresh", 12)
+    stale = make_point(device, "stale", 34)
+    device.add_point_mapping(fresh)
+    device.add_point_mapping(stale)
     device.pollerList = [FakePoller(True, [fresh]), FakePoller(False, [stale])]
     handler = ModbusHandler(FakeClient(), "unused.tm.json", daemon=True)
     handler.deviceList = [device]
@@ -94,9 +96,9 @@ def test_partial_poll_does_not_publish_a_stale_reference(monkeypatch):
 
 def test_snapshot_marks_invalid_sample_null_and_preserves_zero_timestamp(tmp_path):
     device = Device("meter", 1)
-    ref = make_ref(device, "voltage", 230)
-    device.add_reference_mapping(ref)
-    ref.valid_this_poll = False
+    point = make_point(device, "voltage", 230)
+    device.add_point_mapping(point)
+    point.valid_this_poll = False
     handler = ModbusHandler(FakeClient(), "unused.tm.json")
     handler.deviceList = [device]
     path = tmp_path / "snapshot.json"
@@ -108,11 +110,11 @@ def test_snapshot_marks_invalid_sample_null_and_preserves_zero_timestamp(tmp_pat
 
 def test_zero_scale_is_applied_to_nonzero_register_value():
     device = Device("meter", 1)
-    ref = Reference(device, "zeroed", "0", "uint16", "r", None, 0)
+    point = Point(device, "zeroed", "0", "uint16", "r", None, 0)
 
-    ref.update_value(123)
+    point.update_value(123)
 
-    assert ref.val == 0
+    assert point.val == 0
 
 
 def test_export_merges_multiple_handlers_and_preserves_old_file_on_failure(
@@ -120,10 +122,10 @@ def test_export_merges_multiple_handlers_and_preserves_old_file_on_failure(
 ):
     first_device = Device("first", 1)
     second_device = Device("second", 2)
-    first_ref = make_ref(first_device, "value", 1)
-    second_ref = make_ref(second_device, "value", 2)
-    first_device.add_reference_mapping(first_ref)
-    second_device.add_reference_mapping(second_ref)
+    first_point = make_point(first_device, "value", 1)
+    second_point = make_point(second_device, "value", 2)
+    first_device.add_point_mapping(first_point)
+    second_device.add_point_mapping(second_point)
     handlers = [
         ModbusHandler(FakeClient(), "first.tm.json"),
         ModbusHandler(FakeClient(), "second.tm.json"),
@@ -197,10 +199,10 @@ def test_failure_and_recovery_never_publish_old_samples(monkeypatch, tmp_path):
     monkeypatch.setattr(modbus_task, "delay_thread", lambda timeout=0: None)
     monkeypatch.setattr(modbus_task, "on_threading_event", lambda: False)
     device = Device("meter", 1)
-    ref = Reference(device, "value", "0", "uint16", "r", None, None)
-    device.add_reference_mapping(ref)
+    point = Point(device, "value", "0", "uint16", "r", None, None)
+    device.add_point_mapping(point)
     poller = Poller(device, 3, 0, 1, "BE_BE")
-    poller.add_readable_reference(ref)
+    poller.add_readable_point(point)
     device.pollerList = [poller]
 
     class Client(FakeClient):
@@ -251,18 +253,18 @@ def test_failure_and_recovery_never_publish_old_samples(monkeypatch, tmp_path):
 
 def test_nonfinite_scale_is_rejected_and_nonfinite_sample_is_invalid(caplog):
     device = Device("meter", 1)
-    ref = Reference(device, "temperature", "0", "float32", "r", None, None)
-    ref.update_value(float("inf"))
-    assert ref.val is None and not ref.valid_this_poll
+    point = Point(device, "temperature", "0", "float32", "r", None, None)
+    point.update_value(float("inf"))
+    assert point.val is None and not point.valid_this_poll
 
 
 def test_nonfinite_register_sample_marks_poll_failed(monkeypatch):
     from modpoll.modbus_task import Poller
 
     device = Device("meter", 1)
-    ref = Reference(device, "temperature", "0", "float32", "r", None, None)
+    point = Point(device, "temperature", "0", "float32", "r", None, None)
     poller = Poller(device, 3, 0, 2, "BE_BE")
-    poller.add_readable_reference(ref)
+    poller.add_readable_point(point)
 
     class Client:
         def read_holding_registers(self, address, count, device_id):
@@ -273,16 +275,16 @@ def test_nonfinite_register_sample_marks_poll_failed(monkeypatch):
             )()
 
     assert not poller.poll(Client())
-    assert not ref.valid_this_poll
+    assert not point.valid_this_poll
     assert device.errorCount == 1
 
 
 def test_snapshot_rejects_nonstandard_nan_without_damaging_existing_file(tmp_path):
     device = Device("meter", 1)
-    ref = make_ref(device, "value", 1)
-    ref.val = float("nan")
-    ref.valid_this_poll = True
-    device.add_reference_mapping(ref)
+    point = make_point(device, "value", 1)
+    point.val = float("nan")
+    point.valid_this_poll = True
+    device.add_point_mapping(point)
     handler = ModbusHandler(FakeClient(), "unused.tm.json")
     handler.deviceList = [device]
     path = tmp_path / "snapshot.json"
@@ -296,9 +298,9 @@ def test_odd_length_string_does_not_include_padding_byte():
     from modpoll.modbus_task import Poller
 
     device = Device("meter", 1)
-    ref = Reference(device, "label", "0", "string3", "r", None, None)
+    point = Point(device, "label", "0", "string3", "r", None, None)
     poller = Poller(device, 3, 0, 2, "BE_BE")
-    poller.add_readable_reference(ref)
+    poller.add_readable_point(point)
 
     class Client:
         def read_holding_registers(self, address, count, device_id):
@@ -309,4 +311,4 @@ def test_odd_length_string_does_not_include_padding_byte():
             )()
 
     assert poller.poll(Client())
-    assert ref.val == "ABC"
+    assert point.val == "ABC"

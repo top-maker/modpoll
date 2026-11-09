@@ -29,7 +29,7 @@ def run_model(model, port):
     handler.poll()
     device = handler.deviceList[0]
     assert device.pollSuccess
-    return {name: ref.val for name, ref in device.references.items()}
+    return {name: point.val for name, point in device.points.items()}
 
 
 def test_all_four_blocks_and_37_values_match_legacy(live_modsim):
@@ -153,7 +153,7 @@ def test_mixed_endian_transforms_bits_half_strings_remain_one_request(live_modsi
             handler.poll()
             read.assert_called_once_with(40000, count=len(registers), device_id=7)
         assert {
-            name: ref.val for name, ref in handler.deviceList[0].references.items()
+            name: point.val for name, point in handler.deviceList[0].points.items()
         } == expected
 
 
