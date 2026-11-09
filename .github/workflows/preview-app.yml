@@ -142,8 +142,10 @@ jobs:
           test -f .site/1.x/index.html
           test -f .site/vocab/wot-modbus/acquisition-0.1.json
           test -f .site/vocab/wot-modbus/contract-0.1.txt
-          cp packages/modpoll-wot/modpoll_wot/schemas/acquisition-0.2.json vocab/wot-modbus/
-          cp packages/modpoll-wot/profile.md vocab/wot-modbus/contract-0.2.txt
+          wot_version=$(uv run --locked --no-sync python -c 'import importlib.metadata as m; print(m.version("modpoll-wot"))')
+          wot_source="https://raw.githubusercontent.com/top-maker/modpoll-wot/v$wot_version"
+          curl -fsSL "$wot_source/modpoll_wot/schemas/acquisition-0.2.json" -o vocab/wot-modbus/acquisition-0.2.json
+          curl -fsSL "$wot_source/profile.md" -o vocab/wot-modbus/contract-0.2.txt
           python .github/scripts/assemble-docs.py docs/_build/html .site v2 --vocab vocab
           printf '%s\n' "$(git rev-parse HEAD)" > .site/v2/source-sha.txt
       - uses: peaceiris/actions-gh-pages@v4

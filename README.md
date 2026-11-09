@@ -89,9 +89,9 @@ Both preserve the four original blocks and 37 output references. `--unit-id`
 overrides the Unit ID declared consistently in Forms (fallback 1); a concrete TD's Forms must agree before overrides.
 The existing transport, polling, output and MQTT arguments remain available.
 
-See the [current profile](packages/modpoll-wot/profile.md) for field mapping,
+See the [current profile](https://github.com/top-maker/modpoll-wot/blob/main/profile.md) for field mapping,
 access flags, byte order, multiplier semantics and supported limits; the
-[execution contract](packages/modpoll-wot/CONTRACT.md) defines the profile 0.2-only input policy.
+[execution contract](https://github.com/top-maker/modpoll-wot/blob/main/CONTRACT.md) defines the profile 0.2-only input policy.
 The configuration loader rejects CSV and reports invalid model fields before
 polling. Each model describes one device; use multiple `--config` paths for
 multiple devices. Give each model a unique `title`, which is the output device name.

@@ -1,22 +1,19 @@
 Preview release process
 =======================
 
-The application and ``modpoll-wot`` interpreter are independently versioned in
-this repository. The interpreter validates bundled WoT TD/TM 1.1 schemas and
-the Modpoll executable profile 0.2; it is not a device execution service.
+The ``modpoll-wot`` interpreter is developed and released from its own
+repository, `top-maker/modpoll-wot <https://github.com/top-maker/modpoll-wot>`_.
+It validates bundled WoT TD/TM 1.1 schemas and the Modpoll executable profile
+0.2; it is not a device execution service. Its CI runs this repository's test
+suite against each candidate wheel before release.
 
 1. On ``v2``, select a candidate whose exact commit passes quality, Python
    3.10/3.11/3.12, documentation and simulator interoperability CI.
-2. Set the interpreter version and metadata, build wheel/sdist and verify bundled
-   schemas offline in an independent environment. Push the unique tag
-   ``modpoll-wot-v<version>`` (matching the producer metadata). ``preview-core.yml`` requires the accepted SHA,
-   publishes both artifacts, verifies a registry installation and records a
-   separate prerelease without changing the stable latest release.
-3. After registry installation succeeds, consumers needing the new capability
-   may update their exact dependency. Metadata-only releases do not require an
-   application release. When updating the application, pin it to that exact
-   version. Refresh lock/requirements. Build wheel/sdist and Docker; the wheel
-   guard rejects source URLs and non-exact interpreter requirements.
+2. To adopt a new interpreter, wait until its release is installable from
+   PyPI, then pin that exact version in ``pyproject.toml`` and refresh the lock
+   in a pull request. Build wheel/sdist and Docker; the wheel guard rejects
+   source URLs and non-exact interpreter requirements.
+3. The application release does not require an interpreter release.
 4. Verify the application candidate and push ``v2.0.0a2`` at that accepted SHA.
    ``preview-app.yml`` publishes the application, an explicit amd64/arm64 image,
    versioned documentation and runs registry-installed acceptance with no
@@ -26,8 +23,7 @@ the Modpoll executable profile 0.2; it is not a device execution service.
 
 Tag pushes route releases using the workflow stored at that tag; every checkout
 explicitly selects the tag. The v1 release-please flow remains on ``main``.
-Shared-package tags cannot enter the application preview flow, and stable tags
-are rejected by the preview guard. Never replace an existing tag or PyPI version.
+The preview guard rejects stable tags and tags other than ``v2`` previews. Never replace an existing tag or PyPI version.
 Retries compare artifact filenames and SHA-256 against PyPI; different bytes
 require the original artifacts or a new version, not an overwrite. Retain workflow
 artifacts if a later publishing stage fails and rerun only failed jobs.
@@ -45,15 +41,3 @@ releases update their line while preserving other directories; PRs only build.
 No preview is considered fully accepted until the published-package acceptance
 job succeeds. See `validation <validation.rst>`_ for the published preview acceptance and
 maintainer-confirmed Eastron physical RS485 result.
-
-Shared-package recovery
------------------------
-
-If the first publish stops after uploading ``core-distributions``, keep the tag
-and artifacts unchanged. Fix and CI-accept the release helper on v2, then manually
-run ``preview-core.yml`` at that v2 ref with ``tag`` and ``artifact_run_id``. The
-recovery checks the original run SHA and workflow, downloads its exact build
-artifacts, and uses the tested helper while checking out the immutable tag.
-It does not rebuild the package or relax the accepted-candidate gate. Registry
-bytes must be absent or identical. Non-distribution build sidecars such as
-``.gitignore`` do not count as artifacts; extra wheels or sdists still fail.

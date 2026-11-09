@@ -14,10 +14,7 @@ pytestmark = pytest.mark.skipif(
     not hasattr(modpoll_wot, "AuditPlan"),
     reason="requires the audit producer candidate or release",
 )
-FIXTURE = (
-    Path(__file__).resolve().parents[1]
-    / "packages/modpoll-wot/tests/fixtures/numeric.tm.json"
-)
+FIXTURE = Path(__file__).resolve().parent / "fixtures/numeric.tm.json"
 
 
 @pytest.mark.parametrize("failed", [False, True])

@@ -15,9 +15,7 @@ runs:
         version: 0.11.19
         python-version: ${{ inputs.python-version }}
         enable-cache: true
-        cache-dependency-glob: |
-          uv.lock
-          packages/**/pyproject.toml
+        cache-dependency-glob: uv.lock
     - name: Install dependencies
       run: uv sync --locked --all-extras --all-groups
       shell: bash
