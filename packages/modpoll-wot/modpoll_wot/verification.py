@@ -14,7 +14,7 @@ from .profile import instantiate
 
 FINGERPRINT_VERSION = "pf1"
 MODEL_FINGERPRINT_VERSION = "mf1"
-REPORT_VERSION = 1
+REPORT_VERSION = 2
 # Form fields that decide which bytes are read and how they become a value.
 OPTIONAL_FIELDS = (
     "modpoll:codec",
@@ -121,7 +121,7 @@ def model_fingerprint(model) -> str:
 def _report_validator():
     schema = json.loads(
         files("modpoll_wot")
-        .joinpath("schemas", "verification-report-1.json")
+        .joinpath("schemas", "verification-report-2.json")
         .read_text(encoding="utf-8")
     )
     Draft202012Validator.check_schema(schema)

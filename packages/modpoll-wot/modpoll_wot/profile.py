@@ -217,7 +217,7 @@ def instantiate(document, *, host=None, port=None, unit_id=None, parameters=None
     _check_depth(td)
     validate_standard(td, kind=kind)
     if not td["title"].strip():
-        raise AcquisitionError("/title: device name cannot be empty")
+        raise AcquisitionError("/title: title cannot be empty")
     security = td.get("security", [])
     if isinstance(security, str):
         security = [security]

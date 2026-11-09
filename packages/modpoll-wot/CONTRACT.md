@@ -33,6 +33,14 @@ publish the producer first, and only then change consumer pins. Package version
 and executable profile version are distinct. Existing profile 0.2 semantics are
 preserved; removing the older executable input does not redefine profile 0.2.
 
+## Version 0.3.0a2
+
+Version 0.3.0a2 replaces verification report schema 1 with
+[schema 2](profile.md#verification-reports): `device` becomes `product`,
+`environment.carrier` becomes `environment.chassis`, and `reportVersion` is 2.
+Schema 1, released in 0.3.0a1, had no consumers and is removed. A TD or TM
+with an empty title now fails with `/title: title cannot be empty`.
+
 ## Version 0.3.0a1
 
 Version 0.3.0a1 adds [point and model fingerprints and verification reports](profile.md#point-and-model-fingerprints).

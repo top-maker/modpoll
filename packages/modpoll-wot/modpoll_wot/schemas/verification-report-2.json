@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/top-maker/modpoll-wot/schemas/verification-report-1.json",
-  "title": "Modbus device verification report",
-  "description": "One hardware reading of a device model, without endpoints, serial numbers or raw values.",
+  "$id": "https://github.com/top-maker/modpoll-wot/schemas/verification-report-2.json",
+  "title": "Modbus hardware verification report",
+  "description": "One reading of a Thing Model on a physical device, without endpoints, serial numbers or raw values.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["reportVersion", "device", "model", "tool", "transport", "date", "points"],
+  "required": ["reportVersion", "product", "model", "tool", "transport", "date", "points"],
   "properties": {
-    "reportVersion": { "const": 1 },
-    "device": { "$ref": "#/$defs/deviceId" },
+    "reportVersion": { "const": 2 },
+    "product": { "$ref": "#/$defs/productId" },
     "model": {
       "type": "object",
       "additionalProperties": false,
@@ -59,7 +59,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "carrier": { "$ref": "#/$defs/deviceId" },
+        "chassis": { "$ref": "#/$defs/productId" },
         "firmware": { "type": "string", "minLength": 1, "maxLength": 64 },
         "configuration": { "type": "string", "minLength": 1, "maxLength": 200 }
       }
@@ -95,7 +95,7 @@
   },
   "$defs": {
     "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 64 },
-    "deviceId": {
+    "productId": {
       "type": "string",
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$",
       "maxLength": 129

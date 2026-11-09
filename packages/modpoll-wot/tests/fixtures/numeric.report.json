@@ -1,6 +1,6 @@
 {
-  "reportVersion": 1,
-  "device": "example/numeric-pilot",
+  "reportVersion": 2,
+  "product": "example/numeric-pilot",
   "model": {
     "sha256": "b59cd8b5d53ccfa89c88ef579beca81f3ac38da3e8f5a49f1d7f99ab64e2e356",
     "fingerprint": "mf1:2953dba3f1a8a578194267d1759bdb7f2c5b9c99ac511ff82fb8298e939fe367",

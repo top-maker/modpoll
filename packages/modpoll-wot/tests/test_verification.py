@@ -121,8 +121,8 @@ def test_adding_or_removing_a_readable_point_changes_the_model_fingerprint():
 def report_for(payload):
     prints = point_fingerprints(payload)
     return {
-        "reportVersion": 1,
-        "device": "example/numeric-pilot",
+        "reportVersion": 2,
+        "product": "example/numeric-pilot",
         "model": {
             "sha256": sha256(payload).hexdigest(),
             "fingerprint": model_fingerprint(payload),
@@ -205,7 +205,10 @@ def mutate(path, value):
         (("model", "fingerprint"), KeyError),
         (("model", "fingerprint"), "pf1:" + "0" * 64),
         (("model", "ref"), "main"),
-        (("device",), "Example/Numeric"),
+        (("product",), "Example/Numeric"),
+        (("device",), "example/numeric-pilot"),
+        (("environment", "carrier"), "example/chassis"),
+        (("reportVersion",), 1),
         (("date",), "2026-11-09T10:00:00Z"),
         (("points",), []),
     ],

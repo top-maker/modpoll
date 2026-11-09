@@ -444,7 +444,7 @@ class ProfileSemanticGuardsTests(unittest.TestCase):
             document["title"] = title
             with (
                 self.subTest(title=title),
-                self.assertRaisesRegex(AcquisitionError, "device name cannot be empty"),
+                self.assertRaisesRegex(AcquisitionError, "title cannot be empty"),
             ):
                 instantiate(document)
 

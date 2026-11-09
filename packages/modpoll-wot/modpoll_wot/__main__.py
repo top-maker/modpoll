@@ -142,7 +142,7 @@ def main():
                         f"{phase} {model.profile_version}: passed ({model.title})",
                         stream=sys.stdout,
                     )
-                    print("  Device behavior and register mappings were not tested.")
+                    print("  Device behavior and point mappings were not tested.")
                 else:
                     print(
                         "  JSON Schema only; use --profile to check project compatibility."

@@ -187,8 +187,9 @@ A point fingerprint identifies how one readable property is acquired and
 decoded, independently of the file that contains it. A model fingerprint
 identifies the set of readable point mappings of a whole model. Verification
 statistics are keyed by the model fingerprint: titles, descriptions, units,
-property names and member order do not change it, so an unmodified fork shares
-its parent's statistics, while any change to a read mapping, or adding or
+property names and member order do not change it, so a custom TM whose read
+mappings are unchanged shares the fingerprint and statistics of its upstream
+TM, while any change to a read mapping, or adding or
 removing a readable point, starts a new one.
 
 `point_fingerprints(model)` accepts a TM or TD, as a parsed document or exact
@@ -225,19 +226,19 @@ requires a new prefix.
 
 ## Verification reports
 
-A verification report records one hardware reading of a model. Its schema is
-[schemas/verification-report-1.json](modpoll_wot/schemas/verification-report-1.json)
+A verification report records one reading of a Thing Model on a physical device. Its schema is
+[schemas/verification-report-2.json](modpoll_wot/schemas/verification-report-2.json)
 (JSON Schema 2020-12). A report carries:
 
-- `device`: the catalog device ID `vendor/model`.
+- `product`: the catalog product ID `<manufacturer>/<model-number>`.
 - `model`: the SHA-256 of the exact TM bytes, its model fingerprint and its
   source. Catalog models add
   the 40-character catalog commit and package-relative `models/*.tm.json`
-  path. Workspace models add an opaque version reference. Local models add
+  path. Custom TMs add an opaque version reference. Local models add
   neither.
 - `tool`: the reporting tool's name and version, and the modpoll-wot version.
 - `transport` (`tcp` or `rtu`) and the reading `date`.
-- Optional `environment`: carrier device ID, firmware and a short
+- Optional `environment`: chassis product ID, firmware and a short
   configuration note, such as an input range code.
 - `points`: per property, its fingerprint, the read result (`ok`,
   `exception` with its exception code, `no-response` or `not-tested`) and
