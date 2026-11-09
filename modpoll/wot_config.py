@@ -30,7 +30,7 @@ def read_model(location, *, timeout, unit_id, host=None, port=None, parameters=N
 
 def create_devices(model):
     # The shared interpreter has no dependency on the application or PyModbus.
-    from .modbus_task import Device, Poller, Reference
+    from .modbus_task import Device, Poller, Point
 
     device = Device(model.title, model.unit_id)
     function_codes = {
@@ -52,7 +52,7 @@ def create_devices(model):
             if member.bit is not None:
                 address += ":" + str(member.bit)
             access = ("r" if member.readable else "") + ("w" if member.writable else "")
-            reference = Reference(
+            point = Point(
                 device,
                 member.property,
                 address,
@@ -61,12 +61,12 @@ def create_devices(model):
                 member.unit,
                 None if member.multiplier is None else float(member.multiplier),
             )
-            reference.endian = member.byte_order
-            reference.physical_bits = member.physical_bits
-            reference.bit_count = member.bit_count
-            reference.scalar = member.scalar
+            point.endian = member.byte_order
+            point.physical_bits = member.physical_bits
+            point.bit_count = member.bit_count
+            point.scalar = member.scalar
             if member.readable:
-                poller.add_readable_reference(reference)
-            device.add_reference_mapping(reference)
+                poller.add_readable_point(point)
+            device.add_point_mapping(point)
         device.pollerList.append(poller)
     return [device]

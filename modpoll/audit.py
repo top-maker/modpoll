@@ -62,16 +62,16 @@ def run_audit(args):
     try:
         connected = client.connect()
         for index, poller in enumerate(device.pollerList):
-            (reference,) = poller.readableReferences
-            ok = connected and poller.poll(client) and reference.valid_this_poll
+            (point,) = poller.readablePoints
+            ok = connected and poller.poll(client) and point.valid_this_poll
             success = success and ok
             section = "identity" if index < len(plan.identity) else "status"
             result[section].append(
                 {
-                    "property": reference.name,
+                    "property": point.name,
                     "result": "read" if ok else "failed" if connected else "not-tested",
-                    "value": reference.val if ok else None,
-                    "unit": reference.unit,
+                    "value": point.val if ok else None,
+                    "unit": point.unit,
                 }
             )
     finally:
