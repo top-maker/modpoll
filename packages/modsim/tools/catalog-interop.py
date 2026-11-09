@@ -20,7 +20,7 @@ from modpoll_wot import export_td
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = "devices/advantech/adam-5017uh/models/adam-5017uh.tm.json"
+TM_PATH = "products/advantech/adam-5017uh/models/adam-5017uh.tm.json"
 VALUES = [0x1234, 0x8001, 0xABCD, 0, 65535, 42, 0x0102, 0xFE01]
 EXPECTED = {f"AI{i}_RAW": value for i, value in enumerate(VALUES)}
 
@@ -54,11 +54,11 @@ def run(args):
     revision = lock["revision"]
     if len(revision) != 40 or any(c not in "0123456789abcdef" for c in revision):
         raise ValueError("Full immutable data commit required")
-    url = f"https://raw.githubusercontent.com/{lock['repository']}/{revision}/{MODEL}"
+    url = f"https://raw.githubusercontent.com/{lock['repository']}/{revision}/{TM_PATH}"
     with urlopen(url, timeout=20) as response:
         payload = response.read(2 * 1024 * 1024 + 1)
     digest = hashlib.sha256(payload).hexdigest()
-    if digest != lock["files"][MODEL]:
+    if digest != lock["files"][TM_PATH]:
         raise ValueError("Catalog TM hash mismatch")
     reader = args.node_reader.resolve()
     node_versions = {

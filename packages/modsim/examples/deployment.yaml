@@ -5,12 +5,12 @@ server:
   port: 5020
 devices:
 - id: adam-5017uh
-  model: examples/models/devices/advantech/adam-5017uh/models/adam-5017uh.tm.json
+  model: examples/models/products/advantech/adam-5017uh/models/adam-5017uh.tm.json
   parameters:
     THING_ID: urn:modsim:device:advantech:adam-5017uh
     UNIT_ID: 1
     HOST: 127.0.0.1
-  scenario: examples/models/devices/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  scenario: examples/models/products/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 - id: adam-6024
   model: tests/fixtures/io-module/adam-6024.tm.json
   parameters:

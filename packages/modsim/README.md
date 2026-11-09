@@ -167,7 +167,7 @@ Compose deployment with `docker compose down`.
 A deployment has a stable ID per device, a TM path, instance parameters and an
 optional scenario. TD IDs and Modbus Unit IDs must be unique. Scenarios define
 initial values, seeded generators and bindings; local Python behavior requires
-`--allow-scripts`. They do not duplicate the model's register mapping. See
+`--allow-scripts`. They do not duplicate the Thing Model's point mappings. See
 [model configuration](docs/site/model-validation.md) for the supported profile,
 codecs, constraints and behavior hooks.
 
@@ -175,9 +175,9 @@ For a single device without a managed deployment:
 
 ```bash
 uv run python tools/fetch-models.py
-uv run modsim --config examples/models/devices/advantech/adam-5017uh/models/adam-5017uh.tm.json \
+uv run modsim --config examples/models/products/advantech/adam-5017uh/models/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario examples/models/devices/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --scenario examples/models/products/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 The single-device model runtime currently supports TCP. The unconfigured demo
