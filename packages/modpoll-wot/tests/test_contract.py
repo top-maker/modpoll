@@ -9,7 +9,7 @@ from unittest.mock import patch
 from modpoll_wot import AcquisitionError, export_td
 from modpoll_wot.loading import load_model, loads_model, parse_model
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parent
 RAW_TYPES = {
     "uint16": ("xsd:unsignedShort", 1),
     "int16": ("xsd:short", 1),
@@ -209,8 +209,8 @@ class ContractTests(unittest.TestCase):
         with patch(
             "socket.create_connection", side_effect=AssertionError("network used")
         ):
-            load_model(ROOT / "examples/modsim.tm.json")
-            load_model(ROOT / "examples/modsim.generated.td.json")
+            load_model(ROOT / "fixtures/modsim.tm.json")
+            load_model(ROOT / "fixtures/modsim.generated.td.json")
         for text in (
             '{"a":1,"a":2}',
             "NaN",

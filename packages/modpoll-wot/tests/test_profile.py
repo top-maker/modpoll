@@ -9,7 +9,7 @@ from modpoll_wot import AcquisitionError, AuditPlan, load_model, parse_model
 
 from modpoll_wot.profile import instantiate, export_td
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parent
 
 
 def numeric():
@@ -100,7 +100,7 @@ class ProfileTests(unittest.TestCase):
                     instantiate(source, host="localhost")
 
     def test_full_modsim_fixture_preserves_groups_types_and_transforms(self):
-        model = load_model(ROOT / "examples/modsim.tm.json")
+        model = load_model(ROOT / "fixtures/modsim.tm.json")
         self.assertEqual(
             [(g.table, g.start, g.quantity) for g in model.groups],
             [
@@ -111,7 +111,7 @@ class ProfileTests(unittest.TestCase):
             ],
         )
         self.assertEqual(sum(len(g.members) for g in model.groups), 37)
-        d = json.loads((ROOT / "examples/modsim.tm.json").read_text())
+        d = json.loads((ROOT / "fixtures/modsim.tm.json").read_text())
         model, td = instantiate(d, host="127.0.0.1", port=5020, unit_id=7)
         self.assertEqual(model.groups, instantiate(td)[0].groups)
         self.assertEqual(model.properties_json, instantiate(td)[0].properties_json)

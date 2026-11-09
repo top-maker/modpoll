@@ -1,0 +1,54 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require a tag on main that matches the package version
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          test "$GITHUB_REF_NAME" = "v$version"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+      - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
+        with:
+          version: '2026.10.1'
+      - run: mise run check
+      - name: Publish to PyPI without replacing existing files
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish --no-progress --check-url https://pypi.org/simple/ dist/*
+      - name: Verify the registry installation
+        timeout-minutes: 15
+        run: |
+          fixture="$PWD/tests/fixtures/modsim.tm.json"
+          cd "$RUNNER_TEMP"
+          for attempt in $(seq 1 20); do
+            if uv run --isolated --no-project --no-cache --with "modpoll-wot==$VERSION" modpoll-wot validate "$fixture" --profile; then
+              exit 0
+            fi
+            sleep 30
+          done
+          exit 1
+      - name: Record a GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --prerelease --title "modpoll-wot $VERSION" --notes "See CONTRACT.md and profile.md at this tag."

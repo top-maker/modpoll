@@ -98,14 +98,12 @@ Without an endpoint instantiate's second result is a partial description; only
 export_td promises a complete TD. Exports pass bundled TD 1.1, the pinned official
 Modbus schema and project cross-field checks offline. See schemas/SOURCES.md.
 
-From the repository (omit PYTHONPATH with an installed candidate wheel):
+From a checkout of this repository (use `modpoll-wot` directly with an installed wheel):
 
 ```sh
-PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
-  export examples/modsim.tm.json --host 127.0.0.1 --port 5020 \
-  --unit-id 7 -o /tmp/modsim-instance.td.json
-PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot \
-  validate /tmp/modsim-instance.td.json --profile
+uv run modpoll-wot export tests/fixtures/modsim.tm.json --host 127.0.0.1 \
+  --port 5020 --unit-id 7 -o /tmp/modsim-instance.td.json
+uv run modpoll-wot validate /tmp/modsim-instance.td.json --profile
 ```
 
 Existing output files are never overwritten. These subcommands require shared package 0.2.0a2 or newer. The shared package supplies models/metadata, not a
@@ -141,29 +139,21 @@ custom codecs, bit extraction and multipliers fail by property name rather than
 being stripped or misrepresented. Project TD output retains those semantics.
 No HTTP/cache endpoint is declared without an actual service.
 
-`tools/test-wot-source.py` exports the candidate import path to child CLIs as
-well as pytest. The Python matrix runs the registry-pin suite first, then this
-source suite; pytest's parent-only pythonpath option cannot replace this step.
-
-The distribution gate `tools/verify-wot-distribution.py` builds a disposable
-consumer wheel with the candidate's exact registry pin and tests both installed
-wheels from outside the repository, with no source package imports. It never
-modifies the real consumer pin. Its report requires no skipped tests.
-
-Install locked interop tools with `npm ci --prefix tools/wot-interop
---ignore-scripts --no-audit --no-fund`. Node is pinned in .tool-versions; lockfile
-integrities fix transitive dependencies. CI uses an isolated modsim and checks
-actual reads/writes, not just successful TD parsing.
+CI in this repository tests the source on the supported Python range, builds
+the wheel and sdist, checks the installed wheel from outside the source tree,
+and runs the Modpoll and Modsim test suites against the built wheel. The
+node-wot interoperability gate remains in Modpoll and runs against its pinned
+release.
 
 ## Promotion order
 
-The canonical examples/modsim.tm.json is the four-block/37-property source; generated TDs are
+The canonical tests/fixtures/modsim.tm.json is the four-block/37-property source; generated TDs are
 artifacts. Tests cover
 value/request equivalence, mixed orders, aliases, holes, UTF-8 byte capacities,
 physical bit offsets, parameters and external read/write round trips.
 
 Pass source and installed-wheel checks, publish the immutable shared package via
-the guarded core workflow, verify registry installation, then independently update
+this repository's release workflow, verify registry installation, then independently update
 consumer exact pins and CI. Project versions need not match. Until producer-first
 publication completes, no consumer requires an unpublished version or local path.
 The modsim TD runtime and platform lifecycle remain separate implementation tasks;

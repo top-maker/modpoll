@@ -12,7 +12,7 @@ from modpoll_wot.loading import (
     parse_model,
 )
 
-FIXTURE = Path(__file__).resolve().parents[3] / "examples/modsim.tm.json"
+FIXTURE = Path(__file__).resolve().parent / "fixtures/modsim.tm.json"
 
 
 class LoadingTests(unittest.TestCase):
@@ -43,7 +43,7 @@ class LoadingTests(unittest.TestCase):
         import csv
         from decimal import Decimal
 
-        source = Path(__file__).resolve().parents[3] / "examples/modsim.csv"
+        source = Path(__file__).resolve().parent / "fixtures/modsim.csv"
         model = load_model(FIXTURE, kind="tm")
         groups = []
         for row in csv.reader(source.read_text().splitlines()):

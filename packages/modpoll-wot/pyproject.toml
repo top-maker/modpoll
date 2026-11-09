@@ -14,11 +14,19 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/top-maker/modpoll"
-Documentation = "https://top-maker.github.io/modpoll/v2/"
+Repository = "https://github.com/top-maker/modpoll-wot"
+Documentation = "https://github.com/top-maker/modpoll-wot#readme"
 
 [project.scripts]
 modpoll-wot = "modpoll_wot.__main__:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.2,<9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

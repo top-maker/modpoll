@@ -1,0 +1,29 @@
+[tools]
+python = "3.12"
+uv = "0.11.19"
+
+[tasks.install]
+description = "Install the locked development environment"
+run = "uv sync --locked"
+
+[tasks.test]
+description = "Run the source test suite"
+depends = ["install"]
+run = "uv run --locked pytest -q"
+
+[tasks.build]
+description = "Build the wheel and sdist into dist/"
+run = "uv build --no-sources --clear --out-dir dist"
+
+[tasks.check]
+description = "Run the source tests, build, and smoke-test the installed wheel"
+depends = ["test", "build"]
+run = '''
+set -eu
+fixture="$PWD/tests/fixtures/modsim.tm.json"
+wheel=$(ls "$PWD"/dist/*.whl)
+cd "$(mktemp -d)"
+uv run --isolated --no-project --with "$wheel" modpoll-wot validate "$fixture" --profile
+uv run --isolated --no-project --with "$wheel" modpoll-wot export "$fixture" --host 127.0.0.1 --port 5020 -o instance.td.json
+uv run --isolated --no-project --with "$wheel" modpoll-wot validate instance.td.json --profile
+'''

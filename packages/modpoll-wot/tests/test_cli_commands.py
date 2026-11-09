@@ -92,7 +92,7 @@ class CommandTests(unittest.TestCase):
         self.assertNotEqual(self.run_cli("generate", "--title", "Meter").returncode, 0)
 
     def test_validation_reports_checks_and_failure_stage(self):
-        source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
+        source = Path(__file__).resolve().parent / "fixtures" / "modsim.tm.json"
         basic = self.run_cli("validate", source)
         self.assertEqual(basic.returncode, 0)
         self.assertIn("TM structure (WoT 1.1): passed", basic.stdout)
@@ -131,7 +131,7 @@ class CommandTests(unittest.TestCase):
             self.assertIn("✗", stream.getvalue())
 
     def test_td_generation_and_validation(self):
-        source = Path(__file__).resolve().parents[3] / "examples" / "modsim.tm.json"
+        source = Path(__file__).resolve().parent / "fixtures" / "modsim.tm.json"
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "instance.td.json"
             result = self.run_cli(

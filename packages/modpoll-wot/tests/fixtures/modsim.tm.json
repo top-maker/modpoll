@@ -1,0 +1,690 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "modsim01",
+  "modpoll:version": "0.2",
+  "properties": {
+    "coil01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:address": 0,
+          "modv:quantity": 8,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "coil09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:address": 8,
+          "modv:quantity": 8,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "di01-08": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 10000,
+          "modv:quantity": 8,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "di09-16": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "DiscreteInput",
+          "modv:address": 10008,
+          "modv:quantity": 8,
+          "modv:type": "xsd:boolean"
+        }
+      ]
+    },
+    "input_reg01": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30000,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg02": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30001,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg03": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30002,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg04": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30003,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "input_reg05": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30004,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg06": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30005,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg07": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30006,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg08": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30007,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "input_reg09": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30008,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "input_reg10": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30010,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt",
+          "modpoll:multiplier": "0.001"
+        }
+      ]
+    },
+    "input_reg11": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30012,
+          "modv:quantity": 2,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "input_reg12": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30014,
+          "modv:quantity": 2,
+          "modv:type": "xsd:int",
+          "modpoll:multiplier": "1000"
+        }
+      ]
+    },
+    "input_reg13": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30016,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "input_reg14": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "InputRegister",
+          "modv:address": 30018,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg01": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40000,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg02": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40001,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg03": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40002,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg04": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40003,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort"
+        }
+      ]
+    },
+    "holding_reg05": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40004,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg06": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40005,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg07": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40006,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg08": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40007,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short"
+        }
+      ]
+    },
+    "holding_reg09": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40008,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "holding_reg10": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40010,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt",
+          "modpoll:multiplier": "0.001"
+        }
+      ]
+    },
+    "holding_reg11": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40012,
+          "modv:quantity": 2,
+          "modv:type": "xsd:int"
+        }
+      ]
+    },
+    "holding_reg12": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40014,
+          "modv:quantity": 2,
+          "modv:type": "xsd:int",
+          "modpoll:multiplier": "1000"
+        }
+      ]
+    },
+    "holding_reg13": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40016,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg14": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40018,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float"
+        }
+      ]
+    },
+    "holding_reg15": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40020,
+          "modv:quantity": 4,
+          "modv:type": "xsd:unsignedLong"
+        }
+      ]
+    },
+    "holding_reg16": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40024,
+          "modv:quantity": 4,
+          "modv:type": "xsd:long"
+        }
+      ]
+    },
+    "holding_reg17": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40028,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "holding_reg18": {
+      "type": "number",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40032,
+          "modv:quantity": 4,
+          "modv:type": "xsd:double"
+        }
+      ]
+    },
+    "holding_reg19": {
+      "type": "string",
+      "forms": [
+        {
+          "op": [
+            "readproperty",
+            "writeproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 40036,
+          "modv:quantity": 8,
+          "modv:type": "xsd:string"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modpoll:members": [
+        "coil01-08",
+        "coil09-16"
+      ],
+      "modv:entity": "Coil",
+      "modv:address": 0,
+      "modv:quantity": 16
+    },
+    {
+      "modpoll:members": [
+        "di01-08",
+        "di09-16"
+      ],
+      "modv:entity": "DiscreteInput",
+      "modv:address": 10000,
+      "modv:quantity": 16
+    },
+    {
+      "modpoll:members": [
+        "input_reg01",
+        "input_reg02",
+        "input_reg03",
+        "input_reg04",
+        "input_reg05",
+        "input_reg06",
+        "input_reg07",
+        "input_reg08",
+        "input_reg09",
+        "input_reg10",
+        "input_reg11",
+        "input_reg12",
+        "input_reg13",
+        "input_reg14"
+      ],
+      "modv:entity": "InputRegister",
+      "modv:address": 30000,
+      "modv:quantity": 20
+    },
+    {
+      "modpoll:members": [
+        "holding_reg01",
+        "holding_reg02",
+        "holding_reg03",
+        "holding_reg04",
+        "holding_reg05",
+        "holding_reg06",
+        "holding_reg07",
+        "holding_reg08",
+        "holding_reg09",
+        "holding_reg10",
+        "holding_reg11",
+        "holding_reg12",
+        "holding_reg13",
+        "holding_reg14",
+        "holding_reg15",
+        "holding_reg16",
+        "holding_reg17",
+        "holding_reg18",
+        "holding_reg19"
+      ],
+      "modv:entity": "HoldingRegister",
+      "modv:address": 40000,
+      "modv:quantity": 44
+    }
+  ]
+}

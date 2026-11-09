@@ -1,0 +1,71 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.11.19
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --locked
+      - run: uv run --locked pytest -q
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
+        with:
+          version: '2026.10.1'
+      - run: mise run check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/*
+
+  consumers:
+    name: consumer (${{ matrix.repository }})
+    needs: package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repository: modpoll
+            prepare: 'true'
+          - repository: modsim
+            prepare: uv run --no-sync python tools/fetch-models.py
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: top-maker/${{ matrix.repository }}
+          ref: v2
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: ${{ runner.temp }}/dist
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.11.19
+          python-version: '3.12'
+      - name: Install the consumer with the candidate interpreter
+        run: |
+          uv sync --locked --all-extras --all-groups
+          uv pip install --reinstall --no-deps "$RUNNER_TEMP"/dist/*.whl
+      - run: ${{ matrix.prepare }}
+      - run: uv run --no-sync pytest -q

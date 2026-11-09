@@ -1,7 +1,12 @@
 # modpoll-wot (experimental)
 
-An independently versioned TM/TD configuration interpreter for Modpoll and future
-compatible consumers. No Modbus execution, scheduler or MQTT service is included.
+An independently versioned TM/TD configuration interpreter for
+[Modpoll](https://github.com/top-maker/modpoll),
+[Modsim](https://github.com/top-maker/modsim) and future compatible consumers.
+No Modbus execution, scheduler or MQTT service is included.
+
+Releases up to `0.2.0a4` were developed in the Modpoll repository under
+`packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
 Published `0.2.0a3` adds `validate-device device.yaml` and metadata schema 1. See [CONTRACT.md](CONTRACT.md).
@@ -35,13 +40,18 @@ schema, and acquisition semantics. It does not execute Modbus requests.
 
 ```python
 from modpoll_wot.loading import load_model
-model = load_model("examples/modsim.tm.json", unit_id=1)
+model = load_model("meter.tm.json", unit_id=1)
 ```
 
-The application adapter is connected to the existing Modpoll poll/decode/output engine. Run checks from the repository root:
+## Development
+
+Install [mise](https://mise.jdx.dev/installing-mise.html), then run the source
+tests, build the wheel and sdist, and smoke-test the installed wheel:
 
 ```sh
-PYTHONPATH=packages/modpoll-wot python -m unittest discover -s packages/modpoll-wot/tests
+mise trust
+mise install
+mise run check
 ```
 
 The bundled W3C schemas identify themselves as 1.1-12-March-2025, retrieved from
@@ -53,3 +63,18 @@ Version 0.2.0a1 supports [profile 0.2](profile.md): standard Form mappings,
 explicit blocks, per-property decoding and TM-to-TD export. Current development
 source rejects profile 0.1. This compatibility removal is not yet published; use
 a new immutable release version when promoting it, then update consumer pins.
+
+## Releases
+
+Released versions and tags are immutable.
+
+1. On `main`, set `version` in `pyproject.toml` to a new version and merge it
+   through a pull request whose CI passes, including the consumer job.
+2. Push the tag `v<version>` at that commit. The release workflow checks the
+   tag, tests and builds, publishes to PyPI, verifies the registry installation
+   and records a GitHub prerelease with the built files.
+3. Update the exact `modpoll-wot` pin in each consumer repository in its own
+   pull request.
+
+A failed publish never replaces an existing version: rerun the failed job, or
+release a new version.
