@@ -49,14 +49,13 @@ Repository = "https://github.com/top-maker/modpoll"
 Documentation = "https://top-maker.github.io/modpoll"
 
 [tool.deptry]
-extend_exclude = ["packages"]
 package_module_name_map = { pyserial = "serial" }
 
 [tool.deptry.per_rule_ignores]
 DEP002 = ["pyserial"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "packages/modpoll-wot/tests"]
+testpaths = ["tests"]
 markers = ["integration: marks tests as integration tests"]
 
 [project.scripts]

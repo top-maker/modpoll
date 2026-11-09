@@ -18,11 +18,13 @@ spec.loader.exec_module(release)
 
 def test_release_routes_do_not_accept_stable_tags_or_other_packages():
     assert release.release_target("v2.0.0a2")[:2] == ("modpoll", "2.0.0a2")
-    assert release.release_target("modpoll-wot-v0.2.0a1")[:2] == (
-        "modpoll-wot",
-        "0.2.0a1",
-    )
-    for tag in ("v1.6.2", "v2.0.0", "v2.0.0a1-extra", "other-v0.1.0a1"):
+    for tag in (
+        "v1.6.2",
+        "v2.0.0",
+        "v2.0.0a1-extra",
+        "other-v0.1.0a1",
+        "modpoll-wot-v0.2.0a1",
+    ):
         with pytest.raises(ValueError):
             release.release_target(tag)
 

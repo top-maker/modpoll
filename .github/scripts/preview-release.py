@@ -35,12 +35,6 @@ def package_version(path):
 
 
 def release_target(tag):
-    if re.fullmatch(r"modpoll-wot-v0\.[0-9]+\.[0-9]+(?:a|b|rc)[0-9]+", tag):
-        return (
-            "modpoll-wot",
-            tag.removeprefix("modpoll-wot-v"),
-            Path("packages/modpoll-wot"),
-        )
     if re.fullmatch(r"v2\.[0-9]+\.[0-9]+(?:a|b|rc)[0-9]+", tag):
         return "modpoll", tag[1:], Path(".")
     raise ValueError("unsupported preview tag")

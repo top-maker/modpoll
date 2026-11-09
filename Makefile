@@ -18,7 +18,6 @@ check: ## Run code quality tools.
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
 	@uv run pytest tests --doctest-modules
-	@uv run python tools/test-wot-source.py --doctest-modules
 
 .PHONY: build
 build: clean-build ## Build wheel file using uv

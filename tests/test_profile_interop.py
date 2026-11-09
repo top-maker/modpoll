@@ -41,9 +41,7 @@ def test_all_four_blocks_and_37_values_match_legacy(live_modsim):
 
 
 def numeric_document():
-    d = json.loads(
-        (ROOT / "packages/modpoll-wot/tests/fixtures/numeric.tm.json").read_text()
-    )
+    d = json.loads((ROOT / "tests/fixtures/numeric.tm.json").read_text())
     d["modpoll:version"] = "0.2"
     return d
 
