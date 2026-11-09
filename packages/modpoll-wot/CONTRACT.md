@@ -33,31 +33,14 @@ publish the producer first, and only then change consumer pins. Package version
 and executable profile version are distinct. Existing profile 0.2 semantics are
 preserved; removing the older executable input does not redefine profile 0.2.
 
-## Device metadata schema 1 (modpoll-wot 0.2.0a3)
+## Device metadata
 
-The canonical definition is `schemas/device-schema.yaml`, bundled as
-`modpoll_wot/schemas/device-schema.yaml` in the wheel. Read it with
-`modpoll_wot.metadata.device_schema()` or use `modpoll-wot validate-device device.yaml`.
-The CLI and `load_device_record()` reject duplicate keys, custom tags, anchors and
-aliases. Validation is offline and checks metadata structure, not file existence,
-path containment on disk, legal permission, mapping truth or hardware behavior.
-The data repository owns those reference checks and review decisions.
+Version 0.3.0a1 removes the device metadata schema 1, `validate-device` and
+`modpoll_wot.metadata`, published in 0.2.0a3 and 0.2.0a4. Device metadata records
+and their schema belong to [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog).
+No current consumer uses the removed API.
 
-The metadata `schema-version`, executable profile, Python package and application
-versions are independent. Schema 1 accepts unknown firmware as explicit null and
-keeps all register maps in referenced TMs. Its version and content hash must be
-pinned by the data consumer. Backward-compatible schema corrections can ship in
-an independent package patch (or preview revision) without a profile/CLI change;
-new required fields or stricter rules that reject accepted records require an
-explicit schema migration. Published artifacts and schema bytes are immutable.
-
-Release the producer first, then update the data repository's exact package and
-schema hash in a PR that validates its examples and records. A metadata-only
-release does not require Modpoll/Modsim to change their application pins. A later
-application dependency update still runs its normal regression checks.
-The verified immutable release for this schema is `modpoll-wot==0.2.0a3`.
-
-The 0.2.0a4 candidate adds optional audit references and the publication APIs
+Version 0.2.0a4 adds optional audit references and the publication APIs
 described in [profile.md](profile.md#publication-artifacts). Earlier packages
 can run existing profile 0.2 documents that omit the extension. They reject
 documents with the new audit extension. The shared package validates and

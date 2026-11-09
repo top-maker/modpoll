@@ -9,7 +9,7 @@ Releases up to `0.2.0a4` were developed in the Modpoll repository under
 `packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
-Published `0.2.0a3` adds `validate-device device.yaml` and metadata schema 1. See [CONTRACT.md](CONTRACT.md).
+Version `0.3.0a1` removes the device metadata schema; see [CONTRACT.md](CONTRACT.md).
 
 ```sh
 modpoll-wot new --title "meter"

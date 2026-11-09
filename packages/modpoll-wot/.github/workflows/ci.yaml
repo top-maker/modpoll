@@ -68,4 +68,4 @@ jobs:
           uv sync --locked --all-extras --all-groups
           uv pip install --reinstall --no-deps "$RUNNER_TEMP"/dist/*.whl
       - run: ${{ matrix.prepare }}
-      - run: uv run --no-sync pytest -q
+      - run: uv run --no-sync pytest -q tests

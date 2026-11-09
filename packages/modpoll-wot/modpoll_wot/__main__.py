@@ -8,7 +8,6 @@ import sys
 
 from . import AcquisitionError, export_td, load_model, validate_standard
 from .loading import _document_kind, load_document
-from .metadata import load_device_record
 from .profile import parse_parameters
 
 
@@ -49,10 +48,6 @@ def main():
         "--profile", action="store_true", help="Also check executable profile"
     )
     _instance_options(check)
-    device = commands.add_parser(
-        "validate-device", help="Validate a local device.yaml metadata record"
-    )
-    device.add_argument("input", help="Local YAML file")
     new = commands.add_parser("new", help="Create a starter TM")
     new.add_argument("--title", required=True)
     new.add_argument("-o", "--output", help="Output path (default: <title>.tm.json)")
@@ -86,12 +81,6 @@ def main():
             _write_json(output, document)
             print(f"Generated starter TM: {output} (no executable Modbus mappings)")
         else:
-            if args.command == "validate-device":
-                load_device_record(args.input)
-                print(
-                    "Device metadata schema 1: passed (not a mapping or hardware check)"
-                )
-                return 0
             document = load_document(args.input)
             if not isinstance(document, dict):
                 raise AcquisitionError(f"{args.input}: document: expected object")
