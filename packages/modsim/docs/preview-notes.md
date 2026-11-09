@@ -1,11 +1,25 @@
-# Modsim 2.0.0a3 preview
+# Modsim 2.0.0a4 preview
+
+Remote models and scenarios load directly from a site such as ModioHub:
+
+```sh
+uvx --prerelease allow modsim==2.0.0a4 --config https://example.org/device.tm.json \
+  --scenario https://example.org/device.sim.json --bind 127.0.0.1 --port 5020
+```
+
+HTTPS requests identify themselves as `modsim/<version>`, because some CDNs reject
+the default Python agent. `--scenario` accepts an HTTPS URL; a remote scenario
+cannot name a behavior script. This preview still pins modpoll-wot 0.2.0a4.
+
+### Previous preview
+
+#### Modsim 2.0.0a3
+
 
 This preview pins modpoll-wot 0.2.0a4. A local TCP simulator can load a full
 profile 0.2 TM with an audit plan or its independently derived public audit TM.
 Tests seed the same known values and verify the public model exposes only the
 selected read spans.
-
-### Previous preview
 
 #### Modsim 2.0.0a2
 

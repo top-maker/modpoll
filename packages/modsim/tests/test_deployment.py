@@ -196,7 +196,7 @@ def test_remote_model_uses_https_raw_and_shared_json_checks():
             == "0.2"
         )
         assert (
-            request.call_args.args[0]
+            request.call_args.args[0].full_url
             == "https://raw.githubusercontent.com/top-maker/modsim/v2/device.json"
         )
     with patch("modsim.sources.urlopen", return_value=Response(b'{"a":1,"a":2}')):

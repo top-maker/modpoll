@@ -23,7 +23,9 @@ def get_parser() -> argparse.ArgumentParser:
     )
     sources = parser.add_mutually_exclusive_group()
     sources.add_argument("--config", help="Profile 0.2 TM/TD local path or HTTPS URL")
-    parser.add_argument("--scenario", help="Local scenario JSON for --config")
+    parser.add_argument(
+        "--scenario", help="Scenario JSON local path or HTTPS URL for --config"
+    )
     parser.add_argument("--script", help="Local Python behavior for --config")
     parser.add_argument(
         "--allow-scripts",

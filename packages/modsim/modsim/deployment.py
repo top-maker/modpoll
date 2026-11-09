@@ -7,7 +7,7 @@ from typing import Any
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
 from modpoll_wot.loading import load_document  # type: ignore[import-untyped]
 
-from .sources import local_path
+from .sources import is_remote, local_path, remote_document
 
 
 def obj(properties: dict, required: tuple = ()) -> dict:
@@ -68,15 +68,23 @@ SCENARIO = obj(
 
 
 def document(path: str, schema: dict) -> dict:
-    source = Path(local_path(Path.cwd(), path))
-    value = load_document(source)
+    source: str | Path
+    if is_remote(path):
+        source = path
+        value = remote_document(path)
+        # Behavior scripts are local code; never resolve them from a download.
+        if isinstance(value, dict) and "script" in value:
+            raise ValueError(f"{path}: remote scenarios cannot reference scripts")
+    else:
+        source = Path(local_path(Path.cwd(), path))
+        value = load_document(source)
     errors = sorted(
         Draft7Validator(schema).iter_errors(value), key=lambda error: str(error.path)
     )
     if errors:
         error = errors[0]
         raise ValueError(f"{source}: {'/'.join(map(str, error.path))}: {error.message}")
-    return value  # type: ignore[no-any-return]
+    return value
 
 
 def apply_scenario(args: Any) -> None:
