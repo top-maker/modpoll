@@ -20,7 +20,7 @@ from modpoll_wot import export_td
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = "advantech/adam-5017uh/adam-5017uh.tm.json"
+MODEL = "devices/advantech/adam-5017uh/models/adam-5017uh.tm.json"
 VALUES = [0x1234, 0x8001, 0xABCD, 0, 65535, 42, 0x0102, 0xFE01]
 EXPECTED = {f"AI{i}_RAW": value for i, value in enumerate(VALUES)}
 
@@ -76,17 +76,17 @@ def run(args):
         port = reserve.getsockname()[1]
     with TemporaryDirectory(prefix="modsim-catalog-interop-") as temporary:
         work = Path(temporary)
-        if args.scenario:
-            scenario = args.scenario.resolve()
-            if json.loads(scenario.read_bytes()) != {
-                "version": "1",
-                "initial": EXPECTED,
-            }:
-                raise ValueError("Scenario differs from independent expected vector")
-        else:
-            scenario = work / "initial.sim.json"
-            scenario.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
-        scenario_digest = hashlib.sha256(scenario.read_bytes()).hexdigest()
+        if args.vectors and json.loads(args.vectors.read_bytes()) != EXPECTED:
+            raise ValueError(
+                "Catalog vectors differ from the independent expected vector"
+            )
+        scenario = work / "initial.sim.json"
+        scenario.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
+        vectors_digest = (
+            hashlib.sha256(args.vectors.read_bytes()).hexdigest()
+            if args.vectors
+            else None
+        )
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
         with (work / "simulator.log").open("w+") as log:
@@ -206,7 +206,7 @@ def run(args):
     report = {
         "executed-at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "data-revision": revision,
-        "scenario-sha256": scenario_digest,
+        "vectors-sha256": vectors_digest,
         "td-sha256": td_digest,
         "td-endpoint": {
             "host": "127.0.0.1",
@@ -241,7 +241,7 @@ def run(args):
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(
-        "Catalog L2 subset passed: raw wire, published modpoll, node-wot, wrong-byte-order rejection, shutdown"
+        "Catalog interoperability passed: raw wire, published modpoll, node-wot, wrong-byte-order rejection, shutdown"
     )
 
 
@@ -251,9 +251,9 @@ if __name__ == "__main__":
         "--lock", type=Path, default=ROOT / "examples/model-source.yaml"
     )
     parser.add_argument(
-        "--scenario",
+        "--vectors",
         type=Path,
-        help="Fixed local input with the independent known vector",
+        help="Catalog vectors file that must equal the independent known vector",
     )
     parser.add_argument("--modpoll-python", type=Path, required=True)
     parser.add_argument("--node-reader", type=Path, required=True)

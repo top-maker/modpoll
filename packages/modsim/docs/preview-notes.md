@@ -10,7 +10,8 @@ selected read spans.
 #### Modsim 2.0.0a2
 
 This candidate uses published modpoll-wot 0.2.0a2 and immutable modbus-models-v1
-inputs. Device mappings and contribution workflows now live in modbus-models;
+inputs. Device mappings and contribution workflows moved to a data repository,
+now [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog);
 examples pin a full data commit and individual content hashes. Vendor originals
 are not copied. The tool and data releases remain independent.
 

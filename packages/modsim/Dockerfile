@@ -15,6 +15,7 @@ RUN uv sync --locked --no-dev --no-install-project
 # Copy Python app to the Docker image
 COPY modsim /app/modsim/
 COPY examples /app/examples
+COPY tests/fixtures/io-module /app/tests/fixtures/io-module
 COPY examples/deployment.yaml /app/deployment.yaml
 COPY tools/fetch-models.py /app/tools/fetch-models.py
 RUN .venv/bin/python tools/fetch-models.py

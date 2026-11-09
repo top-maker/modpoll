@@ -67,13 +67,13 @@ jobs:
           cp examples/model-source.yaml "$RUNNER_TEMP/catalog-acceptance/examples/"
           cd "$RUNNER_TEMP/catalog-acceptance"
           "$RUNNER_TEMP/modsim/bin/python" tools/fetch-models.py --output "$RUNNER_TEMP/catalog-acceptance/inputs"
-          "$RUNNER_TEMP/modsim/bin/python" tools/catalog-interop.py --scenario "$RUNNER_TEMP/catalog-acceptance/inputs/advantech/adam-5017uh/simulation/interop-inputs.sim.json" --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$GITHUB_WORKSPACE/.interop/modpoll/tools/wot-interop/read-write.cjs" --output "$RUNNER_TEMP/catalog-interop.json"
-      - name: Verify released runtime for product evidence
+          "$RUNNER_TEMP/modsim/bin/python" tools/catalog-interop.py --vectors "$RUNNER_TEMP/catalog-acceptance/inputs/devices/advantech/adam-5017uh/models/adam-5017uh.vectors.json" --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$GITHUB_WORKSPACE/.interop/modpoll/tools/wot-interop/read-write.cjs" --output "$RUNNER_TEMP/catalog-interop.json"
+      - name: Verify the released runtime against the catalog model
         run: |
           uv venv "$RUNNER_TEMP/released-modsim"
           uv pip install --python "$RUNNER_TEMP/released-modsim/bin/python" 'modsim==2.0.0a2'
           cd "$RUNNER_TEMP/catalog-acceptance"
-          "$RUNNER_TEMP/released-modsim/bin/python" tools/catalog-interop.py --scenario "$RUNNER_TEMP/catalog-acceptance/inputs/advantech/adam-5017uh/simulation/interop-inputs.sim.json" --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$GITHUB_WORKSPACE/.interop/modpoll/tools/wot-interop/read-write.cjs" --output "$RUNNER_TEMP/catalog-interop-released.json"
+          "$RUNNER_TEMP/released-modsim/bin/python" tools/catalog-interop.py --vectors "$RUNNER_TEMP/catalog-acceptance/inputs/devices/advantech/adam-5017uh/models/adam-5017uh.vectors.json" --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$GITHUB_WORKSPACE/.interop/modpoll/tools/wot-interop/read-write.cjs" --output "$RUNNER_TEMP/catalog-interop-released.json"
       - uses: actions/upload-artifact@v4
         with:
           name: catalog-interop

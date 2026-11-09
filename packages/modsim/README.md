@@ -35,8 +35,9 @@ uv run modsim ps
 The commands use `examples/deployment.yaml` by default. The example starts two
 virtual ADAM devices: Unit 1 exposes ADAM-5017UH raw inputs; Unit 2 exposes
 ADAM-6024 raw I/O with synthetic AO→AI and DO→DI loopback. These are simulation
-values, not verified physical measurements. Models, scenarios and source
-information are in [modbus-models](https://github.com/top-maker/modbus-models).
+values, not verified physical measurements. The ADAM-5017UH model and scenario
+come from [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog);
+the ADAM-6024 model is a frozen regression fixture in `tests/fixtures/io-module/`.
 
 The deployment binds to all interfaces by default; set `server.bind` to
 `127.0.0.1` in `examples/deployment.yaml` to restrict a direct local run.
@@ -174,9 +175,9 @@ For a single device without a managed deployment:
 
 ```bash
 uv run python tools/fetch-models.py
-uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config examples/models/devices/advantech/adam-5017uh/models/adam-5017uh.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --scenario examples/models/devices/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
 The single-device model runtime currently supports TCP. The unconfigured demo
@@ -195,10 +196,10 @@ source change.
 
 ## Pinned public model inputs
 
-Device data and optional scenarios are maintained only in
-[modbus-models](https://github.com/top-maker/modbus-models).
-`examples/model-source.yaml` pins data release `modbus-models-v2` to its full
-commit and individual SHA-256 hashes. Prepare examples with
+Device data and optional scenarios are maintained in
+[Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog).
+`examples/model-source.yaml` pins a full catalog commit and individual SHA-256
+hashes. Prepare examples with
 `uv run python tools/fetch-models.py`; this downloads verified local inputs to
 ignored `examples/models/`, never executes downloaded Python, and does not copy
 an interpreter. Re-run after updating the lock through a reviewed PR.
