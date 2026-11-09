@@ -50,7 +50,7 @@ Migration from CSV
 * Copy units unchanged and express the old scale as ``modpoll:multiplier``.
   Multipliers retain the existing floating-point execution behavior; they are
   not interpreted as divisors. Zero and negative multipliers are valid.
-* Preserve effective reference names: the old loader replaced spaces with
+* Preserve effective point names from legacy ``ref`` rows: the old loader replaced spaces with
   underscores. Unknown types or ambiguous fields require review.
 
 The executable contract and test vectors live under

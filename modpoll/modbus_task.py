@@ -244,7 +244,7 @@ class Poller:
                             ref.update_value(None, valid=False)
                             decode_success = False
                             self.logger.error(
-                                "Reference %s is outside the polled bit groups",
+                                "Point %s is outside the polled bit groups",
                                 ref.name,
                             )
                             continue
@@ -293,7 +293,7 @@ class Poller:
                         offset_bytes = (ref.address - self.start_address) * 2
                         if offset_bytes < 0:
                             self.logger.warning(
-                                f"Reference {ref.name} address {ref.address} is outside of poller range starting at {self.start_address}"
+                                f"Point {ref.name} address {ref.address} is outside of poller range starting at {self.start_address}"
                             )
                             ref.update_value(None, valid=False)
                             decode_success = False
@@ -671,7 +671,7 @@ class ModbusHandler:
     def print_results(self):
         for dev in self.deviceList:
             table = PrettyTable()
-            table.field_names = ["Reference", "Value", "Unit"]
+            table.field_names = ["Point", "Value", "Unit"]
             table.align["Reference"] = "l"
             table.align["Value"] = "r"
             table.align["Unit"] = "l"

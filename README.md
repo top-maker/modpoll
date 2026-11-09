@@ -118,7 +118,7 @@ the broker not to retain commands on the set topic; QoS does not make a write
 exactly once.
 
 When a sample is invalid in a poll cycle, modpoll omits it from MQTT output and
-writes `null` for that reference in the JSON snapshot. Snapshots from multiple
+writes `null` for that point in the JSON snapshot. Snapshots from multiple
 configuration files are combined and replaced atomically. When `--timestamp` is
 enabled, the timestamp is the start time of the poll cycle in Unix seconds.
 

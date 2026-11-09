@@ -34,7 +34,7 @@ def get_parser():
         "--unit-id",
         type=int,
         default=None,
-        help="Override instance Unit ID (1-254); otherwise use TD, legacy model default, or 1",
+        help="Override instance Unit ID (1-254); otherwise use the TD, the legacy CSV default, or 1",
     )
     parser.add_argument(
         "-d",
@@ -106,7 +106,7 @@ def get_parser():
         "-o",
         "--export",
         default=None,
-        help="The file name to export references/registers",
+        help="The file name to export point values",
     )
     parser.add_argument(
         "--mqtt-version",
