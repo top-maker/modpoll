@@ -11,15 +11,6 @@
     "modpoll:version": {
       "const": "0.2"
     },
-    "modpoll:audit": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "identity": { "$ref": "#/definitions/auditNames" },
-        "status": { "$ref": "#/definitions/auditNames" }
-      }
-    },
     "modpoll:acquisition": {
       "type": "array",
       "minItems": 1,
@@ -193,14 +184,6 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "auditNames": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
     }
   }
 }

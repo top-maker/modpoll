@@ -160,18 +160,6 @@ The modsim TD runtime and platform lifecycle remain separate implementation task
 this contract does not claim those applications are implemented.
 
 
-### Optional audit plan
-
-A project TM or TD can declare `modpoll:audit` with an `identity` array, a
-`status` array, or both. Each supplied array contains one or more property names
-in reporting order. A name may occur only once in the plan and must resolve to a
-property with a read Form. Validation checks these references before any device
-I/O. The property Forms remain the authority for addresses and codecs.
-
-Project TD export retains the plan. The explicitly selected node-wot export
-omits project extensions. Audit references describe a local client operation
-and do not add WoT actions to a device.
-
 ### Point tables
 
 `project_point_table(tm_bytes)` produces rows in acquisition member order.
