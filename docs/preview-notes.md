@@ -6,8 +6,11 @@ and warnings, log messages, CLI help and documentation say point. Scripts that
 parse the table header need updating. Legacy CSV `ref` rows, JSON and MQTT
 payloads are unchanged.
 
-Modpoll 2.0.0a4 still pins modpoll-wot 0.2.0a4, now consumed from its
-standalone repository. Audit behavior is unchanged from 2.0.0a3.
+Modpoll 2.0.0a4 pins modpoll-wot 0.3.0a2, now released from its standalone
+repository. The bundled `modpoll-wot` command adds `fingerprint`, which prints
+model and point fingerprints, and `validate-report`, which checks a hardware
+verification report. Model loading and audit behavior are unchanged from
+2.0.0a3; `--audit` still needs a TM with a `modpoll:audit` plan.
 
 ## Modpoll 2.0.0a3 preview
 
