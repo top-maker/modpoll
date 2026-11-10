@@ -1,4 +1,18 @@
-# Modsim 2.0.0a5 preview
+# Modsim 2.0.0a6 preview
+
+Modsim 2.0.0a6 pins modpoll-wot 0.3.0a3, the same interpreter as modpoll
+2.0.0a5. Thing Models no longer carry a `modpoll:audit` plan: a TM that still
+declares one is rejected as an unsupported root project extension, so modsim
+and modpoll accept the same models. Delete the key to migrate. Simulation,
+ports and remote loading are unchanged from 2.0.0a5:
+
+```sh
+uvx --prerelease allow modsim==2.0.0a6 --config https://example.org/device.tm.json
+```
+
+### Previous preview
+
+#### Modsim 2.0.0a5
 
 Without `--port`, modsim now listens on the standard Modbus port: 502 for TCP
 and UDP, 802 for Modbus/TLS. A simulator started from a ModioHub Thing Model is
@@ -13,8 +27,6 @@ administrators. modsim then exits before starting and explains how to rerun it
 with sudo (`sudo "$(command -v uvx)" modsim ...`) or choose a port above 1023,
 for example `--port 5020`. Managed deployments keep their explicit server port.
 This preview still pins modpoll-wot 0.2.0a4.
-
-### Previous preview
 
 #### Modsim 2.0.0a4
 

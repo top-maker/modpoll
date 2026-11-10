@@ -829,21 +829,20 @@ wheels = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.2.0a4"
+version = "0.3.0a3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
-    { name = "pyyaml", marker = "python_full_version < '3.15'" },
     { name = "referencing", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f0/ca/beb17dcdca9a1112d9d0f533988527bb49d32fb0a6986b2d247d2e90c063/modpoll_wot-0.2.0a4.tar.gz", hash = "sha256:dacf5de45d4dd987650cb085068bc0a3f028896a713946c929cc18f8046921d1", size = 44852, upload-time = "2026-11-04T05:38:14.015Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ec/c3/aec90bc5a9b1eac294e49e6f0d5ad85846da505f9ee12639ac57d2ba74c7/modpoll_wot-0.3.0a3.tar.gz", hash = "sha256:e2f61c65540d8487eb1f91adbff812d29580c3195632a4a2377374134ee84305", size = 50388, upload-time = "2026-11-10T13:56:03.147Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/2f/d7287c8d4c7604d598139eaf13f6b086e54094fd996135f1fd814c5dbf74/modpoll_wot-0.2.0a4-py3-none-any.whl", hash = "sha256:27b7acc8036e01ab83f8e8ed06236dfd164edbeb96d54f61950adfdc144edac3", size = 40757, upload-time = "2026-11-04T05:38:12.879Z" },
+    { url = "https://files.pythonhosted.org/packages/09/80/cf5e0a63ff469cda8818116e5f8e3bdc8a293aa83a8ba788566f7903198f/modpoll_wot-0.3.0a3-py3-none-any.whl", hash = "sha256:1fb4a27a5a4503512303155881ec8b13c0543d086d39767d613434782d46161e", size = 42463, upload-time = "2026-11-10T13:56:02.184Z" },
 ]
 
 [[package]]
 name = "modsim"
-version = "2.0.0a5"
+version = "2.0.0a6"
 source = { editable = "." }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
@@ -873,7 +872,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "jsonschema", specifier = ">=4.21,<5" },
-    { name = "modpoll-wot", specifier = "==0.2.0a4" },
+    { name = "modpoll-wot", specifier = "==0.3.0a3" },
     { name = "pymodbus", specifier = "~=3.16.1" },
     { name = "pyyaml", specifier = ">=6,<7" },
 ]
