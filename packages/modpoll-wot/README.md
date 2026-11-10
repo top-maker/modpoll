@@ -9,6 +9,7 @@ Releases up to `0.2.0a4` were developed in the Modpoll repository under
 `packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
+Version `0.3.0a3` removes the `modpoll:audit` plan; a full read uses `modpoll:acquisition`.
 Version `0.3.0a2` renames verification report fields to `product` and `chassis` (schema 2).
 Version `0.3.0a1` adds point and model fingerprints and the verification report schema,
 and removes the device metadata schema; see [CONTRACT.md](CONTRACT.md).

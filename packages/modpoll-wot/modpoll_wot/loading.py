@@ -12,14 +12,6 @@ MAX_DEPTH = 64
 
 
 @dataclass(frozen=True)
-class AuditPlan:
-    """Ordered property references for a read-only local audit."""
-
-    identity: tuple[str, ...] = ()
-    status: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True)
 class Model:
     title: str
     kind: str
@@ -28,7 +20,6 @@ class Model:
     endpoint: tuple[str, int] | None = None
     properties_json: str | None = None
     profile_version: str = "0.2"
-    audit: AuditPlan | None = None
 
 
 def _pairs(pairs):

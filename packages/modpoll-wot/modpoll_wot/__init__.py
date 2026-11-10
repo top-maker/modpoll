@@ -1,7 +1,7 @@
 """Modpoll's versioned executable subset of WoT TM/TD and Modbus metadata."""
 
 from .acquisition import AcquisitionError, Group, Member, parse_acquisition
-from .loading import AuditPlan, Model, load_model, loads_model, parse_model
+from .loading import Model, load_model, loads_model, parse_model
 from .validation import ModelValidationError, validate_standard
 from .profile import instantiate, export_td, parse_parameters
 from .delivery import project_point_table
@@ -24,7 +24,6 @@ __all__ = [
     "AcquisitionError",
     "Group",
     "Member",
-    "AuditPlan",
     "Model",
     "ModelValidationError",
     "parse_acquisition",
