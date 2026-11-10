@@ -142,18 +142,6 @@ def app(name="modpoll"):
     # parse args
     args = get_parser().parse_args()
 
-    if args.audit:
-        from pymodbus.exceptions import ModbusException
-
-        from .audit import run_audit
-
-        try:
-            status = run_audit(args)
-        except (ValueError, OSError, ModbusException) as exc:
-            print(f"Audit failed: {exc}", file=sys.stderr)
-            status = 1
-        raise SystemExit(status)
-
     print(
         f"\nModpoll v{__version__} - A New Command-line Tool for Modbus and MQTT\n",
         flush=True,

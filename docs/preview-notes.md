@@ -1,4 +1,18 @@
-# Modpoll 2.0.0a4 preview
+# Modpoll 2.0.0a5 preview
+
+Modpoll 2.0.0a5 removes `--audit` and pins modpoll-wot 0.3.0a3, which removes
+the `modpoll:audit` plan. Thing Models are fully open, and a full read executes
+the whole `modpoll:acquisition` plan, so TM authors only write acquisition
+groups. A TM that still declares `modpoll:audit` is rejected as an unsupported
+root project extension; delete the key. Read a device once with:
+
+```sh
+modpoll --once --config device.tm.json --tcp DEVICE_HOST --unit-id 1
+```
+
+Verification report generation over a full read is planned separately.
+
+## Modpoll 2.0.0a4 preview
 
 Modpoll 2.0.0a4 follows the ModioHub glossary: a decoded value is a point.
 The terminal table's first column header changes from `Reference` to `Point`,

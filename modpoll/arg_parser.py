@@ -208,9 +208,4 @@ def get_parser():
         choices=["default", "ascii", "rtu", "socket"],
         help="The type of framer for Modbus messages. Serial supports ascii/rtu; TCP/UDP use socket.",
     )
-    parser.add_argument(
-        "--audit",
-        action="store_true",
-        help="Read the bounded TM identity and status sample once",
-    )
     return parser
