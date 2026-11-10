@@ -65,7 +65,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--port",
-        help="set port",
+        help="set port; defaults to 502 for TCP and UDP and 802 for TLS",
         type=str,
     )
     parser.add_argument(
@@ -129,10 +129,10 @@ def get_commandline() -> argparse.Namespace:
 
     # set defaults
     comm_defaults: Dict[str, list] = {
-        "tcp": ["socket", 5020],
-        "udp": ["socket", 5020],
+        "tcp": ["socket", 502],
+        "udp": ["socket", 502],
         "serial": ["rtu", "/dev/ptyp0"],
-        "tls": ["tls", 5020],
+        "tls": ["tls", 802],
     }
     framers: Dict[str, Any] = {
         "ascii": FramerType.ASCII,

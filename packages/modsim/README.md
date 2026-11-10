@@ -180,6 +180,13 @@ uv run modsim --config examples/models/products/advantech/adam-5017uh/models/ada
   --scenario examples/models/products/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
+Without `--port`, modsim listens on 502, the standard Modbus TCP port, so
+`modpoll --tcp 127.0.0.1` reaches it without `--tcp-port`. Linux, and macOS
+when binding to `127.0.0.1`, reserve ports below 1024 for administrators: run
+the command with sudo (with uvx, `sudo "$(command -v uvx)" modsim ...`) or pass
+`--port 5020` and read it with `modpoll --tcp-port 5020`. modsim prints the same
+hint when the port is refused. Windows does not reserve these ports.
+
 The single-device model runtime currently supports TCP. The unconfigured demo
 also supports TCP, UDP, TLS, RTU and ASCII; its datastore is shared by all Unit
 IDs. TLS loads `certificates/pymodbus.crt` and `certificates/pymodbus.key` from

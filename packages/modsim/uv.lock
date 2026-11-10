@@ -843,7 +843,7 @@ wheels = [
 
 [[package]]
 name = "modsim"
-version = "2.0.0a4"
+version = "2.0.0a5"
 source = { editable = "." }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },

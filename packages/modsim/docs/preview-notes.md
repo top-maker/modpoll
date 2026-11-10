@@ -1,4 +1,22 @@
-# Modsim 2.0.0a4 preview
+# Modsim 2.0.0a5 preview
+
+Without `--port`, modsim now listens on the standard Modbus port: 502 for TCP
+and UDP, 802 for Modbus/TLS. A simulator started from a ModioHub Thing Model is
+then read with `modpoll --tcp 127.0.0.1`, without `--tcp-port`:
+
+```sh
+uvx --prerelease allow modsim==2.0.0a5 --config https://example.org/device.tm.json
+```
+
+Linux, and macOS when binding to `127.0.0.1`, reserve ports below 1024 for
+administrators. modsim then exits before starting and explains how to rerun it
+with sudo (`sudo "$(command -v uvx)" modsim ...`) or choose a port above 1023,
+for example `--port 5020`. Managed deployments keep their explicit server port.
+This preview still pins modpoll-wot 0.2.0a4.
+
+### Previous preview
+
+#### Modsim 2.0.0a4
 
 Remote models and scenarios load directly from a site such as ModioHub:
 
@@ -11,7 +29,6 @@ HTTPS requests identify themselves as `modsim/<version>`, because some CDNs reje
 the default Python agent. `--scenario` accepts an HTTPS URL; a remote scenario
 cannot name a behavior script. This preview still pins modpoll-wot 0.2.0a4.
 
-### Previous preview
 
 #### Modsim 2.0.0a3
 

@@ -12,6 +12,10 @@ uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json
   --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
 ```
 
+Without `--port`, the listener uses 502, which needs administrator rights on
+Linux and on macOS for `127.0.0.1`; modsim then explains how to rerun with sudo
+or choose a port above 1023.
+
 `--config` also accepts HTTPS model URLs. GitHub `blob` links are converted to
 raw file URLs. Prefer a tag or commit SHA for repeatable runs; branch URLs change.
 Downloads have a 15-second timeout and a 1 MiB limit, and use the shared bounded

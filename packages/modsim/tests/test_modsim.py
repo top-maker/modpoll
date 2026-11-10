@@ -1,3 +1,4 @@
+import os
 import socket
 import signal
 import subprocess
@@ -412,3 +413,51 @@ def test_local_tls_server_with_ephemeral_certificate(tmp_path):
         if process.poll() is None:
             process.kill()
             process.wait(timeout=5)
+
+
+def test_privileged_port_reports_how_to_run(monkeypatch):
+    from modsim import main
+
+    def refuse(self, address):
+        raise PermissionError(13, "Permission denied")
+
+    monkeypatch.setattr(socket.socket, "bind", refuse)
+    with pytest.raises(OSError) as error:
+        main.require_bindable("127.0.0.1", 502)
+    message = str(error.value)
+    assert "Port 502 needs administrator rights" in message
+    assert 'sudo "$(command -v uvx)"' in message
+    assert "--port 5020" in message
+
+
+def test_default_tcp_port_is_502(monkeypatch):
+    from modsim.utils import get_commandline
+
+    monkeypatch.setattr(sys, "argv", ["modsim"])
+    assert get_commandline().port == 502
+
+
+def _unprivileged_low_ports():
+    try:
+        with open("/proc/sys/net/ipv4/ip_unprivileged_port_start") as handle:
+            return int(handle.read()) <= 502
+    except OSError:
+        return True
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not sys.platform.startswith("linux")
+    or os.geteuid() == 0
+    or _unprivileged_low_ports(),
+    reason="needs a non-root Linux user without access to port 502",
+)
+def test_default_port_without_rights_fails_with_hint():
+    result = subprocess.run(
+        [sys.executable, "-m", "modsim", "--log", "error"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+    assert result.returncode == 2
+    assert "Port 502 needs administrator rights" in result.stderr

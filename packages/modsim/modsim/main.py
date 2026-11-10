@@ -5,6 +5,7 @@ import sys
 import json
 import ssl
 import asyncio
+import socket
 import signal
 import logging
 from contextlib import suppress
@@ -108,6 +109,28 @@ def setup_server(args: Any) -> Any:
     return args
 
 
+def privileged_port_hint(port: Any) -> str:
+    """Explain how to listen on a port the operating system reserves."""
+    return (
+        f"Port {port} needs administrator rights on this system. Run the same "
+        'command with sudo; with uvx that is sudo "$(command -v uvx)" followed by '
+        "the rest of the command. Or listen on a port above 1023, for example "
+        "--port 5020, and point the client at it (modpoll --tcp-port 5020)."
+    )
+
+
+def require_bindable(host: str, port: Any, kind: int = socket.SOCK_STREAM) -> None:
+    """Fail early with a clear message when binding needs elevated rights."""
+    with socket.socket(socket.AF_INET, kind) as probe:
+        try:
+            probe.bind((host, int(port)))
+        except PermissionError as exc:
+            raise OSError(privileged_port_hint(port)) from exc
+        except OSError:
+            # Occupied ports and other failures are reported by the server itself.
+            return
+
+
 async def run_async_server(args: Any) -> Any:
     """Run server."""
     txt = f"Start ASYNC server, listening on {args.port} - {args.comm}"
@@ -119,6 +142,7 @@ async def run_async_server(args: Any) -> Any:
             or ("127.0.0.1" if getattr(args, "runtimes", None) else ""),
             args.port,
         )
+        require_bindable(address[0], args.port)
         server = ModbusTcpServer(
             context=args.context,
             identity=args.identity,
@@ -148,6 +172,7 @@ async def run_async_server(args: Any) -> Any:
         return server
     elif args.comm == "udp":
         address = ("127.0.0.1", args.port)
+        require_bindable(address[0], args.port, socket.SOCK_DGRAM)
         server = ModbusUdpServer(
             context=args.context,
             identity=args.identity,
@@ -173,6 +198,7 @@ async def run_async_server(args: Any) -> Any:
         return None
     elif args.comm == "tls":
         address = ("", args.port)
+        require_bindable(address[0], args.port)
         # Create SSL context from cert and key files
         sslctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         sslctx.load_cert_chain(
@@ -217,7 +243,11 @@ def app() -> None:
     except (ValueError, OSError) as exc:
         _logger.error("Invalid model configuration: %s", exc)
         raise SystemExit(2) from exc
-    asyncio.run(_run_server_with_signals(run_args), debug=True)
+    try:
+        asyncio.run(_run_server_with_signals(run_args), debug=True)
+    except OSError as exc:
+        _logger.error("%s", exc)
+        raise SystemExit(2) from exc
 
     _logger.info("exiting.")
 
