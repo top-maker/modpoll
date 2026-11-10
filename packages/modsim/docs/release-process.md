@@ -32,13 +32,12 @@ publishing jobs, installs the existing PyPI wheel, uses fixtures from that exact
 tag and runs the current acceptance tooling. It does not replace packages or
 images. Record the separate validation run and tooling SHA.
 
-### Audit model compatibility
+### Known-value checks
 
-Use the approved full TM or its public audit TM as the configuration for a
-local TCP simulator. Seed known values for the selected properties with
-`--initial PROPERTY=JSON` or `--initial-file`. Public audit TMs expose only the
-selected read spans. Use identical initial values for the shared properties
-when comparing full and public models.
+Use the approved TM as the configuration for a local TCP simulator. Seed known
+values with `--initial PROPERTY=JSON` or `--initial-file`, then read them with
+a full modpoll read. Thing Models no longer carry a `modpoll:audit` plan; a
+full read covers every property in `modpoll:acquisition`.
 
 Stop a foreground simulator with Ctrl-C. Restart with the same TM and initial
 values to restore the original vector. A managed deployment can use
