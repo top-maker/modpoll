@@ -418,7 +418,7 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a3"
+version = "2.0.0a4"
 source = { editable = "." }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
@@ -451,7 +451,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "modpoll-wot", specifier = "==0.2.0a4" },
+    { name = "modpoll-wot", specifier = "==0.3.0a2" },
     { name = "paho-mqtt", specifier = ">=2.1.0,<3.0.0" },
     { name = "prettytable", specifier = ">=3.9.0,<4.0.0" },
     { name = "pymodbus", specifier = "~=3.16.1" },
@@ -478,16 +478,15 @@ docs = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.2.0a4"
+version = "0.3.0a2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
-    { name = "pyyaml", marker = "python_full_version < '3.15'" },
     { name = "referencing", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f0/ca/beb17dcdca9a1112d9d0f533988527bb49d32fb0a6986b2d247d2e90c063/modpoll_wot-0.2.0a4.tar.gz", hash = "sha256:dacf5de45d4dd987650cb085068bc0a3f028896a713946c929cc18f8046921d1", size = 44852, upload-time = "2026-11-04T05:38:14.015Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/46/672134632e850d127a53db78f57a2ed836f5b35401bb3e423485a4124279/modpoll_wot-0.3.0a2.tar.gz", hash = "sha256:8a89c5e2cfcff8601274a6c178bce018267be2e3c140e8fb4758193a5385892e", size = 50965, upload-time = "2026-11-09T17:44:30.705Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/2f/d7287c8d4c7604d598139eaf13f6b086e54094fd996135f1fd814c5dbf74/modpoll_wot-0.2.0a4-py3-none-any.whl", hash = "sha256:27b7acc8036e01ab83f8e8ed06236dfd164edbeb96d54f61950adfdc144edac3", size = 40757, upload-time = "2026-11-04T05:38:12.879Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/21/f5142ffd1bbf77bad4b46007cb9ccf4d13142a4d5a2646c6eae50b129543/modpoll_wot-0.3.0a2-py3-none-any.whl", hash = "sha256:49697acb9985016b9a140cd9762a1d792486e40ac09767bb3d1441dbece0a237", size = 42847, upload-time = "2026-11-09T17:44:29.477Z" },
 ]
 
 [[package]]

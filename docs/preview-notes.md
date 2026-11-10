@@ -1,4 +1,18 @@
-# Modpoll 2.0.0a3 preview
+# Modpoll 2.0.0a4 preview
+
+Modpoll 2.0.0a4 follows the ModioHub glossary: a decoded value is a point.
+The terminal table's first column header changes from `Reference` to `Point`,
+and warnings, log messages, CLI help and documentation say point. Scripts that
+parse the table header need updating. Legacy CSV `ref` rows, JSON and MQTT
+payloads are unchanged.
+
+Modpoll 2.0.0a4 pins modpoll-wot 0.3.0a2, now released from its standalone
+repository. The bundled `modpoll-wot` command adds `fingerprint`, which prints
+model and point fingerprints, and `validate-report`, which checks a hardware
+verification report. Model loading and audit behavior are unchanged from
+2.0.0a3; `--audit` still needs a TM with a `modpoll:audit` plan.
+
+## Modpoll 2.0.0a3 preview
 
 Container users can select `topmaker/modpoll:2.0.0a3-r1` for the packaging
 correction. It runs the same application version.
