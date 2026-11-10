@@ -85,7 +85,7 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a3 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a4 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
@@ -121,7 +121,7 @@
 <p>Default: []</p>
 </dd>
 <dt><kbd>--unit-id</kbd></dt>
-<dd><p>Override instance Unit ID (1-254); otherwise use TD, legacy model default, or 1</p>
+<dd><p>Override instance Unit ID (1-254); otherwise use the TD, the legacy CSV default, or 1</p>
 </dd>
 <dt><kbd>-d, --daemon</kbd></dt>
 <dd><p>Run in daemon mode without printing result. Recommended to use with docker</p>
@@ -169,7 +169,7 @@
 <p>Default: 3.0</p>
 </dd>
 <dt><kbd>-o, --export</kbd></dt>
-<dd><p>The file name to export references/registers</p>
+<dd><p>The file name to export point values</p>
 </dd>
 <dt><kbd>--mqtt-version</kbd></dt>
 <dd><p>Possible choices: 3.1.1, 5.0</p>
@@ -304,7 +304,7 @@
 <li><p>TCP/UDP (<cite>–tcp</cite>/<cite>–udp</cite>) use the <cite>socket</cite> framer; other framers are rejected. If <cite>–framer default</cite> is used, pymodbus defaults to socket framer.</p></li>
 </ul>
 <p>MQTT write commands with malformed payloads, invalid values, ambiguous device names, or a retained-message flag are ignored and logged. Register arrays use FC16 and support 1–123 unsigned 16-bit values. Configure the broker not to retain messages on write-command topics; the MQTT retained flag is not guaranteed to remain set during live forwarding.</p>
-<p>References that fail in a poll cycle are omitted from MQTT output and represented as <code class="docutils literal notranslate"><span class="pre">null</span></code> in JSON snapshots. Multiple configuration files are combined into one atomically replaced snapshot.</p>
+<p>Points that fail in a poll cycle are omitted from MQTT output and represented as <code class="docutils literal notranslate"><span class="pre">null</span></code> in JSON snapshots. Multiple configuration files are combined into one atomically replaced snapshot.</p>
 </section>
 </section>
 
