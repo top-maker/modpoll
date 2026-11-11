@@ -3,6 +3,15 @@ import argparse
 from . import __version__
 
 
+def _positive_rate(value):
+    rate = float(value)
+    if rate <= 0:
+        raise argparse.ArgumentTypeError(
+            f"rate must be positive, got {value}"
+        )
+    return rate
+
+
 def get_parser():
     parser = argparse.ArgumentParser(
         description=f"Modpoll v{__version__} - A New Command-line Tool for Modbus and MQTT"
@@ -29,7 +38,7 @@ def get_parser():
     parser.add_argument(
         "-r",
         "--rate",
-        type=float,
+        type=_positive_rate,
         default=10.0,
         help="The sampling rate (s) to poll modbus device, Defaults to 10.0",
     )

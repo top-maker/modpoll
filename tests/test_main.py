@@ -3,6 +3,7 @@ import sys
 import pytest
 
 from modpoll import main
+from modpoll.arg_parser import get_parser
 
 
 def test_mqtt_tls_cli_options_forwarded(monkeypatch):
@@ -160,3 +161,12 @@ def test_poll_schedule_uses_monotonic_clock_when_utc_changes(monkeypatch, utc_va
     main.app()
 
     assert len(polls) == 2
+
+
+@pytest.mark.parametrize("bad_rate", ["0", "-1", "-0.5"])
+def test_non_positive_rate_rejected(bad_rate):
+    with pytest.raises(SystemExit) as excinfo:
+        get_parser().parse_args(
+            ["--config", "dummy.csv", f"--rate={bad_rate}"]
+        )
+    assert excinfo.value.code == 2
