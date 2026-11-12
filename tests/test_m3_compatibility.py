@@ -1,5 +1,6 @@
 """Regression cases for legitimate v1 mappings and precise v2 failure reporting."""
 
+import logging
 import json
 
 import pytest
@@ -182,7 +183,9 @@ def test_poll_count_is_per_cycle_not_per_poller():
     device = Device("meter", 1)
     for address in range(3):
         poller = Poller(device, 3, address, 1, "BE_BE")
-        point = Point(device, f"value{address}", str(address), "uint16", "r", None, None)
+        point = Point(
+            device, f"value{address}", str(address), "uint16", "r", None, None
+        )
         poller.add_readable_point(point)
         device.pollerList.append(poller)
     handler = ModbusHandler(
@@ -195,3 +198,22 @@ def test_poll_count_is_per_cycle_not_per_poller():
     client.failing = set()
     handler.poll()
     assert (device.pollCount, device.errorCount, device.pollSuccess) == (3, 2, True)
+
+
+def test_undecodable_register_data_logs_one_line_without_traceback(caplog):
+    device = Device("meter", 1)
+    point = Point(device, "name", "0", "string1", "r", None, None)
+    poller = Poller(device, 3, 0, 1, "BE_BE")
+    poller.add_readable_point(point)
+
+    class Client:
+        def read_holding_registers(self, *args, **kwargs):
+            return Result(registers=[0xFF00])
+
+    with caplog.at_level(logging.DEBUG, logger="modpoll.modbus_task"):
+        assert not poller.poll(Client())
+    errors = [r for r in caplog.records if r.levelno >= logging.ERROR]
+    assert len(errors) == 1 and errors[0].exc_info is None
+    assert "UnicodeDecodeError" in errors[0].getMessage()
+    assert any(r.levelno == logging.DEBUG and r.exc_info for r in caplog.records)
+    assert not point.valid_this_poll and point.val is None

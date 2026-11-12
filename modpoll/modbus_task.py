@@ -254,13 +254,10 @@ class Poller:
                                     self._decode_and_update_point(point, decoder)
                                 if not point.valid_this_poll:
                                     decode_success = False
-                            except Exception:
+                            except Exception as exc:
                                 point.update_value(None, valid=False)
                                 decode_success = False
-                                self.logger.exception(
-                                    "Failed to decode physical bit point %s",
-                                    point.name,
-                                )
+                                self._log_decode_failure(point, exc)
                             continue
                         if (
                             offset < 0
@@ -301,12 +298,10 @@ class Poller:
                                 self._decode_and_update_point(point, decoder)
                             if not point.valid_this_poll:
                                 decode_success = False
-                        except Exception:
+                        except Exception as exc:
                             point.update_value(None, valid=False)
                             decode_success = False
-                            self.logger.exception(
-                                "Failed to decode value for point: %s", point.name
-                            )
+                            self._log_decode_failure(point, exc)
                 else:  # Function codes 3 and 4
                     data = result.registers
                     # Sort refs by address to ensure predictable decoding order
@@ -334,12 +329,10 @@ class Poller:
                             self._decode_and_update_point(point, decoder)
                             if not point.valid_this_poll:
                                 decode_success = False
-                        except Exception as e:
+                        except Exception as exc:
                             point.update_value(None, valid=False)
                             decode_success = False
-                            self.logger.error(
-                                f"Failed to decode value for point: {point.name} - {e}"
-                            )
+                            self._log_decode_failure(point, exc)
                 self.update_statistics(decode_success)
                 return decode_success
         except ModbusException:
@@ -362,6 +355,13 @@ class Poller:
             wordorder=wordorder,
             coils=self.fc in (1, 2),
         )
+
+    def _log_decode_failure(self, point: "Point", exc: Exception):
+        """Bad register data is a data event, not a program error: one line, stack at DEBUG."""
+        self.logger.error(
+            "Failed to decode point %s: %s: %s", point.name, type(exc).__name__, exc
+        )
+        self.logger.debug("Decode failure details for %s", point.name, exc_info=True)
 
     def _decode_and_update_point(self, point: "Point", decoder: _PayloadDecoder):
         if getattr(point, "scalar", False) and point.dtype == "uint16":
