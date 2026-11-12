@@ -121,14 +121,13 @@ def test_adding_or_removing_a_readable_point_changes_the_model_fingerprint():
 def report_for(payload):
     prints = point_fingerprints(payload)
     return {
-        "reportVersion": 2,
+        "reportVersion": 3,
         "product": "example/numeric-pilot",
         "model": {
             "sha256": sha256(payload).hexdigest(),
             "fingerprint": model_fingerprint(payload),
             "source": "catalog",
             "ref": "f" * 40,
-            "path": "models/numeric-pilot.tm.json",
         },
         "tool": {"name": "modpoll", "version": "2.1.0a1", "interpreter": "0.3.0a1"},
         "transport": "tcp",
@@ -208,7 +207,8 @@ def mutate(path, value):
         (("product",), "Example/Numeric"),
         (("device",), "example/numeric-pilot"),
         (("environment", "carrier"), "example/chassis"),
-        (("reportVersion",), 1),
+        (("reportVersion",), 2),
+        (("model", "path"), "models/numeric-pilot.tm.json"),
         (("date",), "2026-11-09T10:00:00Z"),
         (("points",), []),
     ],
@@ -220,16 +220,16 @@ def test_reports_reject_private_or_inconsistent_fields(path, value):
 
 def test_model_source_rules():
     workspace = mutate(("model", "source"), "workspace")
+    del workspace["model"]["ref"]
     with pytest.raises(ReportError):
         validate_report(workspace)
-    del workspace["model"]["path"]
     workspace["model"]["ref"] = "fork-3"
     validate_report(workspace)
 
     local = mutate(("model", "source"), "local")
     with pytest.raises(ReportError):
         validate_report(local)
-    del local["model"]["path"], local["model"]["ref"]
+    del local["model"]["ref"]
     validate_report(local)
 
 

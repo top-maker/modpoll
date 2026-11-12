@@ -14,6 +14,7 @@ from . import (
     validate_report,
     validate_standard,
 )
+from .simulation import load_simulation_data
 from .loading import _document_kind, load_document
 from .profile import parse_parameters
 from .verification import combine_fingerprints
@@ -51,7 +52,7 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     check = commands.add_parser("validate", help="Validate TM/TD structure")
     check.add_argument("input", help="Local JSON file")
-    check.add_argument("--kind", choices=["auto", "tm", "td"], default="auto")
+    check.add_argument("--kind", choices=["auto", "tm", "td", "data"], default="auto")
     check.add_argument(
         "--profile", action="store_true", help="Also check executable profile"
     )
@@ -114,7 +115,24 @@ def main():
             document = load_document(args.input)
             if not isinstance(document, dict):
                 raise AcquisitionError(f"{args.input}: document: expected object")
-            if args.command == "validate":
+            if args.command == "validate" and args.kind == "data":
+                phase = "Simulation data"
+                if args.profile:
+                    raise AcquisitionError("--profile applies to TM and TD input")
+                loaded = load_simulation_data(document)
+                data = loaded.data
+                counts = ", ".join(
+                    f"{len(data.get(key, {}))} {key}"
+                    for key in ("initial", "generators", "bindings")
+                )
+                _result(
+                    True,
+                    f"{phase} {data['version']}: passed ({loaded.source}; {counts})",
+                    stream=sys.stdout,
+                )
+                if loaded.unread:
+                    print(f"  Unread snapshot points left out: {', '.join(loaded.unread)}")
+            elif args.command == "validate":
                 if not args.profile and (
                     args.host is not None
                     or args.port is not None

@@ -33,6 +33,16 @@ publish the producer first, and only then change consumer pins. Package version
 and executable profile version are distinct. Existing profile 0.2 semantics are
 preserved; removing the older executable input does not redefine profile 0.2.
 
+## Version 0.4.0a1
+
+Version 0.4.0a1 adds [simulation data](profile.md#simulation-data): schema
+`simulation-data-1.json`, `load_simulation_data`, `scaled_raw` and
+`modpoll-wot validate --kind data`. Modpoll `--export` snapshots are accepted
+as simulation data. Verification report schema 3 replaces schema 2 and drops
+`model.path`: Open Modbus Catalog keeps each baseline Thing Model at
+`model.tm.json`, so the product ID and catalog commit identify it. Schema 2
+had no consumers and is removed.
+
 ## Version 0.3.0a3
 
 Version 0.3.0a3 removes the optional `modpoll:audit` plan and `AuditPlan`.

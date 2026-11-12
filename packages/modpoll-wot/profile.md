@@ -215,15 +215,14 @@ requires a new prefix.
 ## Verification reports
 
 A verification report records one reading of a Thing Model on a physical device. Its schema is
-[schemas/verification-report-2.json](modpoll_wot/schemas/verification-report-2.json)
+[schemas/verification-report-3.json](modpoll_wot/schemas/verification-report-3.json)
 (JSON Schema 2020-12). A report carries:
 
 - `product`: the catalog product ID `<manufacturer>/<model-number>`.
 - `model`: the SHA-256 of the exact TM bytes, its model fingerprint and its
-  source. Catalog models add
-  the 40-character catalog commit and package-relative `models/*.tm.json`
-  path. Custom TMs add an opaque version reference. Local models add
-  neither.
+  source. Catalog models add the 40-character catalog commit as `ref`; the
+  product ID and commit identify the package's `model.tm.json`. Custom TMs add
+  an opaque version reference. Local models add no `ref`.
 - `tool`: the reporting tool's name and version, and the modpoll-wot version.
 - `transport` (`tcp` or `rtu`) and the reading `date`.
 - Optional `environment`: chassis product ID, firmware and a short
@@ -247,3 +246,46 @@ markers and account data belong to the receiving service, not the report.
 `modpoll-wot validate-report REPORT [--model TM]` check the schema and unique
 properties. With the model, they also check its hash and model fingerprint, and that
 every point names a readable property with a matching fingerprint.
+
+## Simulation data
+
+Simulation data describes the values a simulator serves for one device of a
+Thing Model. Its schema is
+[schemas/simulation-data-1.json](modpoll_wot/schemas/simulation-data-1.json)
+(JSON Schema 2020-12), and Modsim loads it with `--data`.
+
+| Field | Meaning |
+| --- | --- |
+| `version` | `"1"`, required |
+| `initial` | Property name to static value; the default way to give a value |
+| `generators` | Property name to a changing value: `constant` (`value`), `sine` (`center`, `amplitude`, positive `period`), `ramp` (`start`, `rate`, `minimum`, `maximum`) or `noise` (`minimum`, `maximum`) |
+| `bindings` | Target property name to the source property it follows |
+| `tick` | Update interval in seconds, at least 0.001, default 1 |
+| `seed` | Random seed, default 0 |
+| `writePolicy` | `hold` (default) or `overwrite`: whether a generator overwrites client writes |
+
+Values are engineering values as Modpoll reads them. Every other field is
+rejected, so simulation data never carries executable code; simulator
+behavior scripts are configured in the simulator itself. Simulation data is
+not a Modbus data table (`modv:entity`).
+
+A Modpoll `--export` snapshot is accepted as simulation data. A document
+without `version` is a snapshot, mapping device titles to point values; the
+`version` key alone decides the shape. `load_simulation_data(document,
+title=..., properties=...)` takes the device entry whose title matches, or the
+only entry, and returns its values as `initial`. Points Modpoll could not read
+(`null`) are left out and listed in `unread`. A `timestamp` entry is a point
+only when the model has a property of that name. With `properties`, every
+referenced name must be a property of the model. Snapshots are instance data:
+they stay on the user's computer and are never part of a catalog, Thing Model
+or verification report.
+
+`scaled_raw(value, multiplier)` returns the raw integer behind a scaled value.
+It accepts the raw integer times the multiplier as an exact decimal (`230.1`
+with `0.1`) or exactly the float Modpoll computes, `float(raw) *
+float(multiplier)` (`230.10000000000002` with `0.1`), and rejects everything
+else without a tolerance threshold, so any value Modpoll exports can be served
+again unchanged.
+
+`modpoll-wot validate DATA --kind data` checks a data document or snapshot.
+

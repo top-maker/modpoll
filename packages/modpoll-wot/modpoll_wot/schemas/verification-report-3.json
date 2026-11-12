@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/top-maker/modpoll-wot/schemas/verification-report-2.json",
+  "$id": "https://github.com/top-maker/modpoll-wot/schemas/verification-report-3.json",
   "title": "Modbus hardware verification report",
   "description": "One reading of a Thing Model on a physical device, without endpoints, serial numbers or raw values.",
   "type": "object",
   "additionalProperties": false,
   "required": ["reportVersion", "product", "model", "tool", "transport", "date", "points"],
   "properties": {
-    "reportVersion": { "const": 2 },
+    "reportVersion": { "const": 3 },
     "product": { "$ref": "#/$defs/productId" },
     "model": {
       "type": "object",
@@ -17,28 +17,24 @@
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "fingerprint": { "type": "string", "pattern": "^mf1:[0-9a-f]{64}$" },
         "source": { "enum": ["catalog", "workspace", "local"] },
-        "ref": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "path": {
-          "type": "string",
-          "pattern": "^models/[a-z0-9]+(?:-[a-z0-9]+)*\\.tm\\.json$"
-        }
+        "ref": { "type": "string", "minLength": 1, "maxLength": 128 }
       },
       "allOf": [
         {
           "if": { "properties": { "source": { "const": "catalog" } } },
           "then": {
-            "required": ["ref", "path"],
+            "required": ["ref"],
             "properties": { "ref": { "pattern": "^[0-9a-f]{40}$" } }
           }
         },
         {
           "if": { "properties": { "source": { "const": "workspace" } } },
-          "then": { "required": ["ref"], "not": { "required": ["path"] } }
+          "then": { "required": ["ref"] }
         },
         {
           "if": { "properties": { "source": { "const": "local" } } },
           "then": {
-            "not": { "anyOf": [{ "required": ["ref"] }, { "required": ["path"] }] }
+            "not": { "required": ["ref"] }
           }
         }
       ]

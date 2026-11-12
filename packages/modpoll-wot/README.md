@@ -9,6 +9,7 @@ Releases up to `0.2.0a4` were developed in the Modpoll repository under
 `packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
+Version `0.4.0a1` adds simulation data (`--kind data`) and verification report schema 3.
 Version `0.3.0a3` removes the `modpoll:audit` plan; a full read uses `modpoll:acquisition`.
 Version `0.3.0a2` renames verification report fields to `product` and `chassis` (schema 2).
 Version `0.3.0a1` adds point and model fingerprints and the verification report schema,
@@ -22,6 +23,7 @@ modpoll-wot export meter.tm.json --host 127.0.0.1 --port 5020 --unit-id 7 -o met
 modpoll-wot validate meter.td.json
 modpoll-wot fingerprint meter.tm.json
 modpoll-wot validate-report report.json --model meter.tm.json
+modpoll-wot validate meter.data.json --kind data
 ```
 
 Use `modpoll-wot --help` and `modpoll-wot validate --help` for options.

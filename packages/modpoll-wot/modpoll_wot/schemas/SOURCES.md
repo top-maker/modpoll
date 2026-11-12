@@ -17,7 +17,8 @@ Upstream repository and licensing: https://github.com/w3c/wot-thing-description
   This binding is a work in progress, not a W3C Recommendation.
 
 acquisition-0.2.json is the executable project schema.
-verification-report-2.json is the project's hardware verification report schema. Profile 0.1 is not
+verification-report-3.json is the project's hardware verification report schema.
+simulation-data-1.json is the project's simulation data schema. Profile 0.1 is not
 bundled or executable in current development source. The Modbus schema's TD reference resolves only to bundled TD 1.1;
 other remote resolution remains disabled.
 

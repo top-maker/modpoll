@@ -30,4 +30,6 @@ uv run --isolated --no-project --with "$wheel" modpoll-wot export "$fixture" --h
 uv run --isolated --no-project --with "$wheel" modpoll-wot validate instance.td.json --profile
 uv run --isolated --no-project --with "$wheel" modpoll-wot fingerprint "$fixture" > /dev/null
 uv run --isolated --no-project --with "$wheel" modpoll-wot validate-report "$report" --model "$numeric"
+printf '{"numeric": {"counter": 7, "missing": null}}' > snapshot.json
+uv run --isolated --no-project --with "$wheel" modpoll-wot validate snapshot.json --kind data
 '''

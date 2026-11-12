@@ -5,6 +5,7 @@ from .loading import Model, load_model, loads_model, parse_model
 from .validation import ModelValidationError, validate_standard
 from .profile import instantiate, export_td, parse_parameters
 from .delivery import project_point_table
+from .simulation import DataError, SimulationData, load_simulation_data, scaled_raw
 from .verification import (
     ReportError,
     model_fingerprint,
@@ -13,6 +14,10 @@ from .verification import (
 )
 
 __all__ = [
+    "DataError",
+    "SimulationData",
+    "load_simulation_data",
+    "scaled_raw",
     "parse_parameters",
     "ReportError",
     "model_fingerprint",
