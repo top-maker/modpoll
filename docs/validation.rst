@@ -157,3 +157,20 @@ examples/modsim.csv`` and ``--config examples/modsim.tm.json`` exited 0 and
 exported byte-identical snapshots of all 37 points; the CSV and TM poller
 structures (four blocks, start addresses, quantities, endianness) match
 exactly. ``--precision`` stays in the default ``auto`` rendering mode.
+
+
+Verification command consolidation
+----------------------------------
+
+On 2026-11-12 the full-read flags became the ``modpoll verify`` subcommand and
+the catalog fetch was removed (maintainer decision, after the 2.0.0a7
+preview): ``modpoll verify --config MODEL --tcp HOST [--report FILE]
+[--upload]`` replaces ``--full-read``/``--report``/``--upload`` at the top
+level; ``--device`` is gone because ``--config`` already covers local files,
+URLs and ``modiohub:`` Workspace references; ``--chassis``/``--firmware``/
+``--configuration`` are gone because the report schema treats the environment
+as optional. Verification options used without ``verify`` exit 2 with a
+pointer to the command. After the change ``make check`` passed and the
+offline suite passed 235 tests with 58 integration tests deselected,
+including new refusal cases for the removed spellings and the verify
+subcommand reaching the transport check.

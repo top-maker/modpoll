@@ -1,11 +1,7 @@
-"""Full read and verification report (POLL-02a): per-group outcomes, report content, catalog fetch and options."""
+"""Verification read and report (POLL-02a): per-group outcomes, report content and options."""
 
-import base64
-import hashlib
 import json
 import sys
-from argparse import Namespace
-
 import modpoll_wot
 import pytest
 from pymodbus.exceptions import ModbusIOException
@@ -26,7 +22,6 @@ def fresh_stop_event():
 
 
 PRODUCT = "acme/meter"
-COMMIT = "0123456789abcdef0123456789abcdef01234567"
 
 
 def three_group_model():
@@ -94,7 +89,9 @@ class FakeClient:
 
 def run_app(monkeypatch, argv, client):
     monkeypatch.setattr(modbus_task, "_create_modbus_client", lambda args: client)
-    monkeypatch.setattr(sys, "argv", ["modpoll", "--interval", "0", *argv])
+    # The verify subcommand must be argv[1], as on a real command line.
+    head, rest = (argv[:1], argv[1:]) if argv[:1] == ["verify"] else ([], argv)
+    monkeypatch.setattr(sys, "argv", ["modpoll", *head, "--interval", "0", *rest])
     monkeypatch.setattr(main, "logger", None)
     main.app()
 
@@ -113,6 +110,7 @@ def test_full_read_records_each_group_and_never_retries(monkeypatch, tmp_path, c
         run_app(
             monkeypatch,
             [
+                "verify",
                 "-f",
                 str(path),
                 "--tcp",
@@ -127,10 +125,6 @@ def test_full_read_records_each_group_and_never_retries(monkeypatch, tmp_path, c
                 "ok1",
                 "--reject",
                 "ok2",
-                "--firmware",
-                "1.2",
-                "--configuration",
-                "range 0-10 V",
             ],
             client,
         )
@@ -147,7 +141,7 @@ def test_full_read_records_each_group_and_never_retries(monkeypatch, tmp_path, c
     ]
     assert report["model"]["source"] == "local" and "ref" not in report["model"]
     assert report["product"] == PRODUCT and report["transport"] == "tcp"
-    assert report["environment"] == {"firmware": "1.2", "configuration": "range 0-10 V"}
+    assert "environment" not in report
     assert report["tool"]["name"] == "modpoll"
     modpoll_wot.validate_report(report, model=path.read_bytes())
     # Nothing that identifies the device or what it answered is in the file.
@@ -167,6 +161,7 @@ def test_full_read_of_a_healthy_device_succeeds_and_exports_a_snapshot(
     run_app(
         monkeypatch,
         [
+            "verify",
             "-f",
             str(path),
             "--tcp",
@@ -193,7 +188,17 @@ def test_report_goes_to_standard_output_with_dash(monkeypatch, tmp_path, capsys)
     path = write_model(tmp_path, three_group_model())
     run_app(
         monkeypatch,
-        ["-f", str(path), "--tcp", "x", "--report", "-", "--product", PRODUCT],
+        [
+            "verify",
+            "-f",
+            str(path),
+            "--tcp",
+            "x",
+            "--report",
+            "-",
+            "--product",
+            PRODUCT,
+        ],
         FakeClient(False, False),
     )
     out = capsys.readouterr().out
@@ -206,6 +211,7 @@ def test_a_point_that_was_not_read_cannot_be_judged(monkeypatch, tmp_path):
         run_app(
             monkeypatch,
             [
+                "verify",
                 "-f",
                 str(path),
                 "--tcp",
@@ -226,27 +232,33 @@ def test_a_point_that_was_not_read_cannot_be_judged(monkeypatch, tmp_path):
 @pytest.mark.parametrize(
     "argv, message",
     [
+        ([], "One of --config/-f is required"),
         (
-            ["--device", PRODUCT, "-f", "x.json"],
-            "either --device or a configuration source",
+            ["-f", "x.json", "--report", "r.json", "--tcp", "x"],
+            "belong to the verify command",
         ),
         (
-            [],
-            "One of --config/-f or --device is required",
+            ["-f", "x.json", "--confirm", "all", "--tcp", "x"],
+            "belong to the verify command",
         ),
-        (["--device", "Bad/Id"], "--device must be"),
-        (["-f", "x.json", "--report", "r.json", "--tcp", "x"], "needs --product"),
         (
-            ["-f", "x.json", "--full-read", "--tcp", "x", "--timeout", "30"],
+            ["verify", "-f", "x.json", "--tcp", "x", "--report", "r.json"],
+            "needs --product",
+        ),
+        (
+            ["verify", "-f", "x.json", "--tcp", "x", "--timeout", "30"],
             "at most 10",
         ),
-        (["-f", "x.json", "--full-read", "--udp", "x"], "not UDP"),
+        (["verify", "-f", "x.json", "--udp", "x"], "not UDP"),
         (
-            ["-f", "x.json", "--full-read", "--rtu", "p", "--framer", "ascii"],
+            ["verify", "-f", "x.json", "--rtu", "p", "--framer", "ascii"],
             "not Modbus ASCII",
         ),
-        (["-f", "x.json", "--full-read", "--tcp", "x", "--mqtt-host", "h"], "MQTT"),
-        (["-f", "x.json", "--confirm", "all", "--tcp", "x"], "needs --full-read"),
+        (["verify", "-f", "x.json", "--tcp", "x", "--mqtt-host", "h"], "MQTT"),
+        (
+            ["verify", "-f", "a.json", "b.json", "--tcp", "x"],
+            "reads one Thing Model",
+        ),
     ],
 )
 def test_option_combinations_are_refused(argv, message, monkeypatch, caplog):
@@ -258,95 +270,9 @@ def test_option_combinations_are_refused(argv, message, monkeypatch, caplog):
     assert message in caplog.text
 
 
-def test_full_read_asks_each_group_once():
-    args = get_parser().parse_args(["-f", "x", "--tcp", "h", "--full-read"])
+def test_verify_asks_each_group_once():
+    args = get_parser().parse_args(["-f", "x", "--tcp", "h"])
+    args.full_read = True
     assert modbus_task._read_options(args) == {"retries": 0}
-    assert (
-        modbus_task._read_options(get_parser().parse_args(["-f", "x", "--tcp", "h"]))
-        == {}
-    )
-
-
-class Response:
-    def __init__(self, status=200, text="", body=None, headers=None):
-        self.status_code, self.text, self._body, self.headers = (
-            status,
-            text,
-            body,
-            headers or {},
-        )
-        self.ok = status < 400
-
-    def json(self):
-        return self._body
-
-
-def catalog_stub(monkeypatch, payload, *, commit=COMMIT, blob=None):
-    calls = []
-    entry = {
-        "encoding": "base64",
-        "content": base64.encodebytes(payload).decode(),
-        "sha": blob or verification.git_blob_sha1(payload),
-    }
-
-    def get(url, headers=None, timeout=None, params=None):
-        calls.append((url, params))
-        if "/commits/" in url:
-            return (
-                Response(text=commit + "\n")
-                if url.endswith("/main") or url.endswith("/v1")
-                else Response(404)
-            )
-        return Response(body=entry) if "products/acme/meter/" in url else Response(404)
-
-    monkeypatch.setattr(verification.requests, "get", get)
-    return calls
-
-
-def test_a_branch_is_resolved_to_the_commit_the_report_names(monkeypatch, tmp_path):
-    payload = json.dumps(three_group_model()).encode()
-    calls = catalog_stub(monkeypatch, payload)
-    report_path = tmp_path / "report.json"
-    run_app(
-        monkeypatch,
-        ["--device", PRODUCT, "--tcp", "x", "--report", str(report_path)],
-        FakeClient(False, False),
-    )
-    report = json.loads(report_path.read_text())
-    assert report["product"] == PRODUCT
-    assert report["model"] == {
-        "sha256": hashlib.sha256(payload).hexdigest(),
-        "fingerprint": modpoll_wot.model_fingerprint(payload),
-        "source": "catalog",
-        "ref": COMMIT,
-    }
-    assert calls[-1][1] == {"ref": COMMIT}
-
-
-def test_a_commit_is_used_as_given_and_a_download_is_checked(monkeypatch):
-    payload = b'{"title": "x"}'
-    calls = catalog_stub(monkeypatch, payload)
-    assert verification.fetch_catalog_model(PRODUCT, COMMIT, timeout=1) == (
-        payload,
-        COMMIT,
-    )
-    assert len(calls) == 1
-    catalog_stub(monkeypatch, payload, blob="0" * 40)
-    with pytest.raises(ValueError, match="Git object id"):
-        verification.fetch_catalog_model(PRODUCT, COMMIT, timeout=1)
-    catalog_stub(monkeypatch, payload)
-    with pytest.raises(ValueError, match="no commit, tag or branch nope"):
-        verification.fetch_catalog_model(PRODUCT, "nope", timeout=1)
-    with pytest.raises(ValueError, match="no Thing Model for acme/other"):
-        verification.fetch_catalog_model("acme/other", COMMIT, timeout=1)
-
-
-def test_device_syntax():
-    assert verification.parse_device("advantech/adam-5017uh") == (
-        "advantech/adam-5017uh",
-        "main",
-    )
-    assert verification.parse_device(f"a/b@{COMMIT}") == ("a/b", COMMIT)
-    for bad in ("adam", "A/B", "a/b@", "a/b/c"):
-        with pytest.raises(ValueError):
-            verification.parse_device(bad)
+    args.full_read = False
+    assert modbus_task._read_options(args) == {}

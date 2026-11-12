@@ -105,23 +105,21 @@ meter (2026-10-28). See [validation](docs/validation.rst) for the evidence scope
 For a complete local simulator/MQTT demonstration, use the repository's
 [Docker Compose example](examples/README.md).
 
-### Read a catalog product and write a verification report
+### Verify a Thing Model on a real device and write a report
 
-`--device <manufacturer>/<model-number>[@<commit>]` reads the baseline Thing Model of a product in the
-[Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog) instead of a file. A branch or tag
-(default `main`) is resolved to its commit, and the download is checked against the Git object id GitHub
-reports for it. `--full-read` reads every point once: read-only, without retries and with a timeout of at
-most 10 seconds, so a lost request is a result and not something to repeat. `--report FILE` also writes the
-verification report (`-` prints it):
+`modpoll verify --config MODEL --tcp HOST` reads every point of a Thing Model once: read-only, without
+retries and with a timeout of at most 10 seconds, so a lost request is a result and not something to repeat.
+MODEL is a local TM/TD file, an http(s) URL or a `modiohub:<id>@<version>` Workspace reference. `--report
+FILE` also writes the verification report (`-` prints it):
 
 ```sh
-modpoll --device advantech/adam-5017uh --tcp 192.168.1.20 --unit-id 3 --report report.json
+modpoll verify --config examples/modsim.tm.json --tcp 192.168.1.20 --unit-id 3 --product advantech/adam-5017uh --report report.json
 ```
 
 The report records, per point, whether the read worked (`ok`, a Modbus `exception` with its code,
 `no-response`, or `not-tested` when the answer could not be decoded) and your judgment of the value:
 `--confirm POINT...` (or `all`) and `--reject POINT...` for values you compared with the device, otherwise
-`unchecked`. `--chassis`, `--firmware` and `--configuration` add context. The report holds no address, Unit
+`unchecked`. The report holds no address, Unit
 ID, serial number or value; review it before sharing. It is checked with
 [modpoll-wot](https://github.com/top-maker/modpoll-wot) (`modpoll-wot validate-report report.json --model
 model.tm.json`), and `--export` still writes the snapshot of the same read. With `-f` for a local Thing
@@ -138,11 +136,12 @@ signing in with either tool signs in both. `MODIOHUB_TOKEN` in the environment r
 revoke the session in your ModioHub settings to end it on the server.
 
 Once signed in, `--config modiohub:<id>@<version>` (the version is a number or `latest`) reads one
-of your custom Thing Models. A shared one needs no login. A full read of it writes a report that names the
-Workspace model, and `--upload` shows the report and, after you confirm (or with `--yes`), uploads it:
+of your custom Thing Models. A shared one needs no login. Verifying it names the Workspace model in the
+report, and `modpoll verify --config ... --upload` shows the report and, after you confirm (or with `--yes`),
+uploads it:
 
 ```sh
-modpoll --config modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
+modpoll verify --config modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
 ```
 
 ### MQTT data and write behavior

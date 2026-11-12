@@ -36,70 +36,47 @@ def get_parser():
         ),
         nargs="+",
     )
-    parser.add_argument(
-        "--device",
-        metavar="MANUFACTURER/MODEL[@COMMIT]",
-        help=(
-            "Read the baseline Thing Model of a product in the Open Modbus Catalog, "
-            "for example advantech/adam-5017uh, at a commit, tag or branch "
-            "(default: main). Use instead of -f."
-        ),
+    verification = parser.add_argument_group(
+        "verification",
+        "modpoll verify --config MODEL --tcp HOST reads every point of one Thing "
+        "Model once, read-only and without retries, and reports which points "
+        "could be read",
     )
-    parser.add_argument(
-        "--full-read",
-        action="store_true",
-        help=(
-            "Read every point of the model once, read-only and without retries, "
-            "and report which points could be read. Implies --once."
-        ),
-    )
-    parser.add_argument(
+    verification.add_argument(
         "--report",
         metavar="FILE",
         help=(
-            "Write the verification report of a full read to FILE ('-' prints it). "
+            "Write the verification report to FILE ('-' prints it). "
             "It lists each point's result and carries no address, Unit ID, serial "
-            "number or value; review it before sharing. Implies --full-read."
+            "number or value; review it before sharing."
         ),
     )
-    parser.add_argument(
+    verification.add_argument(
         "--upload",
         action="store_true",
         help=(
-            "After a full read, show the report and, once you confirm, upload it to "
-            "ModioHub (run modpoll login first). Implies --full-read."
+            "After the verification read, show the report and, once you confirm, "
+            "upload it to ModioHub (run modpoll login first)"
         ),
     )
-    parser.add_argument(
+    verification.add_argument(
         "--yes",
         action="store_true",
         help="Upload without asking for confirmation after the report is shown",
     )
-    parser.add_argument(
+    verification.add_argument(
         "--product",
         metavar="MANUFACTURER/MODEL",
-        help="Catalog product ID the report is for; needed with -f, taken from --device otherwise",
+        help="Catalog product ID the report is for; needed when the model does not name one",
     )
-    parser.add_argument(
-        "--chassis",
-        metavar="MANUFACTURER/MODEL",
-        help="Chassis product ID, for the report",
-    )
-    parser.add_argument(
-        "--firmware", help="Firmware version of the device, for the report"
-    )
-    parser.add_argument(
-        "--configuration",
-        help="Short note on the device configuration, such as an input range, for the report",
-    )
-    parser.add_argument(
+    verification.add_argument(
         "--confirm",
         nargs="+",
         default=[],
         metavar="POINT",
         help="Points whose values you checked and found right ('all' for every point), for the report",
     )
-    parser.add_argument(
+    verification.add_argument(
         "--reject",
         nargs="+",
         default=[],
