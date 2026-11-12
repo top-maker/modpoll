@@ -3,6 +3,7 @@ import logging
 import signal
 import sys
 import time
+from datetime import datetime, timezone
 
 from modpoll_wot import AcquisitionError
 
@@ -128,26 +129,82 @@ def process_mqtt_command(topic, payload, retained, topic_pattern, handlers):
     return success
 
 
+def _ask(prompt):
+    return input(prompt).strip().lower()
+
+
 def _finish_full_read(args, handler):
-    """Summarize the full read and write its report; the result is whether every point was read."""
+    """Summarize the verification read, save the report, and upload it when asked.
+
+    On a terminal without --yes the save location, the judgment of the values
+    and the upload are asked interactively. The result is whether every point
+    was read.
+    """
     try:
         report = verification.build_report(handler, args)
-        if args.report:
-            verification.write_report(report, args.report)
     except (ValueError, OSError, AcquisitionError) as exc:
         logger.error("%s", exc)
         logger.debug("Report error details", exc_info=True)
         return False
     print(f"\n{verification.summary(report)}", flush=True)
+    full = verification.is_full_read(report)
+    if sys.stdin.isatty() and not args.yes:
+        if not full and _ask(
+            "Not every point was read, so this report does not count as a "
+            "full read. Continue? [y/N] "
+        ) not in ("y", "yes"):
+            return False
+        verdict = _ask(
+            "Do the values in the table above look right? "
+            "[y]es, [n]o, [Enter] not checked: "
+        )
+        if verdict in ("y", "yes", "n", "no"):
+            # Judge only the points the device actually answered.
+            judged = [
+                point["property"] for point in report["points"] if point["read"] == "ok"
+            ]
+            if verdict in ("y", "yes"):
+                args.confirm = judged
+            else:
+                args.reject = judged
+            try:
+                report = verification.build_report(handler, args)
+            except (ValueError, OSError, AcquisitionError) as exc:
+                logger.error("%s", exc)
+                logger.debug("Report error details", exc_info=True)
+                return False
+    if args.report == "":
+        if not sys.stdin.isatty():
+            logger.error("Add --report FILE when not running interactively.")
+            return False
+        default = f"report-{datetime.now(timezone.utc).date().isoformat()}.json"
+        args.report = input(f"Save the report to [{default}]: ").strip() or default
+    if args.report:
+        try:
+            verification.write_report(report, args.report)
+        except (ValueError, OSError) as exc:
+            logger.error("%s", exc)
+            logger.debug("Report write details", exc_info=True)
+            return False
+        if args.report != "-":
+            print(
+                f"Report written to {args.report}. It has no addresses, Unit IDs, "
+                "serial numbers or values; review it before sharing.",
+                flush=True,
+            )
     if args.upload and not _upload(args, report):
         return False
-    if args.report and args.report != "-":
-        print(
-            f"Report written to {args.report}. It has no addresses, Unit IDs, serial "
-            "numbers or values; review it before sharing.",
-            flush=True,
-        )
-    return verification.is_full_read(report)
+    return full
+
+
+def _ensure_login():
+    """A session for the upload; without one, sign in with the browser right here."""
+    import modpoll_wot
+
+    server = modpoll_wot.server_url()
+    if modpoll_wot.load_session(server) is None:
+        print(f"Sign in to {server} to upload.", flush=True)
+        login.login(server)
 
 
 def _upload(args, report):
@@ -164,8 +221,9 @@ def _upload(args, report):
             print("Not uploaded.", flush=True)
             return False
     try:
+        _ensure_login()
         stored = verification.upload_report(report, timeout=args.timeout)
-    except ValueError as exc:
+    except (ValueError, login.LoginError, OSError) as exc:
         logger.error("%s", exc)
         return False
     print(
@@ -177,6 +235,7 @@ def _upload(args, report):
         ),
         flush=True,
     )
+    print("Thank you for verifying the Thing Model on real hardware.", flush=True)
     return True
 
 
@@ -193,9 +252,6 @@ def setup_logging(level, format):
 def app(name="modpoll"):
     if sys.argv[1:2] in (["login"], ["logout"]):
         sys.exit(login.command(sys.argv[1:]))
-    verify_mode = sys.argv[1:2] == ["verify"]
-    if verify_mode:
-        sys.argv = [sys.argv[0], *sys.argv[2:]]
     mqtt_handler = None
     modbus_handlers = []
 
@@ -204,7 +260,6 @@ def app(name="modpoll"):
 
     # parse args
     args = get_parser().parse_args()
-    args.verify = verify_mode
 
     print(
         f"\nModpoll v{__version__} - A New Command-line Tool for Modbus and MQTT\n",

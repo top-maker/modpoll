@@ -1,3 +1,16 @@
+# Next preview
+
+The verification flags move back onto the normal read and the report drops the
+product (modpoll-wot 0.6.0a1, report schema 4):
+
+- `--report` on a normal read verifies a Thing Model on real hardware: every point read once, read-only and
+  without retries; the verification report (schema 4) holds no address, Unit ID, serial number or value.
+  Bare `--report` asks where to save, whether the values look right, and whether to upload.
+- `--upload` shows the report and uploads it after you confirm (`--yes` skips the questions); without a
+  login the browser sign-in flow starts inline.
+- The `verify` subcommand and `--product` are gone: ModioHub resolves the product from the model
+  fingerprint (identical for a Thing Model, its Thing Description exports and unmodified forks).
+
 # Modpoll 2.0.0a8 preview
 
 Modpoll 2.0.0a8 keeps modpoll-wot 0.5.0a1. It reshapes the ModioHub commands of 2.0.0a7 and restores v1 CSV

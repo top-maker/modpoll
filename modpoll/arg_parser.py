@@ -38,17 +38,21 @@ def get_parser():
     )
     verification = parser.add_argument_group(
         "verification",
-        "modpoll verify --config MODEL --tcp HOST reads every point of one Thing "
-        "Model once, read-only and without retries, and reports which points "
-        "could be read",
+        "--report/--upload read every point of one Thing Model once, read-only "
+        "and without retries, and report which points could be read",
     )
     verification.add_argument(
         "--report",
+        nargs="?",
+        const="",
+        default=None,
         metavar="FILE",
         help=(
-            "Write the verification report to FILE ('-' prints it). "
-            "It lists each point's result and carries no address, Unit ID, serial "
-            "number or value; review it before sharing."
+            "Read every point of the model once and write the verification "
+            "report to FILE ('-' prints it). Without FILE the save location, "
+            "your judgment of the values and the upload are asked "
+            "interactively. The report lists each point's result and carries "
+            "no address, Unit ID, serial number or value."
         ),
     )
     verification.add_argument(
@@ -56,18 +60,13 @@ def get_parser():
         action="store_true",
         help=(
             "After the verification read, show the report and, once you confirm, "
-            "upload it to ModioHub (run modpoll login first)"
+            "upload it to ModioHub; signs you in with the browser when needed"
         ),
     )
     verification.add_argument(
         "--yes",
         action="store_true",
-        help="Upload without asking for confirmation after the report is shown",
-    )
-    verification.add_argument(
-        "--product",
-        metavar="MANUFACTURER/MODEL",
-        help="Catalog product ID the report is for; needed when the model does not name one",
+        help="Upload without being asked",
     )
     verification.add_argument(
         "--confirm",
