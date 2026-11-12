@@ -36,57 +36,35 @@ def test_configuration_errors_exit_2_without_a_traceback(args, message):
 def test_missing_configuration_exits_2():
     result = run("--once")
     assert result.returncode == 2
-    assert (
-        "One of -f/--tm, --thing-model, --thing-description or --device is required"
-        in result.stderr + result.stdout
+    assert "One of --config/-f or --device is required" in (
+        result.stderr + result.stdout
     )
     assert "Traceback" not in result.stderr + result.stdout
 
 
-@pytest.mark.parametrize(
-    "flag, config, extra",
-    [
-        ("--tm", "examples/modsim.tm.json", []),
-        ("--thing-model", "examples/modsim.tm.json", []),
+def test_config_accepts_csv_tm_and_td_by_content_detection():
+    cases = [
+        (["--config", "examples/modsim.csv"], "No communication method specified"),
+        (["-f", "examples/modsim.tm.json"], "No communication method specified"),
         # A bound TD supplies its own TCP endpoint, so --udp exercises the
         # unbound-TM guard instead of opening a connection.
-        ("--td", "examples/modsim.generated.td.json", ["--udp", "127.0.0.1"]),
         (
-            "--thing-description",
-            "examples/modsim.generated.td.json",
-            ["--udp", "127.0.0.1"],
+            ["--config", "examples/modsim.generated.td.json", "--udp", "127.0.0.1"],
+            "unbound TM",
         ),
-    ],
-)
-def test_thing_model_and_description_flags_accept_json(flag, config, extra):
-    result = run(flag, config, "--once", *extra)
-    output = result.stderr + result.stdout
-    assert result.returncode == 2
-    assert (
-        "No communication method specified" in output or "unbound TM" in output
-    ), output
+    ]
+    for argv, message in cases:
+        result = run(*argv, "--once")
+        output = result.stderr + result.stdout
+        assert result.returncode == 2, output
+        assert message in output, output
 
 
-@pytest.mark.parametrize(
-    "flag, config",
-    [
-        # --tm is the --config alias (local path, URL or modiohub reference);
-        # v1 CSV is detected from the content there.
-        ("--tm", "examples/modsim.csv"),
-        ("-f", "examples/modsim.csv"),
-    ],
-)
-def test_config_alias_accepts_csv_by_content_detection(flag, config):
-    result = run(flag, config, "--once")
-    assert result.returncode == 2
-    assert "No communication method specified" in result.stderr + result.stdout
-
-
-def test_thing_model_flag_rejects_csv_content():
-    result = run("--thing-model", "examples/modsim.csv", "--tcp", "127.0.0.1", "--once")
-    assert result.returncode == 2
-    assert "expects a TM/TD JSON document" in result.stderr + result.stdout
-    assert "Traceback" not in result.stderr + result.stdout
+def test_removed_flag_aliases_are_rejected():
+    for flag in ("--tm", "--thing-model", "--thing-description", "--td"):
+        result = run(flag, "examples/modsim.tm.json", "--once")
+        assert result.returncode == 2, flag
+        assert "unrecognized arguments" in result.stderr + result.stdout
 
 
 def test_csv_rejects_typed_parameters():

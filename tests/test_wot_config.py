@@ -21,23 +21,6 @@ def test_csv_content_loads_as_v1_configuration(tmp_path):
     assert handler.model is None
 
 
-def test_thing_model_flag_rejects_wrong_document_kind(tmp_path):
-    path = tmp_path / "model.td.json"
-    path.write_text(
-        json.dumps(
-            {
-                "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
-                "@type": "tm:ThingDescription",
-                "title": "meter",
-            }
-        )
-    )
-    handler = ModbusHandler(object(), str(path), config_kind="tm")
-    with pytest.raises(ValueError, match="document kind disagrees"):
-        handler.load_config()
-    assert handler.deviceList == []
-
-
 def test_url_model_loader_keeps_timeout_and_streams(monkeypatch):
     from modpoll import wot_config
 

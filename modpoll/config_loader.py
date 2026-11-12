@@ -3,8 +3,8 @@
 ``--config`` accepts the v1 CSV format and WoT TM/TD JSON side by side; the
 format is detected from the content, not the file name or URL suffix. A first
 non-whitespace byte of ``{`` or ``[`` selects JSON; anything else is parsed as
-v1 CSV. ``--thing-model`` and ``--thing-description`` assert the JSON document
-kind instead of relying on detection.
+v1 CSV. ``kind`` lets a caller assert the JSON document kind; the CLI relies
+on detection instead.
 """
 
 from modpoll_wot import AcquisitionError, loads_model
@@ -60,9 +60,9 @@ def load_devices(
             )
         return create_devices(model), model
     if kind is not None:
-        flag = "--thing-model" if kind == "tm" else "--thing-description"
+        document = "Thing Model" if kind == "tm" else "Thing Description"
         raise ConfigUsageError(
-            f"{location}: {flag} expects a TM/TD JSON document, "
+            f"{location}: expected a {document} JSON document, "
             "but the content is not JSON"
         )
     if parameters is not None:

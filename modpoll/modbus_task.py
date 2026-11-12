@@ -537,12 +537,10 @@ class ModbusHandler:
         instance_port: Optional[int] = None,
         instance_parameters=None,
         precision: Optional[int] = None,
-        config_kind: Optional[str] = None,
         model_bytes: Optional[bytes] = None,
     ):
         self.modbus_client = modbus_client
         self.config_file = config_file
-        self.config_kind = config_kind
         self.unit_id = unit_id
         self.instance_host = instance_host
         self.instance_port = instance_port
@@ -578,7 +576,6 @@ class ModbusHandler:
                 self.model_bytes = read_payload(self.config_file, timeout=self.timeout)
             self.deviceList, self.model = load_devices(
                 self.config_file,
-                kind=self.config_kind,
                 payload=self.model_bytes,
                 timeout=self.timeout,
                 unit_id=self.unit_id,
@@ -878,18 +875,7 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
             raise ValueError("TM parameters require the profile 0.2 interpreter")
         parameters = modpoll_wot.parse_parameters(args.param)
     try:
-        config_specs = (
-            [(location, None) for location in (args.config or [])]
-            + [
-                (location, "tm")
-                for location in (getattr(args, "thing_model", None) or [])
-            ]
-            + [
-                (location, "td")
-                for location in (getattr(args, "thing_description", None) or [])
-            ]
-        )
-        for config_file, config_kind in config_specs:
+        for config_file in args.config or []:
             current_handler = ModbusHandler(
                 None,
                 config_file,
@@ -906,7 +892,6 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
                 instance_port=args.tcp_port,
                 instance_parameters=parameters,
                 precision=parse_precision(getattr(args, "precision", None)),
-                config_kind=config_kind,
                 model_bytes=models.get(config_file),
             )
             if current_handler.load_config():
