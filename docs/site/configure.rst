@@ -1,25 +1,42 @@
-WoT TM/TD configuration
-=======================
+CSV and WoT TM/TD configuration
+===============================
 
-The 2.x development branch accepts JSON configurations using WoT TM/TD 1.1.
-Use the same ``--config`` argument for either format. A top-level ``@type``
-containing ``tm:ThingModel`` (a string or an array entry) selects TM validation;
-otherwise the document is validated as TD. File extensions and URL suffixes do
-not select the format. An invalid document fails its selected validation; the
-loader does not retry it as the other format. This preview supports the fixed
-``tm:ThingModel`` spelling, without resolving alternate JSON-LD aliases.
+The 2.x development branch accepts both the v1 CSV configuration format and
+JSON configurations using WoT TM/TD 1.1. ``-f``/``--config`` (alias ``--tm``)
+takes either format and detects it from the content, not the file name or URL
+suffix: a first
+non-whitespace byte of ``{`` or ``[`` selects JSON; anything else is parsed as
+v1 CSV. The same argument also accepts a ``modiohub:<id>@<version>`` reference
+to a custom Thing Model in your ModioHub Workspace (run ``modpoll login``
+first unless the version is shared); a reference is always a Thing Model.
+``--thing-model`` and ``--thing-description``/``--td`` assert
+the JSON document kind explicitly and reject content of the other kind (or a
+CSV file) with a configuration error; they take local paths or URLs only.
 
-It rejects CSV input. The canonical ``examples/modsim.tm.json`` uses profile
-0.2 standard property Forms and explicit acquisition blocks. The generated
-``examples/modsim.generated.td.json`` binds that same 37-property model to local
-TCP at port 5020. Current development source accepts only profile 0.2; older
-profiles must be migrated. Details are in ``packages/modpoll-wot/profile.md``.
+For JSON input, a top-level ``@type`` containing ``tm:ThingModel`` (a string or
+an array entry) selects TM validation; otherwise the document is validated as
+TD. An invalid document fails its selected validation; the loader does not
+retry it as the other format. This preview supports the fixed ``tm:ThingModel``
+spelling, without resolving alternate JSON-LD aliases.
+
+The v1 CSV row format (``device``, ``poll`` and ``ref`` rows) keeps its original
+semantics: point names replace ASCII spaces with underscores, a blank access
+column defaults to ``r``, the scale column multiplies the decoded value, and
+bit-table point addresses identify eight-bit groups. ``--unit-id`` overrides
+the per-device ID column; ``--param`` placeholder bindings require a Thing
+Model and are rejected for CSV. The canonical ``examples/modsim.csv`` produces
+the same four blocks and 37 points as ``examples/modsim.tm.json``. Current
+development source accepts only profile 0.2; older profiles must be migrated.
+Details are in the `modpoll-wot profile documentation
+<https://github.com/top-maker/modpoll-wot/blob/main/profile.md>`_.
 
 Each file describes one device. Its ``title`` is the output device name;
 ``--unit-id`` overrides the instance Unit ID (range 1–254). Without it, each file
 uses the Unit ID declared consistently in its Forms, falling back to 1. Different files
 can therefore address different Unit IDs in one process.
-Multiple files may be supplied to ``--config``; titles must be unique.
+Multiple files may be supplied per flag, and the three flags may be combined;
+files load in ``--config``, ``--thing-model``, ``--thing-description`` order.
+Device names must be unique across all files.
 The existing transport CLI arguments explicitly select the connection endpoint.
 A concrete TD's form Unit IDs, addresses and quantities must agree with the model.
 
@@ -53,8 +70,9 @@ Migration from CSV
 * Preserve effective point names from legacy ``ref`` rows: the old loader replaced spaces with
   underscores. Unknown types or ambiguous fields require review.
 
-The executable contract and test vectors live under
-``packages/modpoll-wot``. Strings, bit selectors, four tables and all four
+The executable contract and test vectors live in the
+`modpoll-wot repository <https://github.com/top-maker/modpoll-wot>`_. Strings,
+bit selectors, four tables and all four
 byte/word orders are represented by the contract. Model inheritance, optional members, URI templates, non-Modbus forms,
 and security schemes other than ``nosec`` are rejected in this preview subset.
 The interpreter records access flags; raw MQTT write commands retain the existing
@@ -68,9 +86,10 @@ fixes and :doc:`csv-migration` for the reusable AI conversion prompt.
 Standard Form profile 0.2
 -------------------------
 
-The shared package ``0.2.0a1`` introduces profile ``0.2`` with standard Form
+The shared ``modpoll-wot`` package provides profile ``0.2`` with standard Form
 mappings and explicit blocks. The application uses the exact published package
-version. See
-``packages/modpoll-wot/profile.md`` for API details, parameter precedence,
+version. See the
+`profile documentation <https://github.com/top-maker/modpoll-wot/blob/main/profile.md>`_
+for API details, parameter precedence,
 necessary extensions and external Consumer limits. The source example is
 ``examples/modsim.tm.json``. Generated TDs are instance artifacts.

@@ -42,10 +42,15 @@ def parse_device(text):
 def validate_args(args):
     """Reject option combinations a full read cannot honour, before anything is connected."""
     args.full_read = args.full_read or bool(args.report) or args.upload
-    if args.device and args.config:
-        raise ValueError("Use either --device or -f, not both")
-    if not args.device and not args.config:
-        raise ValueError("One of -f or --device is required")
+    sources = list(args.config or [])
+    sources += list(getattr(args, "thing_model", None) or [])
+    sources += list(getattr(args, "thing_description", None) or [])
+    if args.device and sources:
+        raise ValueError("Use either --device or a configuration source, not both")
+    if not args.device and not sources:
+        raise ValueError(
+            "One of -f/--tm, --thing-model, --thing-description or --device is required"
+        )
     if args.device:
         parse_device(args.device)
     if not args.full_read:
@@ -53,13 +58,15 @@ def validate_args(args):
             if getattr(args, option):
                 raise ValueError(f"--{option} needs --full-read or --report")
         return
+    if args.thing_description:
+        raise ValueError("A full read reads a Thing Model, not a Thing Description")
     if args.mqtt_host:
         raise ValueError("A full read does not publish to MQTT")
     if args.udp:
         raise ValueError("A full read supports Modbus TCP and RTU, not UDP")
     if args.serial and args.framer == "ascii":
         raise ValueError("A full read supports Modbus RTU, not Modbus ASCII")
-    if args.device is None and args.config and len(args.config) != 1:
+    if args.device is None and len(sources) != 1:
         raise ValueError("A full read reads one Thing Model")
     workspace = any(
         location.startswith(modpoll_wot.REFERENCE_PREFIX)

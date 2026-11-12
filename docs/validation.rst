@@ -136,3 +136,24 @@ The unified local Compose example was started in an isolated project and deliver
 template and duplicate Compose examples were removed; ``examples/modsim.csv``
 remains as the explicit migration-test fixture. See ``examples/README.md`` for
 the current runnable example.
+
+
+v1 CSV compatibility restoration
+--------------------------------
+
+On 2026-11-12 the v1 CSV loader was restored behind content detection:
+``-f``/``--config`` (alias ``--tm``) accepts v1 CSV and WoT TM/TD JSON side by
+side, and the new
+``--thing-model``/``--thing-description`` flags assert the JSON document kind
+(``--tm`` had just been taken by the POLL-02b alias for ``--config``, which
+also accepts ``modiohub:`` Workspace references, so the asserting flag is the
+long ``--thing-model`` only). A full read stays Thing-Model-only: CSV
+configurations are rejected with ``--full-read``. After merging the POLL-02a/02b
+release into the branch, ``make check`` passed and the offline suite passed 243
+tests with 58
+integration tests deselected, including new CSV loader, kind-assertion and
+CLI error tests. Against a local modsim process, ``modpoll --once --config
+examples/modsim.csv`` and ``--config examples/modsim.tm.json`` exited 0 and
+exported byte-identical snapshots of all 37 points; the CSV and TM poller
+structures (four blocks, start addresses, quantities, endianness) match
+exactly. ``--precision`` stays in the default ``auto`` rendering mode.

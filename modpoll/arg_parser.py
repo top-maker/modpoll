@@ -29,13 +29,37 @@ def get_parser():
         dest="config",
         default=None,
         help=(
-            "Local path or URL of a WoT TM/TD JSON configuration, or "
+            "Local path or URL of a v1 CSV or WoT TM/TD JSON configuration, or "
             "modiohub:<id>@<version> for a custom Thing Model in your ModioHub "
             "Workspace (run modpoll login first unless it is shared). "
-            "Type is detected from content, not the filename. "
+            "The format is detected from the content, not the filename. "
             "Required unless --device is given."
         ),
         nargs="+",
+    )
+    parser.add_argument(
+        "--thing-model",
+        dest="thing_model",
+        default=[],
+        help=(
+            "Local path or URL of a WoT Thing Model JSON configuration "
+            "(tm:ThingModel); asserts the document kind instead of detecting it. "
+            "Not for modiohub: Workspace references; use --config/--tm for those."
+        ),
+        nargs="+",
+        metavar="PATH_OR_URL",
+    )
+    parser.add_argument(
+        "--thing-description",
+        "--td",
+        dest="thing_description",
+        default=[],
+        help=(
+            "Local path or URL of a WoT Thing Description JSON configuration; "
+            "asserts the document kind instead of detecting it"
+        ),
+        nargs="+",
+        metavar="PATH_OR_URL",
     )
     parser.add_argument(
         "--device",

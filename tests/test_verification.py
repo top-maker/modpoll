@@ -226,8 +226,14 @@ def test_a_point_that_was_not_read_cannot_be_judged(monkeypatch, tmp_path):
 @pytest.mark.parametrize(
     "argv, message",
     [
-        (["--device", PRODUCT, "-f", "x.json"], "either --device or -f"),
-        ([], "One of -f or --device is required"),
+        (
+            ["--device", PRODUCT, "-f", "x.json"],
+            "either --device or a configuration source",
+        ),
+        (
+            [],
+            "One of -f/--tm, --thing-model, --thing-description or --device is required",
+        ),
         (["--device", "Bad/Id"], "--device must be"),
         (["-f", "x.json", "--report", "r.json", "--tcp", "x"], "needs --product"),
         (
