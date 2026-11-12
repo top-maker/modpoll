@@ -1,15 +1,45 @@
-# Modpoll 2.0.0a7 preview
+# Next preview
+
+The verification flags move back onto the normal read and the report drops the
+product (modpoll-wot 0.6.0a1, report schema 4):
+
+- `--report` on a normal read verifies a Thing Model on real hardware: every point read once, read-only and
+  without retries; the verification report (schema 4) holds no address, Unit ID, serial number or value.
+  Bare `--report` asks where to save, whether the values look right, and whether to upload.
+- `--upload` shows the report and uploads it after you confirm (`--yes` skips the questions); without a
+  login the browser sign-in flow starts inline.
+- The `verify` subcommand and `--product` are gone: ModioHub resolves the product from the model
+  fingerprint (identical for a Thing Model, its Thing Description exports and unmodified forks).
+
+# Modpoll 2.0.0a8 preview
+
+Modpoll 2.0.0a8 keeps modpoll-wot 0.5.0a1. It reshapes the ModioHub commands of 2.0.0a7 and restores v1 CSV
+configurations:
+
+- `modpoll verify --config MODEL --tcp HOST` replaces `--device` and `--full-read`: it reads every point of a
+  Thing Model once, read-only and without retries, and reports which points could be read. `--report FILE`
+  writes the verification report (schema 3), which holds no address, Unit ID, serial number or value, and
+  `--upload` shows the report and uploads it after you confirm. `--device`, `--chassis`, `--firmware` and
+  `--configuration` are removed: give the model with `--config` (a file, an address, or a Workspace model) and
+  the catalog product with `--product <manufacturer>/<model>`.
+- `--config` (`-f`) is the only configuration argument; `--tm` is removed. It takes a WoT Thing Model or
+  Thing Description, a v1 CSV file (detected from the content), or `modiohub:<id>@<version>`, a custom Thing
+  Model from your ModioHub Workspace.
+- `modpoll login` prints the sign-in link and opens a browser only where one can be opened; the opener's
+  output no longer fills the terminal, and Ctrl-C cancels with one line. `modsim login` behaves the same in
+  modsim 2.0.0a10.
+
+## Modpoll 2.0.0a7 preview
 
 Modpoll 2.0.0a7 pins modpoll-wot 0.5.0a1 and connects to ModioHub:
 
-- `--report` on a normal read verifies a Thing Model on real hardware: every point read once, read-only and
-  without retries; the verification report (schema 4) holds no address, Unit ID, serial number or value, and
-  ModioHub resolves the product from the model fingerprint.
+- `--device <manufacturer>/<model>[@commit]` reads the baseline Thing Model of a catalog product.
+- `--full-read` reads every point once, read-only and without retries; `--report FILE` writes the
+  verification report (schema 3), which holds no address, Unit ID, serial number or value.
 - `modpoll login` signs in with your browser and `modpoll logout` forgets the login. The 7-day tool session
   is kept in `~/.config/modiohub/credentials.json` and is shared with modsim 2.0.0a9.
-- `--config modiohub:<id>@<version>` reads a custom Thing Model from your ModioHub Workspace, and
-  `modpoll --config ... --upload` shows the report and uploads it after you confirm (the sign-in flow
-  starts inline when needed).
+- `--tm modiohub:<id>@<version>` reads a custom Thing Model from your ModioHub Workspace, and `--upload` shows
+  the report of a full read and uploads it after you confirm.
 
 ## Modpoll 2.0.0a6 preview
 
