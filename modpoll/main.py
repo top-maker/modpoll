@@ -4,6 +4,8 @@ import signal
 import sys
 import time
 
+from modpoll_wot import AcquisitionError
+
 from .arg_parser import get_parser
 from .mqtt_task import MqttHandler
 from .modbus_task import (
@@ -188,7 +190,7 @@ def app(name="modpoll"):
                     logger.debug(
                         f"Ignoring MQTT close error after failed connect: {close_err}"
                     )
-                exit(1)
+                sys.exit(1)
         except Exception as e:
             logger.error(f"Error setting up MQTT input: {e}, exiting...")
             if mqtt_handler:
@@ -198,11 +200,17 @@ def app(name="modpoll"):
                     logger.debug(
                         f"Ignoring MQTT close error after setup exception: {close_err}"
                     )
-            exit(1)
+            sys.exit(1)
 
     try:
         # setup modbus tasks
-        modbus_handlers = setup_modbus_handlers(args, mqtt_handler)
+        try:
+            modbus_handlers = setup_modbus_handlers(args, mqtt_handler)
+        except (ValueError, AcquisitionError) as exc:
+            # A mistake in the command line or model is reported, not a stack.
+            logger.error("%s", exc)
+            logger.debug("Configuration error details", exc_info=True)
+            sys.exit(2)
         conflicts = (
             snapshot_timestamp_conflicts(modbus_handlers or [])
             if args.export and args.timestamp
@@ -213,13 +221,13 @@ def app(name="modpoll"):
                 "--timestamp would overwrite the point named timestamp in the "
                 f"snapshot of {', '.join(conflicts)}; drop --timestamp. Exiting..."
             )
-            exit(1)
+            sys.exit(1)
         if modbus_handlers:
             logger.info(f"Loaded {len(modbus_handlers)} Modbus config(s).")
             delay_thread(args.delay)
         else:
             logger.error("No Modbus config(s) defined. Exiting...")
-            exit(1)
+            sys.exit(1)
 
         # main loop
         last_check = None
