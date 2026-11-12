@@ -1,7 +1,19 @@
-# Modpoll 2.0.0a6 preview
+# Modpoll 2.0.0a7 preview
+
+Modpoll 2.0.0a7 pins modpoll-wot 0.5.0a1 and connects to ModioHub:
+
+- `--device <manufacturer>/<model>[@commit]` reads the baseline Thing Model of a catalog product.
+- `--full-read` reads every point once, read-only and without retries; `--report FILE` writes the
+  verification report (schema 3), which holds no address, Unit ID, serial number or value.
+- `modpoll login` signs in with your browser and `modpoll logout` forgets the login. The 7-day tool session
+  is kept in `~/.config/modiohub/credentials.json` and is shared with modsim 2.0.0a9.
+- `--tm modiohub:<id>@<version>` reads a custom Thing Model from your ModioHub Workspace, and `--upload` shows
+  the report of a full read and uploads it after you confirm.
+
+## Modpoll 2.0.0a6 preview
 
 Modpoll 2.0.0a6 pins modpoll-wot 0.4.0a1, which defines simulation data. A
-`--export` snapshot is simulation data as it stands, so modsim 2.0.0a7 can
+`--export` snapshot is simulation data as it stands, so modsim 2.0.0a8 can
 replay a device read once, on your computer:
 
 ```sh

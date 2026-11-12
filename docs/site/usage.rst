@@ -74,7 +74,7 @@ Configuration File
 
 The configuration file (`--config`) defines the devices, pollers, and points
 to be read. It can be a WoT TM/TD JSON file or a v1 CSV file; the format is
-detected from the content. Use `--thing-model`/`--tm` or
+detected from the content. Use `--thing-model` or
 `--thing-description`/`--td` to assert the JSON document kind explicitly.
 
 For register references (i.e., Holding or Input registers) with a ``dtype`` of ``bool``, you can specify a single bit to be extracted from the 16-bit register. This is done by appending ``:bit`` to the address, where ``bit`` is an integer from 0 to 15.

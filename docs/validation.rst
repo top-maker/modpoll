@@ -142,9 +142,15 @@ v1 CSV compatibility restoration
 --------------------------------
 
 On 2026-11-12 the v1 CSV loader was restored behind content detection:
-``--config`` accepts v1 CSV and WoT TM/TD JSON side by side, and the new
-``--thing-model``/``--thing-description`` flags assert the JSON document kind.
-``make check`` passed and the offline suite passed 210 tests with 58
+``-f``/``--config`` (alias ``--tm``) accepts v1 CSV and WoT TM/TD JSON side by
+side, and the new
+``--thing-model``/``--thing-description`` flags assert the JSON document kind
+(``--tm`` had just been taken by the POLL-02b alias for ``--config``, which
+also accepts ``modiohub:`` Workspace references, so the asserting flag is the
+long ``--thing-model`` only). A full read stays Thing-Model-only: CSV
+configurations are rejected with ``--full-read``. After merging the POLL-02a/02b
+release into the branch, ``make check`` passed and the offline suite passed 243
+tests with 58
 integration tests deselected, including new CSV loader, kind-assertion and
 CLI error tests. Against a local modsim process, ``modpoll --once --config
 examples/modsim.csv`` and ``--config examples/modsim.tm.json`` exited 0 and

@@ -2,12 +2,16 @@ CSV and WoT TM/TD configuration
 ===============================
 
 The 2.x development branch accepts both the v1 CSV configuration format and
-JSON configurations using WoT TM/TD 1.1. ``--config`` takes either format and
-detects it from the content, not the file name or URL suffix: a first
+JSON configurations using WoT TM/TD 1.1. ``-f``/``--config`` (alias ``--tm``)
+takes either format and detects it from the content, not the file name or URL
+suffix: a first
 non-whitespace byte of ``{`` or ``[`` selects JSON; anything else is parsed as
-v1 CSV. ``--thing-model``/``--tm`` and ``--thing-description``/``--td`` assert
+v1 CSV. The same argument also accepts a ``modiohub:<id>@<version>`` reference
+to a custom Thing Model in your ModioHub Workspace (run ``modpoll login``
+first unless the version is shared); a reference is always a Thing Model.
+``--thing-model`` and ``--thing-description``/``--td`` assert
 the JSON document kind explicitly and reject content of the other kind (or a
-CSV file) with a configuration error.
+CSV file) with a configuration error; they take local paths or URLs only.
 
 For JSON input, a top-level ``@type`` containing ``tm:ThingModel`` (a string or
 an array entry) selects TM validation; otherwise the document is validated as

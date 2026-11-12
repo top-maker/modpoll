@@ -1,11 +1,12 @@
 """Adapt validated WoT configuration to the existing Modpoll execution engine."""
 
-from modpoll_wot.loading import load_model, loads_model, MAX_BYTES
+from modpoll_wot import AcquisitionError
+from modpoll_wot.loading import loads_model, MAX_BYTES
 import requests
 
 
-def read_model(location, *, timeout, unit_id, host=None, port=None, parameters=None):
-    instance = {"host": host, "port": port, "parameters": parameters}
+def read_payload(location, *, timeout):
+    """The exact bytes of a configuration, from a file or an http(s) URL, at most 1 MiB."""
     if location.startswith(("http://", "https://")):
         with requests.get(location, timeout=timeout, stream=True) as response:
             response.raise_for_status()
@@ -15,11 +16,25 @@ def read_model(location, *, timeout, unit_id, host=None, port=None, parameters=N
                 if size > MAX_BYTES:
                     raise ValueError(f"{location}: configuration exceeds 1 MiB")
                 chunks.append(chunk)
-        model = loads_model(
-            b"".join(chunks), source=location, unit_id=unit_id, **instance
-        )
-    else:
-        model = load_model(location, unit_id=unit_id, **instance)
+        return b"".join(chunks)
+    try:
+        with open(location, "rb") as stream:
+            payload = stream.read(MAX_BYTES + 1)
+    except OSError as exc:
+        raise AcquisitionError(f"{location}: {exc}") from exc
+    if len(payload) > MAX_BYTES:
+        raise AcquisitionError(f"{location}: configuration exceeds 1 MiB")
+    return payload
+
+
+def read_model(
+    location, *, timeout, unit_id, host=None, port=None, parameters=None, payload=None
+):
+    """Load a model; ``payload`` are its bytes when the caller already has them."""
+    instance = {"host": host, "port": port, "parameters": parameters}
+    if payload is None:
+        payload = read_payload(location, timeout=timeout)
+    model = loads_model(payload, source=location, unit_id=unit_id, **instance)
     # Enforce application policy even with an older, exactly pinned wheel.
     if model.profile_version != "0.2":
         raise ValueError(

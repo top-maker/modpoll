@@ -120,7 +120,9 @@ def parse_csv(text, *, source, unit_id=None, logger=None):
                         "Config line %s: reference failed validation", line_number
                     )
             else:
-                logger.warning("Config line %s: unknown row type %r", line_number, row[0])
+                logger.warning(
+                    "Config line %s: unknown row type %r", line_number, row[0]
+                )
         except Exception as exc:
             logger.error("Config line %s: invalid row %r: %s", line_number, row, exc)
     if duplicate_devices:
@@ -215,14 +217,11 @@ def _create_point(row, device, logger):
 def _validate_point(point, poller, logger):
     if poller.fc in (1, 2):
         if point.bit is not None:
-            logger.warning(
-                "Bit selectors require a register poller: %s", point.name
-            )
+            logger.warning("Bit selectors require a register poller: %s", point.name)
             return False
         group_count = math.ceil(poller.size / 8)
         if not (
-            poller.start_address
-            <= point.address
+            poller.start_address <= point.address
             and point.address + point.bit_group_width - 1
             < poller.start_address + group_count
         ):
@@ -232,8 +231,7 @@ def _validate_point(point, poller, logger):
             return False
         return True
     if not (
-        poller.start_address
-        <= point.address
+        poller.start_address <= point.address
         and point.address + point.point_width - 1 < poller.start_address + poller.size
     ):
         logger.warning(

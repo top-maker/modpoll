@@ -7,7 +7,7 @@ import struct
 import tempfile
 from decimal import Decimal
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import requests
 from prettytable import PrettyTable
@@ -204,9 +204,12 @@ class Poller:
         self.readablePoints: List[Point] = []
         self.disabled = False
         self.failcounter = 0
+        # Why the last read of this group failed: ("exception", code) or ("no-response", None).
+        self.failure: Optional[Tuple[str, Optional[int]]] = None
         self.logger = logging.getLogger(__name__)
 
     def poll(self, master) -> bool:
+        self.failure = None
         try:
             result = None
             data = None
@@ -336,10 +339,13 @@ class Poller:
                 self.update_statistics(decode_success)
                 return decode_success
         except ModbusException:
+            self.failure = ("no-response", None)
             self.logger.error(
                 f"Modbus exception: {self.device.name} {self.fc} {self.start_address} {self.size}"
             )
 
+        if self.failure is None:
+            self.failure = _read_failure(result)
         self.update_statistics(False)
         for point in self.readablePoints:
             point.update_value(None)
@@ -412,6 +418,14 @@ class Poller:
         else:
             self.failcounter += 1
             self.device.pollSuccess = False
+
+
+def _read_failure(result):
+    """Classify a failed read: the device answered with an exception code, or did not answer."""
+    code = getattr(result, "exception_code", None)
+    if isinstance(code, int) and 1 <= code <= 255:
+        return ("exception", code)
+    return ("no-response", None)
 
 
 def _multiplier(scale):
@@ -524,6 +538,7 @@ class ModbusHandler:
         instance_parameters=None,
         precision: Optional[int] = None,
         config_kind: Optional[str] = None,
+        model_bytes: Optional[bytes] = None,
     ):
         self.modbus_client = modbus_client
         self.config_file = config_file
@@ -532,6 +547,8 @@ class ModbusHandler:
         self.instance_host = instance_host
         self.instance_port = instance_port
         self.instance_parameters = instance_parameters
+        # The exact bytes of the model; given by the caller or read from the configuration location.
+        self.model_bytes = model_bytes
         self.model = None
         self.mqtt_handler = mqtt_handler
         self.timeout = timeout
@@ -553,12 +570,16 @@ class ModbusHandler:
 
     def load_config(self) -> bool:
         from .config_loader import ConfigUsageError, load_devices
+        from .wot_config import read_payload
 
         self.logger.info(f"Loading config from: {self.config_file}")
         try:
+            if self.model_bytes is None:
+                self.model_bytes = read_payload(self.config_file, timeout=self.timeout)
             self.deviceList, self.model = load_devices(
                 self.config_file,
                 kind=self.config_kind,
+                payload=self.model_bytes,
                 timeout=self.timeout,
                 unit_id=self.unit_id,
                 host=self.instance_host,
@@ -844,6 +865,8 @@ class ModbusHandler:
 
 
 def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
+    # ``args.model_payloads`` maps a configuration name to model bytes already in hand (--device).
+    models = getattr(args, "model_payloads", None) or {}
     modbus_handlers = []
     current_handler = None
     device_names = set()
@@ -856,9 +879,15 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
         parameters = modpoll_wot.parse_parameters(args.param)
     try:
         config_specs = (
-            [(location, None) for location in args.config]
-            + [(location, "tm") for location in args.thing_model]
-            + [(location, "td") for location in args.thing_description]
+            [(location, None) for location in (args.config or [])]
+            + [
+                (location, "tm")
+                for location in (getattr(args, "thing_model", None) or [])
+            ]
+            + [
+                (location, "td")
+                for location in (getattr(args, "thing_description", None) or [])
+            ]
         )
         for config_file, config_kind in config_specs:
             current_handler = ModbusHandler(
@@ -878,8 +907,14 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
                 instance_parameters=parameters,
                 precision=parse_precision(getattr(args, "precision", None)),
                 config_kind=config_kind,
+                model_bytes=models.get(config_file),
             )
             if current_handler.load_config():
+                if getattr(args, "full_read", False) and current_handler.model is None:
+                    raise ValueError(
+                        "A full read verifies a Thing Model; "
+                        "CSV configurations cannot produce a report"
+                    )
                 effective_args = copy.copy(args)
                 endpoint = getattr(current_handler.model, "endpoint", None)
                 if endpoint is not None:
@@ -919,6 +954,11 @@ def _valid_write_address(address) -> bool:
     return type(address) is int and 0 <= address <= 65535
 
 
+def _read_options(args):
+    """A full read asks each group once: a lost request is a result, not something to repeat."""
+    return {"retries": 0} if getattr(args, "full_read", False) else {}
+
+
 def _create_modbus_client(args):
     transport = _determine_transport(args)
 
@@ -948,6 +988,7 @@ def _create_serial_client(args, port, framer):
         "parity": parity,
         "stopbits": 1,
         "timeout": args.timeout,
+        **_read_options(args),
     }
     if framer:
         client_args["framer"] = framer
@@ -959,6 +1000,7 @@ def _create_tcp_client(args, framer):
         "host": args.tcp,
         "port": 502 if args.tcp_port is None else args.tcp_port,
         "timeout": args.timeout,
+        **_read_options(args),
     }
     if framer:
         client_args["framer"] = framer

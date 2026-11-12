@@ -7,11 +7,9 @@ v1 CSV. ``--thing-model`` and ``--thing-description`` assert the JSON document
 kind instead of relying on detection.
 """
 
-import requests
 from modpoll_wot import AcquisitionError, loads_model
-from modpoll_wot.loading import MAX_BYTES
 
-from .wot_config import create_devices
+from .wot_config import create_devices, read_payload
 
 
 class ConfigUsageError(ValueError):
@@ -22,6 +20,7 @@ def load_devices(
     location,
     *,
     kind=None,
+    payload=None,
     timeout,
     unit_id=None,
     host=None,
@@ -33,9 +32,11 @@ def load_devices(
 
     ``model`` is the instantiated WoT model for JSON input and ``None`` for
     CSV. ``kind`` is the asserted document kind: ``"tm"``, ``"td"`` or ``None``
-    to accept either.
+    to accept either. ``payload`` are the exact bytes when the caller already
+    has them; otherwise they are read from ``location``.
     """
-    payload = _read_bytes(location, timeout=timeout)
+    if payload is None:
+        payload = read_payload(location, timeout=timeout)
     if payload.lstrip()[:1] in (b"{", b"["):
         try:
             model = loads_model(
@@ -75,22 +76,3 @@ def load_devices(
         payload.decode("utf-8"), source=location, unit_id=unit_id, logger=logger
     )
     return devices, None
-
-
-def _read_bytes(location, *, timeout):
-    """Read a local path or URL with the shared 1 MiB configuration bound."""
-    if location.startswith(("http://", "https://")):
-        with requests.get(location, timeout=timeout, stream=True) as response:
-            response.raise_for_status()
-            chunks, size = [], 0
-            for chunk in response.iter_content(65536):
-                size += len(chunk)
-                if size > MAX_BYTES:
-                    raise ValueError(f"{location}: configuration exceeds 1 MiB")
-                chunks.append(chunk)
-            return b"".join(chunks)
-    with open(location, "rb") as stream:
-        payload = stream.read(MAX_BYTES + 1)
-    if len(payload) > MAX_BYTES:
-        raise ValueError(f"{location}: configuration exceeds 1 MiB")
-    return payload
