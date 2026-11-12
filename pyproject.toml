@@ -23,6 +23,7 @@ dev = [
     "deptry>=0.16.1,<0.17.0",
     "tox>=4.16.0,<5.0.0",
     "tomli>=2,<3; python_version < '3.11'",
+    "pytest-cov>=5,<8",
 ]
 docs = [
     "sphinx>=6,<8",
@@ -61,3 +62,10 @@ markers = ["integration: marks tests as integration tests"]
 [project.scripts]
 modpoll = "modpoll.main:app"
 modpoll-wot = "modpoll_wot.__main__:main"
+
+[tool.coverage.run]
+source = ["modpoll"]
+
+[tool.coverage.report]
+# Measured by the default offline suite (about 84%); raise it as coverage grows.
+fail_under = 80
