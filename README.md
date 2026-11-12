@@ -103,6 +103,29 @@ meter (2026-10-28). See [validation](docs/validation.rst) for the evidence scope
 For a complete local simulator/MQTT demonstration, use the repository's
 [Docker Compose example](examples/README.md).
 
+### Read a catalog product and write a verification report
+
+`--device <manufacturer>/<model-number>[@<commit>]` reads the baseline Thing Model of a product in the
+[Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog) instead of a file. A branch or tag
+(default `main`) is resolved to its commit, and the download is checked against the Git object id GitHub
+reports for it. `--full-read` reads every point once: read-only, without retries and with a timeout of at
+most 10 seconds, so a lost request is a result and not something to repeat. `--report FILE` also writes the
+verification report (`-` prints it):
+
+```sh
+modpoll --device advantech/adam-5017uh --tcp 192.168.1.20 --unit-id 3 --report report.json
+```
+
+The report records, per point, whether the read worked (`ok`, a Modbus `exception` with its code,
+`no-response`, or `not-tested` when the answer could not be decoded) and your judgment of the value:
+`--confirm POINT...` (or `all`) and `--reject POINT...` for values you compared with the device, otherwise
+`unchecked`. `--chassis`, `--firmware` and `--configuration` add context. The report holds no address, Unit
+ID, serial number or value; review it before sharing. It is checked with
+[modpoll-wot](https://github.com/top-maker/modpoll-wot) (`modpoll-wot validate-report report.json --model
+model.tm.json`), and `--export` still writes the snapshot of the same read. With `-f` for a local Thing
+Model, add `--product <manufacturer>/<model-number>`; the report then names the model as local. The exit
+code is 1 unless every point was read.
+
 ### MQTT data and write behavior
 
 The local example above uses the `adam6024_raw` TD title for its default topics:

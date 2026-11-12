@@ -25,12 +25,70 @@ def get_parser():
     parser.add_argument(
         "-f",
         "--config",
-        required=True,
+        default=None,
         help=(
             "Local path or URL of a WoT TM/TD JSON configuration. "
-            "Type is detected from content, not the filename. Required!"
+            "Type is detected from content, not the filename. "
+            "Required unless --device is given."
         ),
         nargs="+",
+    )
+    parser.add_argument(
+        "--device",
+        metavar="MANUFACTURER/MODEL[@COMMIT]",
+        help=(
+            "Read the baseline Thing Model of a product in the Open Modbus Catalog, "
+            "for example advantech/adam-5017uh, at a commit, tag or branch "
+            "(default: main). Use instead of -f."
+        ),
+    )
+    parser.add_argument(
+        "--full-read",
+        action="store_true",
+        help=(
+            "Read every point of the model once, read-only and without retries, "
+            "and report which points could be read. Implies --once."
+        ),
+    )
+    parser.add_argument(
+        "--report",
+        metavar="FILE",
+        help=(
+            "Write the verification report of a full read to FILE ('-' prints it). "
+            "It lists each point's result and carries no address, Unit ID, serial "
+            "number or value; review it before sharing. Implies --full-read."
+        ),
+    )
+    parser.add_argument(
+        "--product",
+        metavar="MANUFACTURER/MODEL",
+        help="Catalog product ID the report is for; needed with -f, taken from --device otherwise",
+    )
+    parser.add_argument(
+        "--chassis",
+        metavar="MANUFACTURER/MODEL",
+        help="Chassis product ID, for the report",
+    )
+    parser.add_argument(
+        "--firmware", help="Firmware version of the device, for the report"
+    )
+    parser.add_argument(
+        "--configuration",
+        help="Short note on the device configuration, such as an input range, for the report",
+    )
+    parser.add_argument(
+        "--confirm",
+        nargs="+",
+        default=[],
+        metavar="POINT",
+        help="Points whose values you checked and found right ('all' for every point), for the report",
+    )
+    parser.add_argument(
+        "--reject",
+        nargs="+",
+        default=[],
+        metavar="POINT",
+        help="Points whose values you checked and found wrong, for the report",
     )
     parser.add_argument(
         "--param",
