@@ -161,3 +161,37 @@ def test_write_only_property_stays_out_of_decoded_output():
     assert device.points["value"].val == 42
     assert not device.points["write_value"].valid_this_poll
     assert [point.name for point in device.pollerList[0].readablePoints] == ["value"]
+
+
+def test_poll_count_is_per_cycle_not_per_poller():
+    class Client:
+        failing = {2}
+
+        def connect(self):
+            return True
+
+        def close(self):
+            pass
+
+        def read_holding_registers(self, address, *args, **kwargs):
+            if address in self.failing:
+                raise OSError("link lost")
+            return Result(registers=[1])
+
+    client = Client()
+    device = Device("meter", 1)
+    for address in range(3):
+        poller = Poller(device, 3, address, 1, "BE_BE")
+        point = Point(device, f"value{address}", str(address), "uint16", "r", None, None)
+        poller.add_readable_point(point)
+        device.pollerList.append(poller)
+    handler = ModbusHandler(
+        client, "test.tm.json", daemon=True, autoremove=False, interval=0
+    )
+    handler.deviceList = [device]
+    handler.poll()
+    handler.poll()
+    assert (device.pollCount, device.errorCount, device.pollSuccess) == (2, 2, False)
+    client.failing = set()
+    handler.poll()
+    assert (device.pollCount, device.errorCount, device.pollSuccess) == (3, 2, True)

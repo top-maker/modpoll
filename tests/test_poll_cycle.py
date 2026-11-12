@@ -276,7 +276,7 @@ def test_nonfinite_register_sample_marks_poll_failed(monkeypatch):
 
     assert not poller.poll(Client())
     assert not point.valid_this_poll
-    assert device.errorCount == 1
+    assert poller.failcounter == 1 and not device.pollSuccess
 
 
 def test_snapshot_rejects_nonstandard_nan_without_damaging_existing_file(tmp_path):
