@@ -126,6 +126,23 @@ model.tm.json`), and `--export` still writes the snapshot of the same read. With
 Model, add `--product <manufacturer>/<model-number>`; the report then names the model as local. The exit
 code is 1 unless every point was read.
 
+### Sign in to ModioHub, read a Workspace Thing Model and upload the report
+
+`modpoll login` signs in with your browser: it prints a code and an address (and opens the address where a
+browser can open), you confirm the code there, and the 7-day tool session is kept in a file only you can read
+(`~/.config/modiohub/credentials.json`, or `%APPDATA%\modiohub` on Windows). modsim uses the same file, so
+signing in with either tool signs in both. `MODIOHUB_TOKEN` in the environment replaces the file for scripts,
+`MODIOHUB_URL` selects another server, and `login` and `logout` take `--server URL` for the same. `modpoll logout` forgets the login on this computer;
+revoke the session in your ModioHub settings to end it on the server.
+
+Once signed in, `--tm modiohub:<id>@<version>` (`-f` works too; the version is a number or `latest`) reads one
+of your custom Thing Models. A shared one needs no login. A full read of it writes a report that names the
+Workspace model, and `--upload` shows the report and, after you confirm (or with `--yes`), uploads it:
+
+```sh
+modpoll --tm modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
+```
+
 ### MQTT data and write behavior
 
 The local example above uses the `adam6024_raw` TD title for its default topics:

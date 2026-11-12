@@ -11,6 +11,7 @@ import json
 import os
 import re
 import tempfile
+import uuid
 from datetime import datetime, timezone
 from importlib.metadata import version as package_version
 from pathlib import Path
@@ -19,6 +20,7 @@ import modpoll_wot
 import requests
 
 from . import __version__
+from .login import headers as api_headers
 
 CATALOG_API = "https://api.github.com/repos/top-maker/open-modbus-catalog"
 MAX_TIMEOUT = 10.0
@@ -39,7 +41,7 @@ def parse_device(text):
 
 def validate_args(args):
     """Reject option combinations a full read cannot honour, before anything is connected."""
-    args.full_read = args.full_read or bool(args.report)
+    args.full_read = args.full_read or bool(args.report) or args.upload
     if args.device and args.config:
         raise ValueError("Use either --device or -f, not both")
     if not args.device and not args.config:
@@ -59,10 +61,16 @@ def validate_args(args):
         raise ValueError("A full read supports Modbus RTU, not Modbus ASCII")
     if args.device is None and args.config and len(args.config) != 1:
         raise ValueError("A full read reads one Thing Model")
-    if args.report and not (args.device or args.product):
+    workspace = any(
+        location.startswith(modpoll_wot.REFERENCE_PREFIX)
+        for location in args.config or []
+    )
+    if (args.report or args.upload) and not (args.device or args.product or workspace):
         raise ValueError(
             "--report with -f needs --product <manufacturer>/<model-number>"
         )
+    if args.yes and not args.upload:
+        raise ValueError("--yes needs --upload")
     if args.product and not _DEVICE.match(args.product):
         raise ValueError("--product must be <manufacturer>/<model-number>")
     if args.timeout > MAX_TIMEOUT:
@@ -144,20 +152,113 @@ def _check_github(response):
 
 
 def resolve_models(args):
-    """For ``--device``, fetch the model and name it as the configuration.
+    """Fetch the models that are not files: a catalog product (``--device``) or Workspace Thing Models.
 
-    The bytes go to ``args.model_payloads`` for the handler, and where they came from to ``args.model_source``
-    for the report.
+    The bytes go to ``args.model_payloads`` for the handlers, and where a full-read model came from to
+    ``args.model_source`` for the report.
     """
-    if not args.device:
-        return
-    product, ref = parse_device(args.device)
-    payload, commit = fetch_catalog_model(product, ref, timeout=args.timeout)
-    label = f"{product}@{commit[:7]}"
-    args.config = [label]
-    args.product = product
-    args.model_payloads = {label: payload}
-    args.model_source = {"source": "catalog", "ref": commit}
+    args.model_payloads = {}
+    if args.device:
+        product, ref = parse_device(args.device)
+        payload, commit = fetch_catalog_model(product, ref, timeout=args.timeout)
+        label = f"{product}@{commit[:7]}"
+        args.config = [label]
+        args.product = product
+        args.model_payloads[label] = payload
+        args.model_source = {"source": "catalog", "ref": commit}
+    for location in args.config or []:
+        if location.startswith(modpoll_wot.REFERENCE_PREFIX):
+            payload, details = fetch_workspace_model(location, timeout=args.timeout)
+            args.model_payloads[location] = payload
+            if args.full_read:
+                args.product = args.product or details["product"]
+                args.model_source = {"source": "workspace", "ref": details["ref"]}
+
+
+def fetch_workspace_model(text, *, timeout):
+    """A custom Thing Model version of the user's Workspace: (bytes, {product, ref}).
+
+    The login is used when there is one; a shared version can be read without it. The token only goes to the
+    server it was issued for, and the download is checked against the SHA-256 the server states.
+    """
+    reference = modpoll_wot.parse_reference(text)
+    server = modpoll_wot.server_url()
+    session = modpoll_wot.load_session(server)
+    token = session.token if session else None
+    base = f"{server}/api/v1/thing-models/{reference.id}"
+
+    def get(url):
+        if not url.startswith(server + "/"):
+            raise ValueError(f"{server} pointed to another address for {text}")
+        try:
+            return requests.get(url, headers=api_headers(token), timeout=timeout)
+        except requests.RequestException as exc:
+            raise ValueError(f"Could not reach {server}: {exc}") from exc
+
+    response = get(base)
+    if response.status_code == 401:
+        raise ValueError("Your ModioHub login is no longer valid; run modpoll login")
+    if response.status_code == 404:
+        raise ValueError(
+            f"No custom Thing Model {reference.id} is shared"
+            + (" or yours" if token else "; run modpoll login if it is yours")
+        )
+    _check_server(response, server)
+    thing_model = response.json()
+    versions = {str(version["version"]): version for version in thing_model["versions"]}
+    version = (
+        versions.get(reference.version)
+        if reference.version != "latest"
+        else thing_model["versions"][0]
+    )
+    if version is None:
+        raise ValueError(f"{text} has no version {reference.version}")
+    response = get(version["fileUrl"])
+    _check_server(response, server)
+    payload = response.content
+    if hashlib.sha256(payload).hexdigest() != version["sha256"]:
+        raise ValueError(f"{text} does not match the SHA-256 {server} reports for it")
+    return payload, {
+        "product": thing_model["productId"],
+        "ref": f"{reference.id}@{version['version']}",
+    }
+
+
+def _check_server(response, server):
+    if not response.ok:
+        raise ValueError(f"{server} answered {response.status_code}")
+
+
+def upload_report(report, *, timeout):
+    """Upload a report as the signed-in user; returns the stored report summary."""
+    server = modpoll_wot.server_url()
+    session = modpoll_wot.load_session(server)
+    if session is None:
+        raise ValueError(f"Sign in to {server} first with modpoll login")
+    try:
+        response = requests.post(
+            f"{server}/api/v1/reports",
+            json=report,
+            timeout=timeout,
+            headers={
+                **api_headers(session.token),
+                "Idempotency-Key": str(uuid.uuid4()),
+            },
+        )
+    except requests.RequestException as exc:
+        raise ValueError(f"Could not reach {server}: {exc}") from exc
+    if response.status_code == 401:
+        raise ValueError("Your ModioHub login is no longer valid; run modpoll login")
+    if not response.ok:
+        detail = (
+            response.json().get("detail")
+            if "json" in response.headers.get("Content-Type", "")
+            else None
+        )
+        raise ValueError(
+            f"{server} refused the report: {detail or response.status_code}"
+        )
+    return response.json()
 
 
 def _transport(args):
