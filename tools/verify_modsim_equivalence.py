@@ -10,6 +10,7 @@ import math
 from pathlib import Path
 import socket
 import socketserver
+import struct
 import subprocess
 import tempfile
 import threading
@@ -131,7 +132,7 @@ def same_value(left, right):
     if isinstance(left, bool) or isinstance(right, bool):
         return left is right
     if isinstance(left, (int, float)) and isinstance(right, (int, float)):
-        return math.isclose(float(left), float(right), rel_tol=1e-9, abs_tol=1e-12)
+        return _same_float(float(left), float(right))
     if left == right:
         return True
     return _same_number(left, right)
@@ -146,14 +147,39 @@ def _same_number(left, right):
         return False
     if math.isnan(left_number) or math.isnan(right_number):
         return False
-    return math.isclose(left_number, right_number, rel_tol=1e-9, abs_tol=1e-12)
+    return _same_float(left_number, right_number)
+
+
+def _same_float(left, right):
+    """Whether two floats name the same reading.
+
+    A float32 register is shown as its shortest decimal in 2.x (12.34) and as
+    the double it widens to in 1.x (12.34000015258789). Both name one float32.
+    """
+    if math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-12):
+        return True
+    return _to_float32(left) == right or _to_float32(right) == left
+
+
+def _to_float32(value):
+    try:
+        return struct.unpack("<f", struct.pack("<f", value))[0]
+    except (OverflowError, struct.error):
+        return None
 
 
 def snapshots_match(left, right):
     """Whether two snapshots name the same values, whatever their float text."""
     if set(left) != set(right):
         return False
-    return all(same_value(left[key], right[key]) for key in left)
+    return all(
+        (
+            snapshots_match(left[key], right[key])
+            if isinstance(left[key], dict) and isinstance(right[key], dict)
+            else same_value(left[key], right[key])
+        )
+        for key in left
+    )
 
 
 def tables_match(left, right):
