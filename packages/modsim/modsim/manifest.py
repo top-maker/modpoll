@@ -250,6 +250,9 @@ def load_deployment(path: Path, *, include_data: bool = True) -> Deployment:
             ).data
         if include_data and item.get("script"):
             script_path = local_path(root, item["script"])
+            # Scripts execute with the simulator's rights; keep them with the deployment.
+            if not Path(script_path).is_relative_to(root.resolve()):
+                raise ValueError(f"{key}: script must stay inside {root}")
             with Path(script_path).open("rb") as stream:
                 script_source = stream.read(MAX_BYTES + 1)
             if len(script_source) > MAX_BYTES:

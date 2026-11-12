@@ -318,6 +318,8 @@ def test_explicit_thing_id_for_model_without_id(tmp_path):
 
 
 def test_root_adam_deployment():
+    if not (ROOT / "examples/models").is_dir():
+        pytest.skip("run tools/fetch-models.py to populate examples/models")
     deployment = load_deployment(ROOT / "examples/deployment.yaml")
     assert deployment.bind == "0.0.0.0"
     assert [item.model.unit_id for item in deployment.instances.values()] == [1, 2]
@@ -337,3 +339,41 @@ def test_removed_deployment_cli_option(tmp_path):
     )
     assert result.returncode != 0
     assert b"unrecognized arguments: --deployment" in result.stderr
+
+
+def test_script_path_cannot_leave_the_deployment_directory(tmp_path):
+    project = tmp_path / "project"
+    project.mkdir()
+    (tmp_path / "evil.py").write_text('raise AssertionError("must not execute")')
+    (project / "link.py").symlink_to(tmp_path / "evil.py")
+    for script in ("../evil.py", str(tmp_path / "evil.py"), "link.py"):
+        with pytest.raises(ValueError, match="script must stay inside"):
+            build(project, [device(script=script)])
+
+
+def test_noise_sequences_follow_the_seed_and_differ_between_seeds(tmp_path):
+    for name, seed in (("a", 73), ("b", 74)):
+        (tmp_path / f"{name}.json").write_text(
+            json.dumps(
+                {
+                    "version": "1",
+                    "seed": seed,
+                    "generators": {
+                        "AO0_RAW": {"kind": "noise", "minimum": 1, "maximum": 100}
+                    },
+                }
+            )
+        )
+    args = build(
+        tmp_path,
+        [device(1, data="a.json"), device(2, data="a.json"), device(3, data="b.json")],
+    )
+    sequences = []
+    for runtime in args.runtimes:
+        values = []
+        for tick in range(1, 9):
+            runtime.advance(tick, 1)
+            values.append(runtime.get("AO0_RAW"))
+        sequences.append(values)
+    assert sequences[0] == sequences[1]
+    assert sequences[0] != sequences[2]

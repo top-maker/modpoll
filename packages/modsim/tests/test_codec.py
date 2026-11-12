@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from pymodbus.constants import ExcCodes
+
 from modsim.runtime import RuntimeContext
 from modsim.utils import get_parser
 from modsim.wot import configure
@@ -239,7 +241,7 @@ def test_readonly_bits_and_writeonly_property(tmp_path):
     instance = configure_properties(tmp_path, {"a": a, "b": b})
     context = RuntimeContext([instance])
     assert asyncio.run(context.async_setValues(1, 6, 0, [2])) is None
-    assert asyncio.run(context.async_setValues(1, 6, 0, [3])) is not None
+    assert asyncio.run(context.async_setValues(1, 6, 0, [3])) == ExcCodes.ILLEGAL_VALUE
     assert instance.get("a") is False
     assert instance.get("b") is True
     instance = configure_properties(tmp_path, {"value": prop(writeOnly=True)})
@@ -269,12 +271,15 @@ def test_partial_float_write_validates_full_span_and_rolls_back(tmp_path):
         tmp_path, {"value": prop("float", 2, "number", maximum=1.5)}, {"value": 1.5}
     )
     context = RuntimeContext([instance])
-    assert asyncio.run(context.async_setValues(1, 6, 1, [1])) is not None
+    assert asyncio.run(context.async_setValues(1, 6, 1, [1])) == ExcCodes.ILLEGAL_VALUE
     assert instance.get("value") == 1.5
     assert asyncio.run(context.async_setValues(1, 6, 0, [0x3F80])) is None
     assert instance.get("value") == 1.0
     assert instance.held == {"value"}
-    assert asyncio.run(context.async_setValues(1, 6, 0, [0x7F80])) is not None
+    assert (
+        asyncio.run(context.async_setValues(1, 6, 0, [0x7F80]))
+        == ExcCodes.ILLEGAL_VALUE
+    )
     assert instance.get("value") == 1.0
 
 
@@ -295,7 +300,9 @@ def test_legacy_bool16_full_span_write_preserves_padding(tmp_path):
     context = RuntimeContext([instance])
     assert asyncio.run(context.async_setValues(1, 16, 0, [0x8101, 0])) is None
     assert instance.get("value") == [True] + [False] * 6 + [True, True] + [False] * 7
-    assert asyncio.run(context.async_setValues(1, 16, 0, [0, 1])) is not None
+    assert (
+        asyncio.run(context.async_setValues(1, 16, 0, [0, 1])) == ExcCodes.ILLEGAL_VALUE
+    )
     assert instance.cells["holding_register"] == {0: 0x8101, 1: 0}
 
 
@@ -463,3 +470,94 @@ def test_float_initial_multipleof_intersects_declared_bounds(tmp_path, raw, quan
         },
     )
     assert instance.get("value") == 105
+
+
+def test_bound_target_keeps_a_client_write_under_hold_and_follows_under_overwrite(
+    tmp_path,
+):
+    source = prop("unsignedShort", 1, address=0)
+    target = prop("unsignedShort", 1, address=1)
+    for policy, expected in (("hold", 999), ("overwrite", 10)):
+        instance = configure_properties(
+            tmp_path, {"src": source, "tgt": target}, {"src": 10}
+        )
+        instance.bindings = {"tgt": "src"}
+        instance.write_policy = policy
+        instance.apply_bindings()
+        context = RuntimeContext([instance])
+        assert asyncio.run(context.async_setValues(1, 6, 1, [999])) is None
+        instance.advance(0, 1)
+        assert instance.get("src") == 10
+        assert instance.get("tgt") == expected, policy
+
+
+def test_rejected_write_restores_only_touched_cells_in_place(tmp_path):
+    flag = prop("unsignedShort", 1, address=0)
+    other = prop("unsignedShort", 1, address=1)
+    instance = configure_properties(tmp_path, {"a": flag, "b": other}, {"a": 1, "b": 2})
+    cells = instance.cells
+    context = RuntimeContext([instance])
+
+    def fail(name, *args):
+        if name == "on_write":
+            instance.set("b", 77)
+            raise ValueError("script refused")
+
+    instance.hook = fail
+    assert asyncio.run(context.async_setValues(1, 6, 0, [5])) == ExcCodes.ILLEGAL_VALUE
+    assert instance.get("a") == 1 and instance.get("b") == 2
+    assert instance.cells is cells
+    assert instance.journal is None
+
+
+def bit_prop():
+    value = prop("unsignedShort", 1, "boolean")
+    value["forms"][0]["modpoll:bit"] = 0
+    return value
+
+
+@pytest.mark.parametrize(
+    "properties, name, value, match",
+    [
+        ({"v": prop("unsignedShort", 1)}, "v", "text", "violates|expected"),
+        ({"v": prop("unsignedShort", 1)}, "v", True, "violates|expected"),
+        ({"v": prop("unsignedShort", 1)}, "v", 70000, "violates|cannot be encoded"),
+        ({"v": prop("float", 2, "number")}, "v", float("nan"), "violates|non-finite"),
+        ({"v": bit_prop()}, "v", 1, "violates"),
+        ({"v": bit_prop()}, "v", "yes", "violates"),
+    ],
+)
+def test_encoder_rejects_wrong_types_without_touching_the_register(
+    tmp_path, properties, name, value, match
+):
+    instance = configure_properties(tmp_path, properties)
+    before = instance.get(name)
+    with pytest.raises(ValueError, match=match):
+        instance.set(name, value)
+    assert instance.get(name) == before
+
+
+def test_script_hooks_must_be_synchronous(tmp_path):
+    from types import SimpleNamespace
+
+    instance = configure_properties(tmp_path, {"v": prop("unsignedShort", 1)})
+
+    async def coroutine_hook(device, *args):
+        return None
+
+    instance.script = SimpleNamespace(on_write=coroutine_hook)
+    with pytest.raises(ValueError, match="synchronous"):
+        instance.hook("on_write", {})
+    instance.script = SimpleNamespace(on_write=lambda device, *args: asyncio.sleep(0))
+    with pytest.raises(ValueError, match="synchronous"):
+        instance.hook("on_write", {})
+    instance.script = SimpleNamespace(on_write=lambda device, *args: object())
+    assert instance.hook("on_write", {}) is None
+
+
+def test_async_hook_is_rejected_when_the_script_loads(tmp_path):
+    instance = configure_properties(tmp_path, {"v": prop("unsignedShort", 1)})
+    script = tmp_path / "behavior.py"
+    script.write_text("async def tick(device, elapsed, dt):\n    pass\n")
+    with pytest.raises(ValueError, match="must be a synchronous function"):
+        instance.load_script(str(script))

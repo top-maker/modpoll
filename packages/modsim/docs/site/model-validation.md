@@ -106,8 +106,8 @@ change read-only/reserved bits; a writable bit sharing a register with read-only
 bits can be changed while preserving those bits. Reads that would expose a
 write-only field are rejected, while FC5/6 write echoes remain supported.
 Model read-only measurements may be changed internally but cannot be written by clients.
-`hold` stops a generator for a property after a valid client write until restart;
-`overwrite` permits the next tick to replace it. Scripts define their own write
+`hold` stops a generator or binding for a property after a valid client write until
+restart; `overwrite` permits the next tick to replace it. Scripts define their own write
 response and may deliberately overwrite values.
 
 ## Local Python behaviors

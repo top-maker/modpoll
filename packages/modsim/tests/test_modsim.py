@@ -478,3 +478,25 @@ def test_tls_without_certificates_explains_what_is_missing(tmp_path):
     )
     assert result.returncode == 2
     assert "certificates/pymodbus.crt" in result.stderr + result.stdout
+
+
+def test_serial_transport_passes_port_framer_and_datastore(monkeypatch):
+    import asyncio
+
+    from modsim import main
+    from modsim.utils import get_parser
+
+    calls = {}
+
+    async def fake_serial_server(**kwargs):
+        calls.update(kwargs)
+
+    monkeypatch.setattr(main, "StartAsyncSerialServer", fake_serial_server)
+    args = get_parser().parse_args(
+        ["--comm", "serial", "--port", "/dev/modsim-test", "--framer", "rtu"]
+    )
+    main.setup_server(args)
+    assert asyncio.run(main.run_async_server(args)) is None
+    assert calls["port"] == "/dev/modsim-test"
+    assert calls["framer"] == args.framer
+    assert calls["context"] is args.context

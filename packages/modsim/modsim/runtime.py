@@ -1,7 +1,6 @@
 """Independent device state, local behavior hooks and atomic protocol access."""
 
 import asyncio
-import copy
 import importlib.util
 import inspect
 import logging
@@ -48,6 +47,9 @@ class Device:
         self.bindings: dict[str, str] = {}
         self.write_policy = "hold"
         self.held: set[str] = set()
+        # Previous raw values of cells changed by the write in progress, so a
+        # rejected write restores only what it touched.
+        self.journal: dict[tuple[str, int], Any] | None = None
 
     def get(self, name: str) -> Any:
         """Read the current property value, including previous client writes."""
@@ -91,6 +93,9 @@ class Device:
         old = {
             (table, address): self.cells[table][address] for table, address in updates
         }
+        if self.journal is not None:
+            for key, raw in old.items():
+                self.journal.setdefault(key, raw)
         try:
             for (table, address), (raw, mask) in updates.items():
                 value = (int(self.cells[table][address]) & ~mask) | (raw & mask)
@@ -164,8 +169,17 @@ class Device:
             values[name] = value
         self.set_many(values)
         self.hook("tick", elapsed, dt)
+        self.apply_bindings()
+
+    def apply_bindings(self) -> None:
+        """Copy sources to targets; under hold a client-written target stays put."""
+        hold = self.write_policy == "hold"
         self.set_many(
-            {target: self.get(source) for target, source in self.bindings.items()}
+            {
+                target: self.get(source)
+                for target, source in self.bindings.items()
+                if not (hold and target in self.held)
+            }
         )
 
     async def run(self) -> None:
@@ -219,7 +233,8 @@ class RuntimeContext:
         if error := device.access(func_code, address, len(values), True):
             return error
         table = FUNCTIONS[func_code]
-        old = copy.deepcopy(device.cells)
+        journal: dict[tuple[str, int], Any] = {}
+        device.journal = journal
         held = device.held.copy()
         try:
             full_mask = 1 if table in ("coil", "discrete_input") else 65535
@@ -229,6 +244,9 @@ class RuntimeContext:
                 current = int(device.cells[table][current_address])
                 if (current ^ int(value)) & (full_mask ^ allowed):
                     raise ValueError("write changes read-only or unconfigured bits")
+                journal.setdefault(
+                    (table, current_address), device.cells[table][current_address]
+                )
                 device.cells[table][current_address] = value
             touched = {(table, item) for item in range(address, address + len(values))}
             changes = device.validate_cells(touched)
@@ -237,15 +255,13 @@ class RuntimeContext:
                 name for name in changes if device.codecs[name].member.writable
             )
             device.hook("on_write", changes)
-            device.set_many(
-                {
-                    target: device.get(source)
-                    for target, source in device.bindings.items()
-                }
-            )
+            device.apply_bindings()
         except Exception:
-            device.cells = old
+            for (name, address), raw in journal.items():
+                device.cells[name][address] = raw
             device.held = held
             _LOG.exception("Write rejected by device %s", device.name)
             return ExcCodes.ILLEGAL_VALUE
+        finally:
+            device.journal = None
         return None
