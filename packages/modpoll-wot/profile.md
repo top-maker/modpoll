@@ -247,6 +247,25 @@ markers and account data belong to the receiving service, not the report.
 properties. With the model, they also check its hash and model fingerprint, and that
 every point names a readable property with a matching fingerprint.
 
+## Tool sessions and Workspace references
+
+A tool such as modpoll or modsim signs in to ModioHub with the browser authorization flow
+(OAuth 2.0 device authorization grant) and receives a tool session token that lives 7 days.
+This package only defines where the token is kept and how a Workspace Thing Model is named, so
+that a login made by any tool works for every tool on the same computer. It makes no request.
+
+- **Token**: `MODIOHUB_TOKEN` in the environment wins; otherwise the credentials file. `MODIOHUB_URL` names
+  another server (an origin, https unless local; default `https://modiohub.com`).
+- **File**: `MODIOHUB_CREDENTIALS`, else `modiohub/credentials.json` under `$XDG_CONFIG_HOME` (default
+  `~/.config`) or `%APPDATA%`. Mode `0600` in a `0700` directory; a file other users can read is refused.
+  Content: `{"version": 1, "servers": {"<origin>": {"token", "expiresAt", "githubUser"}}}`. Each server
+  keeps its own login; an expired token is ignored.
+- **Reference**: `modiohub:<id>@<version>` names a version of a custom Thing Model. The id is the 16
+  characters of the custom Thing Model, the version a number or `latest` (the default). Shared versions
+  can be read without a login.
+
+`load_session`, `save_session`, `forget_session`, `server_url` and `parse_reference` implement this.
+
 ## Simulation data
 
 Simulation data describes the values a simulator serves for one device of a

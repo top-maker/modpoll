@@ -6,6 +6,17 @@ from .validation import ModelValidationError, validate_standard
 from .profile import instantiate, export_td, parse_parameters
 from .delivery import project_point_table
 from .simulation import DataError, SimulationData, load_simulation_data, scaled_raw
+from .session import (
+    REFERENCE_PREFIX,
+    CredentialError,
+    Reference,
+    Session,
+    forget_session,
+    load_session,
+    parse_reference,
+    save_session,
+    server_url,
+)
 from .verification import (
     ReportError,
     model_fingerprint,
@@ -14,6 +25,15 @@ from .verification import (
 )
 
 __all__ = [
+    "REFERENCE_PREFIX",
+    "CredentialError",
+    "Reference",
+    "Session",
+    "forget_session",
+    "load_session",
+    "parse_reference",
+    "save_session",
+    "server_url",
     "DataError",
     "SimulationData",
     "load_simulation_data",
