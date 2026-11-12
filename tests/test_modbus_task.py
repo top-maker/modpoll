@@ -1,3 +1,5 @@
+import os
+
 from tests.wot_helpers import write_meter
 import pytest  # type: ignore
 from modpoll.arg_parser import get_parser
@@ -5,6 +7,10 @@ from modpoll.modbus_task import setup_modbus_handlers
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(
+    not os.environ.get("MODPOLL_PUBLIC_NETWORK"),
+    reason="reads the public modsim.topmaker.net; set MODPOLL_PUBLIC_NETWORK=1 to run",
+)
 def test_modbus_task_poll_modsim():
     parser = get_parser()
     args = parser.parse_args(

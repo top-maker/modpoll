@@ -1,3 +1,4 @@
+import os
 import pytest
 import time
 import queue
@@ -252,6 +253,11 @@ def test_publish_attempts_reconnect_when_disconnected_qos1(monkeypatch):
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(
+    not os.environ.get("MODPOLL_PUBLIC_NETWORK")
+    and not os.environ.get("MODPOLL_MQTT_HOST"),
+    reason="connects to a public broker; set MODPOLL_PUBLIC_NETWORK=1 or MODPOLL_MQTT_HOST",
+)
 def test_mqtt_task_connect():
     import os
     import uuid
