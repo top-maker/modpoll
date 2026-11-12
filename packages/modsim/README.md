@@ -207,6 +207,22 @@ the working directory. See [transport details](docs/site/index.md#unconfigured-d
 The checked-in ADAM-6024 TD and its source hash can be checked with
 `uv run python tools/generate-td.py --check`; omit `--check` to regenerate.
 
+### Models in your ModioHub Workspace
+
+`modsim login` signs in to ModioHub with your browser: it prints a code and an address (and opens the address
+where a browser can open), you confirm the code there, and the 7-day tool session is kept in a file only you
+can read (`~/.config/modiohub/credentials.json`, or `%APPDATA%\modiohub` on Windows). modpoll uses the same
+file, so signing in with either tool signs in both. `MODIOHUB_TOKEN` replaces the file for scripts,
+`MODIOHUB_URL` selects another server, and `login` and `logout` take `--server URL` for the same. `modsim logout` forgets the login on this computer.
+
+Then `--config modiohub:<id>@<version>` (the version is a number or `latest`) simulates one of your custom
+Thing Models, or a shared one without signing in; the download is checked against the SHA-256 the server states.
+Deployment manifests do not take `modiohub:` models, so a hosted deployment never carries your login.
+
+```sh
+modsim --config modiohub:k3x9f2m7q4a8n5bd@latest --port 5020
+```
+
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the v2 workflow and checks. The

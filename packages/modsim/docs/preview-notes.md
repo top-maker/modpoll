@@ -1,4 +1,15 @@
-# Modsim 2.0.0a8 preview
+# Modsim 2.0.0a9 preview
+
+Modsim 2.0.0a9 pins modpoll-wot 0.5.0a1 and connects to ModioHub:
+
+- `modsim login` signs in with your browser and `modsim logout` forgets the login. The 7-day tool session is
+  kept in `~/.config/modiohub/credentials.json` and is shared with modpoll 2.0.0a7.
+- `--config modiohub:<id>@<version>` simulates a custom Thing Model from your ModioHub Workspace (a shared one
+  needs no login). Deployment manifests do not accept it.
+- It also carries the SIM-06 fixes: only writable points are held after a client write, management requests
+  and device builds no longer block the event loop, and `script:` paths stay inside the deployment directory.
+
+## Modsim 2.0.0a8 preview
 
 Modsim 2.0.0a8 loads [simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
 with `--data` and pins modpoll-wot 0.4.0a1. This preview breaks the previous

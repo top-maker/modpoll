@@ -16,13 +16,16 @@ config: Dict[str, Any] = {}
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=f"Modsim v{__version__} - A Simple Modbus TCP Device Simulator used for modpoll tool",
-        epilog="Managed commands: up, down, ps, logs, export, reset. Use modsim COMMAND --help.",
+        epilog="Managed commands: up, down, ps, logs, export, reset. Use modsim COMMAND --help. Sign in to ModioHub with modsim login.",
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"{__package__} v{__version__}"
     )
     sources = parser.add_mutually_exclusive_group()
-    sources.add_argument("--config", help="Profile 0.2 TM/TD local path or HTTPS URL")
+    sources.add_argument(
+        "--config",
+        help="Profile 0.2 TM/TD local path, HTTPS URL, or modiohub:<id>@<version> for a custom Thing Model in your ModioHub Workspace",
+    )
     parser.add_argument(
         "--data",
         help=(

@@ -233,7 +233,10 @@ async def run_async_server(args: Any) -> Any:
 
 def app() -> None:
     from .commands import ACTIONS, run
+    from .login import command
 
+    if sys.argv[1:2] in (["login"], ["logout"]):
+        raise SystemExit(command(sys.argv[1:]))
     if len(sys.argv) > 1 and sys.argv[1] in ACTIONS:
         run(sys.argv[1:])
         return
