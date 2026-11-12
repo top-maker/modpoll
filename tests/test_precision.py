@@ -213,3 +213,52 @@ def test_cli_rejects_a_precision_that_is_not_a_count(text):
 
     with pytest.raises(SystemExit):
         parser.parse_args(["-f", "c.tm.json", "--precision", text])
+
+
+@pytest.mark.parametrize("text", [True, "abc", "1.5", -1, "-2"])
+def test_invalid_precision_is_rejected(text):
+    with pytest.raises(ValueError):
+        parse_precision(text)
+
+
+def test_precision_accepts_auto_count_and_blank():
+    assert parse_precision(None) is None
+    assert parse_precision(" AUTO ") is None
+    assert parse_precision("") is None
+    assert parse_precision("3") == 3
+    assert parse_precision(0) == 0
+
+
+@pytest.mark.parametrize("multiplier", [Decimal("sNaN"), Decimal(0), Decimal("1E+500")])
+def test_unusable_multipliers_fall_back_to_the_value_without_raising(multiplier):
+    # No branch may turn a reading into a wrong number or an exception.
+    for precision in (None, 3):
+        rendered = render_value(1.5, precision, raw=3, multiplier=multiplier)
+        assert rendered == 1.5 or precision == 3
+
+
+def test_exact_decimal_too_wide_to_quantize_keeps_its_value():
+    assert render_value(1e40, 2, raw=1, multiplier=Decimal("1E+40")) == 1e40
+
+
+def test_exact_decimal_beyond_float_range_falls_back_to_the_reading():
+    assert render_value(1.5, None, raw=1, multiplier=Decimal("1E+400")) == 1.5
+
+
+@pytest.mark.parametrize(
+    "value, dtype, expected",
+    [
+        (12.34000015258789, "float32", 12.34),
+        (0.1, "float32", 0.1),
+        (1e300, "float32", 1e300),
+        (float("inf"), "float32", float("inf")),
+        (1.5, "uint16", 1.5),
+    ],
+)
+def test_register_width_shortest_decimal(value, dtype, expected):
+    assert render_value(value, None, dtype=dtype) == expected
+
+
+@pytest.mark.parametrize("multiplier", [Decimal(0), Decimal("sNaN")])
+def test_a_value_that_cannot_be_inverted_does_not_name_the_raw(multiplier):
+    assert not names_same_raw(1.5, 3, multiplier)

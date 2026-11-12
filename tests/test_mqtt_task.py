@@ -1,7 +1,9 @@
 import os
-import pytest
-import time
 import queue
+import ssl
+import time
+
+import pytest
 from modpoll.mqtt_task import MqttHandler
 
 
@@ -360,3 +362,55 @@ def test_received_payload_is_logged_at_debug_not_info(caplog):
     assert any("a/b" in line for line in info)
     assert not any("secret" in line for line in info)
     assert any("secret" in line for line in debug)
+
+
+class TlsClient:
+    def __init__(self, error=None):
+        self.error, self.calls = error, []
+
+    def tls_set(self, **kwargs):
+        if self.error:
+            raise self.error
+        self.calls.append(kwargs)
+
+
+def tls_handler(client, **options):
+    handler = MqttHandler(
+        "t", "broker.local", 8883, None, None, "c", 0, use_tls=True, **options
+    )
+    handler.mqtt_client = client
+    return handler
+
+
+@pytest.mark.parametrize(
+    "version, expected",
+    [
+        ("tlsv1.2", "PROTOCOL_TLSv1_2"),
+        ("TLSv1.1", "PROTOCOL_TLSv1_1"),
+        ("tlsv1", "PROTOCOL_TLSv1"),
+        ("other", "PROTOCOL_TLS"),
+    ],
+)
+def test_tls_version_names_map_to_ssl_protocols(version, expected):
+    client = TlsClient()
+    tls_handler(client, tls_version=version, cacerts="ca.pem")._setup_tls()
+    (call,) = client.calls
+    assert call["tls_version"] == getattr(ssl, expected)
+    assert call["ca_certs"] == "ca.pem"
+
+
+@pytest.mark.parametrize(
+    "insecure, expected", [(False, "CERT_REQUIRED"), (True, "CERT_NONE")]
+)
+def test_insecure_flag_decides_certificate_verification(insecure, expected):
+    client = TlsClient()
+    tls_handler(client, tls_version="tlsv1.2", insecure=insecure)._setup_tls()
+    assert client.calls[0]["cert_reqs"] == getattr(ssl, expected)
+
+
+@pytest.mark.parametrize("error", [ssl.SSLError("bad"), OSError("no ca file")])
+def test_tls_setup_errors_are_logged_and_raised(error, caplog):
+    handler = tls_handler(TlsClient(error), tls_version="tlsv1.2")
+    with pytest.raises(type(error)):
+        handler._setup_tls()
+    assert "setup error" in caplog.text.lower()
