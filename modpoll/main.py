@@ -14,7 +14,7 @@ from .modbus_task import (
     snapshot_timestamp_conflicts,
 )
 
-from . import __version__
+from . import __version__, verification
 from .utils import set_threading_event, delay_thread, on_threading_event, get_utc_time
 
 
@@ -128,6 +128,26 @@ def process_mqtt_command(topic, payload, retained, topic_pattern, handlers):
     return success
 
 
+def _finish_full_read(args, handler):
+    """Summarize the full read and write its report; the result is whether every point was read."""
+    try:
+        report = verification.build_report(handler, args)
+        if args.report:
+            verification.write_report(report, args.report)
+    except (ValueError, OSError, AcquisitionError) as exc:
+        logger.error("%s", exc)
+        logger.debug("Report error details", exc_info=True)
+        return False
+    print(f"\n{verification.summary(report)}", flush=True)
+    if args.report and args.report != "-":
+        print(
+            f"Report written to {args.report}. It has no addresses, Unit IDs, serial "
+            "numbers or values; review it before sharing.",
+            flush=True,
+        )
+    return verification.is_full_read(report)
+
+
 def _signal_handler(signal_number, frame):
     if logger:
         logger.info(f"Exiting {sys.argv[0]}")
@@ -157,6 +177,12 @@ def app(name="modpoll"):
     setup_logging(args.loglevel, LOG_SIMPLE)
     global logger
     logger = logging.getLogger(__name__)
+
+    try:
+        verification.validate_args(args)
+    except ValueError as exc:
+        logger.error("%s", exc)
+        sys.exit(2)
 
     # setup mqtt
     if not args.mqtt_host:
@@ -205,6 +231,7 @@ def app(name="modpoll"):
     try:
         # setup modbus tasks
         try:
+            verification.resolve_models(args)
             modbus_handlers = setup_modbus_handlers(args, mqtt_handler)
         except (ValueError, AcquisitionError) as exc:
             # A mistake in the command line or model is reported, not a stack.
@@ -267,6 +294,10 @@ def app(name="modpoll"):
                         timestamp=now if args.timestamp else None,
                     )
                     cycle_success = export_success and cycle_success
+                if args.full_read and not on_threading_event():
+                    cycle_success = (
+                        _finish_full_read(args, modbus_handlers[0]) and cycle_success
+                    )
             if args.diagnostics_rate > 0 and (
                 last_diag is None or monotonic_now >= last_diag + args.diagnostics_rate
             ):
