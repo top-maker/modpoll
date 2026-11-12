@@ -96,8 +96,7 @@ The configuration loader detects the format from the content and reports invalid
 model fields before polling. Each model describes one device; use multiple
 `--config` paths for multiple devices. Give each model a unique `title`, which is
 the output device name. Existing v1 CSV configurations load through the same
-`--config` argument; use `--thing-model` or
-`--thing-description`/`--td` to assert the JSON document kind explicitly.
+`--config` argument; no separate flags are needed.
 
 Physical RS485 polling has also been verified by the maintainer with an Eastron
 meter (2026-10-28). See [validation](docs/validation.rst) for the evidence scope and
@@ -138,12 +137,12 @@ signing in with either tool signs in both. `MODIOHUB_TOKEN` in the environment r
 `MODIOHUB_URL` selects another server, and `login` and `logout` take `--server URL` for the same. `modpoll logout` forgets the login on this computer;
 revoke the session in your ModioHub settings to end it on the server.
 
-Once signed in, `--tm modiohub:<id>@<version>` (`-f` works too; the version is a number or `latest`) reads one
+Once signed in, `--config modiohub:<id>@<version>` (the version is a number or `latest`) reads one
 of your custom Thing Models. A shared one needs no login. A full read of it writes a report that names the
 Workspace model, and `--upload` shows the report and, after you confirm (or with `--yes`), uploads it:
 
 ```sh
-modpoll --tm modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
+modpoll --config modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
 ```
 
 ### MQTT data and write behavior

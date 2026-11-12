@@ -230,7 +230,14 @@ def test_full_read_of_a_workspace_model_names_the_workspace_as_its_source(
     with pytest.raises(SystemExit):
         run_app(
             monkeypatch,
-            ["--tm", f"modiohub:{ID}@2", "--tcp", "x", "--report", str(report_path)],
+            [
+                "--config",
+                f"modiohub:{ID}@2",
+                "--tcp",
+                "x",
+                "--report",
+                str(report_path),
+            ],
             FakeClient(),
         )
     report = json.loads(report_path.read_text())

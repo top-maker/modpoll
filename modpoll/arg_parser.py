@@ -25,7 +25,6 @@ def get_parser():
     parser.add_argument(
         "-f",
         "--config",
-        "--tm",
         dest="config",
         default=None,
         help=(
@@ -36,30 +35,6 @@ def get_parser():
             "Required unless --device is given."
         ),
         nargs="+",
-    )
-    parser.add_argument(
-        "--thing-model",
-        dest="thing_model",
-        default=[],
-        help=(
-            "Local path or URL of a WoT Thing Model JSON configuration "
-            "(tm:ThingModel); asserts the document kind instead of detecting it. "
-            "Not for modiohub: Workspace references; use --config/--tm for those."
-        ),
-        nargs="+",
-        metavar="PATH_OR_URL",
-    )
-    parser.add_argument(
-        "--thing-description",
-        "--td",
-        dest="thing_description",
-        default=[],
-        help=(
-            "Local path or URL of a WoT Thing Description JSON configuration; "
-            "asserts the document kind instead of detecting it"
-        ),
-        nargs="+",
-        metavar="PATH_OR_URL",
     )
     parser.add_argument(
         "--device",

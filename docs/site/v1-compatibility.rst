@@ -2,8 +2,8 @@ v1 compatibility and M3 acceptance
 ===================================
 
 The v2 change adds the executable TM/TD profile alongside the retained v1 CSV
-loader. ``--config`` detects the format from the content;
-``--thing-model``/``--thing-description`` assert the JSON document kind. The
+loader. ``--config`` is the single configuration argument and detects the
+format from the content. The
 existing transport, decoder, output and raw write paths remain. This table
 compares the pinned v1 baseline ``0b42099`` with the v2 implementation; it is
 not a claim that all WoT documents or every operating system has been

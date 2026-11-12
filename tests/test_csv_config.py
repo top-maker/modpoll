@@ -109,12 +109,12 @@ def test_format_is_detected_from_content_not_filename(tmp_path):
     assert model is not None
 
 
-def test_thing_model_and_description_assert_the_document_kind():
+def test_document_kind_assertion_at_loader_level():
     with pytest.raises(ValueError, match="document kind disagrees"):
         load_devices(str(MODSIM_TD), kind="tm", timeout=1)
     with pytest.raises(ValueError, match="document kind disagrees"):
         load_devices(str(MODSIM_TM), kind="td", timeout=1)
-    with pytest.raises(ValueError, match="expects a TM/TD JSON document"):
+    with pytest.raises(ValueError, match="expected a Thing Model JSON document"):
         load_devices(str(MODSIM_CSV), kind="tm", timeout=1)
     (_,), model = load_devices(str(MODSIM_TM), kind="tm", timeout=1)
     assert model is not None
