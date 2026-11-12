@@ -254,13 +254,10 @@ class Poller:
                                     self._decode_and_update_point(point, decoder)
                                 if not point.valid_this_poll:
                                     decode_success = False
-                            except Exception:
+                            except Exception as exc:
                                 point.update_value(None, valid=False)
                                 decode_success = False
-                                self.logger.exception(
-                                    "Failed to decode physical bit point %s",
-                                    point.name,
-                                )
+                                self._log_decode_failure(point, exc)
                             continue
                         if (
                             offset < 0
@@ -301,12 +298,10 @@ class Poller:
                                 self._decode_and_update_point(point, decoder)
                             if not point.valid_this_poll:
                                 decode_success = False
-                        except Exception:
+                        except Exception as exc:
                             point.update_value(None, valid=False)
                             decode_success = False
-                            self.logger.exception(
-                                "Failed to decode value for point: %s", point.name
-                            )
+                            self._log_decode_failure(point, exc)
                 else:  # Function codes 3 and 4
                     data = result.registers
                     # Sort refs by address to ensure predictable decoding order
@@ -334,12 +329,10 @@ class Poller:
                             self._decode_and_update_point(point, decoder)
                             if not point.valid_this_poll:
                                 decode_success = False
-                        except Exception as e:
+                        except Exception as exc:
                             point.update_value(None, valid=False)
                             decode_success = False
-                            self.logger.error(
-                                f"Failed to decode value for point: {point.name} - {e}"
-                            )
+                            self._log_decode_failure(point, exc)
                 self.update_statistics(decode_success)
                 return decode_success
         except ModbusException:
@@ -362,6 +355,13 @@ class Poller:
             wordorder=wordorder,
             coils=self.fc in (1, 2),
         )
+
+    def _log_decode_failure(self, point: "Point", exc: Exception):
+        """Bad register data is a data event, not a program error: one line, stack at DEBUG."""
+        self.logger.error(
+            "Failed to decode point %s: %s: %s", point.name, type(exc).__name__, exc
+        )
+        self.logger.debug("Decode failure details for %s", point.name, exc_info=True)
 
     def _decode_and_update_point(self, point: "Point", decoder: _PayloadDecoder):
         if getattr(point, "scalar", False) and point.dtype == "uint16":
@@ -406,13 +406,11 @@ class Poller:
             self.readablePoints.append(point)
 
     def update_statistics(self, success: bool):
-        self.device.pollCount += 1
         if success:
             self.failcounter = 0
             self.device.pollSuccess = True
         else:
             self.failcounter += 1
-            self.device.errorCount += 1
             self.device.pollSuccess = False
 
 
@@ -602,11 +600,14 @@ class ModbusHandler:
             for dev in self.deviceList:
                 for point in dev.points.values():
                     point.update_value(None, valid=False)
-                for poller in dev.pollerList:
-                    if not poller.disabled:
-                        previous_failures = poller.failcounter
-                        poller.update_statistics(False)
-                        self._record_poller_result(poller, False, previous_failures)
+                active = [p for p in dev.pollerList if not p.disabled]
+                if active:
+                    dev.pollCount += 1
+                    dev.errorCount += 1
+                for poller in active:
+                    previous_failures = poller.failcounter
+                    poller.update_statistics(False)
+                    self._record_poller_result(poller, False, previous_failures)
             return
         try:
             for dev in self.deviceList:
@@ -615,7 +616,6 @@ class ModbusHandler:
                 poll_success = bool(pollers)
                 for p in pollers:
                     previous_failures = p.failcounter
-                    previous_polls = dev.pollCount
                     try:
                         succeeded = p.poll(self.modbus_client)
                         poll_success = succeeded and poll_success
@@ -625,15 +625,16 @@ class ModbusHandler:
                         poll_success = False
                         for point in p.readablePoints:
                             point.update_value(None, valid=False)
-                    if dev.pollCount == previous_polls:
-                        dev.pollCount += 1
-                        if not succeeded:
-                            dev.errorCount += 1
                     self._record_poller_result(p, succeeded, previous_failures)
                     if on_threading_event():
                         return
                     delay_thread(timeout=self.interval)
                 dev.pollSuccess = poll_success
+                if pollers:
+                    # One poll cycle per device, however many pollers it has.
+                    dev.pollCount += 1
+                    if not poll_success:
+                        dev.errorCount += 1
         finally:
             self.disconnect()
             if not self.daemon:

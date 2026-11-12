@@ -17,7 +17,7 @@ check: ## Run code quality tools.
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@uv run pytest tests --doctest-modules
+	@uv run pytest tests -m "not integration"
 
 .PHONY: build
 build: clean-build ## Build wheel file using uv

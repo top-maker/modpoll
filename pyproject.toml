@@ -41,7 +41,7 @@ module-name = "modpoll"
 module-root = ""
 
 [tool.uv]
-# The CI matrix currently covers Python 3.10 through 3.14.
+# Resolution covers Python 3.10 through 3.14; the CI matrix tests 3.10 and 3.14.
 environments = ["python_version < '3.15'"]
 
 [project.urls]
