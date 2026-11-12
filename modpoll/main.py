@@ -193,6 +193,9 @@ def setup_logging(level, format):
 def app(name="modpoll"):
     if sys.argv[1:2] in (["login"], ["logout"]):
         sys.exit(login.command(sys.argv[1:]))
+    verify_mode = sys.argv[1:2] == ["verify"]
+    if verify_mode:
+        sys.argv = [sys.argv[0], *sys.argv[2:]]
     mqtt_handler = None
     modbus_handlers = []
 
@@ -201,6 +204,7 @@ def app(name="modpoll"):
 
     # parse args
     args = get_parser().parse_args()
+    args.verify = verify_mode
 
     print(
         f"\nModpoll v{__version__} - A New Command-line Tool for Modbus and MQTT\n",

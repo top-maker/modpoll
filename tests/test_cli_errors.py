@@ -36,9 +36,7 @@ def test_configuration_errors_exit_2_without_a_traceback(args, message):
 def test_missing_configuration_exits_2():
     result = run("--once")
     assert result.returncode == 2
-    assert "One of --config/-f or --device is required" in (
-        result.stderr + result.stdout
-    )
+    assert "One of --config/-f is required" in (result.stderr + result.stdout)
     assert "Traceback" not in result.stderr + result.stdout
 
 
@@ -60,11 +58,27 @@ def test_config_accepts_csv_tm_and_td_by_content_detection():
         assert message in output, output
 
 
-def test_removed_flag_aliases_are_rejected():
-    for flag in ("--tm", "--thing-model", "--thing-description", "--td"):
+def test_removed_flags_are_rejected():
+    for flag in (
+        "--tm",
+        "--thing-model",
+        "--thing-description",
+        "--td",
+        "--device",
+        "--full-read",
+        "--chassis",
+        "--firmware",
+        "--configuration",
+    ):
         result = run(flag, "examples/modsim.tm.json", "--once")
         assert result.returncode == 2, flag
         assert "unrecognized arguments" in result.stderr + result.stdout
+
+
+def test_verify_command_reaches_the_transport_check():
+    result = run("verify", "--config", "examples/modsim.tm.json", "--once")
+    assert result.returncode == 2
+    assert "No communication method specified" in result.stderr + result.stdout
 
 
 def test_csv_rejects_typed_parameters():

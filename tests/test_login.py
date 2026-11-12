@@ -231,6 +231,7 @@ def test_full_read_of_a_workspace_model_names_the_workspace_as_its_source(
         run_app(
             monkeypatch,
             [
+                "verify",
                 "--config",
                 f"modiohub:{ID}@2",
                 "--tcp",
@@ -264,7 +265,17 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
     monkeypatch.setattr(verification.requests, "post", post)
     run_app(
         monkeypatch,
-        ["-f", str(path), "--tcp", "x", "--product", PRODUCT, "--upload", "--yes"],
+        [
+            "verify",
+            "-f",
+            str(path),
+            "--tcp",
+            "x",
+            "--product",
+            PRODUCT,
+            "--upload",
+            "--yes",
+        ],
         FakeClient(False, False),
     )
     out = capsys.readouterr().out
@@ -287,7 +298,16 @@ def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
         "post",
         lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
     )
-    arguments = ["-f", str(path), "--tcp", "x", "--product", PRODUCT, "--upload"]
+    arguments = [
+        "verify",
+        "-f",
+        str(path),
+        "--tcp",
+        "x",
+        "--product",
+        PRODUCT,
+        "--upload",
+    ]
     # Not a terminal and no --yes: nothing is sent.
     with pytest.raises(SystemExit) as exit_info:
         run_app(monkeypatch, arguments, FakeClient(False, False))
