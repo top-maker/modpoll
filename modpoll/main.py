@@ -6,7 +6,11 @@ import time
 
 from .arg_parser import get_parser
 from .mqtt_task import MqttHandler
-from .modbus_task import export_modbus_handlers, setup_modbus_handlers
+from .modbus_task import (
+    export_modbus_handlers,
+    setup_modbus_handlers,
+    snapshot_timestamp_conflicts,
+)
 
 from . import __version__
 from .utils import set_threading_event, delay_thread, on_threading_event, get_utc_time
@@ -199,6 +203,17 @@ def app(name="modpoll"):
     try:
         # setup modbus tasks
         modbus_handlers = setup_modbus_handlers(args, mqtt_handler)
+        conflicts = (
+            snapshot_timestamp_conflicts(modbus_handlers or [])
+            if args.export and args.timestamp
+            else []
+        )
+        if conflicts:
+            logger.error(
+                "--timestamp would overwrite the point named timestamp in the "
+                f"snapshot of {', '.join(conflicts)}; drop --timestamp. Exiting..."
+            )
+            exit(1)
         if modbus_handlers:
             logger.info(f"Loaded {len(modbus_handlers)} Modbus config(s).")
             delay_thread(args.delay)

@@ -35,6 +35,15 @@ Commandline Usage
 
     modpoll --tcp 127.0.0.1 --tcp-port 5020 --config examples/modsim.tm.json --export data.json
 
+- Replay an exported snapshot with modsim on this computer. A snapshot is
+  simulation data as it stands; points that were not read keep their defaults.
+  It holds readings of a real device, so keep it local.
+
+  .. code-block:: shell
+
+    modpoll --once --tcp 192.168.1.10 --config examples/modsim.tm.json --export snapshot.json
+    modsim --config examples/modsim.tm.json --port 5020 --data snapshot.json
+
 Configuration File
 ------------------
 

@@ -1,4 +1,21 @@
-# Modpoll 2.0.0a5 preview
+# Modpoll 2.0.0a6 preview
+
+Modpoll 2.0.0a6 pins modpoll-wot 0.4.0a1, which defines simulation data. A
+`--export` snapshot is simulation data as it stands, so modsim 2.0.0a7 can
+replay a device read once, on your computer:
+
+```sh
+modpoll --once --config device.tm.json --tcp DEVICE_HOST --export snapshot.json
+modsim --config device.tm.json --data snapshot.json
+```
+
+The snapshot format is unchanged. Snapshots hold readings of a real device;
+keep them on your computer. With `--export` and `--timestamp`, a device that
+has a point named `timestamp` now stops modpoll at startup instead of having
+that point overwritten. The bundled `modpoll-wot validate --kind data` checks
+a snapshot or a data document. Verification report schema 3 replaces schema 2.
+
+## Modpoll 2.0.0a5 preview
 
 Modpoll 2.0.0a5 removes `--audit` and pins modpoll-wot 0.3.0a3, which removes
 the `modpoll:audit` plan. Thing Models are fully open, and a full read executes

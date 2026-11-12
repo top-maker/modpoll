@@ -312,3 +312,18 @@ def test_odd_length_string_does_not_include_padding_byte():
 
     assert poller.poll(Client())
     assert point.val == "ABC"
+
+
+def test_snapshot_timestamp_never_hides_a_timestamp_point(tmp_path):
+    device = Device("logger", 1)
+    point = make_point(device, "timestamp", 42)
+    device.add_point_mapping(point)
+    handler = ModbusHandler(FakeClient(), "logger.tm.json")
+    handler.deviceList = [device]
+    path = tmp_path / "snapshot.json"
+
+    assert modbus_task.snapshot_timestamp_conflicts([handler]) == ["logger"]
+    assert not export_modbus_handlers([handler], path, timestamp=10)
+    assert not path.exists()
+    assert export_modbus_handlers([handler], path)
+    assert json.loads(path.read_text()) == {"logger": {"timestamp": 42}}
