@@ -106,20 +106,43 @@ class _PayloadDecoder:
         return [bool(value & (1 << bit)) for bit in range(8)]
 
 
+SNAPSHOT_TIMESTAMP = "timestamp"
+
+
+def snapshot_timestamp_conflicts(handlers) -> list:
+    """Device names whose point named `timestamp` a snapshot timestamp would hide."""
+    return [
+        dev.name
+        for handler in handlers
+        for dev in handler.deviceList
+        if SNAPSHOT_TIMESTAMP in dev.points
+    ]
+
+
 def export_modbus_handlers(handlers, file, timestamp=None) -> bool:
-    """Write one complete, atomically replaced JSON snapshot for all handlers."""
+    """Write one complete, atomically replaced JSON snapshot for all handlers.
+
+    The snapshot maps each device title to its point values, with null for
+    points not read in this cycle. Modsim accepts it as simulation data.
+    """
     data = {}
     for handler in handlers:
         for dev in handler.deviceList:
             if dev.name in data:
                 handler.logger.error("Cannot export duplicate device name %s", dev.name)
                 return False
+            if timestamp is not None and SNAPSHOT_TIMESTAMP in dev.points:
+                handler.logger.error(
+                    "Cannot export --timestamp: device %s has a point named timestamp",
+                    dev.name,
+                )
+                return False
             dev_data = {
                 point.name: point.val if point.valid_this_poll else None
                 for point in dev.points.values()
             }
             if timestamp is not None:
-                dev_data["timestamp"] = timestamp
+                dev_data[SNAPSHOT_TIMESTAMP] = timestamp
             data[dev.name] = dev_data
 
     target = Path(file)

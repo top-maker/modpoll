@@ -120,7 +120,10 @@ exactly once.
 When a sample is invalid in a poll cycle, modpoll omits it from MQTT output and
 writes `null` for that point in the JSON snapshot. Snapshots from multiple
 configuration files are combined and replaced atomically. When `--timestamp` is
-enabled, the timestamp is the start time of the poll cycle in Unix seconds.
+enabled, the timestamp is the start time of the poll cycle in Unix seconds; a
+device with a point named `timestamp` cannot use it. A snapshot is
+[simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data),
+so `modsim --config device.tm.json --data snapshot.json` replays it locally.
 
 
 ## Run with docker
@@ -182,6 +185,13 @@ for example, if the child folder `examples` contains the config file `modsim.tm.
     --tcp 127.0.0.1 --tcp-port 5020 \
     --export data.json \
     --config examples/modsim.tm.json
+  ```
+
+- Replay the snapshot with modsim on this computer (keep snapshots of real
+  devices local)
+
+  ```bash
+  modsim --config examples/modsim.tm.json --port 5020 --data data.json
   ```
 
 > Refer to the [documentation](https://top-maker.github.io/modpoll) site for more details about the configuration and examples.
