@@ -1,15 +1,16 @@
 """Verification of a Thing Model against a real device and its report (POLL-02a).
 
-``modpoll verify`` executes the whole ``modpoll:acquisition`` plan once:
-read-only, no retries and a bounded timeout. The
-result per point is recorded in a verification report whose format and validation belong to modpoll-wot. The report
-holds no address, Unit ID, serial number or value; the user reviews it before anything leaves the machine.
+With ``--report`` or ``--upload`` the read executes the whole
+``modpoll:acquisition`` plan once: read-only, no retries and a bounded
+timeout. The result per point is recorded in a verification report whose
+format and validation belong to modpoll-wot. The report holds no address,
+Unit ID, serial number or value; the receiving service resolves the catalog
+product from the model fingerprint, so the user never names the product.
 """
 
 import hashlib
 import json
 import os
-import re
 import tempfile
 import uuid
 from datetime import datetime, timezone
@@ -23,51 +24,31 @@ from . import __version__
 from .login import headers as api_headers
 
 MAX_TIMEOUT = 10.0
-_SLUG = r"[a-z0-9]+(?:-[a-z0-9]+)*"
-_DEVICE = re.compile(rf"^({_SLUG}/{_SLUG})(?:@([A-Za-z0-9][A-Za-z0-9._/-]{{0,99}}))?$")
 
 
 def validate_args(args):
     """Reject option combinations a command cannot honour, before anything is connected."""
-    verify_options = ("report", "upload", "yes", "confirm", "reject", "product")
-    if args.verify:
-        args.full_read = True
-    else:
-        args.full_read = False
-        if any(getattr(args, option) for option in verify_options):
-            raise ValueError(
-                "Verification options belong to the verify command; for example: "
-                "modpoll verify --config model.tm.json --tcp HOST --upload"
-            )
+    args.full_read = args.report is not None or args.upload
+    if args.yes and not args.upload:
+        raise ValueError("--yes needs --upload")
+    if (args.confirm or args.reject) and not args.full_read:
+        raise ValueError("--confirm and --reject need --report or --upload")
     sources = list(args.config or [])
     if not sources:
         raise ValueError("One of --config/-f is required")
     if not args.full_read:
         return
     if args.mqtt_host:
-        raise ValueError("modpoll verify does not publish to MQTT")
+        raise ValueError("A verification report is not published to MQTT")
     if args.udp:
-        raise ValueError("modpoll verify supports Modbus TCP and RTU, not UDP")
+        raise ValueError("A verification report supports Modbus TCP and RTU, not UDP")
     if args.serial and args.framer == "ascii":
-        raise ValueError("modpoll verify supports Modbus RTU, not Modbus ASCII")
+        raise ValueError("A verification report supports Modbus RTU, not Modbus ASCII")
     if len(sources) != 1:
-        raise ValueError("modpoll verify reads one Thing Model")
-    workspace = any(
-        location.startswith(modpoll_wot.REFERENCE_PREFIX)
-        for location in args.config or []
-    )
-    if (args.report or args.upload) and not (args.product or workspace):
-        raise ValueError(
-            "modpoll verify --report needs --product <manufacturer>/<model-number> "
-            "when the model does not name one"
-        )
-    if args.yes and not args.upload:
-        raise ValueError("--yes needs --upload")
-    if args.product and not _DEVICE.match(args.product):
-        raise ValueError("--product must be <manufacturer>/<model-number>")
+        raise ValueError("A verification report reads one Thing Model")
     if args.timeout > MAX_TIMEOUT:
         raise ValueError(
-            f"--timeout is at most {MAX_TIMEOUT:g} seconds in a verification"
+            f"--timeout is at most {MAX_TIMEOUT:g} seconds for a verification report"
         )
     args.once = True
     args.daemon = False
@@ -85,7 +66,6 @@ def resolve_models(args):
             payload, details = fetch_workspace_model(location, timeout=args.timeout)
             args.model_payloads[location] = payload
             if args.full_read:
-                args.product = args.product or details["product"]
                 args.model_source = {"source": "workspace", "ref": details["ref"]}
 
 
@@ -230,8 +210,7 @@ def build_report(handler, args):
         point["expected"] = judged.get(name, "unchecked") if read_ok else "unchecked"
         points.append(point)
     report = {
-        "reportVersion": 3,
-        "product": args.product,
+        "reportVersion": 4,
         "model": {
             "sha256": hashlib.sha256(payload).hexdigest(),
             "fingerprint": modpoll_wot.model_fingerprint(payload),

@@ -105,15 +105,16 @@ meter (2026-10-28). See [validation](docs/validation.rst) for the evidence scope
 For a complete local simulator/MQTT demonstration, use the repository's
 [Docker Compose example](examples/README.md).
 
-### Verify a Thing Model on a real device and write a report
+### Read a device and write a verification report
 
-`modpoll verify --config MODEL --tcp HOST` reads every point of a Thing Model once: read-only, without
-retries and with a timeout of at most 10 seconds, so a lost request is a result and not something to repeat.
-MODEL is a local TM/TD file, an http(s) URL or a `modiohub:<id>@<version>` Workspace reference. `--report
-FILE` also writes the verification report (`-` prints it):
+Adding `--report` to a normal read verifies the Thing Model on real hardware: every point is read once,
+read-only, without retries and with a timeout of at most 10 seconds, so a lost request is a result and not
+something to repeat. MODEL is a local TM/TD file, an http(s) URL or a `modiohub:<id>@<version>` Workspace
+reference. `--report FILE` writes the verification report (`-` prints it); bare `--report` asks where to
+save, whether the values look right, and whether to upload:
 
 ```sh
-modpoll verify --config examples/modsim.tm.json --tcp 192.168.1.20 --unit-id 3 --product advantech/adam-5017uh --report report.json
+modpoll --config examples/modsim.tm.json --tcp 192.168.1.20 --unit-id 3 --report report.json
 ```
 
 The report records, per point, whether the read worked (`ok`, a Modbus `exception` with its code,
@@ -122,8 +123,8 @@ The report records, per point, whether the read worked (`ok`, a Modbus `exceptio
 `unchecked`. The report holds no address, Unit
 ID, serial number or value; review it before sharing. It is checked with
 [modpoll-wot](https://github.com/top-maker/modpoll-wot) (`modpoll-wot validate-report report.json --model
-model.tm.json`), and `--export` still writes the snapshot of the same read. With `-f` for a local Thing
-Model, add `--product <manufacturer>/<model-number>`; the report then names the model as local. The exit
+model.tm.json`), and `--export` still writes the snapshot of the same read. ModioHub resolves the product
+from the model fingerprint, so you never name the product. The exit
 code is 1 unless every point was read.
 
 ### Sign in to ModioHub, read a Workspace Thing Model and upload the report
@@ -137,11 +138,11 @@ revoke the session in your ModioHub settings to end it on the server.
 
 Once signed in, `--config modiohub:<id>@<version>` (the version is a number or `latest`) reads one
 of your custom Thing Models. A shared one needs no login. Verifying it names the Workspace model in the
-report, and `modpoll verify --config ... --upload` shows the report and, after you confirm (or with `--yes`),
-uploads it:
+report, and `modpoll --config ... --upload` shows the report and, after you confirm (or with `--yes`),
+uploads it; without a login the sign-in flow starts right there:
 
 ```sh
-modpoll verify --config modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
+modpoll --config modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
 ```
 
 ### MQTT data and write behavior

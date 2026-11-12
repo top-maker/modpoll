@@ -174,3 +174,22 @@ pointer to the command. After the change ``make check`` passed and the
 offline suite passed 235 tests with 58 integration tests deselected,
 including new refusal cases for the removed spellings and the verify
 subcommand reaching the transport check.
+
+
+Interactive report and upload on a normal read
+----------------------------------------------
+
+On 2026-11-13 the ``verify`` subcommand was replaced by plain flags on the
+normal read (maintainer decision: the tools have no subcommand tradition, and
+verification is a by-product of reading a device). ``--report`` without FILE
+asks where to save (default ``report-<date>.json``), whether the values look
+right (yes/no/not checked, judged as confirm-all or reject-all over the points
+the device answered), and whether to upload; ``--upload`` signs in inline with
+the browser flow when there is no session. ``--product`` is gone with schema 4
+(modpoll-wot 0.6.0a1): the receiving service resolves the product from the
+model fingerprint. After the change ``make check`` passed and the offline
+suite passed 238 tests with 58 integration tests deselected, including the
+interactive save/judgment flow, the inline sign-in, and refusal cases for
+``--confirm``/``--yes`` without ``--report``/``--upload``. End-to-end against a
+local modsim: ``--config examples/modsim.tm.json --tcp ... --report -`` prints
+a schema-4 report with all 37 points ``ok``.

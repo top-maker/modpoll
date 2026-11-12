@@ -14,7 +14,6 @@ from modpoll import login, main, utils, verification
 
 from .test_verification import (  # noqa: F401  (the fixture clears the process-wide stop event)
     FakeClient,
-    PRODUCT,
     fresh_stop_event,
     run_app,
     three_group_model,
@@ -22,6 +21,7 @@ from .test_verification import (  # noqa: F401  (the fixture clears the process-
 
 SERVER = "https://hub.test"
 ID = "k3x9f2m7q4a8n5bd"
+PRODUCT = "acme/meter"
 
 
 @pytest.fixture(autouse=True)
@@ -231,7 +231,6 @@ def test_full_read_of_a_workspace_model_names_the_workspace_as_its_source(
         run_app(
             monkeypatch,
             [
-                "verify",
                 "--config",
                 f"modiohub:{ID}@2",
                 "--tcp",
@@ -242,7 +241,7 @@ def test_full_read_of_a_workspace_model_names_the_workspace_as_its_source(
             FakeClient(),
         )
     report = json.loads(report_path.read_text())
-    assert report["product"] == PRODUCT
+    assert "product" not in report
     assert (
         report["model"]["source"] == "workspace" and report["model"]["ref"] == f"{ID}@2"
     )
@@ -265,24 +264,15 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
     monkeypatch.setattr(verification.requests, "post", post)
     run_app(
         monkeypatch,
-        [
-            "verify",
-            "-f",
-            str(path),
-            "--tcp",
-            "x",
-            "--product",
-            PRODUCT,
-            "--upload",
-            "--yes",
-        ],
+        ["-f", str(path), "--tcp", "x", "--upload", "--yes"],
         FakeClient(False, False),
     )
     out = capsys.readouterr().out
     assert "Report to upload:" in out and "Uploaded. This is a full read" in out
     assert (
-        sent["url"] == f"{SERVER}/api/v1/reports" and sent["body"]["reportVersion"] == 3
+        sent["url"] == f"{SERVER}/api/v1/reports" and sent["body"]["reportVersion"] == 4
     )
+    assert "product" not in sent["body"]
     assert (
         sent["headers"]["Authorization"] == "Bearer tok"
         and sent["headers"]["Idempotency-Key"]
@@ -298,16 +288,7 @@ def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
         "post",
         lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
     )
-    arguments = [
-        "verify",
-        "-f",
-        str(path),
-        "--tcp",
-        "x",
-        "--product",
-        PRODUCT,
-        "--upload",
-    ]
+    arguments = ["-f", str(path), "--tcp", "x", "--upload"]
     # Not a terminal and no --yes: nothing is sent.
     with pytest.raises(SystemExit) as exit_info:
         run_app(monkeypatch, arguments, FakeClient(False, False))
@@ -319,9 +300,14 @@ def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
     with pytest.raises(SystemExit):
         run_app(monkeypatch, arguments, FakeClient(False, False))
     assert "Not uploaded." in capsys.readouterr().out and not posted
-    # Agreeing without a login.
+    # Agreeing without a login starts the sign-in flow; when it fails, nothing is sent.
     utils._thread_event.clear()
     monkeypatch.setattr("builtins.input", lambda prompt: "y")
+    monkeypatch.setattr(
+        login,
+        "login",
+        lambda *a, **k: (_ for _ in ()).throw(login.LoginError("no browser here")),
+    )
     with pytest.raises(SystemExit):
         run_app(monkeypatch, arguments, FakeClient(False, False))
     assert not posted
@@ -339,3 +325,28 @@ def test_a_refused_upload_reports_why(monkeypatch):
     monkeypatch.setattr(verification.requests, "post", lambda *a, **k: Reply(401, {}))
     with pytest.raises(ValueError, match="modpoll login"):
         verification.upload_report({}, timeout=3)
+
+
+def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, capsys):
+    """--upload without a login starts the browser flow and continues with the session."""
+    path = tmp_path / "meter.tm.json"
+    path.write_text(json.dumps(three_group_model()))
+    posted = []
+    monkeypatch.setattr(
+        verification.requests,
+        "post",
+        lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
+    )
+
+    def fake_login(server, **kwargs):
+        modpoll_wot.save_session(server, "tok", expires_in=3600)
+        return modpoll_wot.load_session(server)
+
+    monkeypatch.setattr(login, "login", fake_login)
+    run_app(
+        monkeypatch,
+        ["-f", str(path), "--tcp", "x", "--upload", "--yes"],
+        FakeClient(False, False),
+    )
+    assert posted
+    assert "Sign in to" in capsys.readouterr().out

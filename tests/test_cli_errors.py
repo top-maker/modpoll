@@ -75,10 +75,16 @@ def test_removed_flags_are_rejected():
         assert "unrecognized arguments" in result.stderr + result.stdout
 
 
-def test_verify_command_reaches_the_transport_check():
-    result = run("verify", "--config", "examples/modsim.tm.json", "--once")
+def test_report_flag_reaches_the_transport_check():
+    result = run("--config", "examples/modsim.tm.json", "--report", "-", "--once")
     assert result.returncode == 2
     assert "No communication method specified" in result.stderr + result.stdout
+
+
+def test_confirm_without_report_is_refused():
+    result = run("--config", "examples/modsim.tm.json", "--confirm", "all", "--once")
+    assert result.returncode == 2
+    assert "need --report or --upload" in result.stderr + result.stdout
 
 
 def test_csv_rejects_typed_parameters():
