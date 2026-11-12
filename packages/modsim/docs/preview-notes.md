@@ -1,6 +1,6 @@
-# Modsim 2.0.0a7 preview
+# Modsim 2.0.0a8 preview
 
-Modsim 2.0.0a7 loads [simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
+Modsim 2.0.0a8 loads [simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
 with `--data` and pins modpoll-wot 0.4.0a1. This preview breaks the previous
 command line:
 
@@ -15,13 +15,16 @@ command line:
 
 ```sh
 uvx --prerelease allow modpoll==2.0.0a6 --config device.tm.json --tcp 192.168.1.10 --once --export snapshot.json
-uvx --prerelease allow modsim==2.0.0a7 --config device.tm.json --data snapshot.json
+uvx --prerelease allow modsim==2.0.0a8 --config device.tm.json --data snapshot.json
 ```
 
 Scaled values that modpoll exports, such as `230.10000000000002` for a raw
 2301 with multiplier 0.1, are served again unchanged. Snapshot points modpoll
 could not read keep their defaults and are listed at startup. Snapshots hold
 readings of a real device: keep them on your computer.
+
+The `v2.0.0a7` tag points at the same changes but was never published: its
+release guard did not yet expect the new snapshot replay CI job.
 
 ### Previous preview
 

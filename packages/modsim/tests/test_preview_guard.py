@@ -19,7 +19,13 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
     monkeypatch.setattr(release.subprocess, "run", lambda *a, **kw: None)
     jobs = [
         {"name": name, "conclusion": "success"}
-        for name in ("quality", "docs", "tox (3.10)", "tox (3.14)")
+        for name in (
+            "quality",
+            "docs",
+            "tox (3.10)",
+            "tox (3.14)",
+            "modpoll snapshot replay",
+        )
     ]
 
     platform_jobs = [
@@ -54,10 +60,10 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
 
     monkeypatch.setattr(release.subprocess, "check_output", output)
     release.guard("v" + __import__("modsim").__version__)
-    jobs.pop()
+    removed = jobs.pop()
     with pytest.raises(ValueError, match="expected CI jobs"):
         release.guard("v" + __import__("modsim").__version__)
-    jobs.append({"name": "tox (3.14)", "conclusion": "failure"})
+    jobs.append({**removed, "conclusion": "failure"})
     with pytest.raises(ValueError, match="expected CI jobs"):
         release.guard("v" + __import__("modsim").__version__)
 

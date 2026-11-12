@@ -37,7 +37,12 @@ def guard(tag):
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     subprocess.run(["git", "merge-base", "--is-ancestor", sha, "origin/v2"], check=True)
     repo = os.environ["GITHUB_REPOSITORY"]
-    require_ci(repo, sha, "main.yml", {"quality", "docs", "tox (3.10)", "tox (3.14)"})
+    require_ci(
+        repo,
+        sha,
+        "main.yml",
+        {"quality", "docs", "tox (3.10)", "tox (3.14)", "modpoll snapshot replay"},
+    )
     require_ci(
         repo,
         sha,
