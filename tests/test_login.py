@@ -92,7 +92,7 @@ def test_login_waits_for_the_browser_and_keeps_one_login_for_both_tools(
         "ABCD1234" in out.getvalue()
         and f"{SERVER}/activate/?user_code=ABCD1234" in out.getvalue()
     )
-    assert "Open that address in a browser" in out.getvalue()
+    assert "Open the address above in a browser" in out.getvalue()
     assert calls[0][2] == {"client_id": "modpoll"}
     assert ("GET", f"{SERVER}/api/v1/me", "Bearer tok") in calls
     assert (session.token, session.github_user, session.source) == (
@@ -141,7 +141,7 @@ def test_the_code_expires_when_nobody_confirms(monkeypatch):
 
 def test_login_and_logout_commands(monkeypatch, capsys):
     device_flow(monkeypatch, [Reply(200, {"access_token": "tok", "expires_in": 60})])
-    monkeypatch.setattr(login.webbrowser, "open", lambda url: True)
+    monkeypatch.setattr(login, "open_in_browser", lambda url: True)
     monkeypatch.setattr(login.time, "sleep", lambda seconds: None)
     assert login.command(["login"]) == 0
     assert (
@@ -339,3 +339,95 @@ def test_a_refused_upload_reports_why(monkeypatch):
     monkeypatch.setattr(verification.requests, "post", lambda *a, **k: Reply(401, {}))
     with pytest.raises(ValueError, match="modpoll login"):
         verification.upload_report({}, timeout=3)
+
+
+class Finished:
+    def __init__(self, returncode):
+        self.returncode = returncode
+
+
+@pytest.mark.parametrize(
+    "environ, platform, expected_calls",
+    [
+        ({"DISPLAY": ":0"}, "linux", 1),
+        ({"WAYLAND_DISPLAY": "wayland-0"}, "linux", 1),
+        ({}, "linux", 0),  # no desktop: SSH or a minimal WSL
+        ({"DISPLAY": ":0", "SSH_CONNECTION": "1 2 3 4"}, "linux", 0),
+    ],
+)
+def test_a_browser_is_tried_only_where_there_is_a_desktop(
+    environ, platform, expected_calls
+):
+    calls = []
+    opened = login.open_in_browser(
+        "https://hub.test/activate/?user_code=X",
+        environ=environ,
+        platform=platform,
+        run=lambda command, **options: calls.append((command, options)) or Finished(0),
+        which=lambda name: "/usr/bin/xdg-open",
+    )
+    assert len(calls) == expected_calls and opened is bool(expected_calls)
+    if calls:
+        # The opener's complaints stay out of the terminal.
+        assert (
+            calls[0][1]["stdout"] == login.subprocess.DEVNULL
+            and calls[0][1]["stderr"] == login.subprocess.DEVNULL
+        )
+
+
+def test_an_opener_that_finds_no_browser_or_is_missing_is_a_failure_not_noise():
+    environ = {"DISPLAY": ":0"}
+    assert (
+        login.open_in_browser(
+            "https://x.test",
+            environ=environ,
+            platform="linux",
+            run=lambda *a, **k: Finished(3),
+            which=lambda name: "/usr/bin/xdg-open",
+        )
+        is False
+    )
+    assert (
+        login.open_in_browser(
+            "https://x.test", environ=environ, platform="linux", which=lambda name: None
+        )
+        is False
+    )
+
+    def broken(*args, **kwargs):
+        raise OSError("gone")
+
+    assert (
+        login.open_in_browser(
+            "https://x.test",
+            environ=environ,
+            platform="linux",
+            run=broken,
+            which=lambda name: "/usr/bin/xdg-open",
+        )
+        is False
+    )
+
+
+def test_the_browser_variable_and_other_platforms_use_the_standard_opener(monkeypatch):
+    seen = []
+    monkeypatch.setattr(login.webbrowser, "open", lambda url: seen.append(url) or True)
+    assert (
+        login.open_in_browser(
+            "https://a.test", environ={"BROWSER": "wslview"}, platform="linux"
+        )
+        is True
+    )
+    assert (
+        login.open_in_browser("https://b.test", environ={}, platform="darwin") is True
+    )
+    assert seen == ["https://a.test", "https://b.test"]
+
+
+def test_ctrl_c_while_waiting_is_a_one_line_cancel(monkeypatch, capsys):
+    def interrupted(*args, **kwargs):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(login, "login", interrupted)
+    assert login.command(["login"]) == 130
+    assert "Login cancelled." in capsys.readouterr().err
