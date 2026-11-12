@@ -136,3 +136,18 @@ The unified local Compose example was started in an isolated project and deliver
 template and duplicate Compose examples were removed; ``examples/modsim.csv``
 remains as the explicit migration-test fixture. See ``examples/README.md`` for
 the current runnable example.
+
+
+v1 CSV compatibility restoration
+--------------------------------
+
+On 2026-11-12 the v1 CSV loader was restored behind content detection:
+``--config`` accepts v1 CSV and WoT TM/TD JSON side by side, and the new
+``--thing-model``/``--thing-description`` flags assert the JSON document kind.
+``make check`` passed and the offline suite passed 210 tests with 58
+integration tests deselected, including new CSV loader, kind-assertion and
+CLI error tests. Against a local modsim process, ``modpoll --once --config
+examples/modsim.csv`` and ``--config examples/modsim.tm.json`` exited 0 and
+exported byte-identical snapshots of all 37 points; the CSV and TM poller
+structures (four blocks, start addresses, quantities, endianness) match
+exactly. ``--precision`` stays in the default ``auto`` rendering mode.

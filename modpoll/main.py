@@ -146,7 +146,10 @@ def app(name="modpoll"):
     signal.signal(signal.SIGTERM, _signal_handler)
 
     # parse args
-    args = get_parser().parse_args()
+    parser = get_parser()
+    args = parser.parse_args()
+    if not (args.config or args.thing_model or args.thing_description):
+        parser.error("one of --config/--thing-model/--thing-description is required")
 
     print(
         f"\nModpoll v{__version__} - A New Command-line Tool for Modbus and MQTT\n",

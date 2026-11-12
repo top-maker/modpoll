@@ -1,4 +1,4 @@
-> **2.x development branch.** This checkout accepts WoT TM/TD JSON using profile 0.2. CSV remains supported on the 1.x `main` branch. Install the current preview with `uv tool install --prerelease allow 'modpoll[serial]==2.0.0a6'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
+> **2.x development branch.** This checkout accepts v1 CSV and WoT TM/TD JSON using profile 0.2; `--config` detects the format from the content. Install the current preview with `uv tool install --prerelease allow 'modpoll[serial]==2.0.0a6'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
 
 # Modpoll - A New Command-line Tool for Modbus and MQTT
 
@@ -92,9 +92,12 @@ The existing transport, polling, output and MQTT arguments remain available.
 See the [current profile](https://github.com/top-maker/modpoll-wot/blob/main/profile.md) for field mapping,
 access flags, byte order, multiplier semantics and supported limits; the
 [execution contract](https://github.com/top-maker/modpoll-wot/blob/main/CONTRACT.md) defines the profile 0.2-only input policy.
-The configuration loader rejects CSV and reports invalid model fields before
-polling. Each model describes one device; use multiple `--config` paths for
-multiple devices. Give each model a unique `title`, which is the output device name.
+The configuration loader detects the format from the content and reports invalid
+model fields before polling. Each model describes one device; use multiple
+`--config` paths for multiple devices. Give each model a unique `title`, which is
+the output device name. Existing v1 CSV configurations load through the same
+`--config` argument; use `--thing-model`/`--tm` or
+`--thing-description`/`--td` to assert the JSON document kind explicitly.
 
 Physical RS485 polling has also been verified by the maintainer with an Eastron
 meter (2026-10-28). See [validation](docs/validation.rst) for the evidence scope and

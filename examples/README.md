@@ -4,7 +4,8 @@
   explicit blocks and 37 properties.
 - `modsim.generated.td.json`: its generated local TCP instance for the same
   blocks and properties.
-- `modsim.csv`: v1 migration and compatibility-test input. v2 does not load it.
+- `modsim.csv`: the v1 CSV configuration; v2 loads it again through the same
+  `--config` content detection and produces the same 37 points as the TM.
 
 From the repository root, run the self-contained TCP/MQTT demonstration:
 

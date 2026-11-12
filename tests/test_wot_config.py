@@ -10,15 +10,32 @@ from modpoll.wot_config import read_model, create_devices
 from tests.wot_helpers import meter_model, write_meter
 
 
-def test_csv_content_is_rejected_without_partial_device(tmp_path, caplog):
+def test_csv_content_loads_as_v1_configuration(tmp_path):
     path = tmp_path / "old.csv"
     path.write_text(
         "device,meter,1\npoll,holding_register,0,1,BE_BE\nref,x,0,uint16,r\n"
     )
     handler = ModbusHandler(object(), str(path))
-    assert not handler.load_config()
+    assert handler.load_config()
+    assert [device.name for device in handler.deviceList] == ["meter"]
+    assert handler.model is None
+
+
+def test_thing_model_flag_rejects_wrong_document_kind(tmp_path):
+    path = tmp_path / "model.td.json"
+    path.write_text(
+        json.dumps(
+            {
+                "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+                "@type": "tm:ThingDescription",
+                "title": "meter",
+            }
+        )
+    )
+    handler = ModbusHandler(object(), str(path), config_kind="tm")
+    with pytest.raises(ValueError, match="document kind disagrees"):
+        handler.load_config()
     assert handler.deviceList == []
-    assert "Invalid WoT configuration" in caplog.text
 
 
 def test_url_model_loader_keeps_timeout_and_streams(monkeypatch):

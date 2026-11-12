@@ -1,10 +1,16 @@
 Migrating CSV configurations
 ============================
 
-v1 remains available for existing CSV users. v2 accepts TM/TD JSON and provides
-an offline validator; it does not load CSV or invoke an AI service at runtime.
-Convert new configurations to profile 0.2 as described in
-``packages/modpoll-wot/profile.md``. Current development source rejects profile
+v2 loads v1 CSV configurations again: pass them to ``--config`` as before, and
+the format is detected from the content. Existing v1 commands keep working
+unchanged. Migrating to profile 0.2 remains the recommended path for new or
+heavily edited configurations, because a Thing Model is validated offline,
+carries access and unit metadata explicitly, and is what the ModioHub catalog
+publishes. v2 does not invoke an AI service at runtime.
+Convert configurations to profile 0.2 as described in the
+`modpoll-wot profile documentation
+<https://github.com/top-maker/modpoll-wot/blob/main/profile.md>`_. Current
+development source rejects profile
 0.1; migrate its member mapping into Forms and use physical bit addresses.
 Check the executable profile and bundled schemas before using a conversion.
 
@@ -32,10 +38,10 @@ Migration procedure
    Review the report before using the file on a device. A successful schema check
    alone cannot certify a vendor register map.
 
-Commands from the development checkout (the validation command uses the
-candidate shared package; version 0.2.0a1 does not provide this subcommand)::
+Commands from the development checkout (the pinned ``modpoll-wot`` dependency
+provides the validation subcommand)::
 
-    PYTHONPATH=packages/modpoll-wot uv run python -m modpoll_wot validate meter.tm.json --profile
+    uv run python -m modpoll_wot validate meter.tm.json --profile
     uv run modpoll --once --config meter.tm.json --tcp HOST --tcp-port PORT --export data.json
     uv run modpoll --config first.tm.json second.tm.json --tcp HOST
 
@@ -112,7 +118,7 @@ Review checklist
 * Access corrections and rejected source mistakes are explicit in the report.
 * All JSON files pass the offline profile validator; independent vectors and
   output comparisons pass. Unknown vendor facts remain unresolved, not guessed.
-* No runtime CSV fallback, AI calls or device-library dependency is introduced.
+* No AI calls or device-library dependency are introduced at conversion time.
 
 The authored ``examples/modsim.tm.json`` / ``modsim.generated.td.json`` pair and the
 independent vectors in the tests demonstrate the process. Migrating the entire

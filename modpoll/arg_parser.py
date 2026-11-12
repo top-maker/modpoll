@@ -25,12 +25,37 @@ def get_parser():
     parser.add_argument(
         "-f",
         "--config",
-        required=True,
+        default=[],
         help=(
-            "Local path or URL of a WoT TM/TD JSON configuration. "
-            "Type is detected from content, not the filename. Required!"
+            "Local path or URL of a v1 CSV or WoT TM/TD JSON configuration. "
+            "The format is detected from the content, not the filename."
         ),
         nargs="+",
+        metavar="PATH_OR_URL",
+    )
+    parser.add_argument(
+        "--thing-model",
+        "--tm",
+        dest="thing_model",
+        default=[],
+        help=(
+            "Local path or URL of a WoT Thing Model JSON configuration "
+            "(tm:ThingModel); asserts the document kind instead of detecting it"
+        ),
+        nargs="+",
+        metavar="PATH_OR_URL",
+    )
+    parser.add_argument(
+        "--thing-description",
+        "--td",
+        dest="thing_description",
+        default=[],
+        help=(
+            "Local path or URL of a WoT Thing Description JSON configuration; "
+            "asserts the document kind instead of detecting it"
+        ),
+        nargs="+",
+        metavar="PATH_OR_URL",
     )
     parser.add_argument(
         "--param",
