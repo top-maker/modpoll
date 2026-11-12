@@ -121,8 +121,7 @@ def test_adding_or_removing_a_readable_point_changes_the_model_fingerprint():
 def report_for(payload):
     prints = point_fingerprints(payload)
     return {
-        "reportVersion": 3,
-        "product": "example/numeric-pilot",
+        "reportVersion": 4,
         "model": {
             "sha256": sha256(payload).hexdigest(),
             "fingerprint": model_fingerprint(payload),
@@ -270,3 +269,24 @@ def test_cli_fingerprints_and_validates_reports(tmp_path):
 def test_fixture_report_matches_its_model():
     report = json.loads((FIXTURES / "numeric.report.json").read_bytes())
     assert report == report_for(NUMERIC.read_bytes())
+
+
+def test_version_3_reports_with_product_still_validate():
+    report = report_for(NUMERIC.read_bytes())
+    report["reportVersion"] = 3
+    report["product"] = "example/numeric-pilot"
+    validate_report(report, model=NUMERIC.read_bytes())
+
+
+def test_unknown_report_version_is_rejected():
+    report = report_for(NUMERIC.read_bytes())
+    report["reportVersion"] = 5
+    with pytest.raises(ReportError, match="unsupported report version"):
+        validate_report(report)
+
+
+def test_present_but_invalid_product_is_still_rejected():
+    report = report_for(NUMERIC.read_bytes())
+    report["product"] = "Example/Numeric"
+    with pytest.raises(ReportError):
+        validate_report(report)

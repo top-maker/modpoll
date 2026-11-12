@@ -118,19 +118,26 @@ def model_fingerprint(model) -> str:
 
 
 @lru_cache(maxsize=1)
-def _report_validator():
-    schema = json.loads(
-        files("modpoll_wot")
-        .joinpath("schemas", "verification-report-3.json")
-        .read_text(encoding="utf-8")
-    )
-    Draft202012Validator.check_schema(schema)
-    return Draft202012Validator(schema)
+def _report_validators():
+    validators = {}
+    for version in (3, 4):
+        schema = json.loads(
+            files("modpoll_wot")
+            .joinpath("schemas", f"verification-report-{version}.json")
+            .read_text(encoding="utf-8")
+        )
+        Draft202012Validator.check_schema(schema)
+        validators[version] = Draft202012Validator(schema)
+    return validators
 
 
 def validate_report(report, *, model: bytes | None = None):
-    """Validate a verification report, optionally against its exact TM bytes."""
-    error = next(_report_validator().iter_errors(report), None)
+    """Validate a verification report (schema 3 or 4), optionally against its exact TM bytes."""
+    version = report.get("reportVersion") if isinstance(report, dict) else None
+    validator = _report_validators().get(version)
+    if validator is None:
+        raise ReportError(f"/reportVersion: unsupported report version {version!r}")
+    error = next(validator.iter_errors(report), None)
     if error is not None:
         path = "/" + "/".join(
             str(p).replace("~", "~0").replace("/", "~1") for p in error.absolute_path

@@ -215,10 +215,12 @@ requires a new prefix.
 ## Verification reports
 
 A verification report records one reading of a Thing Model on a physical device. Its schema is
-[schemas/verification-report-3.json](modpoll_wot/schemas/verification-report-3.json)
-(JSON Schema 2020-12). A report carries:
+[schemas/verification-report-4.json](modpoll_wot/schemas/verification-report-4.json)
+(JSON Schema 2020-12; schema 3 remains valid). A report carries:
 
-- `product`: the catalog product ID `<manufacturer>/<model-number>`.
+- Optional `product`: the catalog product ID `<manufacturer>/<model-number>`. The receiving
+  service resolves the product from the model fingerprint, so tools do not need to know it;
+  older reports may still carry it. A fingerprint that matches no known product is rejected.
 - `model`: the SHA-256 of the exact TM bytes, its model fingerprint and its
   source. Catalog models add the 40-character catalog commit as `ref`; the
   product ID and commit identify the package's `model.tm.json`. Custom TMs add
