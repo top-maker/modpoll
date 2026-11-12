@@ -31,6 +31,14 @@ all WoT documents or every operating system has been validated.
        multipliers retained; unscaled large integers remain Python integers.
      - Independent struct vectors in all four byte/word orders. Multiplied values
        still use the existing floating-point execution semantics.
+   * - Value rendering
+     - The console table, the MQTT payload and the JSON snapshot show one number
+       for one reading. ``--precision auto`` keeps the precision the source data
+       carries; ``--precision N`` rounds every float to at most ``N`` decimals.
+     - Intentional change: v1 rounded console and MQTT values to three decimals
+       but wrote raw floats to the export, so one reading had two renderings and
+       a scaled value of ``0.0001`` read as ``0.0``. Cross-version comparisons
+       now compare values rather than bytes.
    * - Numeric/string references in bit tables
      - Restored for complete payload bytes. Offsets remain eight-bit groups;
        numeric width counts bytes, stringN counts N bytes.

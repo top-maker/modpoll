@@ -49,6 +49,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commandline-usage">Commandline Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#value-rendering">Value rendering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#framers-and-transports">Framers and transports</a></li>
 </ul>
@@ -85,16 +86,21 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a6 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a7 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">device</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">[</span><span class="nd">@COMMIT</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">full</span><span class="o">-</span><span class="n">read</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="n">FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">upload</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">product</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">chassis</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">firmware</span> <span class="n">FIRMWARE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">configuration</span> <span class="n">CONFIGURATION</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">reject</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">baud</span> <span class="n">SERIAL_BAUD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">parity</span> <span class="p">{</span><span class="n">none</span><span class="p">,</span><span class="n">odd</span><span class="p">,</span><span class="n">even</span><span class="p">}]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">timeout</span> <span class="n">TIMEOUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">EXPORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="mf">3.1.1</span><span class="p">,</span><span class="mf">5.0</span><span class="p">}]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">host</span> <span class="n">MQTT_HOST</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">port</span> <span class="n">MQTT_PORT</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">clientid</span> <span class="n">MQTT_CLIENTID</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">timeout</span> <span class="n">TIMEOUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">EXPORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">precision</span> <span class="n">auto</span><span class="o">|</span><span class="n">N</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="mf">3.1.1</span><span class="p">,</span><span class="mf">5.0</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">host</span> <span class="n">MQTT_HOST</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">port</span> <span class="n">MQTT_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">clientid</span> <span class="n">MQTT_CLIENTID</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">publish</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_PUBLISH_TOPIC_PATTERN</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">subscribe</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_SUBSCRIBE_TOPIC_PATTERN</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_DIAGNOSTICS_TOPIC_PATTERN</span><span class="p">]</span>
@@ -113,8 +119,46 @@
 <dt><kbd>-v, --version</kbd></dt>
 <dd><p>show program’s version number and exit</p>
 </dd>
-<dt><kbd>-f, --config</kbd></dt>
-<dd><p>Local path or URL of a WoT TM/TD JSON configuration. Type is detected from content, not the filename. Required!</p>
+<dt><kbd>-f, --config, --tm</kbd></dt>
+<dd><p>Local path or URL of a WoT TM/TD JSON configuration, or modiohub:&lt;id&gt;&#64;&lt;version&gt; for a custom Thing Model in your ModioHub Workspace (run modpoll login first unless it is shared). Type is detected from content, not the filename. Required unless –device is given.</p>
+</dd>
+<dt><kbd>--device</kbd></dt>
+<dd><p>Read the baseline Thing Model of a product in the Open Modbus Catalog, for example advantech/adam-5017uh, at a commit, tag or branch (default: main). Use instead of -f.</p>
+</dd>
+<dt><kbd>--full-read</kbd></dt>
+<dd><p>Read every point of the model once, read-only and without retries, and report which points could be read. Implies –once.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--report</kbd></dt>
+<dd><p>Write the verification report of a full read to FILE (‘-’ prints it). It lists each point’s result and carries no address, Unit ID, serial number or value; review it before sharing. Implies –full-read.</p>
+</dd>
+<dt><kbd>--upload</kbd></dt>
+<dd><p>After a full read, show the report and, once you confirm, upload it to ModioHub (run modpoll login first). Implies –full-read.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--yes</kbd></dt>
+<dd><p>Upload without asking for confirmation after the report is shown</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--product</kbd></dt>
+<dd><p>Catalog product ID the report is for; needed with -f, taken from –device otherwise</p>
+</dd>
+<dt><kbd>--chassis</kbd></dt>
+<dd><p>Chassis product ID, for the report</p>
+</dd>
+<dt><kbd>--firmware</kbd></dt>
+<dd><p>Firmware version of the device, for the report</p>
+</dd>
+<dt><kbd>--configuration</kbd></dt>
+<dd><p>Short note on the device configuration, such as an input range, for the report</p>
+</dd>
+<dt><kbd>--confirm</kbd></dt>
+<dd><p>Points whose values you checked and found right (‘all’ for every point), for the report</p>
+<p>Default: []</p>
+</dd>
+<dt><kbd>--reject</kbd></dt>
+<dd><p>Points whose values you checked and found wrong, for the report</p>
+<p>Default: []</p>
 </dd>
 <dt><kbd>--param</kbd></dt>
 <dd><p>Typed TM placeholder binding (requires the profile 0.2 interpreter)</p>
@@ -170,6 +214,9 @@
 </dd>
 <dt><kbd>-o, --export</kbd></dt>
 <dd><p>The file name to export point values</p>
+</dd>
+<dt><kbd>--precision</kbd></dt>
+<dd><p>Decimals to show for float values. The default ‘auto’ keeps the precision of the source data; N rounds every float to at most that many decimals.</p>
 </dd>
 <dt><kbd>--mqtt-version</kbd></dt>
 <dd><p>Possible choices: 3.1.1, 5.0</p>
@@ -290,6 +337,30 @@ modsim<span class="w"> </span>--config<span class="w"> </span>examples/modsim.tm
 </div>
 </li>
 </ul>
+</section>
+<section id="value-rendering">
+<h2>Value rendering<a class="headerlink" href="#value-rendering" title="Link to this heading"></a></h2>
+<p>The terminal table, the MQTT payload and the JSON snapshot show one number for
+one reading. The default <code class="docutils literal notranslate"><span class="pre">--precision</span> <span class="pre">auto</span></code> keeps the precision the source
+data carries:</p>
+<ul class="simple">
+<li><p>A register value with a <code class="docutils literal notranslate"><span class="pre">modpoll:multiplier</span></code> is shown as its exact
+decimal, so <code class="docutils literal notranslate"><span class="pre">2301</span></code> scaled by <code class="docutils literal notranslate"><span class="pre">0.1</span></code> reads <code class="docutils literal notranslate"><span class="pre">230.1</span></code> rather than
+<code class="docutils literal notranslate"><span class="pre">230.10000000000002</span></code>.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">float16</span></code> or <code class="docutils literal notranslate"><span class="pre">float32</span></code> register is shown as the shortest decimal that
+reads back as the same value at that width, so <code class="docutils literal notranslate"><span class="pre">12.34</span></code> stays <code class="docutils literal notranslate"><span class="pre">12.34</span></code>.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">float64</span></code> register keeps its full value.</p></li>
+<li><p>Integers, booleans and strings are shown unchanged.</p></li>
+</ul>
+<p>An explicit <code class="docutils literal notranslate"><span class="pre">--precision</span> <span class="pre">N</span></code> rounds every float to at most <code class="docutils literal notranslate"><span class="pre">N</span></code> decimals:</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--tcp<span class="w"> </span><span class="m">192</span>.168.1.10<span class="w"> </span>--config<span class="w"> </span>examples/modsim.tm.json<span class="w"> </span>--precision<span class="w"> </span><span class="m">2</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Rounding a scaled reading can change the raw register value it names. The
+exported snapshot doubles as modsim simulation data, so Modpoll logs a warning
+when that happens. The value is still written as asked for.</p>
 </section>
 <section id="configuration-file">
 <h2>Configuration File<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h2>

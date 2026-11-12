@@ -122,7 +122,16 @@ multipliers retained; unscaled large integers remain Python integers.</p></td>
 <td><p>Independent struct vectors in all four byte/word orders. Multiplied values
 still use the existing floating-point execution semantics.</p></td>
 </tr>
-<tr class="row-even"><td><p>Numeric/string references in bit tables</p></td>
+<tr class="row-even"><td><p>Value rendering</p></td>
+<td><p>The console table, the MQTT payload and the JSON snapshot show one number
+for one reading. <code class="docutils literal notranslate"><span class="pre">--precision</span> <span class="pre">auto</span></code> keeps the precision the source data
+carries; <code class="docutils literal notranslate"><span class="pre">--precision</span> <span class="pre">N</span></code> rounds every float to at most <code class="docutils literal notranslate"><span class="pre">N</span></code> decimals.</p></td>
+<td><p>Intentional change: v1 rounded console and MQTT values to three decimals
+but wrote raw floats to the export, so one reading had two renderings and
+a scaled value of <code class="docutils literal notranslate"><span class="pre">0.0001</span></code> read as <code class="docutils literal notranslate"><span class="pre">0.0</span></code>. Cross-version comparisons
+now compare values rather than bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Numeric/string references in bit tables</p></td>
 <td><p>Restored for complete payload bytes. Offsets remain eight-bit groups;
 numeric width counts bytes, stringN counts N bytes.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">test_m3_compatibility.py</span></code> and actual v1/TM numeric-bit parity tests.
@@ -130,24 +139,24 @@ Incomplete numeric/string spans now fail validation, rather than decoding
 protocol padding or failing later. As in v1, bit-table numeric assembly
 reverses bit order within a byte; word order is not applied to bit tables.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Aliases and overlapping views</p></td>
+<tr class="row-even"><td><p>Aliases and overlapping views</p></td>
 <td><p>Distinct property names can decode the same address; every alias is kept.
 Duplicate property membership is still rejected.</p></td>
 <td><p>v1 could silently omit same-address aliases. This is an intentional fix;
 <code class="docutils literal notranslate"><span class="pre">test_aliases_decode_every_property_from_one_read</span></code> checks both views
 from one physical request.</p></td>
 </tr>
-<tr class="row-even"><td><p>Read/write metadata</p></td>
+<tr class="row-odd"><td><p>Read/write metadata</p></td>
 <td><p>Readable properties are decoded; writeOnly properties are omitted from
 telemetry and remain null in snapshots. Declared blocks still get read.</p></td>
 <td><p>DI/IR are read-only. Raw MQTT address writes do not inherit property-level
 authorization or engineering-value inverse transforms.</p></td>
 </tr>
-<tr class="row-odd"><td><p>UDP</p></td>
+<tr class="row-even"><td><p>UDP</p></td>
 <td><p>Existing socket transport retained; explicit socket framer fixed.</p></td>
 <td><p>Real simulator comparison of v1 CSV and the unbound 0.2 TM output.</p></td>
 </tr>
-<tr class="row-even"><td><p>Serial RTU / ASCII</p></td>
+<tr class="row-odd"><td><p>Serial RTU / ASCII</p></td>
 <td><p>Serial and <code class="docutils literal notranslate"><span class="pre">--rtu</span></code> alias retained, explicit framer uses the actual
 PyModbus enum API instead of rejected class arguments.</p></td>
 <td><p>POSIX PTY tests use the unbound 0.2 TM and verify full outputs and
@@ -156,30 +165,30 @@ The pinned v1 explicit ASCII path
 fails construction, so ASCII is checked against independent wire/data
 expectations rather than claiming false v1 equivalence.</p></td>
 </tr>
-<tr class="row-odd"><td><p>MQTT protocol/output/commands</p></td>
+<tr class="row-even"><td><p>MQTT protocol/output/commands</p></td>
 <td><p>3.1.1 and 5.0, grouped JSON, individual topics, diagnostics and existing
 FC5/6/16 commands retained.</p></td>
 <td><p>Private-broker CSV/TM/TD matrix for QoS0/1; TLS/QoS2 CLI tests cover both
 protocols, both output styles, and command readback.</p></td>
 </tr>
-<tr class="row-even"><td><p>MQTT TLS / authentication</p></td>
+<tr class="row-odd"><td><p>MQTT TLS / authentication</p></td>
 <td><p>Existing TLS version, CA, credentials and explicit insecure option retained.</p></td>
 <td><p>Disposable CA/server certificates verify trusted success, unknown CA,
 hostname mismatch and bad-password refusal. Insecure bypass is explicit.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Failures, counts and snapshots</p></td>
+<tr class="row-even"><td><p>Failures, counts and snapshots</p></td>
 <td><p>Short responses invalidate missing values; connect/transport failures count
 once per active group. Disabled autoremove groups do not add attempts.</p></td>
 <td><p>Real stop/restart and short-response cases. Invalid values are omitted from
 MQTT and null in atomic JSON snapshots; existing fsync/replace failure
 tests remain.</p></td>
 </tr>
-<tr class="row-even"><td><p>One-shot exit status</p></td>
+<tr class="row-odd"><td><p>One-shot exit status</p></td>
 <td><p>A failed group or JSON export makes <code class="docutils literal notranslate"><span class="pre">--once</span></code> exit nonzero after cleanup.</p></td>
 <td><p>Intentional correction: v1 could report exit 0 despite failed sampling or
 export. Signal-driven shutdown remains graceful.</p></td>
 </tr>
-<tr class="row-odd"><td><p>MQTT shutdown / outbound queue</p></td>
+<tr class="row-even"><td><p>MQTT shutdown / outbound queue</p></td>
 <td><p>Accepted publications get a bounded flush window (default five seconds),
 then disconnect precedes joining the network loop. Outstanding messages
 are reported; the outgoing queue is bounded to 1000 entries.</p></td>
