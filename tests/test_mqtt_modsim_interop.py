@@ -259,14 +259,24 @@ def test_csv_tm_td_mqtt_equivalence_and_local_write_commands(
                 assert started - 1 <= snapshot["timestamp"] <= time.time() + 1
                 if not single:
                     assert isinstance(data.pop("timestamp"), (int, float))
-                assert data == rounded_values(snapshot)
+                snapshot_values = {
+                    key: value for key, value in snapshot.items() if key != "timestamp"
+                }
+                if source == baseline:
+                    # 1.x rounds the payload but writes the raw value to the snapshot.
+                    assert data == rounded_values(snapshot)
+                else:
+                    # 2.x renders the payload and the snapshot with one rule.
+                    assert data == snapshot_values
                 assert len(data) == 37
                 assert (
                     data["holding_reg01"] == 1
                 ), "retained command changed local device"
                 if expected is None:
                     expected = dict(data)
-                assert data == expected
+                # 1.x cannot show more than three decimals, so the versions are
+                # compared at the resolution 1.x offers.
+                assert rounded_values(data) == rounded_values(expected)
                 diag_topic = prefix + "/modsim01/diagnostics"
                 diagnostic = wait_for(lambda: observer.snapshot()[0].get(diag_topic))
                 diagnostic = json.loads(diagnostic[0])

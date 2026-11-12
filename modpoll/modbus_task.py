@@ -5,6 +5,7 @@ import math
 import os
 import struct
 import tempfile
+from decimal import Decimal
 from pathlib import Path
 from typing import List, Optional
 
@@ -17,9 +18,7 @@ from pymodbus.framer import FramerType
 
 from .utils import on_threading_event, delay_thread
 from .mqtt_task import MqttHandler
-
-
-FLOAT_TYPE_PRECISION = 3
+from .precision import names_same_raw, parse_precision, render_value
 
 
 class _PayloadDecoder:
@@ -137,10 +136,14 @@ def export_modbus_handlers(handlers, file, timestamp=None) -> bool:
                     dev.name,
                 )
                 return False
-            dev_data = {
-                point.name: point.val if point.valid_this_poll else None
-                for point in dev.points.values()
-            }
+            dev_data = {}
+            for point in dev.points.values():
+                if not point.valid_this_poll:
+                    dev_data[point.name] = None
+                    continue
+                rendered = handler.render_point(point)
+                handler.warn_truncated(point, rendered)
+                dev_data[point.name] = rendered
             if timestamp is not None:
                 dev_data[SNAPSHOT_TIMESTAMP] = timestamp
             data[dev.name] = dev_data
@@ -413,6 +416,19 @@ class Poller:
             self.device.pollSuccess = False
 
 
+def _multiplier(scale):
+    """The float the engine computes with, and the exact decimal of it.
+
+    An unusable multiplier leaves the reading unscaled, as it always did.
+    """
+    if scale is None:
+        return None, None
+    try:
+        return float(scale), Decimal(str(scale))
+    except (TypeError, ValueError, ArithmeticError):
+        return scale, None
+
+
 class Point:
     def __init__(
         self,
@@ -422,7 +438,7 @@ class Point:
         dtype: str,
         rw: str,
         unit: str,
-        scale: float,
+        scale: Optional[Decimal | float],
     ):
         self.device = device
         self.name = point_name
@@ -448,8 +464,13 @@ class Point:
         self.point_width = type_width(self.dtype)
         self.rw = rw.lower()
         self.unit = unit
-        self.scale = scale
+        # The multiplier reaches the engine as a float, so the value is
+        # computed exactly as before.  Its shortest decimal form is kept
+        # separately, because that is the form the profile contract uses to
+        # map an engineering value back to its raw register value.
+        self.scale, self.exact_multiplier = _multiplier(scale)
         self.val = None
+        self.raw_val = None
         self.last_val = None
         self.valid_this_poll = False
 
@@ -462,6 +483,7 @@ class Point:
         return type_width(self.dtype, bit_table=True)
 
     def update_value(self, v, valid=True):
+        self.raw_val = v
         if self.scale is not None and not isinstance(v, bool):
             try:
                 v = v * float(self.scale)
@@ -502,6 +524,7 @@ class ModbusHandler:
         instance_host: Optional[str] = None,
         instance_port: Optional[int] = None,
         instance_parameters=None,
+        precision: Optional[int] = None,
     ):
         self.modbus_client = modbus_client
         self.config_file = config_file
@@ -520,6 +543,10 @@ class ModbusHandler:
         self.autoremove = autoremove
         self.connected = False
         self.deviceList: List[Device] = []
+        # None keeps the automatic mode; a count rounds every float to at
+        # most that many decimals.
+        self.precision = precision
+        self._truncation_warned: set = set()
         self.logger = _ConfigLogAdapter(
             logging.getLogger(__name__), {"config": config_file}
         )
@@ -689,6 +716,49 @@ class ModbusHandler:
         self.logger.error(f"Device {device_name} not found")
         return False
 
+    def render_point(self, point):
+        """The value the console, the MQTT payload and the snapshot show.
+
+        All three read the point through this method, so one reading never
+        appears as two different numbers.
+        """
+        return render_value(
+            point.val,
+            self.precision,
+            dtype=point.dtype,
+            raw=point.raw_val,
+            multiplier=point.exact_multiplier,
+        )
+
+    def warn_truncated(self, point, rendered) -> None:
+        """Warn once when rounding a scaled reading changed its raw value.
+
+        The exported snapshot doubles as simulation data, so a truncated
+        scaled value that no longer names its raw register value silently
+        changes what a replay serves.
+        """
+        if self.precision is None or point.exact_multiplier is None:
+            return
+        raw = point.raw_val
+        if raw is None or isinstance(raw, bool) or not isinstance(raw, int):
+            return
+        if names_same_raw(rendered, raw, point.exact_multiplier):
+            return
+        key = (point.device.name, point.name)
+        if key in self._truncation_warned:
+            return
+        self._truncation_warned.add(key)
+        self.logger.warning(
+            "Precision %d rounds point %s of device %s to %r, which no longer "
+            "names raw value %s; replaying the exported snapshot serves a "
+            "different register value.",
+            self.precision,
+            point.name,
+            point.device.name,
+            rendered,
+            raw,
+        )
+
     def print_results(self):
         for dev in self.deviceList:
             table = PrettyTable()
@@ -697,15 +767,11 @@ class ModbusHandler:
             table.align["Value"] = "r"
             table.align["Unit"] = "l"
             for point in dev.points.values():
-                value = (
-                    round(point.val, FLOAT_TYPE_PRECISION)
-                    if point.valid_this_poll and isinstance(point.val, float)
-                    else point.val
-                )
+                value = self.render_point(point) if point.valid_this_poll else None
                 table.add_row(
                     [
                         point.name,
-                        value if point.valid_this_poll else None,
+                        value,
                         point.unit or "",
                     ]
                 )
@@ -722,11 +788,7 @@ class ModbusHandler:
                 if not point.valid_this_poll:
                     continue
                 if not on_change or point.val != point.last_val:
-                    point_val = (
-                        round(point.val, FLOAT_TYPE_PRECISION)
-                        if isinstance(point.val, float)
-                        else point.val
-                    )
+                    point_val = self.render_point(point)
                     key = f"{point.name}|{point.unit}" if point.unit else point.name
                     payload[key] = point_val
 
@@ -801,6 +863,7 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
                 instance_host=args.tcp,
                 instance_port=args.tcp_port,
                 instance_parameters=parameters,
+                precision=parse_precision(getattr(args, "precision", None)),
             )
             if current_handler.load_config():
                 effective_args = copy.copy(args)

@@ -14,7 +14,11 @@ import pytest
 from pymodbus.client import ModbusSerialClient, ModbusUdpClient
 from pymodbus.framer import FramerType
 
-from tools.verify_modsim_equivalence import assert_values, EXPECTED_REQUESTS
+from tools.verify_modsim_equivalence import (
+    assert_values,
+    EXPECTED_REQUESTS,
+    snapshots_match,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = [
@@ -209,7 +213,7 @@ def test_udp_preserves_csv_tm_results(tmp_path):
                     tmp_path / (label + ".json"),
                 )
             )
-        assert results[0] == results[1]
+        assert snapshots_match(results[0], results[1])
     finally:
         stop_simulator(process)
 

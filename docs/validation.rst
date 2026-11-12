@@ -14,6 +14,12 @@ rendered CLI tables, JSON snapshots and the four actual requests from 1.x CSV,
 Public remote state may have been changed, so remote runs compare successive
 actual snapshots rather than asserting initial values.
 
+The 1.x baseline renders floats with three decimals while 2.x keeps the
+precision of the source data, so the cross-version comparison matches values
+by magnitude rather than by bytes. Within one version the terminal table, the
+MQTT payload and the JSON snapshot are compared exactly, because one
+rendering rule produces all three.
+
 ``tests/test_wot_reading_interop.py`` independently encodes all supported numeric
 register types with Python struct, including integers beyond JavaScript's exact
 integer range, and tests all four byte/word orders. It also checks register bits,

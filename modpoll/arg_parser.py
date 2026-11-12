@@ -1,6 +1,15 @@
 import argparse
 
 from . import __version__
+from .precision import parse_precision
+
+
+def _precision(text):
+    """Argparse type for --precision: 'auto' or a non-negative count."""
+    try:
+        return parse_precision(text)
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e)) from e
 
 
 def get_parser():
@@ -107,6 +116,17 @@ def get_parser():
         "--export",
         default=None,
         help="The file name to export point values",
+    )
+    parser.add_argument(
+        "--precision",
+        type=_precision,
+        default=None,
+        metavar="auto|N",
+        help=(
+            "Decimals to show for float values. The default 'auto' keeps the "
+            "precision of the source data; N rounds every float to at most "
+            "that many decimals."
+        ),
     )
     parser.add_argument(
         "--mqtt-version",

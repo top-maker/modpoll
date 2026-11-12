@@ -44,6 +44,31 @@ Commandline Usage
     modpoll --once --tcp 192.168.1.10 --config examples/modsim.tm.json --export snapshot.json
     modsim --config examples/modsim.tm.json --port 5020 --data snapshot.json
 
+Value rendering
+---------------
+
+The terminal table, the MQTT payload and the JSON snapshot show one number for
+one reading. The default ``--precision auto`` keeps the precision the source
+data carries:
+
+- A register value with a ``modpoll:multiplier`` is shown as its exact
+  decimal, so ``2301`` scaled by ``0.1`` reads ``230.1`` rather than
+  ``230.10000000000002``.
+- A ``float16`` or ``float32`` register is shown as the shortest decimal that
+  reads back as the same value at that width, so ``12.34`` stays ``12.34``.
+- A ``float64`` register keeps its full value.
+- Integers, booleans and strings are shown unchanged.
+
+An explicit ``--precision N`` rounds every float to at most ``N`` decimals:
+
+  .. code-block:: shell
+
+    modpoll --tcp 192.168.1.10 --config examples/modsim.tm.json --precision 2
+
+Rounding a scaled reading can change the raw register value it names. The
+exported snapshot doubles as modsim simulation data, so Modpoll logs a warning
+when that happens. The value is still written as asked for.
+
 Configuration File
 ------------------
 

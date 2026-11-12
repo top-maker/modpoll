@@ -122,6 +122,52 @@ def table_cells(text):
     return rows
 
 
+def same_value(left, right):
+    """Whether two numbers or strings name the same value.
+
+    1.x and 2.x render one reading with different precision, so the text of
+    a float may differ while the value it names stays the same.
+    """
+    if isinstance(left, bool) or isinstance(right, bool):
+        return left is right
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        return math.isclose(float(left), float(right), rel_tol=1e-9, abs_tol=1e-12)
+    if left == right:
+        return True
+    return _same_number(left, right)
+
+
+def _same_number(left, right):
+    """Whether two texts both name a number and name the same one."""
+    try:
+        left_number = float(left)
+        right_number = float(right)
+    except (TypeError, ValueError):
+        return False
+    if math.isnan(left_number) or math.isnan(right_number):
+        return False
+    return math.isclose(left_number, right_number, rel_tol=1e-9, abs_tol=1e-12)
+
+
+def snapshots_match(left, right):
+    """Whether two snapshots name the same values, whatever their float text."""
+    if set(left) != set(right):
+        return False
+    return all(same_value(left[key], right[key]) for key in left)
+
+
+def tables_match(left, right):
+    """Whether two terminal tables show the same values, whatever their text."""
+    if len(left) != len(right):
+        return False
+    for left_row, right_row in zip(left, right):
+        if len(left_row) != len(right_row):
+            return False
+        if not all(same_value(a, b) for a, b in zip(left_row, right_row)):
+            return False
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--modpoll-1x", type=Path, required=True)
@@ -235,8 +281,10 @@ def main():
                     finally:
                         proxy.shutdown()
                         worker.join(timeout=5)
-        assert all(run["snapshot"] == runs[0]["snapshot"] for run in runs)
-        assert all(run["table"] == runs[0]["table"] for run in runs)
+        assert all(
+            snapshots_match(run["snapshot"], runs[0]["snapshot"]) for run in runs
+        )
+        assert all(tables_match(run["table"], runs[0]["table"]) for run in runs)
         report = {
             "upstream": host,
             "fixed_initial_values_verified": not bool(args.remote_host),

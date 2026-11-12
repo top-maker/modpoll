@@ -59,7 +59,7 @@ def create_devices(model):
                 member.data_type,
                 access,
                 member.unit,
-                None if member.multiplier is None else float(member.multiplier),
+                member.multiplier,
             )
             point.endian = member.byte_order
             point.physical_bits = member.physical_bits
