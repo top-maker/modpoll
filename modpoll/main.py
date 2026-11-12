@@ -14,7 +14,7 @@ from .modbus_task import (
     snapshot_timestamp_conflicts,
 )
 
-from . import __version__, verification
+from . import __version__, login, verification
 from .utils import set_threading_event, delay_thread, on_threading_event, get_utc_time
 
 
@@ -139,6 +139,8 @@ def _finish_full_read(args, handler):
         logger.debug("Report error details", exc_info=True)
         return False
     print(f"\n{verification.summary(report)}", flush=True)
+    if args.upload and not _upload(args, report):
+        return False
     if args.report and args.report != "-":
         print(
             f"Report written to {args.report}. It has no addresses, Unit IDs, serial "
@@ -146,6 +148,36 @@ def _finish_full_read(args, handler):
             flush=True,
         )
     return verification.is_full_read(report)
+
+
+def _upload(args, report):
+    """Show the report and, once the user agrees, upload it. Returns whether it was uploaded."""
+    print("\nReport to upload:\n" + json.dumps(report, indent=2), flush=True)
+    if not args.yes:
+        if not sys.stdin.isatty():
+            logger.error("Add --yes to upload without being asked.")
+            return False
+        if input("Upload this report to ModioHub? [y/N] ").strip().lower() not in (
+            "y",
+            "yes",
+        ):
+            print("Not uploaded.", flush=True)
+            return False
+    try:
+        stored = verification.upload_report(report, timeout=args.timeout)
+    except ValueError as exc:
+        logger.error("%s", exc)
+        return False
+    print(
+        "Uploaded. "
+        + (
+            "This is a full read and counts toward the community level."
+            if stored["fullRead"]
+            else "It is not a full read, so it does not count toward the community level."
+        ),
+        flush=True,
+    )
+    return True
 
 
 def _signal_handler(signal_number, frame):
@@ -159,6 +191,8 @@ def setup_logging(level, format):
 
 
 def app(name="modpoll"):
+    if sys.argv[1:2] in (["login"], ["logout"]):
+        sys.exit(login.command(sys.argv[1:]))
     mqtt_handler = None
     modbus_handlers = []
 

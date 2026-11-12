@@ -1,4 +1,4 @@
-> **2.x development branch.** This checkout accepts WoT TM/TD JSON using profile 0.2. CSV remains supported on the 1.x `main` branch. Install the current preview with `uv tool install --prerelease allow 'modpoll[serial]==2.0.0a6'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
+> **2.x development branch.** This checkout accepts WoT TM/TD JSON using profile 0.2. CSV remains supported on the 1.x `main` branch. Install the current preview with `uv tool install --prerelease allow 'modpoll[serial]==2.0.0a7'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
 
 # Modpoll - A New Command-line Tool for Modbus and MQTT
 
@@ -47,13 +47,13 @@ This tool requires Python 3.10+ (Ubuntu 22.04+ or equivalent) and is available o
 Install *modpoll* using the following command,
 
 ```bash
-uv tool install --prerelease allow "modpoll==2.0.0a6"
+uv tool install --prerelease allow "modpoll==2.0.0a7"
 ```
 
 Optionally, [pyserial](https://pyserial.readthedocs.io/) library can be installed for Modbus-RTU communication,
 
 ```bash
-uv tool install --prerelease allow 'modpoll[serial]==2.0.0a6'
+uv tool install --prerelease allow 'modpoll[serial]==2.0.0a7'
 ```
 
 Upgrade the tool via the following command,
@@ -126,6 +126,23 @@ model.tm.json`), and `--export` still writes the snapshot of the same read. With
 Model, add `--product <manufacturer>/<model-number>`; the report then names the model as local. The exit
 code is 1 unless every point was read.
 
+### Sign in to ModioHub, read a Workspace Thing Model and upload the report
+
+`modpoll login` signs in with your browser: it prints a code and an address (and opens the address where a
+browser can open), you confirm the code there, and the 7-day tool session is kept in a file only you can read
+(`~/.config/modiohub/credentials.json`, or `%APPDATA%\modiohub` on Windows). modsim uses the same file, so
+signing in with either tool signs in both. `MODIOHUB_TOKEN` in the environment replaces the file for scripts,
+`MODIOHUB_URL` selects another server, and `login` and `logout` take `--server URL` for the same. `modpoll logout` forgets the login on this computer;
+revoke the session in your ModioHub settings to end it on the server.
+
+Once signed in, `--tm modiohub:<id>@<version>` (`-f` works too; the version is a number or `latest`) reads one
+of your custom Thing Models. A shared one needs no login. A full read of it writes a report that names the
+Workspace model, and `--upload` shows the report and, after you confirm (or with `--yes`), uploads it:
+
+```sh
+modpoll --tm modiohub:k3x9f2m7q4a8n5bd@latest --tcp 192.168.1.20 --upload
+```
+
 ### MQTT data and write behavior
 
 The local example above uses the `adam6024_raw` TD title for its default topics:
@@ -154,7 +171,7 @@ so `modsim --config device.tm.json --data snapshot.json` replays it locally.
 A docker image has been provided for user to directly run the tool without local installation,
 
   ```bash
-  docker run --rm topmaker/modpoll:2.0.0a6
+  docker run --rm topmaker/modpoll:2.0.0a7
   ```
 
 It shows the version of the tool by default.
@@ -166,7 +183,7 @@ If you want to load a local configure file, you need to mount a local folder ont
 for example, if the child folder `examples` contains the config file `modsim.tm.json`, we can use it via the following command,
 
   ```bash
-  docker run --rm --network host -v "$(pwd)/examples:/app/examples:ro" topmaker/modpoll:2.0.0a6 \
+  docker run --rm --network host -v "$(pwd)/examples:/app/examples:ro" topmaker/modpoll:2.0.0a7 \
     modpoll -d \
       --tcp 127.0.0.1 --tcp-port 5020 \
       --config /app/examples/modsim.tm.json

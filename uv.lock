@@ -683,7 +683,7 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a6"
+version = "2.0.0a7"
 source = { editable = "." }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
@@ -717,7 +717,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "modpoll-wot", specifier = "==0.4.0a1" },
+    { name = "modpoll-wot", specifier = "==0.5.0a1" },
     { name = "paho-mqtt", specifier = ">=2.1.0,<3.0.0" },
     { name = "prettytable", specifier = ">=3.9.0,<4.0.0" },
     { name = "pymodbus", specifier = "~=3.16.1" },
@@ -745,15 +745,15 @@ docs = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.4.0a1"
+version = "0.5.0a1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
     { name = "referencing", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f6/19/f27b28a5e50b5ff8c7cb25e3593df58f31c65d4da5f29d051d29ee0f4d2a/modpoll_wot-0.4.0a1.tar.gz", hash = "sha256:81d25997407a64799a034ad4df9c53dbb4f8a7842f4416dacb81a7e26d95b6b6", size = 54976, upload-time = "2026-11-12T03:52:27.323Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/a4/477adeef74d9b4ce969ab377e9d00c90c115ab006aea6bb15dd3dd4c3176/modpoll_wot-0.5.0a1.tar.gz", hash = "sha256:c510a352bedf2c01a8d42abf21b394cacab208e46277c82e4531ea3799195cb1", size = 59242, upload-time = "2026-11-12T12:24:59.788Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/d3/4400813559fd11ca7d758d5ab343505366a7dd94c65be0c293b8048d915c/modpoll_wot-0.4.0a1-py3-none-any.whl", hash = "sha256:9708d2cadf65ce93626eb5755905f25e7aedcc1b9746e66277d5d94f08aa4c76", size = 46936, upload-time = "2026-11-12T03:52:26.239Z" },
+    { url = "https://files.pythonhosted.org/packages/89/3a/a24f047c949d4b866ea0f511a2d1f7f1c15bbb13249755dfcfb0bdf8e3f3/modpoll_wot-0.5.0a1-py3-none-any.whl", hash = "sha256:59dcd551d95ebd549de3e3e04170d7dec2fe8ea58e643e2b6d5ab6d91b0acb21", size = 50246, upload-time = "2026-11-12T12:24:58.568Z" },
 ]
 
 [[package]]

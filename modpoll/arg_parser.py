@@ -25,9 +25,13 @@ def get_parser():
     parser.add_argument(
         "-f",
         "--config",
+        "--tm",
+        dest="config",
         default=None,
         help=(
-            "Local path or URL of a WoT TM/TD JSON configuration. "
+            "Local path or URL of a WoT TM/TD JSON configuration, or "
+            "modiohub:<id>@<version> for a custom Thing Model in your ModioHub "
+            "Workspace (run modpoll login first unless it is shared). "
             "Type is detected from content, not the filename. "
             "Required unless --device is given."
         ),
@@ -58,6 +62,19 @@ def get_parser():
             "It lists each point's result and carries no address, Unit ID, serial "
             "number or value; review it before sharing. Implies --full-read."
         ),
+    )
+    parser.add_argument(
+        "--upload",
+        action="store_true",
+        help=(
+            "After a full read, show the report and, once you confirm, upload it to "
+            "ModioHub (run modpoll login first). Implies --full-read."
+        ),
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Upload without asking for confirmation after the report is shown",
     )
     parser.add_argument(
         "--product",

@@ -1,6 +1,6 @@
 [project]
 name = "modpoll"
-version = "2.0.0a6"
+version = "2.0.0a7"
 description = "A New Command-line Tool for Modbus and MQTT"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
@@ -10,7 +10,7 @@ dependencies = [
     "paho-mqtt>=2.1.0,<3.0.0",
     "prettytable>=3.9.0,<4.0.0",
     "requests>=2.32.5,<3.0.0",
-    "modpoll-wot==0.4.0a1",
+    "modpoll-wot==0.5.0a1",
 ]
 
 [project.optional-dependencies]
