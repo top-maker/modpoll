@@ -344,3 +344,19 @@ def test_connect_reports_success_after_connack():
     handler.mqtt_client = StubClient()
     assert handler.connect() is True
     assert handler.is_connected()
+
+
+def test_received_payload_is_logged_at_debug_not_info(caplog):
+    import logging
+
+    handler = MqttHandler("t", "broker.local", 1883, None, None, "c", 0)
+    message = type(
+        "M", (), {"retain": 0, "topic": "a/b", "payload": b"\x00\xffsecret"}
+    )()
+    with caplog.at_level(logging.DEBUG):
+        handler._on_message(None, None, message)
+    info = [r.getMessage() for r in caplog.records if r.levelno == logging.INFO]
+    debug = [r.getMessage() for r in caplog.records if r.levelno == logging.DEBUG]
+    assert any("a/b" in line for line in info)
+    assert not any("secret" in line for line in info)
+    assert any("secret" in line for line in debug)

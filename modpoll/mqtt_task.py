@@ -101,12 +101,11 @@ class MqttHandler:
         self.logger.debug(f"Message (mid={mid}) published successfully.")
 
     def _on_message(self, client, userdata, message):
-        if message.retain == 0:
-            self.logger.info(f"Receive message ({message.topic}): {message.payload}")
-        else:
-            self.logger.info(
-                f"Receive retained message ({message.topic}): {message.payload}"
-            )
+        kind = "retained message" if message.retain else "message"
+        self.logger.info(f"Receive {kind} ({message.topic})")
+        self.logger.debug(
+            f"Receive {kind} payload ({message.topic}): {message.payload}"
+        )
         msg = (message.topic, message.payload, bool(message.retain))
         try:
             self.rx_queue.put(msg, block=False)
