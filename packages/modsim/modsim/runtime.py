@@ -232,7 +232,10 @@ class RuntimeContext:
                 device.cells[table][current_address] = value
             touched = {(table, item) for item in range(address, address + len(values))}
             changes = device.validate_cells(touched)
-            device.held.update(changes)
+            # Read-only aliases are re-decoded but not written, so their generators keep running.
+            device.held.update(
+                name for name in changes if device.codecs[name].member.writable
+            )
             device.hook("on_write", changes)
             device.set_many(
                 {

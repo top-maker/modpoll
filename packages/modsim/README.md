@@ -90,10 +90,11 @@ again just to start it. After editing the mounted deployment file, apply the
 updated configuration to the running simulator with:
 
 ```bash
-docker compose exec modsim python -m modsim up -f /app/examples/deployment.yaml -d
+docker compose exec modsim python -m modsim up -f /app/deployment.yaml -d
 ```
 
-An unchanged device keeps its state; a changed device is replaced. Listener
+Use the mounted path Compose started (`/app/deployment.yaml`); the control
+socket rejects any other path. An unchanged device keeps its state; a changed device is replaced. Listener
 changes require a container restart. If you replace the deployment file itself,
 run `docker compose up -d --force-recreate` to refresh its bind mount. Export
 all running TDs directly into the host's `examples/td/` directory. The Compose

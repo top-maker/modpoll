@@ -461,3 +461,20 @@ def test_default_port_without_rights_fails_with_hint():
     )
     assert result.returncode == 2
     assert "Port 502 needs administrator rights" in result.stderr
+
+
+def test_tls_without_certificates_explains_what_is_missing(tmp_path):
+    with socket.socket() as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
+    source = os.path.dirname(os.path.dirname(modsim.__file__))
+    result = subprocess.run(
+        [sys.executable, "-m", "modsim", "--comm", "tls", "--port", str(port)],
+        cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": source},
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 2
+    assert "certificates/pymodbus.crt" in result.stderr + result.stdout

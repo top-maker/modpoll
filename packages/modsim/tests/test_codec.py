@@ -249,6 +249,21 @@ def test_readonly_bits_and_writeonly_property(tmp_path):
     assert instance.get("value") == 0x12345678
 
 
+def test_client_write_holds_only_writable_properties(tmp_path):
+    a = prop("unsignedShort", 1, "boolean", readOnly=True)
+    a["forms"][0]["modpoll:bit"] = 0
+    b = prop("unsignedShort", 1, "boolean")
+    b["forms"][0]["modpoll:bit"] = 1
+    instance = configure_properties(tmp_path, {"a": a, "b": b})
+    instance.generators = {"a": {"kind": "constant", "value": True}}
+    context = RuntimeContext([instance])
+    assert asyncio.run(context.async_setValues(1, 6, 0, [2])) is None
+    assert instance.held == {"b"}
+    instance.advance(0, 1)
+    assert instance.get("a") is True
+    assert instance.get("b") is True
+
+
 def test_partial_float_write_validates_full_span_and_rolls_back(tmp_path):
     instance = configure_properties(
         tmp_path, {"value": prop("float", 2, "number", maximum=1.5)}, {"value": 1.5}

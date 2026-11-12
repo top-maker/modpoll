@@ -201,10 +201,16 @@ async def run_async_server(args: Any) -> Any:
         require_bindable(address[0], args.port)
         # Create SSL context from cert and key files
         sslctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        sslctx.load_cert_chain(
-            certfile="certificates/pymodbus.crt",
-            keyfile="certificates/pymodbus.key",
-        )
+        try:
+            sslctx.load_cert_chain(
+                certfile="certificates/pymodbus.crt",
+                keyfile="certificates/pymodbus.key",
+            )
+        except OSError as exc:
+            raise OSError(
+                "TLS needs certificates/pymodbus.crt and certificates/pymodbus.key "
+                f"in the working directory: {exc}"
+            ) from exc
 
         server = ModbusTlsServer(
             context=args.context,
@@ -244,7 +250,7 @@ def app() -> None:
         _logger.error("Invalid model configuration: %s", exc)
         raise SystemExit(2) from exc
     try:
-        asyncio.run(_run_server_with_signals(run_args), debug=True)
+        asyncio.run(_run_server_with_signals(run_args), debug=args.log == "debug")
     except OSError as exc:
         _logger.error("%s", exc)
         raise SystemExit(2) from exc

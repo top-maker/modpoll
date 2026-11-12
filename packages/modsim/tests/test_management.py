@@ -422,3 +422,58 @@ def test_attached_up_and_follow_logs_detach_without_stopping(tmp_path):
                 assert json.loads(cli(path, "ps").stdout)["running"] is True
     finally:
         cli(path, "down")
+
+
+def test_apply_builds_devices_off_the_event_loop(tmp_path, monkeypatch):
+    import threading
+
+    path, _, _ = fixture(tmp_path)
+    desired = load_deployment(path)
+    instance_type = type(desired.instances["io-1"])
+    original = instance_type.build
+    threads = []
+
+    def build(self, *args, **kwargs):
+        threads.append(threading.current_thread())
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(instance_type, "build", build)
+
+    async def exercise():
+        manager = RuntimeManager()
+        try:
+            await manager.apply(desired)
+        finally:
+            await manager.close()
+
+    asyncio.run(exercise())
+    assert threads and all(t is not threading.main_thread() for t in threads)
+
+
+def test_idle_management_connection_does_not_block_other_commands(tmp_path):
+    import time
+
+    from modsim.management import paths
+
+    path, spec, _ = fixture(tmp_path)
+    process = subprocess.Popen(
+        [sys.executable, "-m", "modsim", "up"],
+        cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(ROOT)},
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        deadline = time.monotonic() + 10
+        while not json.loads(cli(path, "ps").stdout)["running"]:
+            assert time.monotonic() < deadline and process.poll() is None
+            time.sleep(0.05)
+        with socket.socket(socket.AF_UNIX) as idle:
+            idle.connect(str(paths(spec["name"])[0]))
+            started = time.monotonic()
+            assert json.loads(cli(path, "ps").stdout)["running"]
+            # The server drops an idle client after 5 seconds.
+            assert time.monotonic() - started < 3
+    finally:
+        process.terminate()
+        process.wait(timeout=10)

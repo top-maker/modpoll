@@ -84,8 +84,12 @@ class RuntimeManager:
     async def apply(self, desired: Deployment, dry_run: bool = False) -> dict:
         plan = self.plan(desired)
         # Only changed candidates initialize; repeated up cannot rerun live hooks.
+        # Building validates schemas and executes behavior scripts; keep it off the
+        # event loop so Modbus clients of the running devices are still served.
         candidates = {
-            key: desired.instances[key].build(self.allow_scripts, preview=dry_run)
+            key: await asyncio.to_thread(
+                desired.instances[key].build, self.allow_scripts, preview=dry_run
+            )
             for key in plan["added"] + plan["replaced"]
         }
         if dry_run:
@@ -227,12 +231,13 @@ async def serve(
             if task is not None:
                 handlers.add(task)
             try:
+                # Read before locking so an idle connection cannot stall other commands.
+                payload = await asyncio.wait_for(reader.readline(), 5)
+                message = json.loads(payload)
+                if message.get("source") != str(desired.path):
+                    raise ValueError("deployment name belongs to a different file")
+                action = message.get("action")
                 async with manager.lock:
-                    payload = await asyncio.wait_for(reader.readline(), 5)
-                    message = json.loads(payload)
-                    if message.get("source") != str(desired.path):
-                        raise ValueError("deployment name belongs to a different file")
-                    action = message.get("action")
                     if action == "up":
                         if message.get("allow_scripts") and not manager.allow_scripts:
                             raise ValueError(
