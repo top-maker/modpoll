@@ -1,6 +1,6 @@
 repository: top-maker/open-modbus-catalog
-revision: 3359d13e008cebfbb1c79646a4083cf5e39e0609
+revision: fd90607ef0235c5af01dfd1c62b32ca853834bdb
 files:
-  products/advantech/adam-5017uh/models/adam-5017uh.tm.json: 9e1d6e38dbb4e2db2f30f8dfd3d9df90a349b2e9aeb60a168ae4d60ee709ead7
-  products/advantech/adam-5017uh/models/adam-5017uh.vectors.json: a76f365ae333b78e8113227940e15cc52e527962d676d62754d6211b184e22eb
-  products/advantech/adam-5017uh/simulation/adam-5017uh.sim.json: 246e0eaf9234aaec6c85c63497a27bbd89c132e436345636c9cdba8969fd3c9f
+  products/advantech/adam-5017uh/model.tm.json: 9e1d6e38dbb4e2db2f30f8dfd3d9df90a349b2e9aeb60a168ae4d60ee709ead7
+  # Catalog schema 7 name for the simulation data; later catalog commits call it model.data.json.
+  products/advantech/adam-5017uh/model.sim.json: 246e0eaf9234aaec6c85c63497a27bbd89c132e436345636c9cdba8969fd3c9f

@@ -7,9 +7,9 @@ shared package; Modsim owns state and protocol execution.
 ## One device
 
 ```bash
-uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
+uv run modsim --config examples/models/products/advantech/adam-5017uh/model.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --data examples/models/products/advantech/adam-5017uh/model.sim.json
 ```
 
 Without `--port`, the listener uses 502, which needs administrator rights on
@@ -56,24 +56,31 @@ The ADAM lab example starts two independent devices on one listener:
 uv run modsim up -f examples/deployment.yaml
 ```
 
-Paths in deployment files are relative to the deployment directory; scenario
-script paths are relative to the scenario file. Unit IDs and TD identities must
+Paths in deployment files, including data and script paths, are relative to the
+deployment directory. Unit IDs and TD identities must
 be unique. Unknown addresses or Unit IDs never inherit another device's state.
 
-## Scenarios
+## Simulation data
 
+`--data` takes a local path or HTTPS URL of simulation data, defined by
+[modpoll-wot](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data).
 Version `"1"` fields:
 
 | Field | Meaning |
 | --- | --- |
-| `initial` | Property-name/value overrides |
+| `initial` | Property-name/value static values, the default |
 | `tick` | Update interval in seconds, default 1, minimum 0.001 |
 | `seed` | Per-instance random seed, default 0 |
 | `generators` | Property-name to generator specification |
 | `bindings` | Target property to source property for synthetic loopback |
 | `writePolicy` | `hold` (default) or `overwrite` for generated properties |
-| `script` | Local Python file |
-| `parameters` | Script values exposed as `device.parameters` |
+
+Simulation data carries no code. A modpoll `--export` snapshot is accepted as
+well: the entry titled like the model, or the only entry, becomes `initial`;
+points modpoll could not read (`null`) keep their defaults and are logged.
+Scaled values are accepted when they are exact decimal multiples of the
+multiplier or exactly the float modpoll exports, so a snapshot replays
+unchanged.
 
 Generators: `constant` (`value`); `sine` (`center`, `amplitude`, positive `period`);
 `ramp` (`start`, `rate`, `minimum`, `maximum`, clamped to bounds);
@@ -84,9 +91,8 @@ Boolean channels can use constant values, bindings or scripts. All updates must
 satisfy the model's schema and raw encoding bounds. Unknown properties are errors.
 Binding chains and cycles are rejected; use a script for ordered dependencies.
 
-Initialization order: model defaults/type fallback → scenario initial →
-CLI initial → script `initialize` → first dynamic update at elapsed 0.
-`--initial` and `--initial-file` remain available for single-device runs.
+Initialization order: model defaults/type fallback → data `initial` →
+CLI `--initial` → script `initialize` → first dynamic update at elapsed 0.
 Single-device startup logs include the final initialized values; raw values are
 synthetic unless the contribution explicitly documents their source.
 
@@ -107,8 +113,8 @@ response and may deliberately overwrite values.
 ## Local Python behaviors
 
 ```bash
-uv run modsim --config examples/models/advantech/adam-5017uh/adam-5017uh.tm.json \
-  --scenario examples/models/advantech/adam-5017uh/simulation/adam-5017uh-scripted-analog-input.sim.json --allow-scripts
+uv run modsim --config examples/models/products/advantech/adam-5017uh/model.tm.json \
+  --script behavior.py --allow-scripts
 ```
 
 Optional synchronous hooks:

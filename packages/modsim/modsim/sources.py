@@ -1,4 +1,4 @@
-"""Bounded local JSON and HTTPS model and scenario loading."""
+"""Bounded local JSON and HTTPS model and simulation data loading."""
 
 import tempfile
 from pathlib import Path
@@ -33,7 +33,7 @@ def remote_document(source: str) -> dict:
     """Load bounded JSON from an HTTPS URL with the shared loader's rules."""
     url = urlparse(source)
     if url.scheme != "https":
-        raise ValueError("model and scenario URLs must use HTTPS")
+        raise ValueError("model and data URLs must use HTTPS")
     if url.hostname == "github.com":
         parts = url.path.strip("/").split("/")
         if len(parts) >= 5 and parts[2] == "blob":

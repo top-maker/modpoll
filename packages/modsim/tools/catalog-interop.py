@@ -20,7 +20,7 @@ from modpoll_wot import export_td
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-TM_PATH = "products/advantech/adam-5017uh/models/adam-5017uh.tm.json"
+TM_PATH = "products/advantech/adam-5017uh/model.tm.json"
 VALUES = [0x1234, 0x8001, 0xABCD, 0, 65535, 42, 0x0102, 0xFE01]
 EXPECTED = {f"AI{i}_RAW": value for i, value in enumerate(VALUES)}
 
@@ -76,17 +76,8 @@ def run(args):
         port = reserve.getsockname()[1]
     with TemporaryDirectory(prefix="modsim-catalog-interop-") as temporary:
         work = Path(temporary)
-        if args.vectors and json.loads(args.vectors.read_bytes()) != EXPECTED:
-            raise ValueError(
-                "Catalog vectors differ from the independent expected vector"
-            )
-        scenario = work / "initial.sim.json"
-        scenario.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
-        vectors_digest = (
-            hashlib.sha256(args.vectors.read_bytes()).hexdigest()
-            if args.vectors
-            else None
-        )
+        data = work / "initial.data.json"
+        data.write_text(json.dumps({"version": "1", "initial": EXPECTED}))
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
         with (work / "simulator.log").open("w+") as log:
@@ -103,8 +94,8 @@ def run(args):
                     str(port),
                     "--unit-id",
                     "1",
-                    "--scenario",
-                    str(scenario),
+                    "--data",
+                    str(data),
                 ],
                 cwd=work,
                 env=env,
@@ -206,7 +197,6 @@ def run(args):
     report = {
         "executed-at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "data-revision": revision,
-        "vectors-sha256": vectors_digest,
         "td-sha256": td_digest,
         "td-endpoint": {
             "host": "127.0.0.1",
@@ -249,11 +239,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--lock", type=Path, default=ROOT / "examples/model-source.yaml"
-    )
-    parser.add_argument(
-        "--vectors",
-        type=Path,
-        help="Catalog vectors file that must equal the independent known vector",
     )
     parser.add_argument("--modpoll-python", type=Path, required=True)
     parser.add_argument("--node-reader", type=Path, required=True)

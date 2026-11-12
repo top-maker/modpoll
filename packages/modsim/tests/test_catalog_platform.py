@@ -22,10 +22,10 @@ def test_remote_model_single_device_read_and_stop(tmp_path):
     lock = yaml.safe_load(
         (Path(__file__).resolve().parents[1] / "examples/model-source.yaml").read_text()
     )
-    url = f"https://raw.githubusercontent.com/{lock['repository']}/{lock['revision']}/products/advantech/adam-5017uh/models/adam-5017uh.tm.json"
-    scenario = tmp_path / "initial.sim.json"
+    url = f"https://raw.githubusercontent.com/{lock['repository']}/{lock['revision']}/products/advantech/adam-5017uh/model.tm.json"
+    data = tmp_path / "initial.data.json"
     values = [0x1234, 0x8001, 0xABCD, 0, 65535, 42, 0x0102, 0xFE01]
-    scenario.write_text(
+    data.write_text(
         json.dumps(
             {"version": "1", "initial": {f"AI{i}_RAW": v for i, v in enumerate(values)}}
         )
@@ -49,8 +49,8 @@ def test_remote_model_single_device_read_and_stop(tmp_path):
                 str(port),
                 "--unit-id",
                 "1",
-                "--scenario",
-                str(scenario),
+                "--data",
+                str(data),
             ],
             cwd=tmp_path,
             env=env,

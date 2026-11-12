@@ -34,23 +34,17 @@ def device(unit=1, **options):
 
 
 def build(tmp_path, devices, **server):
-    # The fixture creates version 2 declarations; initial values and scripts
-    # belong to scenario documents, not deployment device fields.
+    # The fixture creates version 2 declarations; initial values belong to
+    # simulation data documents, not deployment device fields.
     import copy
 
     devices = copy.deepcopy(devices)
     for index, spec in enumerate(devices):
         initial = spec.pop("initial", None)
-        script = spec.pop("script", None)
-        if initial is not None or script:
-            scene = {"version": "1"}
-            if initial is not None:
-                scene["initial"] = initial
-            if script:
-                scene["script"] = script
-            scene_path = tmp_path / f"fixture-scene-{index}.json"
-            scene_path.write_text(json.dumps(scene))
-            spec["scenario"] = str(scene_path)
+        if initial is not None:
+            data_path = tmp_path / f"fixture-data-{index}.json"
+            data_path.write_text(json.dumps({"version": "1", "initial": initial}))
+            spec["data"] = str(data_path)
     path = tmp_path / "deployment.yaml"
     path.write_text(
         yaml.safe_dump(
@@ -93,7 +87,7 @@ def test_duplicate_instances_fail_before_listening(tmp_path, devices):
         build(tmp_path, devices)
 
 
-def test_relative_scenario_script_and_instance_state(tmp_path, monkeypatch):
+def test_relative_script_and_instance_state(tmp_path, monkeypatch):
     (tmp_path / "models").mkdir()
     (tmp_path / "models/io.tm.json").write_bytes(MODEL.read_bytes())
     (tmp_path / "scenes").mkdir()
@@ -113,11 +107,8 @@ def on_write(device, changes):
         device.set("AI0_RAW", changes["AO0_RAW"])
 """
     )
-    (tmp_path / "scenes/io.json").write_text(
-        json.dumps({"version": "1", "script": "behavior.py"})
-    )
     specs = [
-        device(unit, model="models/io.tm.json", scenario="scenes/io.json")
+        device(unit, model="models/io.tm.json", script="scenes/behavior.py")
         for unit in (1, 2)
     ]
     monkeypatch.chdir("/")
@@ -135,12 +126,9 @@ def on_write(device, changes):
 def test_script_requires_opt_in_and_unknown_fields_rejected(tmp_path):
     (tmp_path / "script.py").write_text('raise AssertionError("must not execute")')
     path = tmp_path / "denied.yaml"
-    (tmp_path / "scene.json").write_text(
-        json.dumps({"version": "1", "script": "script.py"})
-    )
     path.write_text(
         yaml.safe_dump(
-            {"version": 2, "name": "denied", "devices": [device(scenario="scene.json")]}
+            {"version": 2, "name": "denied", "devices": [device(script="script.py")]}
         )
     )
     with pytest.raises(ValueError, match="allow-scripts"):
@@ -150,15 +138,13 @@ def test_script_requires_opt_in_and_unknown_fields_rejected(tmp_path):
 
 
 def test_seeded_noise_and_client_write_policy(tmp_path):
-    scenario = {
+    data = {
         "version": "1",
         "seed": 73,
         "generators": {"AO0_RAW": {"kind": "noise", "minimum": 1, "maximum": 100}},
     }
-    (tmp_path / "scene.json").write_text(json.dumps(scenario))
-    args = build(
-        tmp_path, [device(1, scenario="scene.json"), device(2, scenario="scene.json")]
-    )
+    (tmp_path / "data.json").write_text(json.dumps(data))
+    args = build(tmp_path, [device(1, data="data.json"), device(2, data="data.json")])
     first, second = args.runtimes
     assert first.get("AO0_RAW") == second.get("AO0_RAW")
     first.advance(1, 1)
@@ -220,8 +206,8 @@ def test_multi_device_listener_loopback_and_shutdown(tmp_path):
             device(1, initial={"AO0_RAW": 10}),
             device(
                 2,
-                scenario=str(
-                    ROOT / "tests/fixtures/io-module/simulation/adam-6024.sim.json"
+                data=str(
+                    ROOT / "tests/fixtures/io-module/simulation/adam-6024.data.json"
                 ),
             ),
         ],
@@ -280,14 +266,14 @@ def test_invalid_generator_envelope_and_binding_cycles_fail_at_startup(tmp_path)
         )
     )
     with pytest.raises(ValueError):
-        build(tmp_path, [device(scenario=scene.name)])
+        build(tmp_path, [device(data=scene.name)])
     scene.write_text(
         json.dumps(
             {"version": "1", "bindings": {"AO0_RAW": "AO1_RAW", "AO1_RAW": "AO0_RAW"}}
         )
     )
     with pytest.raises(ValueError, match="chains/cycles"):
-        build(tmp_path, [device(scenario=scene.name)])
+        build(tmp_path, [device(data=scene.name)])
 
 
 def test_failed_write_hook_rolls_back_entire_device(tmp_path):

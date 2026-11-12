@@ -139,7 +139,7 @@ def run(argv: list[str]) -> None:
                         "inside the Docker Compose container"
                     ) from exc
             else:
-                deployment = load_deployment(path, include_scenarios=False)
+                deployment = load_deployment(path, include_data=False)
                 tds = {key: item.td for key, item in deployment.instances.items()}
             export_documents(tds, args)
             return

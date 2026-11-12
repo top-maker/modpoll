@@ -14,7 +14,7 @@ prepare_acceptance = module_from_spec(spec)
 spec.loader.exec_module(prepare_acceptance)
 
 
-def test_relocated_manifest_preserves_model_and_scenario_base(tmp_path, monkeypatch):
+def test_relocated_manifest_preserves_model_and_data_base(tmp_path, monkeypatch):
     directory = tmp_path / "examples"
     directory.mkdir()
     (directory / "model-source.yaml").write_text("revision: pinned\n")
@@ -25,7 +25,7 @@ def test_relocated_manifest_preserves_model_and_scenario_base(tmp_path, monkeypa
                 "devices": [
                     {
                         "model": "examples/models/vendor/model.tm.json",
-                        "scenario": "examples/models/vendor/initial.sim.json",
+                        "data": "examples/models/vendor/model.data.json",
                     }
                 ]
             }
@@ -39,7 +39,7 @@ def test_relocated_manifest_preserves_model_and_scenario_base(tmp_path, monkeypa
     assert str(directory / "models") in args
     device = yaml.safe_load(manifest.read_text())["devices"][0]
     assert device["model"] == str(directory / "models/vendor/model.tm.json")
-    assert device["scenario"] == str(directory / "models/vendor/initial.sim.json")
+    assert device["data"] == str(directory / "models/vendor/model.data.json")
 
 
 def test_historical_release_is_left_unchanged(tmp_path, monkeypatch):

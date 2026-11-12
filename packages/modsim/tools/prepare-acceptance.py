@@ -30,7 +30,7 @@ def prepare(root):
     # The source example uses repository-root paths. A detached acceptance tree
     # has no Git root, so make that original base explicit in the staged copy.
     for device in document["devices"]:
-        for key in ("model", "scenario"):
+        for key in ("model", "data", "script"):
             if key in device and not device[key].startswith("https://"):
                 device[key] = str((root / device[key]).resolve())
     manifest.write_text(yaml.safe_dump(document, sort_keys=False))

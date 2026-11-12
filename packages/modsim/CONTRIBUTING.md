@@ -1,6 +1,6 @@
 # Contributing to modsim
 
-Simulator code, runtime and scenario language changes target the affected tool
+Simulator code, runtime and simulation data changes target the affected tool
 line (`v2` for model-driven development). Run relevant checks from the root:
 
 ```sh
@@ -11,7 +11,7 @@ uv run python tools/generate-td.py --check
 uv run --group docs mkdocs build -s
 ```
 
-Device TMs, metadata, sources and product-specific scenarios belong in
+Device TMs, metadata, sources and product-specific simulation data belong in
 [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog), targeting
 its `main` through a PR and required catalog CI. Do not add editable device copies
 here. A new model submission needs an executable TM and source/permission/known

@@ -194,7 +194,7 @@ def test_exact_inverse_multiplier_negative_and_zero(tmp_path):
     instance = configure_properties(tmp_path, {"value": mapping}, {"value": 12.3})
     assert instance.cells["holding_register"][0] == 0xFF85
     assert instance.get("value") == 12.3
-    with pytest.raises(ValueError, match="exact integer"):
+    with pytest.raises(ValueError, match="integer multiple"):
         instance.set("value", 12.35)
     assert instance.get("value") == 12.3
     mapping["forms"][0]["modpoll:multiplier"] = 0
@@ -315,8 +315,8 @@ def test_tcp_wide_values_partial_writes_and_writeonly(tmp_path):
         "flags": [True, False] * 4,
     }
     configure_properties(tmp_path, properties, initial)
-    initial_path = tmp_path / "initial.json"
-    initial_path.write_text(json.dumps(initial))
+    data_path = tmp_path / "initial.data.json"
+    data_path.write_text(json.dumps({"version": "1", "initial": initial}))
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
@@ -330,8 +330,8 @@ def test_tcp_wide_values_partial_writes_and_writeonly(tmp_path):
                 "modsim",
                 "--config",
                 str(tmp_path / "codec.tm.json"),
-                "--initial-file",
-                str(initial_path),
+                "--data",
+                str(data_path),
                 "--port",
                 str(port),
                 "--unit-id",

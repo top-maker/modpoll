@@ -50,6 +50,26 @@ jobs:
       - name: Test with tox
         run: uv run --locked --no-sync tox -e ${{ matrix.tox-env }}
 
+  snapshot-replay:
+    name: modpoll snapshot replay
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up uv and Python
+        uses: ./.github/actions/setup-uv
+
+      - name: Install an independent released modpoll
+        run: |
+          uv venv "$RUNNER_TEMP/modpoll"
+          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" 'modpoll==2.0.0a5'
+
+      - name: Export with modpoll and replay with modsim
+        env:
+          MODSIM_TEST_MODPOLL_PYTHON: ${{ runner.temp }}/modpoll/bin/python
+        run: uv run --locked pytest tests/test_snapshot_replay.py -v
+
   docs:
     runs-on: ubuntu-latest
     steps:

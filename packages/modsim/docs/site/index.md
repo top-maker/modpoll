@@ -1,7 +1,7 @@
 # modsim v2 development source
 
 modsim runs simulated Modbus devices for development and integration testing.
-The current source supports profile 0.2 TM/TD input, scenarios and independent
+The current source supports profile 0.2 TM/TD input, simulation data and independent
 devices on a single managed Modbus TCP listener. The published `2.0.0a1`
 preview does not include all current managed commands; see
 [preview notes](https://github.com/top-maker/modsim/blob/v2/docs/preview-notes.md).
@@ -32,6 +32,6 @@ The CLI rejects non-default `--store` and the unsupported `--slaves` and
 
 ## More information
 
-- [Model-driven simulation](model-validation.md): TM/TD, codecs and scenarios.
+- [Model-driven simulation](model-validation.md): TM/TD, codecs and simulation data.
 - [Managed deployments](managed-deployments.md): YAML, lifecycle and export.
 - [Modules](modules.md): API reference.

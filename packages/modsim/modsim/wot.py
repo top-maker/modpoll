@@ -4,7 +4,6 @@ import json
 from typing import Any
 
 from modpoll_wot import parse_model, parse_parameters  # type: ignore[import-untyped]
-from modpoll_wot.loading import load_document  # type: ignore[import-untyped]
 from pymodbus.constants import ExcCodes
 from pymodbus.simulator import DataType, SimData, SimDevice
 
@@ -37,15 +36,7 @@ def configure(args: Any) -> SimDevice:
     if model.profile_version != "0.2" or model.properties_json is None:
         raise ValueError("configured simulation requires profile 0.2")
     schemas = json.loads(model.properties_json)
-    overrides: dict[str, Any] = {}
-    if args.initial_file:
-        overrides = load_document(args.initial_file)
-        if not isinstance(overrides, dict):
-            raise ValueError("--initial-file must contain a property-name/value object")
-    cli_values = parse_parameters(args.initial)
-    if overrides.keys() & cli_values.keys():
-        raise ValueError("duplicate initial values in --initial and --initial-file")
-    overrides.update(cli_values)
+    overrides: dict[str, Any] = parse_parameters(args.initial)
     if overrides.keys() - schemas.keys():
         raise ValueError(
             f"unknown initial properties: {sorted(overrides.keys() - schemas.keys())}"

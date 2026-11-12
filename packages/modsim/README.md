@@ -3,7 +3,7 @@
 modsim is a standalone Modbus simulator for device integration and testing.
 The v2 development source reads WoT Thing Models (TM), instantiates device
 descriptions (TD), and runs independent simulated devices on one Modbus TCP
-listener. Models, scenarios, the simulator and the client remain separate.
+listener. Models, simulation data, the simulator and the client remain separate.
 
 This README describes the **v2 development branch**. The published `2.0.0a1`
 preview predates the managed deployment commands shown below; do not assume an
@@ -35,7 +35,7 @@ uv run modsim ps
 The commands use `examples/deployment.yaml` by default. The example starts two
 virtual ADAM devices: Unit 1 exposes ADAM-5017UH raw inputs; Unit 2 exposes
 ADAM-6024 raw I/O with synthetic AO→AI and DO→DI loopback. These are simulation
-values, not verified physical measurements. The ADAM-5017UH model and scenario
+values, not verified physical measurements. The ADAM-5017UH model and simulation data
 come from [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog);
 the ADAM-6024 model is a frozen regression fixture in `tests/fixtures/io-module/`.
 
@@ -84,7 +84,7 @@ container unless stopped. Each restart resets simulation state. TDs advertise
 `127.0.0.1` by default; configure the advertised host and port mapping when
 clients connect from another machine.
 
-The deployment and model/scenario files are mounted from the repository.
+The deployment, model and simulation data files are mounted from the repository.
 `docker compose up -d` starts the configured deployment; do not run `modsim up`
 again just to start it. After editing the mounted deployment file, apply the
 updated configuration to the running simulator with:
@@ -162,12 +162,14 @@ Stop modpoll with Ctrl+C, stop the broker if used (`docker stop
 modpoll-demo-mqtt`), then stop modsim with `uv run modsim down` or stop the
 Compose deployment with `docker compose down`.
 
-## Models and scenarios
+## Models and simulation data
 
-A deployment has a stable ID per device, a TM path, instance parameters and an
-optional scenario. TD IDs and Modbus Unit IDs must be unique. Scenarios define
-initial values, seeded generators and bindings; local Python behavior requires
-`--allow-scripts`. They do not duplicate the Thing Model's point mappings. See
+A deployment has a stable ID per device, a TM path, instance parameters and
+optional simulation data. TD IDs and Modbus Unit IDs must be unique.
+[Simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
+gives static initial values, seeded generators and bindings, and carries no
+code; a local Python behavior is a separate `script` that requires
+`--allow-scripts`. Neither duplicates the Thing Model's point mappings. See
 [model configuration](docs/site/model-validation.md) for the supported profile,
 codecs, constraints and behavior hooks.
 
@@ -175,9 +177,18 @@ For a single device without a managed deployment:
 
 ```bash
 uv run python tools/fetch-models.py
-uv run modsim --config examples/models/products/advantech/adam-5017uh/models/adam-5017uh.tm.json \
+uv run modsim --config examples/models/products/advantech/adam-5017uh/model.tm.json \
   --unit-id 1 --port 5020 \
-  --scenario examples/models/products/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+  --data examples/models/products/advantech/adam-5017uh/model.sim.json
+```
+
+A modpoll `--export` snapshot is simulation data too, so a device read once can
+be replayed locally. Snapshots hold readings of a real device; keep them on
+your computer:
+
+```bash
+modpoll --config device.tm.json --tcp 192.168.1.10 --once --export snapshot.json
+uv run modsim --config device.tm.json --port 5020 --data snapshot.json
 ```
 
 Without `--port`, modsim listens on 502, the standard Modbus TCP port, so
@@ -203,17 +214,17 @@ source change.
 
 ## Pinned public model inputs
 
-Device data and optional scenarios are maintained in
+Device models and optional simulation data are maintained in
 [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog).
 `examples/model-source.yaml` pins a full catalog commit and individual SHA-256
 hashes. Prepare examples with
 `uv run python tools/fetch-models.py`; this downloads verified local inputs to
 ignored `examples/models/`, never executes downloaded Python, and does not copy
 an interpreter. Re-run after updating the lock through a reviewed PR.
-The application keeps its independent modpoll-wot 0.2.0a2 dependency.
+The application keeps its independent modpoll-wot dependency.
 
-Single-device mode can read a fixed HTTPS TM URL directly. Optional scenarios
-remain local; scripts require explicit `--allow-scripts`. Managed deployments
+Single-device mode can read a fixed HTTPS TM URL and simulation data directly;
+scripts stay local and require explicit `--allow-scripts`. Managed deployments
 use Unix sockets and require POSIX; native Windows should use single-device
 foreground mode or WSL. Independent-wheel CI verifies single-device remote-TM
 startup, raw reads and process shutdown on Linux, macOS and native Windows.

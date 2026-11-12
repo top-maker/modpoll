@@ -24,7 +24,11 @@ def get_parser() -> argparse.ArgumentParser:
     sources = parser.add_mutually_exclusive_group()
     sources.add_argument("--config", help="Profile 0.2 TM/TD local path or HTTPS URL")
     parser.add_argument(
-        "--scenario", help="Scenario JSON local path or HTTPS URL for --config"
+        "--data",
+        help=(
+            "Simulation data for --config: a local path or HTTPS URL of a data "
+            "document or a modpoll --export snapshot"
+        ),
     )
     parser.add_argument("--script", help="Local Python behavior for --config")
     parser.add_argument(
@@ -39,9 +43,6 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument("--param", action="append", default=[], metavar="NAME=JSON")
     parser.add_argument(
         "--initial", action="append", default=[], metavar="PROPERTY=JSON"
-    )
-    parser.add_argument(
-        "--initial-file", help="Property-name/value JSON initialization file"
     )
     parser.add_argument(
         "--comm",
@@ -97,14 +98,13 @@ def get_commandline() -> argparse.Namespace:
     args.comm = args.comm or "tcp"
     if not args.config and (
         args.initial
-        or args.initial_file
         or args.param
         or args.unit_id is not None
-        or args.scenario
+        or args.data
         or args.script
     ):
         parser.error(
-            "--initial, --initial-file, --param and --unit-id require --config"
+            "--data, --initial, --param, --script and --unit-id require --config"
         )
     if args.bind and args.comm != "tcp":
         parser.error("--bind currently supports --comm tcp only")

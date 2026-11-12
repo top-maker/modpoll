@@ -6,6 +6,7 @@ from fractions import Fraction
 from typing import Any
 
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
+from modpoll_wot import DataError, scaled_raw  # type: ignore[import-untyped]
 
 FORMATS = {
     "uint16": "H",
@@ -154,22 +155,28 @@ class Codec:
             else:
                 if type(value) not in (int, float):
                     raise ValueError(f"{self.name}: expected a finite numeric value")
-                if not self.factor:
-                    if value != 0:
-                        raise ValueError(
-                            f"{self.name}: zero multiplier only represents zero"
-                        )
-                    raw = Fraction(0)
-                else:
-                    raw = Fraction(str(value)) / self.factor
                 if self.dtype.startswith("float"):
-                    raw = float(raw)
-                elif raw.denominator != 1:
-                    raise ValueError(
-                        f"{self.name}: value is not an exact integer after inverse multiplier"
-                    )
+                    if not self.factor:
+                        if value != 0:
+                            raise ValueError(
+                                f"{self.name}: zero multiplier only represents zero"
+                            )
+                        raw = 0.0
+                    else:
+                        raw = float(Fraction(str(value)) / self.factor)
                 else:
-                    raw = raw.numerator
+                    # Exact decimals and the floats modpoll exports both map back.
+                    try:
+                        raw = scaled_raw(
+                            value,
+                            (
+                                1
+                                if self.member.multiplier is None
+                                else self.member.multiplier
+                            ),
+                        )
+                    except DataError as exc:
+                        raise ValueError(f"{self.name}: {exc}") from exc
             try:
                 payload = self.ordered(struct.pack(">" + FORMATS[self.dtype], raw))
             except (OverflowError, struct.error) as exc:

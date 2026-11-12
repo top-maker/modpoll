@@ -10,10 +10,14 @@ from typing import Any
 
 import yaml  # type: ignore[import-untyped]
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
-from modpoll_wot import export_td, parse_model  # type: ignore[import-untyped]
+from modpoll_wot import (  # type: ignore[import-untyped]
+    export_td,
+    load_simulation_data,
+    parse_model,
+)
 from modpoll_wot.loading import MAX_BYTES, load_document  # type: ignore[import-untyped]
 
-from .deployment import SCENARIO, STRING, obj
+from .deployment import STRING, obj
 from .sources import local_path, model_document
 
 
@@ -63,7 +67,9 @@ MANIFEST = obj(
                     "id": IDENTIFIER,
                     "model": STRING,
                     "parameters": {"type": "object"},
-                    "scenario": STRING,
+                    "data": STRING,
+                    "script": STRING,
+                    "scriptParameters": {"type": "object"},
                 },
                 ("id", "model"),
             ),
@@ -120,13 +126,14 @@ class Instance:
     td: dict
     model: Any
     fingerprint: str
-    scenario: dict
+    data: dict
     script_path: str | None
     script_source: bytes | None
+    script_parameters: dict
 
     def build(self, allow_scripts: bool = False, *, preview: bool = False) -> Any:
         """Construct isolated state from this snapshot, without reopening inputs."""
-        from .deployment import apply_scenario
+        from .deployment import apply_data
         from .wot import configure
 
         if self.script_source is not None:
@@ -136,17 +143,17 @@ class Instance:
                 compile(self.script_source, self.script_path or "<behavior>", "exec")
         args = Namespace(
             prepared_model=self.model,
-            initial_file=None,
             initial=[],
-            scenario=None,
-            scenario_spec=copy.deepcopy(self.scenario),
+            data=None,
+            data_spec=copy.deepcopy(self.data),
             script=None if preview else self.script_path,
             script_source=self.script_source,
+            script_parameters=copy.deepcopy(self.script_parameters),
             allow_scripts=allow_scripts,
         )
         configure(args)
         args.runtime.name = self.id
-        apply_scenario(args)
+        apply_data(args)
         return args.runtime
 
 
@@ -171,7 +178,7 @@ def deployment_root(path: Path) -> Path:
     return path.parent
 
 
-def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment:
+def load_deployment(path: Path, *, include_data: bool = True) -> Deployment:
     """Resolve and validate every instance before the runtime can be changed."""
     path = path.resolve()
     if path.suffix.lower() not in (".yaml", ".yml"):
@@ -233,25 +240,32 @@ def load_deployment(path: Path, *, include_scenarios: bool = True) -> Deployment
             raise ValueError(f"{key}: duplicate TD id or Unit ID")
         units.add(model.unit_id)
         identities.add(identity)
-        scenario = {}
+        data: dict = {}
         script_path, script_source = None, None
-        if include_scenarios and item.get("scenario"):
-            scene_path = Path(local_path(root, item["scenario"]))
-            scenario = read_yaml(scene_path)
-            validate(scenario, SCENARIO)
-            if scenario.get("script"):
-                script_path = local_path(scene_path.parent, scenario["script"])
-                with Path(script_path).open("rb") as stream:
-                    script_source = stream.read(MAX_BYTES + 1)
-                if len(script_source) > MAX_BYTES:
-                    raise ValueError("script exceeds 1 MiB")
-                # Resolved script is supplied separately to apply_scenario.
-                scenario = {k: v for k, v in scenario.items() if k != "script"}
+        if include_data and item.get("data"):
+            data = load_simulation_data(
+                read_yaml(Path(local_path(root, item["data"]))),
+                title=model.title,
+                properties=json.loads(model.properties_json).keys(),
+            ).data
+        if include_data and item.get("script"):
+            script_path = local_path(root, item["script"])
+            with Path(script_path).open("rb") as stream:
+                script_source = stream.read(MAX_BYTES + 1)
+            if len(script_source) > MAX_BYTES:
+                raise ValueError("script exceeds 1 MiB")
+        script_parameters = dict(item.get("scriptParameters", {}))
         fingerprint = hashlib.sha256(
-            canonical([item, document, td, scenario, script_path])
-            + (script_source or b"")
+            canonical([item, document, td, data, script_path]) + (script_source or b"")
         ).hexdigest()
         instances[key] = Instance(
-            key, td, model, fingerprint, scenario, script_path, script_source
+            key,
+            td,
+            model,
+            fingerprint,
+            data,
+            script_path,
+            script_source,
+            script_parameters,
         )
     return Deployment(path, name, bind, port, instances)

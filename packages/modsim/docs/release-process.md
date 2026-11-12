@@ -35,7 +35,7 @@ images. Record the separate validation run and tooling SHA.
 ### Known-value checks
 
 Use the approved TM as the configuration for a local TCP simulator. Seed known
-values with `--initial PROPERTY=JSON` or `--initial-file`, then read them with
+values with `--initial PROPERTY=JSON` or `--data` with an `initial` object, then read them with
 a full modpoll read. Thing Models no longer carry a `modpoll:audit` plan; a
 full read covers every property in `modpoll:acquisition`.
 

@@ -38,23 +38,23 @@ server:
   port: 5020
 devices:
   - id: adam-5017uh
-    model: examples/models/advantech/adam-5017uh/adam-5017uh.tm.json
+    model: examples/models/products/advantech/adam-5017uh/model.tm.json
     parameters:
       THING_ID: urn:modsim:example:adam-5017uh
       UNIT_ID: 1
-    scenario: examples/models/advantech/adam-5017uh/simulation/adam-5017uh.sim.json
+    data: examples/models/products/advantech/adam-5017uh/model.sim.json
 ```
 
 `devices` may be empty. IDs and deployment names use lowercase letters, digits
 and hyphens, starting with a letter or digit (maximum 64 characters). Device IDs,
 instantiated TD IDs and Unit IDs must each be unique within the deployment.
 Paths in the repository example resolve from the project root; for standalone
-deployments, model and scenario paths resolve relative to the deployment file. Scripts
-resolve relative to their scenario file. Models may also use bounded HTTPS URLs. Pin remote model revisions
+deployments, model, data and script paths resolve relative to the deployment file.
+Models may also use bounded HTTPS URLs. Pin remote model revisions
 for repeatable runs.
 
-Each device contains only `id`, `model`, optional `parameters` and optional
-`scenario`. A model must be a profile 0.2 TM. Its instantiated TD must have a
+Each device contains only `id`, `model`, and optional `parameters`, `data`,
+`script` and `scriptParameters` (values a script reads as `device.parameters`). A model must be a profile 0.2 TM. Its instantiated TD must have a
 stable URI `id`. Supply `THING_ID` when the TM declares that placeholder or has no `id`.
 The deployment device ID selects management operations; the TD ID identifies the
 Thing; Unit ID selects the device in Modbus requests. A device's TD ID cannot
@@ -78,11 +78,11 @@ The deployment format is a Modsim contract, not a standard TD object. TD generat
 uses `modpoll-wot==0.2.0a2` and its bundled TD/Modbus/profile validation. There is
 no private TD parser or arbitrary TD patch mechanism.
 
-Scenarios keep their existing version `"1"` schema, including `initial`, generators,
-bindings, seed, tick and optional local behavior scripts. Both JSON and YAML
-scenario documents are accepted by managed deployments. There is no duplicate
-initial-value field in deployment v2. Omitting a scenario produces valid static
-initial values from the model. Scenario state is not exported as TD defaults.
+`data` names [simulation data](model-validation.md#simulation-data) or a modpoll
+snapshot. Both JSON and YAML documents are accepted by managed deployments.
+There is no duplicate initial-value field in deployment v2. Omitting data
+produces valid static initial values from the model. Simulation data is not
+exported as TD defaults.
 
 Deployment files must use the `.yaml` or `.yml` extension. YAML uses safe loading with a 1 MiB document limit, bounded nesting and JSON
 compatible values; aliases, duplicate keys, implicit dates and non-finite numbers
@@ -90,7 +90,7 @@ are rejected. Use quoted strings where YAML scalar inference is inappropriate.
 
 ## Update and reset behavior
 
-Before changing a runtime, `up` validates every model and scenario and initializes
+Before changing a runtime, `up` validates every model and data document and initializes
 all new or changed candidates. An invalid candidate leaves the live device set
 unchanged. This guarantee covers simulator state, not external side effects in
 explicitly enabled Python scripts.
@@ -99,7 +99,7 @@ explicitly enabled Python scripts.
   and script state. Repeating `up` does not rerun their initialization hooks.
 * New IDs create independent devices. Removed IDs stop their tasks. Removing the
   last device leaves the listener available for a subsequent `up`.
-* Changed model, parameters, scenario or behavior source replaces that device and
+* Changed model, parameters, data or behavior source replaces that device and
   resets its state. Changes are detected by content, not just file paths.
 * Listener changes require `down` followed by `up`.
 
@@ -129,7 +129,7 @@ during a real application of the update.
 
 In managed mode, a periodic behavior failure takes that device offline and marks
 it failed in `ps`; other devices continue. Repeated unchanged `up` preserves that
-failure status. Use `reset` to retry or change the scenario and run `up`. The legacy
+failure status. Use `reset` to retry or change the data or script and run `up`. The legacy
 flag-based startup retains its existing process-wide failure behavior.
 
 ## TD export
@@ -144,7 +144,7 @@ By default, `modsim export` writes every TD to `output/` in the project root.
 The directory is ignored by Git. `--output-dir` changes the destination.
 
 Offline export reads the deployment, instantiates its TMs and validates the TDs;
-it needs no running process or scenario files and never executes behavior scripts. `--running`
+it needs no running process or data files and never executes behavior scripts. `--running`
 exports the last successfully applied TDs, so pending file edits cannot be
 mistaken for the active configuration. TD export describes interfaces and
 advertised endpoints, not current register values or a runtime snapshot.

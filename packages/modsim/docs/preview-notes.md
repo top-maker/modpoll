@@ -1,4 +1,31 @@
-# Modsim 2.0.0a6 preview
+# Modsim 2.0.0a7 preview
+
+Modsim 2.0.0a7 loads [simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
+with `--data` and pins modpoll-wot 0.4.0a1. This preview breaks the previous
+command line:
+
+- `--scenario` becomes `--data`; deployment devices use `data:` instead of
+  `scenario:`.
+- `--initial-file` is removed: put the values in a data document's `initial`.
+- Simulation data carries no code. Behavior scripts move out of the data file
+  to `--script` (with `--allow-scripts`) or a deployment device's `script:`,
+  and their values to the device's `scriptParameters:`.
+- A modpoll `--export` snapshot is simulation data, so a device read once can
+  be replayed on this computer:
+
+```sh
+uvx --prerelease allow modpoll==2.0.0a6 --config device.tm.json --tcp 192.168.1.10 --once --export snapshot.json
+uvx --prerelease allow modsim==2.0.0a7 --config device.tm.json --data snapshot.json
+```
+
+Scaled values that modpoll exports, such as `230.10000000000002` for a raw
+2301 with multiplier 0.1, are served again unchanged. Snapshot points modpoll
+could not read keep their defaults and are listed at startup. Snapshots hold
+readings of a real device: keep them on your computer.
+
+### Previous preview
+
+#### Modsim 2.0.0a6
 
 Modsim 2.0.0a6 pins modpoll-wot 0.3.0a3, the same interpreter as modpoll
 2.0.0a5. Thing Models no longer carry a `modpoll:audit` plan: a TM that still
@@ -9,8 +36,6 @@ ports and remote loading are unchanged from 2.0.0a5:
 ```sh
 uvx --prerelease allow modsim==2.0.0a6 --config https://example.org/device.tm.json
 ```
-
-### Previous preview
 
 #### Modsim 2.0.0a5
 

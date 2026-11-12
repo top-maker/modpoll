@@ -26,7 +26,7 @@ def fixture(tmp_path):
     model["id"] = "{{THING_ID}}"
     model["title"] = "{{TITLE}}"
     (tmp_path / "io.tm.json").write_text(json.dumps(model))
-    (tmp_path / "scene.json").write_text(
+    (tmp_path / "data.json").write_text(
         json.dumps({"version": "1", "initial": {"AO0_RAW": 12}})
     )
     with socket.socket() as reservation:
@@ -52,7 +52,7 @@ def device(unit):
             "TITLE": f"I/O {unit}",
             "UNIT_ID": unit,
         },
-        "scenario": "scene.json",
+        "data": "data.json",
     }
 
 
@@ -165,7 +165,7 @@ def test_snapshot_reset_reconcile_and_cleanup(tmp_path):
             await manager.apply(load_deployment(path))
             assert retired.done()
             assert 2 not in manager.context.devices
-            (tmp_path / "scene.json").write_text("invalid on disk")
+            (tmp_path / "data.json").write_text("invalid on disk")
             await manager.reset("io-1")
             assert manager.devices["io-1"].get("AO0_RAW") == 12
         finally:
@@ -188,9 +188,8 @@ def test_dry_run_never_executes_scripts_and_failures_preserve_live_state(tmp_pat
         try:
             await manager.apply(load_deployment(path))
             original = manager.devices["io-1"]
-            (tmp_path / "scene.json").write_text(
-                json.dumps({"version": "1", "script": "behavior.py"})
-            )
+            spec["devices"][0]["script"] = "behavior.py"
+            write(path, spec)
             desired = load_deployment(path)
             plan = await manager.apply(desired, dry_run=True)
             assert plan["replaced"] == ["io-1"]
@@ -279,9 +278,8 @@ def test_cli_live_add_remove_replace_export_reset_and_rollback(tmp_path):
 def test_offline_export_requires_no_process_and_does_not_run_behavior(tmp_path):
     path, spec, _ = fixture(tmp_path)
     (tmp_path / "fail.py").write_text("raise RuntimeError('must not execute')")
-    (tmp_path / "scene.json").write_text(
-        json.dumps({"version": "1", "script": "fail.py"})
-    )
+    spec["devices"][0]["script"] = "fail.py"
+    write(path, spec)
     output = tmp_path / "tds"
     cli(path, "export", "--output-dir", str(output))
     td = json.loads((output / "io-1.td.json").read_text())
@@ -296,11 +294,9 @@ def test_reset_uses_pristine_script_parameters(tmp_path):
         "    device.parameters['counter'] += 1\n"
         "    device.set('AO0_RAW', device.parameters['counter'])\n"
     )
-    (tmp_path / "scene.json").write_text(
-        json.dumps(
-            {"version": "1", "parameters": {"counter": 0}, "script": "behavior.py"}
-        )
-    )
+    spec["devices"][0]["script"] = "behavior.py"
+    spec["devices"][0]["scriptParameters"] = {"counter": 0}
+    write(path, spec)
 
     async def exercise():
         manager = RuntimeManager(allow_scripts=True)
@@ -322,10 +318,9 @@ def test_managed_behavior_failure_isolated_and_not_revived_by_unchanged_up(tmp_p
         "    if elapsed > 0:\n"
         "        raise RuntimeError('failed device')\n"
     )
-    (tmp_path / "fail.json").write_text(
-        json.dumps({"version": "1", "tick": 0.001, "script": "fail.py"})
-    )
-    spec["devices"][0]["scenario"] = "fail.json"
+    (tmp_path / "fail.json").write_text(json.dumps({"version": "1", "tick": 0.001}))
+    spec["devices"][0]["data"] = "fail.json"
+    spec["devices"][0]["script"] = "fail.py"
     spec["devices"].append(device(2))
     write(path, spec)
 
@@ -349,9 +344,9 @@ def test_managed_behavior_failure_isolated_and_not_revived_by_unchanged_up(tmp_p
     asyncio.run(exercise())
 
 
-def test_export_does_not_require_scenario_files(tmp_path):
+def test_export_does_not_require_data_files(tmp_path):
     path, spec, _ = fixture(tmp_path)
-    (tmp_path / "scene.json").unlink()
+    (tmp_path / "data.json").unlink()
     output = tmp_path / "instance.td.json"
     cli(path, "export", "--device", "io-1", "-o", str(output))
     assert parse_model(json.loads(output.read_text())).unit_id == 1
