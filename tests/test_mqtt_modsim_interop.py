@@ -283,7 +283,8 @@ def test_csv_tm_td_mqtt_equivalence_and_local_write_commands(
                 assert (
                     diagnostic["last_poll_success"] and diagnostic["error_count"] == 0
                 )
-                assert diagnostic["poll_count"] >= 4
+                # One count per poll cycle, however many pollers read the device.
+                assert diagnostic["poll_count"] >= 1
                 messages, count = observer.snapshot()
                 for topic, (_, retained, message_qos) in messages.items():
                     if topic.startswith(prefix + "/modsim01/data"):

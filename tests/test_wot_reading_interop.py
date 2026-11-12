@@ -16,6 +16,7 @@ from pymodbus.client import ModbusTcpClient
 from modpoll.arg_parser import get_parser
 from modpoll.modbus_task import setup_modbus_handlers
 from tests.wot_helpers import meter_model, raw_form
+from tools.verify_modsim_equivalence import snapshots_match
 
 pytestmark = pytest.mark.integration
 ROOT = Path(__file__).resolve().parents[1]
@@ -499,4 +500,5 @@ def test_numeric_bit_table_csv_parity_uses_complete_bytes(
             timeout=15,
         )
         assert result.returncode == 0 and not result.stderr, result.stderr
-        assert json.loads(output.read_text()) == expected
+        actual = json.loads(output.read_text())
+        assert snapshots_match(actual, expected), (label, actual)

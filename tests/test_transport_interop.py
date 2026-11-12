@@ -283,7 +283,7 @@ def test_serial_actual_frames_and_values(tmp_path, framer):
                 tmp_path / "tm.json",
             )
             if point is not None:
-                assert result == point
+                assert snapshots_match(result, point), (result, point)
             assert bridge.captured() == expected_serial(framer)
         finally:
             stop_simulator(process)
