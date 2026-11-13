@@ -683,7 +683,7 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a9"
+version = "2.0.0a10"
 source = { editable = "." }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
