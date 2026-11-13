@@ -1,6 +1,8 @@
 """Verification read and report (POLL-02a): per-group outcomes, report content and options."""
 
+import hashlib
 import json
+import os
 import sys
 import modpoll_wot
 import pytest
@@ -95,6 +97,39 @@ def write_model(tmp_path, model):
     path = tmp_path / "meter.tm.json"
     path.write_text(json.dumps(model))
     return path
+
+
+def saved_report(model, *, transport="tcp"):
+    """A schema-4 report for a model, as a read on a device would have written it."""
+    return {
+        "reportVersion": 4,
+        "model": {
+            "sha256": hashlib.sha256(model).hexdigest(),
+            "fingerprint": modpoll_wot.model_fingerprint(model),
+            "source": "local",
+        },
+        "tool": {"name": "modpoll", "version": "2.0.0a8", "interpreter": "0.6.0a2"},
+        "transport": transport,
+        "date": "2026-11-13",
+        "points": [
+            {
+                "property": name,
+                "fingerprint": fingerprint,
+                "read": "ok",
+                "expected": "confirmed",
+            }
+            for name, fingerprint in modpoll_wot.point_fingerprints(model).items()
+        ],
+    }
+
+
+def patch_upload(monkeypatch, uploaded):
+    def fake_upload(report, *, timeout):
+        uploaded["report"] = report
+        return {"fullRead": True}
+
+    monkeypatch.setattr(main, "_ensure_login", lambda: None)
+    monkeypatch.setattr(verification, "upload_report", fake_upload)
 
 
 def test_full_read_records_each_group_and_never_retries(monkeypatch, tmp_path, capsys):
@@ -218,7 +253,7 @@ def test_a_point_that_was_not_read_cannot_be_judged(monkeypatch, tmp_path):
         ([], "One of --config/-f is required"),
         (
             ["-f", "x.json", "--confirm", "all", "--tcp", "x"],
-            "need --report or --upload",
+            "need --report",
         ),
         (["-f", "x.json", "--tcp", "x", "--yes"], "--yes needs --upload"),
         (
@@ -283,14 +318,8 @@ def test_bare_report_uploads_after_a_yes(monkeypatch, tmp_path, capsys):
     answers = iter(["y", "", "y"])  # values look right; default name; upload
     monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
     monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
-    monkeypatch.setattr(main, "_ensure_login", lambda: None)
     uploaded = {}
-
-    def fake_upload(report, *, timeout):
-        uploaded["report"] = report
-        return {"fullRead": True}
-
-    monkeypatch.setattr(verification, "upload_report", fake_upload)
+    patch_upload(monkeypatch, uploaded)
     run_app(
         monkeypatch,
         ["-f", str(path), "--tcp", "192.0.2.10", "--report"],
@@ -300,6 +329,57 @@ def test_bare_report_uploads_after_a_yes(monkeypatch, tmp_path, capsys):
     out = capsys.readouterr().out
     assert "Report to upload:" in out
     assert "Uploaded." in out
+
+
+def test_upload_only_sends_a_saved_report_without_a_read(monkeypatch, tmp_path, capsys):
+    """--upload FILE uploads a saved report without a device or a --config."""
+    report_path = tmp_path / "report-2026-11-13.json"
+    report_path.write_text(
+        json.dumps(saved_report(json.dumps(three_group_model()).encode()))
+    )
+    uploaded = {}
+    patch_upload(monkeypatch, uploaded)
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(monkeypatch, ["--upload", str(report_path), "--yes"], None)
+    assert exit_info.value.code == 0
+    assert uploaded["report"]["reportVersion"] == 4
+    assert "Uploaded." in capsys.readouterr().out
+
+
+def test_upload_only_picks_the_newest_report_interactively(monkeypatch, tmp_path):
+    """Bare --upload offers the newest report-*.json as the default file."""
+    model = json.dumps(three_group_model()).encode()
+    old = tmp_path / "report-2026-11-11.json"
+    old.write_text(json.dumps(saved_report(model, transport="rtu")))
+    os.utime(old, (1_600_000_000, 1_600_000_000))
+    new = tmp_path / "report-2026-11-13.json"
+    new.write_text(json.dumps(saved_report(model)))
+    monkeypatch.chdir(tmp_path)
+    answers = iter(["", "y"])  # the offered default; upload
+    monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
+    monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
+    uploaded = {}
+    patch_upload(monkeypatch, uploaded)
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(monkeypatch, ["--upload"], None)
+    assert exit_info.value.code == 0
+    assert uploaded["report"]["transport"] == "tcp"
+
+
+def test_upload_only_refuses_a_file_that_is_not_a_report(monkeypatch, tmp_path, caplog):
+    bad = tmp_path / "report-2026-11-13.json"
+    bad.write_text("{}")
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(monkeypatch, ["--upload", str(bad), "--yes"], None)
+    assert exit_info.value.code == 1
+    assert "is not a verification report" in caplog.text
+
+
+def test_upload_only_without_a_terminal_names_a_file(monkeypatch, tmp_path, caplog):
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(monkeypatch, ["--upload"], None)
+    assert exit_info.value.code == 1
+    assert "Add --upload FILE" in caplog.text
 
 
 def test_bare_report_without_a_terminal_names_a_file(monkeypatch, tmp_path, caplog):

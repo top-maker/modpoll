@@ -193,3 +193,16 @@ interactive save/judgment flow, the inline sign-in, and refusal cases for
 ``--confirm``/``--yes`` without ``--report``/``--upload``. End-to-end against a
 local modsim: ``--config examples/modsim.tm.json --tcp ... --report -`` prints
 a schema-4 report with all 37 points ``ok``.
+
+On 2026-11-13 (second revision) ``--upload`` was decoupled from the read:
+``--upload FILE`` uploads a report saved earlier without reading a device
+(the file is previewed and confirmed first; bare ``--upload`` offers the
+newest ``report-*.json``), while ``--report --upload`` still uploads the fresh
+verification read. After the user agrees, the tool reports which ModioHub it
+is signed in to and uploads; the browser sign-in starts only without a login.
+Without ``MODIOHUB_URL`` the server of the only stored login stands
+(modpoll-wot 0.6.0a2 ``active_server``), so a staging login is no longer
+mistaken for the default server. After the change the offline suite passed
+with the new upload-only, interactive file-choice and active-server cases; the
+two serial-port construction tests fail in this environment only for the
+missing serial device and pass in CI.

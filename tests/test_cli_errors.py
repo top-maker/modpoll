@@ -84,7 +84,7 @@ def test_report_flag_reaches_the_transport_check():
 def test_confirm_without_report_is_refused():
     result = run("--config", "examples/modsim.tm.json", "--confirm", "all", "--once")
     assert result.returncode == 2
-    assert "need --report or --upload" in result.stderr + result.stdout
+    assert "need --report" in result.stderr + result.stdout
 
 
 def test_csv_rejects_typed_parameters():

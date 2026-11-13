@@ -1,0 +1,41 @@
+{
+  "reportVersion": 4,
+  "model": {
+    "sha256": "e4e4a198a03fcf0c0f2cf8749f7fb5c0383b883864031d6c55980dd125c708b2",
+    "fingerprint": "mf1:c8746d0ae0bb322012380c8a1ca92c637ce1ea12165d5d5dfd89444540ecfe11",
+    "source": "local"
+  },
+  "tool": {
+    "name": "modpoll",
+    "version": "2.0.0a8",
+    "interpreter": "0.6.0a2"
+  },
+  "transport": "tcp",
+  "date": "2026-11-13",
+  "points": [
+    {
+      "property": "ok1",
+      "fingerprint": "pf1:21976b145744104ef2f54260217a5b811f4d01828247de17602df4cf0de08580",
+      "read": "ok",
+      "expected": "confirmed"
+    },
+    {
+      "property": "ok2",
+      "fingerprint": "pf1:1a8fa1d777264882a994cf0da5c46cc476d92949994dc37e20d48b3bb871a1f5",
+      "read": "ok",
+      "expected": "confirmed"
+    },
+    {
+      "property": "refused",
+      "fingerprint": "pf1:8088de611157e2e56e8c75dceb78e6890c58b2dd21ef972b50bfdb4c25458628",
+      "read": "ok",
+      "expected": "confirmed"
+    },
+    {
+      "property": "silent",
+      "fingerprint": "pf1:40987c48a0c86fbbc784721f8be883870cffaa572906a72de9ec598c5863b51e",
+      "read": "ok",
+      "expected": "confirmed"
+    }
+  ]
+}

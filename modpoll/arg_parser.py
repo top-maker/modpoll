@@ -38,8 +38,9 @@ def get_parser():
     )
     verification = parser.add_argument_group(
         "verification",
-        "--report/--upload read every point of one Thing Model once, read-only "
-        "and without retries, and report which points could be read",
+        "--report reads every point of one Thing Model once, read-only and "
+        "without retries, and reports which points could be read; --upload "
+        "sends a verification report to ModioHub",
     )
     verification.add_argument(
         "--report",
@@ -57,10 +58,18 @@ def get_parser():
     )
     verification.add_argument(
         "--upload",
-        action="store_true",
+        nargs="?",
+        const="",
+        default=None,
+        metavar="FILE",
         help=(
-            "After the verification read, show the report and, once you confirm, "
-            "upload it to ModioHub; signs you in with the browser when needed"
+            "Upload a verification report to ModioHub. With FILE (or a file "
+            "chosen interactively, the newest report-*.json by default) a "
+            "saved report is uploaded without reading a device: it is shown "
+            "for confirmation and uploaded once you agree; you are signed in "
+            "with the browser only when no login exists. Together with "
+            "--report, the report of the verification read is uploaded "
+            "instead of only being saved."
         ),
     )
     verification.add_argument(

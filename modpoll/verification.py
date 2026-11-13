@@ -28,11 +28,18 @@ MAX_TIMEOUT = 10.0
 
 def validate_args(args):
     """Reject option combinations a command cannot honour, before anything is connected."""
-    args.full_read = args.report is not None or args.upload
-    if args.yes and not args.upload:
+    args.full_read = args.report is not None
+    if args.yes and args.upload is None:
         raise ValueError("--yes needs --upload")
     if (args.confirm or args.reject) and not args.full_read:
-        raise ValueError("--confirm and --reject need --report or --upload")
+        raise ValueError("--confirm and --reject need --report")
+    if args.upload is not None and not args.full_read:
+        # Uploading a saved report does not read a device.
+        if args.mqtt_host:
+            raise ValueError("An uploaded report is not published to MQTT")
+        if args.export:
+            raise ValueError("An uploaded report has no snapshot to export")
+        return
     sources = list(args.config or [])
     if not sources:
         raise ValueError("One of --config/-f is required")
@@ -76,7 +83,7 @@ def fetch_workspace_model(text, *, timeout):
     server it was issued for, and the download is checked against the SHA-256 the server states.
     """
     reference = modpoll_wot.parse_reference(text)
-    server = modpoll_wot.server_url()
+    server = modpoll_wot.active_server()
     session = modpoll_wot.load_session(server)
     token = session.token if session else None
     base = f"{server}/api/v1/thing-models/{reference.id}"
@@ -125,7 +132,7 @@ def _check_server(response, server):
 
 def upload_report(report, *, timeout):
     """Upload a report as the signed-in user; returns the stored report summary."""
-    server = modpoll_wot.server_url()
+    server = modpoll_wot.active_server()
     session = modpoll_wot.load_session(server)
     if session is None:
         raise ValueError(f"Sign in to {server} first with modpoll login")
@@ -226,6 +233,23 @@ def build_report(handler, args):
         "points": points,
     }
     modpoll_wot.validate_report(report, model=payload)
+    return report
+
+
+def load_report(target):
+    """The verification report in a file, validated with modpoll-wot (no model bytes at hand)."""
+    try:
+        text = Path(target).read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ValueError(f"{target} cannot be read: {exc}") from exc
+    try:
+        report = json.loads(text)
+    except ValueError as exc:
+        raise ValueError(f"{target} is not JSON: {exc}") from exc
+    try:
+        modpoll_wot.validate_report(report)
+    except modpoll_wot.ReportError as exc:
+        raise ValueError(f"{target} is not a verification report: {exc}") from exc
     return report
 
 

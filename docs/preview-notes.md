@@ -1,5 +1,17 @@
 # Next preview
 
+`--upload` stands alone (modpoll-wot 0.6.0a2):
+
+- `modpoll --upload FILE` uploads a report saved earlier without reading a device: the report is shown
+  for confirmation and uploaded once you agree. Bare `--upload` offers the newest `report-*.json` in the
+  current directory (`--yes` answers the questions; without a terminal, name the file).
+- After you agree, the tool tells you which ModioHub it is signed in to and uploads; the browser sign-in
+  starts only when no login exists. Without `MODIOHUB_URL`, the server of the only stored login stands,
+  so a login made against staging is no longer mistaken for the default server.
+- With `--report`, `--upload` still uploads the fresh verification read instead of only saving it.
+
+# Modpoll 2.0.0a8 preview
+
 The verification flags move back onto the normal read and the report drops the
 product (modpoll-wot 0.6.0a1, report schema 4):
 
@@ -10,24 +22,6 @@ product (modpoll-wot 0.6.0a1, report schema 4):
   login the browser sign-in flow starts inline.
 - The `verify` subcommand and `--product` are gone: ModioHub resolves the product from the model
   fingerprint (identical for a Thing Model, its Thing Description exports and unmodified forks).
-
-# Modpoll 2.0.0a8 preview
-
-Modpoll 2.0.0a8 keeps modpoll-wot 0.5.0a1. It reshapes the ModioHub commands of 2.0.0a7 and restores v1 CSV
-configurations:
-
-- `modpoll verify --config MODEL --tcp HOST` replaces `--device` and `--full-read`: it reads every point of a
-  Thing Model once, read-only and without retries, and reports which points could be read. `--report FILE`
-  writes the verification report (schema 3), which holds no address, Unit ID, serial number or value, and
-  `--upload` shows the report and uploads it after you confirm. `--device`, `--chassis`, `--firmware` and
-  `--configuration` are removed: give the model with `--config` (a file, an address, or a Workspace model) and
-  the catalog product with `--product <manufacturer>/<model>`.
-- `--config` (`-f`) is the only configuration argument; `--tm` is removed. It takes a WoT Thing Model or
-  Thing Description, a v1 CSV file (detected from the content), or `modiohub:<id>@<version>`, a custom Thing
-  Model from your ModioHub Workspace.
-- `modpoll login` prints the sign-in link and opens a browser only where one can be opened; the opener's
-  output no longer fills the terminal, and Ctrl-C cancels with one line. `modsim login` behaves the same in
-  modsim 2.0.0a10.
 
 ## Modpoll 2.0.0a7 preview
 

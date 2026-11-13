@@ -4,6 +4,7 @@ import signal
 import sys
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 from modpoll_wot import AcquisitionError
 
@@ -174,11 +175,14 @@ def _finish_full_read(args, handler):
                 logger.debug("Report error details", exc_info=True)
                 return False
     if args.report == "":
-        if not sys.stdin.isatty():
+        if args.yes and args.upload is not None:
+            args.report = None  # --yes --upload sends the report without saving it
+        elif not sys.stdin.isatty():
             logger.error("Add --report FILE when not running interactively.")
             return False
-        default = f"report-{datetime.now(timezone.utc).date().isoformat()}.json"
-        args.report = input(f"Save the report to [{default}]: ").strip() or default
+        else:
+            default = f"report-{datetime.now(timezone.utc).date().isoformat()}.json"
+            args.report = input(f"Save the report to [{default}]: ").strip() or default
     if args.report:
         try:
             verification.write_report(report, args.report)
@@ -192,7 +196,7 @@ def _finish_full_read(args, handler):
                 "serial numbers or values; review it before sharing.",
                 flush=True,
             )
-    upload = args.upload
+    upload = args.upload is not None
     confirmed = False
     if not upload and not args.yes and sys.stdin.isatty():
         upload = _ask("Upload this report to ModioHub? [y/N] ") in ("y", "yes")
@@ -206,10 +210,45 @@ def _ensure_login():
     """A session for the upload; without one, sign in with the browser right here."""
     import modpoll_wot
 
-    server = modpoll_wot.server_url()
-    if modpoll_wot.load_session(server) is None:
-        print(f"Sign in to {server} to upload.", flush=True)
+    server = modpoll_wot.active_server()
+    session = modpoll_wot.load_session(server)
+    if session is None:
+        print(f"Not signed in to {server}; starting the browser sign-in.", flush=True)
         login.login(server)
+    else:
+        who = f" as {session.github_user}" if session.github_user else ""
+        print(f"Signed in to {server}{who}.", flush=True)
+
+
+def _latest_report_file():
+    """The newest report-*.json in the current directory, for the interactive --upload default."""
+    candidates = sorted(
+        Path.cwd().glob("report-*.json"), key=lambda path: path.stat().st_mtime
+    )
+    return str(candidates[-1]) if candidates else ""
+
+
+def _upload_saved(args):
+    """Upload a report saved earlier: choose the file, preview it, confirm, then upload."""
+    target = args.upload
+    if not target:
+        if not sys.stdin.isatty():
+            logger.error("Add --upload FILE when not running interactively.")
+            return False
+        default = _latest_report_file()
+        prompt = "Report file to upload"
+        prompt += f" [{default}]: " if default else ": "
+        target = input(prompt).strip() or default
+        if not target:
+            logger.error("No report file given.")
+            return False
+    try:
+        report = verification.load_report(target)
+    except ValueError as exc:
+        logger.error("%s", exc)
+        logger.debug("Report load details", exc_info=True)
+        return False
+    return _upload(args, report)
 
 
 def _upload(args, report, *, confirm=True):
@@ -285,6 +324,9 @@ def app(name="modpoll"):
     except ValueError as exc:
         logger.error("%s", exc)
         sys.exit(2)
+
+    if args.upload is not None and args.report is None:
+        sys.exit(0 if _upload_saved(args) else 1)
 
     # setup mqtt
     if not args.mqtt_host:

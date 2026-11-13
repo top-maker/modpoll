@@ -264,7 +264,7 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
     monkeypatch.setattr(verification.requests, "post", post)
     run_app(
         monkeypatch,
-        ["-f", str(path), "--tcp", "x", "--upload", "--yes"],
+        ["-f", str(path), "--tcp", "x", "--report", "--upload", "--yes"],
         FakeClient(False, False),
     )
     out = capsys.readouterr().out
@@ -288,7 +288,7 @@ def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
         "post",
         lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
     )
-    arguments = ["-f", str(path), "--tcp", "x", "--upload"]
+    arguments = ["-f", str(path), "--tcp", "x", "--report", "--upload"]
     # Not a terminal and no --yes: nothing is sent.
     with pytest.raises(SystemExit) as exit_info:
         run_app(monkeypatch, arguments, FakeClient(False, False))
@@ -345,11 +345,11 @@ def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, 
     monkeypatch.setattr(login, "login", fake_login)
     run_app(
         monkeypatch,
-        ["-f", str(path), "--tcp", "x", "--upload", "--yes"],
+        ["-f", str(path), "--tcp", "x", "--report", "--upload", "--yes"],
         FakeClient(False, False),
     )
     assert posted
-    assert "Sign in to" in capsys.readouterr().out
+    assert "signed in to" in capsys.readouterr().out
 
 
 class Finished:
