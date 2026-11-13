@@ -105,9 +105,12 @@ def expected_serial(framer):
 
 
 def run_client(source, config, arguments, output):
+    # The 2.x client is this checkout, run in the interpreter running the tests: the workspace
+    # environment lives at the repository root since TOOL-01. A baseline keeps its own venv.
+    python = sys.executable if source == ROOT else str(source / ".venv/bin/python")
     result = subprocess.run(
         [
-            str(source / ".venv/bin/python"),
+            python,
             "-m",
             "modpoll",
             "--once",
