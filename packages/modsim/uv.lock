@@ -842,12 +842,13 @@ wheels = [
 
 [[package]]
 name = "modsim"
-version = "2.0.0a11"
+version = "2.0.0a12"
 source = { editable = "." }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
     { name = "pymodbus", marker = "python_full_version < '3.15'" },
+    { name = "pyserial", marker = "python_full_version < '3.15'" },
     { name = "pyyaml", marker = "python_full_version < '3.15'" },
 ]
 
@@ -874,6 +875,7 @@ requires-dist = [
     { name = "jsonschema", specifier = ">=4.21,<5" },
     { name = "modpoll-wot", specifier = "==0.6.0a2" },
     { name = "pymodbus", specifier = "~=3.16.1" },
+    { name = "pyserial", specifier = ">=3.5,<4.0" },
     { name = "pyyaml", specifier = ">=6,<7" },
 ]
 
@@ -1074,6 +1076,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d1/82/9cec47d1613bd5cdd918b82a6ffe54924c5462f1e14c59c71ef238fbc9cf/pyproject_api-1.11.4.tar.gz", hash = "sha256:42332ebb8e5e510a3a9ea498cedb5723134ddd46ddfe2d07693917b2ebea22a7", size = 25169, upload-time = "2026-10-07T23:24:01.089Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d3/2f/ff5b8a99a33094a83e0e5c5b4cdf7b1fcc19dd009ff4acc1a749dcc18332/pyproject_api-1.11.4-py3-none-any.whl", hash = "sha256:30921dec1f85946dd47664536a003b2aea3a8be18e334c93ed12f6a8b1e60c76", size = 13563, upload-time = "2026-10-07T23:23:59.699Z" },
+]
+
+[[package]]
+name = "pyserial"
+version = "3.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/7d/ae3f0a63f41e4d2f6cb66a5b57197850f919f59e558159a4dd3a818f5082/pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb", size = 159125, upload-time = "2020-11-23T03:59:15.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0", size = 90585, upload-time = "2020-11-23T03:59:13.41Z" },
 ]
 
 [[package]]

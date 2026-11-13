@@ -1,4 +1,21 @@
-# Modsim 2.0.0a10 preview
+# Modsim 2.0.0a12 preview
+
+Modsim 2.0.0a12 keeps modpoll-wot 0.6.0a2 and changes how a simulator is reached:
+
+- **Port 5020 by default.** Without `--port`, modsim now listens on 5020 for TCP, UDP and TLS, so the first
+  command needs no administrator rights on Linux and macOS. Read it with
+  `modpoll --tcp 127.0.0.1 --tcp-port 5020` (modpoll 2.0.0a10). `--port 502` still selects the standard port.
+- **Modbus RTU without hardware.** `modsim --config device.tm.json --serial pty` creates a virtual serial
+  port on Linux and macOS, prints it together with the matching `modpoll --serial ...` command, and removes
+  it on exit. `--serial-link PATH` adds a fixed symbolic link; `--serial PORT` listens on an existing port
+  (on Windows, one port of a virtual pair made with a driver such as com0com). Virtual ports ignore baud
+  rate and parity. pyserial is now installed with modsim.
+
+## Modsim 2.0.0a11 preview
+
+Modsim 2.0.0a11 pins modpoll-wot 0.6.0a2 and resolves the ModioHub server from the only stored login.
+
+## Modsim 2.0.0a10 preview
 
 Modsim 2.0.0a10 keeps modpoll-wot 0.5.0a1. `modsim login` prints the sign-in link and opens a browser only
 where one can be opened; the opener's output no longer fills the terminal, and Ctrl-C cancels with one line.

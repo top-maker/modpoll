@@ -12,7 +12,7 @@ uv run modsim --config examples/models/products/advantech/adam-5017uh/model.tm.j
   --data examples/models/products/advantech/adam-5017uh/model.sim.json
 ```
 
-Without `--port`, the listener uses 502, which needs administrator rights on
+Without `--port`, the listener uses 5020; port 502 needs administrator rights on
 Linux and on macOS for `127.0.0.1`; modsim then explains how to rerun with sudo
 or choose a port above 1023.
 

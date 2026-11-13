@@ -430,11 +430,12 @@ def test_privileged_port_reports_how_to_run(monkeypatch):
     assert "--port 5020" in message
 
 
-def test_default_tcp_port_is_502(monkeypatch):
+@pytest.mark.parametrize("comm", ["tcp", "udp", "tls"])
+def test_default_port_is_5020(monkeypatch, comm):
     from modsim.utils import get_commandline
 
-    monkeypatch.setattr(sys, "argv", ["modsim"])
-    assert get_commandline().port == 502
+    monkeypatch.setattr(sys, "argv", ["modsim", "--comm", comm])
+    assert get_commandline().port == 5020
 
 
 def _unprivileged_low_ports():
@@ -452,9 +453,9 @@ def _unprivileged_low_ports():
     or _unprivileged_low_ports(),
     reason="needs a non-root Linux user without access to port 502",
 )
-def test_default_port_without_rights_fails_with_hint():
+def test_privileged_port_without_rights_fails_with_hint():
     result = subprocess.run(
-        [sys.executable, "-m", "modsim", "--log", "error"],
+        [sys.executable, "-m", "modsim", "--log", "error", "--port", "502"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -484,19 +485,41 @@ def test_serial_transport_passes_port_framer_and_datastore(monkeypatch):
     import asyncio
 
     from modsim import main
-    from modsim.utils import get_parser
+    from modsim.utils import get_commandline
 
     calls = {}
 
-    async def fake_serial_server(**kwargs):
-        calls.update(kwargs)
+    class FakeSerialServer:
+        def __init__(self, **kwargs):
+            calls.update(kwargs)
+            self.serving = asyncio.get_event_loop().create_future()
+            self.serving.set_result(None)
 
-    monkeypatch.setattr(main, "StartAsyncSerialServer", fake_serial_server)
-    args = get_parser().parse_args(
-        ["--comm", "serial", "--port", "/dev/modsim-test", "--framer", "rtu"]
+        async def listen(self):
+            return True
+
+        async def shutdown(self):
+            calls["shutdown"] = True
+
+    monkeypatch.setattr(main, "ModbusSerialServer", FakeSerialServer)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "modsim",
+            "--serial",
+            "/dev/modsim-test",
+            "--serial-baud",
+            "19200",
+            "--serial-parity",
+            "even",
+        ],
     )
+    args = get_commandline()
     main.setup_server(args)
     assert asyncio.run(main.run_async_server(args)) is None
     assert calls["port"] == "/dev/modsim-test"
     assert calls["framer"] == args.framer
     assert calls["context"] is args.context
+    assert (calls["baudrate"], calls["parity"]) == (19200, "E")
+    assert calls["shutdown"]

@@ -8,7 +8,10 @@ from pymodbus.framer import (
     FramerType,
 )
 
-from . import __version__
+from . import __version__, virtual_serial
+
+# Above 1023, so the first command needs no administrator rights.
+DEFAULT_PORT = 5020
 
 config: Dict[str, Any] = {}
 
@@ -55,6 +58,27 @@ def get_parser() -> argparse.ArgumentParser:
         type=str,
     )
     parser.add_argument(
+        "--serial",
+        metavar="PORT",
+        help=(
+            "listen for Modbus RTU on a serial port; 'pty' creates a virtual serial "
+            "port (Linux, macOS) and prints the port for the client"
+        ),
+    )
+    parser.add_argument(
+        "--serial-baud", type=int, help="serial baud rate, default is 9600"
+    )
+    parser.add_argument(
+        "--serial-parity",
+        choices=["none", "even", "odd"],
+        help="serial parity, default is none",
+    )
+    parser.add_argument(
+        "--serial-link",
+        metavar="PATH",
+        help="with --serial pty, also create this symbolic link to the client port",
+    )
+    parser.add_argument(
         "--framer",
         choices=["ascii", "rtu", "socket", "tls"],
         help="set framer, default depends on --comm",
@@ -69,7 +93,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--port",
-        help="set port; defaults to 502 for TCP and UDP and 802 for TLS",
+        help="set port; defaults to 5020, which needs no administrator rights",
         type=str,
     )
     parser.add_argument(
@@ -98,7 +122,29 @@ def get_commandline() -> argparse.Namespace:
     parser = get_parser()
     args = parser.parse_args()
 
+    if args.serial:
+        if args.comm not in (None, "serial"):
+            parser.error("--serial cannot be combined with --comm %s" % args.comm)
+        if args.port:
+            parser.error("--serial and --port are mutually exclusive")
+        args.comm = "serial"
+        args.port = args.serial
     args.comm = args.comm or "tcp"
+    if args.comm != "serial" and (
+        args.serial_baud or args.serial_parity or args.serial_link
+    ):
+        parser.error(
+            "--serial-baud, --serial-parity and --serial-link require --serial"
+        )
+    if args.serial_link and args.serial != "pty":
+        parser.error("--serial-link requires --serial pty")
+    if args.serial == "pty" and not virtual_serial.available():
+        parser.error(
+            "--serial pty is not available on Windows: create a virtual serial port "
+            "pair with a driver such as com0com and pass one of its ports to --serial"
+        )
+    args.serial_baud = args.serial_baud or 9600
+    args.serial_parity = args.serial_parity or "none"
     if not args.config and (
         args.initial
         or args.param
@@ -111,8 +157,8 @@ def get_commandline() -> argparse.Namespace:
         )
     if args.bind and args.comm != "tcp":
         parser.error("--bind currently supports --comm tcp only")
-    if args.config and args.comm != "tcp":
-        parser.error("model-driven simulation currently supports --comm tcp")
+    if args.config and args.comm not in ("tcp", "serial"):
+        parser.error("model-driven simulation supports TCP and --serial")
     if args.store != "sequential":
         parser.error("only --store sequential is supported")
     if args.slaves != 0:
@@ -132,10 +178,10 @@ def get_commandline() -> argparse.Namespace:
 
     # set defaults
     comm_defaults: Dict[str, list] = {
-        "tcp": ["socket", 502],
-        "udp": ["socket", 502],
+        "tcp": ["socket", DEFAULT_PORT],
+        "udp": ["socket", DEFAULT_PORT],
         "serial": ["rtu", "/dev/ptyp0"],
-        "tls": ["tls", 802],
+        "tls": ["tls", DEFAULT_PORT],
     }
     framers: Dict[str, Any] = {
         "ascii": FramerType.ASCII,

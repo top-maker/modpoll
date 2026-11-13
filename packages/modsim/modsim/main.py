@@ -13,7 +13,7 @@ from typing import Any
 
 from pymodbus.pdu.device import ModbusDeviceIdentification
 from pymodbus.server import (
-    StartAsyncSerialServer,
+    ModbusSerialServer,
     ModbusTcpServer,
     ModbusTlsServer,
     ModbusUdpServer,
@@ -24,6 +24,9 @@ from pymodbus.simulator import DataType, SimData, SimDevice
 from . import __version__
 from .compat import BinaryPayloadBuilder, Endian
 from .utils import get_commandline, get_utc_time, get_logger
+from .virtual_serial import VirtualSerialPair
+
+SERIAL_PARITY = {"none": "N", "even": "E", "odd": "O"}
 
 _logger = logging.getLogger(__name__)
 
@@ -131,6 +134,60 @@ def require_bindable(host: str, port: Any, kind: int = socket.SOCK_STREAM) -> No
             return
 
 
+def read_command(args: Any, port: str) -> str:
+    """The modpoll command that reads this simulator over its virtual serial port."""
+    parts = ["modpoll"]
+    if getattr(args, "config", None):
+        parts += ["--config", args.config]
+    parts += ["--serial", port, "--serial-baud", str(args.serial_baud)]
+    if args.serial_parity != "none":
+        parts += ["--serial-parity", args.serial_parity]
+    if getattr(args, "unit_id", None) is not None:
+        parts += ["--unit-id", str(args.unit_id)]
+    return " ".join(parts)
+
+
+async def serve_serial(args: Any) -> None:
+    pair = None
+    port = args.port
+    if port == "pty":
+        pair = VirtualSerialPair(getattr(args, "serial_link", None))
+        pair.open(asyncio.get_running_loop())
+        port = pair.server_port
+        _logger.info("Virtual serial port for the client: %s", pair.client_port)
+        if getattr(args, "serial_link", None):
+            _logger.info("Also linked as %s", args.serial_link)
+        _logger.info("Read it with: %s", read_command(args, pair.client_port))
+    server: Any = ModbusSerialServer(
+        context=args.context,
+        identity=args.identity,
+        port=port,
+        framer=args.framer,
+        baudrate=args.serial_baud,
+        parity=SERIAL_PARITY[args.serial_parity],
+    )
+    if hasattr(args, "runtimes"):
+        from .runtime import RuntimeContext
+
+        server.context = RuntimeContext(args.runtimes)
+    tasks: list = []
+    try:
+        if not await server.listen():
+            raise OSError("Could not open serial port %s" % port)
+        tasks = [
+            asyncio.create_task(device.run())
+            for device in getattr(args, "runtimes", [])
+        ]
+        await asyncio.gather(server.serving, *tasks)
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await server.shutdown()
+        if pair is not None:
+            pair.close()
+
+
 async def run_async_server(args: Any) -> Any:
     """Run server."""
     txt = f"Start ASYNC server, listening on {args.port} - {args.comm}"
@@ -189,13 +246,7 @@ async def run_async_server(args: Any) -> Any:
             await server.shutdown()
         return server
     elif args.comm == "serial":
-        await StartAsyncSerialServer(
-            context=args.context,
-            identity=args.identity,
-            port=args.port,
-            framer=args.framer,
-        )
-        return None
+        return await serve_serial(args)
     elif args.comm == "tls":
         address = ("", args.port)
         require_bindable(address[0], args.port)
@@ -281,7 +332,7 @@ async def _run_server_with_signals(args: Any) -> None:
         nonlocal stop_requested
         if not stop_requested:
             stop_requested = True
-            if args.comm in ("tcp", "udp", "tls"):
+            if args.comm in ("tcp", "udp", "tls", "serial"):
                 server_task.cancel()
             else:
                 loop.create_task(stop_server())
