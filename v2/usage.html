@@ -87,10 +87,10 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a8 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a9 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">upload</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">upload</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">reject</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span>
@@ -266,17 +266,16 @@
 </section>
 <section id="verification">
 <h2>verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
-<p>–report/–upload read every point of one Thing Model once, read-only and without retries, and report which points could be read</p>
+<p>–report reads every point of one Thing Model once, read-only and without retries, and reports which points could be read; –upload sends a verification report to ModioHub</p>
 <dl class="option-list">
 <dt><kbd>--report</kbd></dt>
-<dd><p>Read every point of the model once and write the verification report to FILE (‘-’ prints it). Without FILE the save location, your judgment of the values and the upload are asked interactively. The report lists each point’s result and carries no address, Unit ID, serial number or value.</p>
+<dd><p>Read every point of the model once and write the verification report to FILE (‘-’ prints it). Without FILE the save location, your judgment of the values and whether to upload are asked interactively. The report lists each point’s result and carries no address, Unit ID, serial number or value.</p>
 </dd>
 <dt><kbd>--upload</kbd></dt>
-<dd><p>After the verification read, show the report and, once you confirm, upload it to ModioHub; signs you in with the browser when needed</p>
-<p>Default: False</p>
+<dd><p>Upload a verification report to ModioHub. With FILE (or a file chosen interactively, the newest report-<a href="#id1"><span class="problematic" id="id2">*</span></a>.json by default) a saved report is uploaded without reading a device: it is shown for confirmation and uploaded once you agree; you are signed in with the browser only when no login exists. Together with –report, the report of the verification read is uploaded instead of only being saved.</p>
 </dd>
 <dt><kbd>--yes</kbd></dt>
-<dd><p>Upload without being asked</p>
+<dd><p>Answer the report questions without asking: keep the default report file and upload it. Needs –report or –upload and an existing sign-in (the browser sign-in is interactive).</p>
 <p>Default: False</p>
 </dd>
 <dt><kbd>--confirm</kbd></dt>
