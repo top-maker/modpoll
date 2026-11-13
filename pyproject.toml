@@ -1,6 +1,6 @@
 [project]
 name = "modpoll"
-version = "2.0.0a8"
+version = "2.0.0a9"
 description = "A New Command-line Tool for Modbus and MQTT"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
