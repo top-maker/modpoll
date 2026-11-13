@@ -143,7 +143,7 @@ def command(arguments: list[str], *, out: TextIO | None = None) -> int:
         if rest[:1] == ["--server"] and len(rest) == 2:
             server = modpoll_wot.server_url({"MODIOHUB_URL": rest[1]})
         elif not rest:
-            server = modpoll_wot.server_url()
+            server = modpoll_wot.active_server()
         else:
             raise LoginError(f"usage: modsim {name} [--server URL]")
         if name == "logout":

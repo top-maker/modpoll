@@ -41,7 +41,7 @@ def workspace_document(text: str) -> dict:
     server it was issued for, and the download is checked against the SHA-256 the server states.
     """
     reference = modpoll_wot.parse_reference(text)
-    server = modpoll_wot.server_url()
+    server = modpoll_wot.active_server()
     session = modpoll_wot.load_session(server)
     token = session.token if session else None
     status, thing_model = call_json(

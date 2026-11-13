@@ -829,15 +829,15 @@ wheels = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.5.0a1"
+version = "0.6.0a2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
     { name = "referencing", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2b/a4/477adeef74d9b4ce969ab377e9d00c90c115ab006aea6bb15dd3dd4c3176/modpoll_wot-0.5.0a1.tar.gz", hash = "sha256:c510a352bedf2c01a8d42abf21b394cacab208e46277c82e4531ea3799195cb1", size = 59242, upload-time = "2026-11-12T12:24:59.788Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9a/c8/edebe6d6e0775d0f2cd97b24f835f03a0c2bca51313b912e5b385271ce10/modpoll_wot-0.6.0a2.tar.gz", hash = "sha256:38d078ae260d0666ba4ac83987da4db527c030900a62adf6de23986650e1ff5e", size = 60721, upload-time = "2026-11-13T07:20:06.794Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/3a/a24f047c949d4b866ea0f511a2d1f7f1c15bbb13249755dfcfb0bdf8e3f3/modpoll_wot-0.5.0a1-py3-none-any.whl", hash = "sha256:59dcd551d95ebd549de3e3e04170d7dec2fe8ea58e643e2b6d5ab6d91b0acb21", size = 50246, upload-time = "2026-11-12T12:24:58.568Z" },
+    { url = "https://files.pythonhosted.org/packages/80/8f/63352f818565184ee7961fedd0462ed36931fee58675477b604ce1cacf74/modpoll_wot-0.6.0a2-py3-none-any.whl", hash = "sha256:b6b4bf52dd2a195030c9bc8fc53bae9e7d027e94af33f01e512c708cbf888f7f", size = 52246, upload-time = "2026-11-13T07:20:07.947Z" },
 ]
 
 [[package]]
@@ -872,7 +872,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "jsonschema", specifier = ">=4.21,<5" },
-    { name = "modpoll-wot", specifier = "==0.5.0a1" },
+    { name = "modpoll-wot", specifier = "==0.6.0a2" },
     { name = "pymodbus", specifier = "~=3.16.1" },
     { name = "pyyaml", specifier = ">=6,<7" },
 ]

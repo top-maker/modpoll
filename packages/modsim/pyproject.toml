@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "pymodbus~=3.16.1",
-    "modpoll-wot==0.5.0a1",
+    "modpoll-wot==0.6.0a2",
     "jsonschema>=4.21,<5",
     "PyYAML>=6,<7",
 ]
