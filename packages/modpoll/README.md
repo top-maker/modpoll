@@ -89,9 +89,9 @@ Both preserve the four original blocks and 37 output references. `--unit-id`
 overrides the Unit ID declared consistently in Forms (fallback 1); a concrete TD's Forms must agree before overrides.
 The existing transport, polling, output and MQTT arguments remain available.
 
-See the [current profile](https://github.com/top-maker/modpoll-wot/blob/main/profile.md) for field mapping,
+See the [current profile](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/profile.md) for field mapping,
 access flags, byte order, multiplier semantics and supported limits; the
-[execution contract](https://github.com/top-maker/modpoll-wot/blob/main/CONTRACT.md) defines the profile 0.2-only input policy.
+[execution contract](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/CONTRACT.md) defines the profile 0.2-only input policy.
 The configuration loader detects the format from the content and reports invalid
 model fields before polling. Each model describes one device; use multiple
 `--config` paths for multiple devices. Give each model a unique `title`, which is
@@ -122,7 +122,7 @@ The report records, per point, whether the read worked (`ok`, a Modbus `exceptio
 `--confirm POINT...` (or `all`) and `--reject POINT...` for values you compared with the device, otherwise
 `unchecked`. The report holds no address, Unit
 ID, serial number or value; review it before sharing. It is checked with
-[modpoll-wot](https://github.com/top-maker/modpoll-wot) (`modpoll-wot validate-report report.json --model
+[modpoll-wot](https://github.com/top-maker/modpoll/tree/v2/packages/modpoll-wot) (`modpoll-wot validate-report report.json --model
 model.tm.json`), and `--export` still writes the snapshot of the same read. ModioHub resolves the product
 from the model fingerprint, so you never name the product. The exit
 code is 1 unless every point was read.
@@ -164,7 +164,7 @@ writes `null` for that point in the JSON snapshot. Snapshots from multiple
 configuration files are combined and replaced atomically. When `--timestamp` is
 enabled, the timestamp is the start time of the poll cycle in Unix seconds; a
 device with a point named `timestamp` cannot use it. A snapshot is
-[simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data),
+[simulation data](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/profile.md#simulation-data),
 so `modsim --config device.tm.json --data snapshot.json` replays it locally.
 
 

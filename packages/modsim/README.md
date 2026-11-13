@@ -18,8 +18,8 @@ they are not included in the published `2.0.0a1` release. Clone the `v2`
 branch and install its dependencies with uv:
 
 ```bash
-git clone --branch v2 https://github.com/top-maker/modsim.git
-cd modsim
+git clone --branch v2 https://github.com/top-maker/modpoll.git
+cd modpoll/packages/modsim
 uv sync --all-groups
 ```
 
@@ -167,7 +167,7 @@ Compose deployment with `docker compose down`.
 
 A deployment has a stable ID per device, a TM path, instance parameters and
 optional simulation data. TD IDs and Modbus Unit IDs must be unique.
-[Simulation data](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data)
+[Simulation data](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/profile.md#simulation-data)
 gives static initial values, seeded generators and bindings, and carries no
 code; a local Python behavior is a separate `script` that requires
 `--allow-scripts`. Neither duplicates the Thing Model's point mappings. See

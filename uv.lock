@@ -1143,7 +1143,7 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a10"
+version = "2.0.0a11"
 source = { editable = "packages/modpoll" }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
@@ -1205,7 +1205,7 @@ docs = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.6.0a2"
+version = "0.6.0a3"
 source = { editable = "packages/modpoll-wot" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },
@@ -1228,7 +1228,7 @@ dev = [{ name = "pytest", specifier = ">=8.2.2,<9" }]
 
 [[package]]
 name = "modsim"
-version = "2.0.0a12"
+version = "2.0.0a13"
 source = { editable = "packages/modsim" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },

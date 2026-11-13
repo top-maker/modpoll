@@ -1,4 +1,10 @@
-# Modsim 2.0.0a12 preview
+# Modsim 2.0.0a13 preview
+
+Modsim 2.0.0a13 pins modpoll-wot 0.6.0a3 and is the first release from the
+[modpoll repository](https://github.com/top-maker/modpoll/tree/v2/packages/modsim), where modsim, modpoll and
+modpoll-wot now share one workspace. It changes nothing in the simulator. Release tags are now `modsim-v<version>`.
+
+## Modsim 2.0.0a12 preview
 
 Modsim 2.0.0a12 keeps modpoll-wot 0.6.0a2 and changes how a simulator is reached:
 

@@ -1,6 +1,6 @@
 [project]
 name = "modpoll-wot"
-version = "0.6.0a2"
+version = "0.6.0a3"
 description = "Shared WoT Modbus configuration interpreter"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
@@ -13,8 +13,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/top-maker/modpoll-wot"
-Documentation = "https://github.com/top-maker/modpoll-wot#readme"
+Repository = "https://github.com/top-maker/modpoll"
+Documentation = "https://github.com/top-maker/modpoll/tree/v2/packages/modpoll-wot#readme"
 
 [project.scripts]
 modpoll-wot = "modpoll_wot.__main__:main"
