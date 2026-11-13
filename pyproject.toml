@@ -1,0 +1,8 @@
+# uv workspace for modpoll, modsim and modpoll-wot (TOOL-01). This root is not a package: each member keeps its own
+# pyproject.toml, version and PyPI name, and is built and released on its own.
+[tool.uv.workspace]
+members = ["packages/modpoll", "packages/modsim", "packages/modpoll-wot"]
+
+[tool.uv]
+# Resolution covers Python 3.10 through 3.14; the CI matrix tests 3.10 and 3.14.
+environments = ["python_version < '3.15'"]

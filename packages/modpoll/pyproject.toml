@@ -41,9 +41,9 @@ build-backend = "uv_build"
 module-name = "modpoll"
 module-root = ""
 
-[tool.uv]
-# Resolution covers Python 3.10 through 3.14; the CI matrix tests 3.10 and 3.14.
-environments = ["python_version < '3.15'"]
+[tool.uv.sources]
+# Inside the workspace modpoll-wot comes from packages/modpoll-wot; `uv build --no-sources` keeps the published pin.
+modpoll-wot = { workspace = true }
 
 [project.urls]
 Repository = "https://github.com/top-maker/modpoll"
