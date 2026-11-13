@@ -289,7 +289,9 @@ def test_a_report_read_asks_each_group_once():
     args.full_read = True
     assert modbus_task._read_options(args) == {"retries": 0}
     args.full_read = False
-    assert modbus_task._read_options(args) == {}
+    assert modbus_task._read_options(args) == {"retries": 1}
+    args.once = True
+    assert modbus_task._read_options(args) == {"retries": 0}
 
 
 def test_bare_report_interactively_saves_and_judges(monkeypatch, tmp_path, capsys):

@@ -327,3 +327,61 @@ def test_snapshot_timestamp_never_hides_a_timestamp_point(tmp_path):
     assert not path.exists()
     assert export_modbus_handlers([handler], path)
     assert json.loads(path.read_text()) == {"logger": {"timestamp": 42}}
+
+
+def test_one_shot_gives_up_after_the_first_unanswered_group(monkeypatch):
+    from modpoll.modbus_task import Poller
+
+    monkeypatch.setattr(modbus_task, "delay_thread", lambda timeout=0: None)
+    monkeypatch.setattr(modbus_task, "on_threading_event", lambda: False)
+
+    def run(once):
+        device = Device("meter", 1)
+        calls = []
+        pollers = []
+        for start in (0, 10, 20):
+            poller = Poller(device, 3, start, 1, "BE_BE")
+
+            def silent(client, poller=poller, start=start):
+                calls.append(start)
+                poller.failure = ("no-response", None)
+                return False
+
+            poller.poll = silent
+            pollers.append(poller)
+        device.pollerList = pollers
+        handler = ModbusHandler(FakeClient(), "unused.tm.json", daemon=True, once=once)
+        handler.deviceList = [device]
+        handler.poll()
+        return calls, device
+
+    calls, device = run(once=True)
+    assert calls == [0]
+    assert not device.pollSuccess
+    assert run(once=False)[0] == [0, 10, 20]
+
+
+def test_one_shot_keeps_reading_once_the_device_has_answered(monkeypatch):
+    from modpoll.modbus_task import Poller
+
+    monkeypatch.setattr(modbus_task, "delay_thread", lambda timeout=0: None)
+    monkeypatch.setattr(modbus_task, "on_threading_event", lambda: False)
+    device = Device("meter", 1)
+    calls = []
+    outcomes = [(True, None), (False, ("no-response", None)), (True, None)]
+    pollers = []
+    for start, (ok, failure) in zip((0, 10, 20), outcomes):
+        poller = Poller(device, 3, start, 1, "BE_BE")
+
+        def read(client, poller=poller, start=start, ok=ok, failure=failure):
+            calls.append(start)
+            poller.failure = failure
+            return ok
+
+        poller.poll = read
+        pollers.append(poller)
+    device.pollerList = pollers
+    handler = ModbusHandler(FakeClient(), "unused.tm.json", daemon=True, once=True)
+    handler.deviceList = [device]
+    handler.poll()
+    assert calls == [0, 10, 20]

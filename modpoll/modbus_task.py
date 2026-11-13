@@ -528,6 +528,7 @@ class ModbusHandler:
         timeout: float = 3.0,
         interval: float = 0.5,
         daemon: bool = False,
+        once: bool = False,
         mqtt_publish_topic_pattern: Optional[str] = None,
         mqtt_diagnostics_topic_pattern: Optional[str] = None,
         mqtt_single_publish: bool = False,
@@ -552,6 +553,8 @@ class ModbusHandler:
         self.timeout = timeout
         self.interval = interval
         self.daemon = daemon
+        # A one-shot run (--once, --report) gives up on a device that does not answer.
+        self.once = once
         self.mqtt_publish_topic_pattern = mqtt_publish_topic_pattern
         self.mqtt_diagnostics_topic_pattern = mqtt_diagnostics_topic_pattern
         self.mqtt_single_publish = mqtt_single_publish
@@ -639,7 +642,8 @@ class ModbusHandler:
                 self.logger.debug(f"Polling device {dev.name} ...")
                 pollers = [p for p in dev.pollerList if not p.disabled]
                 poll_success = bool(pollers)
-                for p in pollers:
+                answered = False
+                for index, p in enumerate(pollers):
                     previous_failures = p.failcounter
                     try:
                         succeeded = p.poll(self.modbus_client)
@@ -651,8 +655,26 @@ class ModbusHandler:
                         for point in p.readablePoints:
                             point.update_value(None, valid=False)
                     self._record_poller_result(p, succeeded, previous_failures)
+                    failure = getattr(p, "failure", None)
+                    if succeeded or (failure is not None and failure[0] == "exception"):
+                        answered = True
                     if on_threading_event():
                         return
+                    if self.once and not answered and failure == ("no-response", None):
+                        skipped = pollers[index + 1 :]
+                        self.logger.error(
+                            "No response from %s; not trying its remaining %d group(s)",
+                            dev.name,
+                            len(skipped),
+                        )
+                        for rest in skipped:
+                            previous = rest.failcounter
+                            rest.update_statistics(False)
+                            self._record_poller_result(rest, False, previous)
+                            for point in rest.readablePoints:
+                                point.update_value(None, valid=False)
+                        poll_success = False
+                        break
                     delay_thread(timeout=self.interval)
                 dev.pollSuccess = poll_success
                 if pollers:
@@ -883,6 +905,7 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
                 timeout=args.timeout,
                 interval=args.interval,
                 daemon=args.daemon,
+                once=bool(args.once or getattr(args, "full_read", False)),
                 mqtt_publish_topic_pattern=args.mqtt_publish_topic_pattern,
                 mqtt_diagnostics_topic_pattern=args.mqtt_diagnostics_topic_pattern,
                 mqtt_single_publish=args.mqtt_single,
@@ -940,8 +963,9 @@ def _valid_write_address(address) -> bool:
 
 
 def _read_options(args):
-    """A full read asks each group once: a lost request is a result, not something to repeat."""
-    return {"retries": 0} if getattr(args, "full_read", False) else {}
+    """A one-shot read (--once, --report) asks each group once; continuous polling retries once."""
+    one_shot = getattr(args, "full_read", False) or getattr(args, "once", False)
+    return {"retries": 0 if one_shot else 1}
 
 
 def _create_modbus_client(args):
@@ -997,6 +1021,7 @@ def _create_udp_client(args, framer):
         "host": args.udp,
         "port": args.udp_port,
         "timeout": args.timeout,
+        **_read_options(args),
     }
     if framer:
         client_args["framer"] = framer
