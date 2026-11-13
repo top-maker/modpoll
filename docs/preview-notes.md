@@ -1,4 +1,14 @@
-# Next preview
+# Modpoll 2.0.0a10 preview
+
+Modpoll 2.0.0a10 keeps modpoll-wot 0.6.0a2:
+
+- A one-shot run (`--once`, `--report`) stops at the first group a device does not answer and reports the
+  remaining groups as not read, instead of waiting for a timeout on every group.
+- Modsim 2.0.0a12 listens on port 5020 by default: read a local simulator with `--tcp 127.0.0.1 --tcp-port 5020`.
+  It can also simulate Modbus RTU on a virtual serial port (`modsim --serial pty`), which prints the
+  `modpoll --serial ...` command to read it.
+
+# Modpoll 2.0.0a9 preview
 
 `--report` includes the upload and `--upload` stands alone (modpoll-wot 0.6.0a2):
 
