@@ -1,3 +1,8 @@
+# Modpoll 2.0.0a11 preview
+
+Modpoll 2.0.0a11 pins modpoll-wot 0.6.0a3 and is the first release after modsim and modpoll-wot joined this
+repository as one workspace (`packages/`). It changes nothing in modpoll. Release tags are now `modpoll-v<version>`.
+
 # Modpoll 2.0.0a10 preview
 
 Modpoll 2.0.0a10 keeps modpoll-wot 0.6.0a2:

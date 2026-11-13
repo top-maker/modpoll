@@ -1,6 +1,6 @@
 [project]
 name = "modsim"
-version = "2.0.0a12"
+version = "2.0.0a13"
 description = "A Simple Modbus TCP Device Simulator used for modpoll tool"
 authors = [{ name = "Ying Shaodong", email = "helloysd@gmail.com" }]
 readme = "README.md"
@@ -8,7 +8,7 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
     "pymodbus~=3.16.1",
     "pyserial>=3.5,<4.0",
-    "modpoll-wot==0.6.0a2",
+    "modpoll-wot==0.6.0a3",
     "jsonschema>=4.21,<5",
     "PyYAML>=6,<7",
 ]
@@ -44,7 +44,7 @@ module-root = ""
 modpoll-wot = { workspace = true }
 
 [project.urls]
-Repository = "https://github.com/top-maker/modsim"
+Repository = "https://github.com/top-maker/modpoll"
 Documentation = "https://top-maker.github.io/modsim/"
 
 [tool.mypy]

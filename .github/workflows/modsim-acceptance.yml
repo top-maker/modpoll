@@ -41,10 +41,13 @@ jobs:
         with:
           version: 0.11.19
           python-version: '3.12'
-      - name: Build and install isolated wheel
+      # The candidate set is this commit: modsim with the modpoll-wot it pins, built from the workspace, so a
+      # modpoll-wot release and the modsim that pins it can be accepted before either is on PyPI.
+      - name: Build and install isolated wheels
         shell: bash
         run: |
           uv build --wheel --no-sources --out-dir dist
+          uv build --wheel --no-sources --package modpoll-wot --out-dir dist
           uv venv "$RUNNER_TEMP/installed-modsim"
           if [ "$RUNNER_OS" = Windows ]; then python_path="$RUNNER_TEMP/installed-modsim/Scripts/python.exe"; else python_path="$RUNNER_TEMP/installed-modsim/bin/python"; fi
           uv pip install --python "$python_path" dist/*.whl pytest
@@ -84,6 +87,7 @@ jobs:
       - name: Test fixed public model with independent clients
         run: |
           uv build --wheel --no-sources --out-dir dist
+          uv build --wheel --no-sources --package modpoll-wot --out-dir dist
           uv venv "$RUNNER_TEMP/modsim"
           uv pip install --python "$RUNNER_TEMP/modsim/bin/python" dist/*.whl
           mkdir -p "$RUNNER_TEMP/catalog-acceptance/tools" "$RUNNER_TEMP/catalog-acceptance/examples"

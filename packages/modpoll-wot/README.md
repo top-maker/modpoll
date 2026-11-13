@@ -2,7 +2,7 @@
 
 An independently versioned TM/TD configuration interpreter for
 [Modpoll](https://github.com/top-maker/modpoll),
-[Modsim](https://github.com/top-maker/modsim) and future compatible consumers.
+[Modsim](https://github.com/top-maker/modpoll/tree/v2/packages/modsim) and future compatible consumers.
 No Modbus execution, scheduler or MQTT service is included.
 
 Releases up to `0.2.0a4` were developed in the Modpoll repository under
