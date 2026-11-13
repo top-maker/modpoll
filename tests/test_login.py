@@ -254,6 +254,7 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
     payload = json.dumps(three_group_model()).encode()
     path = tmp_path / "meter.tm.json"
     path.write_bytes(payload)
+    monkeypatch.chdir(tmp_path)
     modpoll_wot.save_session(SERVER, "tok", expires_in=3600)
     sent = {}
 
@@ -328,15 +329,18 @@ def test_a_refused_upload_reports_why(monkeypatch):
 
 
 def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, capsys):
-    """--upload without a login starts the browser flow and continues with the session."""
+    """An interactive upload without a login starts the browser flow and continues with the session."""
     path = tmp_path / "meter.tm.json"
     path.write_text(json.dumps(three_group_model()))
+    monkeypatch.chdir(tmp_path)
     posted = []
     monkeypatch.setattr(
         verification.requests,
         "post",
         lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
     )
+    monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
+    monkeypatch.setattr("builtins.input", lambda prompt: "y")
 
     def fake_login(server, **kwargs):
         modpoll_wot.save_session(server, "tok", expires_in=3600)
@@ -345,7 +349,7 @@ def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, 
     monkeypatch.setattr(login, "login", fake_login)
     run_app(
         monkeypatch,
-        ["-f", str(path), "--tcp", "x", "--report", "--upload", "--yes"],
+        ["-f", str(path), "--tcp", "x", "--report", "--upload"],
         FakeClient(False, False),
     )
     assert posted

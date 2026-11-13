@@ -255,7 +255,7 @@ def test_a_point_that_was_not_read_cannot_be_judged(monkeypatch, tmp_path):
             ["-f", "x.json", "--confirm", "all", "--tcp", "x"],
             "need --report",
         ),
-        (["-f", "x.json", "--tcp", "x", "--yes"], "--yes needs --upload"),
+        (["-f", "x.json", "--tcp", "x", "--yes"], "--yes needs --report or --upload"),
         (
             ["-f", "x.json", "--report", "r.json", "--tcp", "x", "--timeout", "30"],
             "at most 10",
@@ -380,6 +380,43 @@ def test_upload_only_without_a_terminal_names_a_file(monkeypatch, tmp_path, capl
         run_app(monkeypatch, ["--upload"], None)
     assert exit_info.value.code == 1
     assert "Add --upload FILE" in caplog.text
+
+
+def test_report_yes_saves_the_default_file_and_uploads(monkeypatch, tmp_path, capsys):
+    """--report --yes is enough without a terminal: default file, then upload."""
+    path = write_model(tmp_path, three_group_model())
+    monkeypatch.chdir(tmp_path)
+    uploaded = {}
+    patch_upload(monkeypatch, uploaded)
+    run_app(
+        monkeypatch,
+        ["-f", str(path), "--tcp", "192.0.2.10", "--report", "--yes"],
+        FakeClient(False, False),
+    )
+    (saved,) = tmp_path.glob("report-*.json")
+    assert uploaded["report"]["reportVersion"] == 4
+    out = capsys.readouterr().out
+    assert f"Report written to {saved.name}" in out
+    assert "Uploaded." in out
+
+
+def test_report_yes_without_a_login_fails_instead_of_signing_in(
+    monkeypatch, tmp_path, caplog
+):
+    """--yes cannot answer the browser sign-in, so an upload needs an existing login."""
+    path = write_model(tmp_path, three_group_model())
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MODIOHUB_CREDENTIALS", str(tmp_path / "credentials.json"))
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(
+            monkeypatch,
+            ["-f", str(path), "--tcp", "192.0.2.10", "--report", "--yes"],
+            FakeClient(False, False),
+        )
+    assert exit_info.value.code == 1
+    assert "Sign in to" in caplog.text
+    # The report is kept locally even though the upload did not run.
+    assert list(tmp_path.glob("report-*.json"))
 
 
 def test_bare_report_without_a_terminal_names_a_file(monkeypatch, tmp_path, caplog):

@@ -1,14 +1,17 @@
 # Next preview
 
-`--upload` stands alone (modpoll-wot 0.6.0a2):
+`--report` includes the upload and `--upload` stands alone (modpoll-wot 0.6.0a2):
 
+- Bare `--report` asks where to save, whether the values look right, and whether to upload. `--report --yes`
+  is the whole non-interactive run: every point read once, the report kept under the default
+  `report-<date>.json`, then uploaded — an existing sign-in is required, because `--yes` does not answer the
+  browser sign-in (without one the run fails fast instead of hanging).
 - `modpoll --upload FILE` uploads a report saved earlier without reading a device: the report is shown
   for confirmation and uploaded once you agree. Bare `--upload` offers the newest `report-*.json` in the
   current directory (`--yes` answers the questions; without a terminal, name the file).
 - After you agree, the tool tells you which ModioHub it is signed in to and uploads; the browser sign-in
   starts only when no login exists. Without `MODIOHUB_URL`, the server of the only stored login stands,
   so a login made against staging is no longer mistaken for the default server.
-- With `--report`, `--upload` still uploads the fresh verification read instead of only saving it.
 
 # Modpoll 2.0.0a8 preview
 

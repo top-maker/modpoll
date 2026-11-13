@@ -174,14 +174,14 @@ def _finish_full_read(args, handler):
                 logger.error("%s", exc)
                 logger.debug("Report error details", exc_info=True)
                 return False
+    default = f"report-{datetime.now(timezone.utc).date().isoformat()}.json"
     if args.report == "":
-        if args.yes and args.upload is not None:
-            args.report = None  # --yes --upload sends the report without saving it
+        if args.yes:
+            args.report = default  # --yes keeps the report under the default name
         elif not sys.stdin.isatty():
             logger.error("Add --report FILE when not running interactively.")
             return False
         else:
-            default = f"report-{datetime.now(timezone.utc).date().isoformat()}.json"
             args.report = input(f"Save the report to [{default}]: ").strip() or default
     if args.report:
         try:
@@ -196,9 +196,11 @@ def _finish_full_read(args, handler):
                 "serial numbers or values; review it before sharing.",
                 flush=True,
             )
-    upload = args.upload is not None
+    # --report includes the upload: interactive runs ask, --yes uploads without
+    # asking and therefore needs an existing sign-in.
+    upload = args.upload is not None or args.yes
     confirmed = False
-    if not upload and not args.yes and sys.stdin.isatty():
+    if not upload and sys.stdin.isatty():
         upload = _ask("Upload this report to ModioHub? [y/N] ") in ("y", "yes")
         confirmed = upload
     if upload and not _upload(args, report, confirm=not confirmed):
@@ -207,12 +209,21 @@ def _finish_full_read(args, handler):
 
 
 def _ensure_login():
-    """A session for the upload; without one, sign in with the browser right here."""
+    """A session for the upload; without one, sign in with the browser right here.
+
+    Without a terminal there is no one to approve the browser sign-in, so the
+    caller gets an error instead (``--yes`` uploads require an existing login).
+    """
     import modpoll_wot
 
     server = modpoll_wot.active_server()
     session = modpoll_wot.load_session(server)
     if session is None:
+        if not sys.stdin.isatty():
+            raise ValueError(
+                f"Sign in to {server} first with modpoll login; "
+                "an upload without questions needs an existing login."
+            )
         print(f"Not signed in to {server}; starting the browser sign-in.", flush=True)
         login.login(server)
     else:

@@ -29,8 +29,8 @@ MAX_TIMEOUT = 10.0
 def validate_args(args):
     """Reject option combinations a command cannot honour, before anything is connected."""
     args.full_read = args.report is not None
-    if args.yes and args.upload is None:
-        raise ValueError("--yes needs --upload")
+    if args.yes and args.upload is None and args.report is None:
+        raise ValueError("--yes needs --report or --upload")
     if (args.confirm or args.reject) and not args.full_read:
         raise ValueError("--confirm and --reject need --report")
     if args.upload is not None and not args.full_read:

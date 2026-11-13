@@ -206,3 +206,12 @@ mistaken for the default server. After the change the offline suite passed
 with the new upload-only, interactive file-choice and active-server cases; the
 two serial-port construction tests fail in this environment only for the
 missing serial device and pass in CI.
+
+In the same revision ``--report`` was made to include the upload: the
+interactive run asks whether to upload after saving, and ``--report --yes``
+reads, keeps the default ``report-<date>.json`` and uploads without asking,
+failing fast when no login exists (the browser sign-in stays interactive).
+``--yes`` now stands on ``--report`` or ``--upload``. After the change the
+offline suite passed with the new save-and-upload and no-login refusal cases;
+the two serial-port construction tests fail in this environment only for the
+missing serial device and pass in CI.

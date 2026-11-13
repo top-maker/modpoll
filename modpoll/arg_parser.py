@@ -51,7 +51,7 @@ def get_parser():
         help=(
             "Read every point of the model once and write the verification "
             "report to FILE ('-' prints it). Without FILE the save location, "
-            "your judgment of the values and the upload are asked "
+            "your judgment of the values and whether to upload are asked "
             "interactively. The report lists each point's result and carries "
             "no address, Unit ID, serial number or value."
         ),
@@ -75,7 +75,11 @@ def get_parser():
     verification.add_argument(
         "--yes",
         action="store_true",
-        help="Upload without being asked",
+        help=(
+            "Answer the report questions without asking: keep the default "
+            "report file and upload it. Needs --report or --upload and an "
+            "existing sign-in (the browser sign-in is interactive)."
+        ),
     )
     verification.add_argument(
         "--confirm",
