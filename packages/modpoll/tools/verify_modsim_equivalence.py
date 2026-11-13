@@ -12,6 +12,7 @@ import socket
 import socketserver
 import struct
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -242,10 +243,13 @@ def main():
                     raise TimeoutError("modsim did not start")
                 time.sleep(0.05)
         with tempfile.TemporaryDirectory() as temp:
-            for label, root, config in (
-                ("1.x CSV", old, old / "examples/modsim.csv"),
-                ("2.x TM", ROOT, ROOT / "examples/modsim.tm.json"),
-                ("2.x TD", ROOT, ROOT / "examples/modsim.generated.td.json"),
+            # 2.x runs in the interpreter that runs this tool: the workspace environment,
+            # which since TOOL-01 lives at the repository root rather than in this package.
+            current = Path(sys.executable)
+            for label, root, python, config in (
+                ("1.x CSV", old, old / ".venv/bin/python", old / "examples/modsim.csv"),
+                ("2.x TM", ROOT, current, ROOT / "examples/modsim.tm.json"),
+                ("2.x TD", ROOT, current, ROOT / "examples/modsim.generated.td.json"),
             ):
                 with Proxy(("127.0.0.1", 0), Handler) as proxy:
                     proxy.upstream = (host, port)
@@ -254,7 +258,7 @@ def main():
                     worker.start()
                     output = Path(temp) / "values.json"
                     command = [
-                        str(root / ".venv/bin/python"),
+                        str(python),
                         "-m",
                         "modpoll",
                         "--once",

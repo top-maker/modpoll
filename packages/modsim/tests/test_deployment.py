@@ -377,3 +377,23 @@ def test_noise_sequences_follow_the_seed_and_differ_between_seeds(tmp_path):
         sequences.append(values)
     assert sequences[0] == sequences[1]
     assert sequences[0] != sequences[2]
+
+
+def test_deployment_root_finds_the_modsim_project_inside_a_workspace(tmp_path):
+    from modsim.manifest import deployment_root
+
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".git" / "HEAD").write_text("ref: refs/heads/v2\n")
+    package = tmp_path / "packages" / "modsim"
+    (package / "examples").mkdir(parents=True)
+    (package / "pyproject.toml").write_text('[project]\nname = "modsim"\n')
+    # modsim's own example resolves against the package, not the workspace repository.
+    assert deployment_root(package / "examples" / "deployment.yaml") == package
+    # Any other checked-in deployment keeps the repository root.
+    (tmp_path / "pyproject.toml").write_text('[project]\nname = "plant"\n')
+    (tmp_path / "lab").mkdir()
+    assert deployment_root(tmp_path / "lab" / "deployment.yaml") == tmp_path
+    # Outside Git, the configuration directory is the root.
+    alone = tmp_path.parent / (tmp_path.name + "-alone")
+    alone.mkdir()
+    assert deployment_root(alone / "deployment.yaml") == alone

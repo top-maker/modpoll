@@ -49,7 +49,9 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
                             "head_branch": "v2",
                             "status": "completed",
                             "conclusion": "success",
-                            "id": 43 if "modsim-acceptance.yml" in " ".join(args) else 42,
+                            "id": (
+                                43 if "modsim-acceptance.yml" in " ".join(args) else 42
+                            ),
                         }
                     ]
                 }

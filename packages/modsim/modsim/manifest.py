@@ -166,8 +166,30 @@ class Deployment:
     instances: dict[str, Instance]
 
 
+def _is_modsim_project(directory: Path) -> bool:
+    try:
+        text = (directory / "pyproject.toml").read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return '\nname = "modsim"\n' in text
+
+
+def _is_git_root(directory: Path) -> bool:
+    marker = directory / ".git"
+    return marker.is_file() or (marker.is_dir() and any(marker.iterdir()))
+
+
 def deployment_root(path: Path) -> Path:
-    """Use the repository root for checked-in examples, config directory otherwise."""
+    """Use the repository root for checked-in examples, config directory otherwise.
+
+    modsim's own examples resolve against the modsim project, which is the repository
+    root of a standalone checkout and packages/modsim inside the tools workspace.
+    """
+    for parent in (path.parent, *path.parent.parents):
+        if _is_modsim_project(parent):
+            return parent
+        if _is_git_root(parent):
+            break
     for parent in path.parent.parents:
         marker = parent / ".git"
         if marker.is_file() or (marker.is_dir() and any(marker.iterdir())):
