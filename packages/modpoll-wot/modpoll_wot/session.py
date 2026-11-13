@@ -171,3 +171,28 @@ def forget_session(server=None, *, environ=None):
         return False
     _write(path, document)
     return True
+
+
+def active_server(environ=None, *, now=None):
+    """The server a tool should talk to when the user did not name one.
+
+    ``MODIOHUB_URL`` wins. Without it, the default server stands when it has a
+    live session; otherwise the only stored server with a live session wins, so
+    a login made against one ModioHub (for example staging) keeps working in
+    later commands. With no live session, or with live sessions on several
+    servers, the default is returned and the caller starts the sign-in flow.
+    """
+    environ = os.environ if environ is None else environ
+    if environ.get(SERVER_VARIABLE):
+        return server_url(environ)
+    default = server_url(environ)
+    if load_session(default, environ=environ, now=now) is not None:
+        return default
+    origins = [
+        origin
+        for origin in _read(credentials_path(environ)).get("servers", {})
+        if load_session(origin, environ=environ, now=now) is not None
+    ]
+    if len(origins) == 1:
+        return origins[0]
+    return default

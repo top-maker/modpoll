@@ -82,6 +82,33 @@ def test_server_addresses(value, expected):
     assert modpoll_wot.server_url({"MODIOHUB_URL": value} if value else {}) == expected
 
 
+def test_the_active_server_falls_back_to_the_only_live_login(tmp_path):
+    env = environ(tmp_path)
+    modpoll_wot.save_session("https://modsim.dev", "staging", expires_in=60, environ=env, now=NOW)
+    assert modpoll_wot.active_server(environ=env, now=NOW) == "https://modsim.dev"
+    # The default server wins once it has a live session too.
+    modpoll_wot.save_session(SERVER, "prod", expires_in=60, environ=env, now=NOW)
+    assert modpoll_wot.active_server(environ=env, now=NOW) == SERVER
+    # An explicit MODIOHUB_URL always wins.
+    explicit = {**env, "MODIOHUB_URL": "https://modsim.dev"}
+    assert modpoll_wot.active_server(explicit, now=NOW) == "https://modsim.dev"
+
+
+def test_an_expired_single_login_falls_back_to_the_default(tmp_path):
+    env = environ(tmp_path)
+    modpoll_wot.save_session("https://modsim.dev", "staging", expires_in=60, environ=env, now=NOW)
+    assert modpoll_wot.active_server(environ=env, now=NOW + timedelta(days=7)) == SERVER
+
+
+def test_the_active_server_is_the_default_without_any_live_login(tmp_path):
+    env = environ(tmp_path)
+    assert modpoll_wot.active_server(environ=env, now=NOW) == SERVER
+    # Two live logins are ambiguous: the default stands.
+    modpoll_wot.save_session("https://modsim.dev", "staging", expires_in=60, environ=env, now=NOW)
+    modpoll_wot.save_session("https://staging.example.com", "other", expires_in=60, environ=env, now=NOW)
+    assert modpoll_wot.active_server(environ=env, now=NOW) == SERVER
+
+
 @pytest.mark.parametrize("value", ["ftp://x.test", "http://example.com", "https://example.com/api", "https://u:p@example.com", "modiohub.com"])
 def test_server_addresses_that_would_send_a_token_astray_are_refused(value):
     with pytest.raises(CredentialError):
