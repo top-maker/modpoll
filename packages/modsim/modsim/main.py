@@ -1,0 +1,363 @@
+#!/usr/bin/env python3
+"""Modbus simulator server and process lifecycle."""
+
+import sys
+import json
+import ssl
+import asyncio
+import socket
+import signal
+import logging
+from contextlib import suppress
+from typing import Any
+
+from pymodbus.pdu.device import ModbusDeviceIdentification
+from pymodbus.server import (
+    ModbusSerialServer,
+    ModbusTcpServer,
+    ModbusTlsServer,
+    ModbusUdpServer,
+    ServerAsyncStop,
+)
+from pymodbus.simulator import DataType, SimData, SimDevice
+
+from . import __version__
+from .compat import BinaryPayloadBuilder, Endian
+from .utils import get_commandline, get_utc_time, get_logger
+from .virtual_serial import VirtualSerialPair
+
+SERIAL_PARITY = {"none": "N", "even": "E", "odd": "O"}
+
+_logger = logging.getLogger(__name__)
+
+
+def setup_server(args: Any) -> Any:
+    """Run server setup."""
+    # The datastores only respond to the addresses that are initialized
+    # If you initialize a DataBlock to addresses of 0x00 to 0xFF, a request to
+    # 0x100 will respond with an invalid address exception.
+    # This is because many devices exhibit this kind of behavior (but not all)
+    if getattr(args, "config", None):
+        from .deployment import configure_devices
+
+        args.context = configure_devices(args)
+        _logger.info(
+            "Model initialization: %s",
+            json.dumps(args.model_initialization, sort_keys=True),
+        )
+    if not args.context:
+        _logger.info("Create datastore")
+        # build your payload
+        co_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
+        # address=0, bytes=3
+        for _ in range(3):
+            # The bits within each byte are big-endian
+            # The coils status (from the first position) = [1,0,1,0,0,0,0,1]
+            co_builder.add_bits([True, False, True, False, False, False, False, True])
+
+        hr_builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
+        # address=0, bytes=8
+        hr_builder.add_16bit_uint(1)
+        hr_builder.add_16bit_uint(2)
+        hr_builder.add_16bit_uint(3)
+        hr_builder.add_16bit_uint(4)
+        # address=8, bytes=8
+        hr_builder.add_16bit_int(-1)
+        hr_builder.add_16bit_int(-2)
+        hr_builder.add_16bit_int(-3)
+        hr_builder.add_16bit_int(-4)
+        # address=16, bytes=8
+        hr_builder.add_32bit_uint(12345678)
+        hr_builder.add_32bit_uint(12345678)
+        # address=24, bytes=8
+        hr_builder.add_32bit_int(-12345678)
+        hr_builder.add_32bit_int(-12345678)
+        # address=32, bytes=8
+        hr_builder.add_32bit_float(12.34)
+        hr_builder.add_32bit_float(-12.34)
+        # address=40, bytes=8
+        hr_builder.add_64bit_uint(12345678900)
+        # address=48, bytes=8
+        hr_builder.add_64bit_int(-12345678900)
+        # address=56, bytes=16
+        hr_builder.add_64bit_float(123.45)
+        hr_builder.add_64bit_float(-123.45)
+        # address=72, bytes=?
+        hr_builder.add_string("this is a string")
+
+        # use that payload in the data store
+        co_values = co_builder.to_coils()
+        hr_values = hr_builder.to_registers()
+        args.context = SimDevice(
+            id=0,
+            simdata=(
+                [SimData(0, values=co_values, datatype=DataType.BITS)],
+                [SimData(10000, values=co_values, datatype=DataType.BITS)],
+                [SimData(40000, values=hr_values, datatype=DataType.REGISTERS)],
+                [SimData(30000, values=hr_values, datatype=DataType.REGISTERS)],
+            ),
+        )
+
+    # initialize the server information
+    # If you don't set this or any fields, they are defaulted to empty strings.
+    args.identity = ModbusDeviceIdentification(
+        info_name={
+            "VendorName": "Pymodbus",
+            "ProductCode": "PM",
+            "VendorUrl": "https://github.com/riptideio/pymodbus/",
+            "ProductName": "Pymodbus Server",
+            "ModelName": "Pymodbus Server",
+        }
+    )
+    return args
+
+
+def privileged_port_hint(port: Any) -> str:
+    """Explain how to listen on a port the operating system reserves."""
+    return (
+        f"Port {port} needs administrator rights on this system. Run the same "
+        'command with sudo; with uvx that is sudo "$(command -v uvx)" followed by '
+        "the rest of the command. Or listen on a port above 1023, for example "
+        "--port 5020, and point the client at it (modpoll --tcp-port 5020)."
+    )
+
+
+def require_bindable(host: str, port: Any, kind: int = socket.SOCK_STREAM) -> None:
+    """Fail early with a clear message when binding needs elevated rights."""
+    with socket.socket(socket.AF_INET, kind) as probe:
+        try:
+            probe.bind((host, int(port)))
+        except PermissionError as exc:
+            raise OSError(privileged_port_hint(port)) from exc
+        except OSError:
+            # Occupied ports and other failures are reported by the server itself.
+            return
+
+
+def read_command(args: Any, port: str) -> str:
+    """The modpoll command that reads this simulator over its virtual serial port."""
+    parts = ["modpoll"]
+    if getattr(args, "config", None):
+        parts += ["--config", args.config]
+    parts += ["--serial", port, "--serial-baud", str(args.serial_baud)]
+    if args.serial_parity != "none":
+        parts += ["--serial-parity", args.serial_parity]
+    if getattr(args, "unit_id", None) is not None:
+        parts += ["--unit-id", str(args.unit_id)]
+    return " ".join(parts)
+
+
+async def serve_serial(args: Any) -> None:
+    pair = None
+    port = args.port
+    if port == "pty":
+        pair = VirtualSerialPair(getattr(args, "serial_link", None))
+        pair.open(asyncio.get_running_loop())
+        port = pair.server_port
+        _logger.info("Virtual serial port for the client: %s", pair.client_port)
+        if getattr(args, "serial_link", None):
+            _logger.info("Also linked as %s", args.serial_link)
+        _logger.info("Read it with: %s", read_command(args, pair.client_port))
+    server: Any = ModbusSerialServer(
+        context=args.context,
+        identity=args.identity,
+        port=port,
+        framer=args.framer,
+        baudrate=args.serial_baud,
+        parity=SERIAL_PARITY[args.serial_parity],
+    )
+    if hasattr(args, "runtimes"):
+        from .runtime import RuntimeContext
+
+        server.context = RuntimeContext(args.runtimes)
+    tasks: list = []
+    try:
+        if not await server.listen():
+            raise OSError("Could not open serial port %s" % port)
+        tasks = [
+            asyncio.create_task(device.run())
+            for device in getattr(args, "runtimes", [])
+        ]
+        await asyncio.gather(server.serving, *tasks)
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await server.shutdown()
+        if pair is not None:
+            pair.close()
+
+
+async def run_async_server(args: Any) -> Any:
+    """Run server."""
+    txt = f"Start ASYNC server, listening on {args.port} - {args.comm}"
+    _logger.info(txt)
+    server: Any
+    if args.comm == "tcp":
+        address: tuple[str, int] = (
+            getattr(args, "bind", None)
+            or ("127.0.0.1" if getattr(args, "runtimes", None) else ""),
+            args.port,
+        )
+        require_bindable(address[0], args.port)
+        server = ModbusTcpServer(
+            context=args.context,
+            identity=args.identity,
+            address=address,
+            framer=args.framer,
+        )
+        if hasattr(args, "runtimes"):
+            from .runtime import RuntimeContext
+
+            server.context = RuntimeContext(args.runtimes)
+        tasks = []
+        try:
+            if not await server.listen():
+                raise OSError(
+                    "Could not start Modbus TCP listener on port %s" % args.port
+                )
+            tasks = [
+                asyncio.create_task(device.run())
+                for device in getattr(args, "runtimes", [])
+            ]
+            await asyncio.gather(server.serving, *tasks)
+        finally:
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            await server.shutdown()
+        return server
+    elif args.comm == "udp":
+        address = ("127.0.0.1", args.port)
+        require_bindable(address[0], args.port, socket.SOCK_DGRAM)
+        server = ModbusUdpServer(
+            context=args.context,
+            identity=args.identity,
+            address=address,
+            framer=args.framer,
+        )
+        try:
+            if not await server.listen():
+                raise OSError(
+                    "Could not start Modbus UDP listener on port %s" % args.port
+                )
+            await server.serving
+        finally:
+            await server.shutdown()
+        return server
+    elif args.comm == "serial":
+        return await serve_serial(args)
+    elif args.comm == "tls":
+        address = ("", args.port)
+        require_bindable(address[0], args.port)
+        # Create SSL context from cert and key files
+        sslctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        try:
+            sslctx.load_cert_chain(
+                certfile="certificates/pymodbus.crt",
+                keyfile="certificates/pymodbus.key",
+            )
+        except OSError as exc:
+            raise OSError(
+                "TLS needs certificates/pymodbus.crt and certificates/pymodbus.key "
+                f"in the working directory: {exc}"
+            ) from exc
+
+        server = ModbusTlsServer(
+            context=args.context,
+            identity=args.identity,
+            address=address,
+            framer=args.framer,
+            sslctx=sslctx,
+        )
+        try:
+            if not await server.listen():
+                raise OSError(
+                    "Could not start Modbus TLS listener on port %s" % args.port
+                )
+            await server.serving
+        finally:
+            await server.shutdown()
+        return server
+    raise ValueError(f"Unknown communication type: {args.comm}")
+
+
+def app() -> None:
+    from .commands import ACTIONS, run
+    from .login import command
+
+    if sys.argv[1:2] in (["login"], ["logout"]):
+        raise SystemExit(command(sys.argv[1:]))
+    if len(sys.argv) > 1 and sys.argv[1] in ACTIONS:
+        run(sys.argv[1:])
+        return
+    args = get_commandline()
+    global _logger
+    _logger = get_logger(args.log)
+    _logger.info(
+        f"Starting modsim v{__version__} at {get_utc_time().strftime('%Y-%m-%d %H:%M:%S')} UTC"
+    )
+
+    try:
+        run_args = setup_server(args)
+    except (ValueError, OSError) as exc:
+        _logger.error("Invalid model configuration: %s", exc)
+        raise SystemExit(2) from exc
+    try:
+        asyncio.run(_run_server_with_signals(run_args), debug=args.log == "debug")
+    except OSError as exc:
+        _logger.error("%s", exc)
+        raise SystemExit(2) from exc
+
+    _logger.info("exiting.")
+
+
+async def _run_server_with_signals(args: Any) -> None:
+    """Run the server and close its listener when the process is signaled."""
+    loop = asyncio.get_running_loop()
+    server_task = asyncio.create_task(run_async_server(args))
+    stop_requested = False
+
+    async def stop_server() -> None:
+        for _ in range(100):
+            if server_task.done():
+                return
+            try:
+                await ServerAsyncStop()
+                return
+            except (AttributeError, RuntimeError):
+                await asyncio.sleep(0.01)
+
+    def request_stop() -> None:
+        nonlocal stop_requested
+        if not stop_requested:
+            stop_requested = True
+            if args.comm in ("tcp", "udp", "tls", "serial"):
+                server_task.cancel()
+            else:
+                loop.create_task(stop_server())
+
+    installed_signals = []
+    for signum in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(signum, request_stop)
+            installed_signals.append(signum)
+        except (NotImplementedError, RuntimeError):
+            pass
+
+    try:
+        await server_task
+    except asyncio.CancelledError:
+        if not stop_requested:
+            raise
+    finally:
+        for signum in installed_signals:
+            loop.remove_signal_handler(signum)
+        if not server_task.done():
+            server_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await server_task
+
+
+if __name__ == "__main__":
+    app()

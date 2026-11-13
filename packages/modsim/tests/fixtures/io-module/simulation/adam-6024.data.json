@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "tick": 0.1,
+  "initial": {
+    "AI0_RAW": 1000,
+    "AI1_RAW": 2000,
+    "AI2_RAW": 3000,
+    "AI3_RAW": 4000,
+    "AI4_RAW": 5000,
+    "AI5_RAW": 6000,
+    "AO0_RAW": 100,
+    "AO1_RAW": 200,
+    "DI0": false,
+    "DI1": true,
+    "DO0": false,
+    "DO1": true
+  },
+  "bindings": {
+    "AI0_RAW": "AO0_RAW",
+    "AI1_RAW": "AO1_RAW",
+    "AI2_RAW": "AO0_RAW",
+    "AI3_RAW": "AO1_RAW",
+    "AI4_RAW": "AO0_RAW",
+    "AI5_RAW": "AO1_RAW",
+    "DI0": "DO0",
+    "DI1": "DO1"
+  }
+}

@@ -1,0 +1,79 @@
+name: main
+
+on:
+  push:
+    branches: [main, v2]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Set up the environment
+        uses: ./.github/actions/setup-uv
+
+      - name: Run checks
+        run: make check
+
+  tox:
+    name: tox (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - python-version: "3.10"
+            tox-env: py310
+          - python-version: "3.14"
+            tox-env: py314
+      fail-fast: false
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up uv and Python
+        uses: ./.github/actions/setup-uv
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Prepare immutable public model inputs
+        run: uv run --locked python tools/fetch-models.py
+
+      - name: Test with tox
+        run: uv run --locked --no-sync tox -e ${{ matrix.tox-env }}
+
+  snapshot-replay:
+    name: modpoll snapshot replay
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up uv and Python
+        uses: ./.github/actions/setup-uv
+
+      - name: Install an independent released modpoll
+        run: |
+          uv venv "$RUNNER_TEMP/modpoll"
+          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" 'modpoll==2.0.0a5'
+
+      - name: Export with modpoll and replay with modsim
+        env:
+          MODSIM_TEST_MODPOLL_PYTHON: ${{ runner.temp }}/modpoll/bin/python
+        run: uv run --locked pytest tests/test_snapshot_replay.py -v
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-uv
+      - run: uv run --locked --no-sync --group docs mkdocs build -s
+      - run: uv run --locked --no-sync python tools/generate-td.py --check

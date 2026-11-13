@@ -1,0 +1,75 @@
+# Changelog
+
+## 2.0.0a1 (2026-10-29)
+
+- Add profile 0.2 TM/TD configuration from local files and HTTPS URLs.
+- Run isolated Unit IDs on one TCP listener using local deployment files.
+- Add deterministic scenarios, initialization and explicit local Python behaviors.
+- Share complete property codecs across initialization, updates and protocol writes.
+- Add community contributions with ADAM models and synthetic behavior examples.
+- Preserve legacy unconfigured operation; publish v2 as an explicit preview.
+
+## [1.0.1](https://github.com/top-maker/modsim/compare/v1.0.0...v1.0.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* harden simulator transports and release safety ([#12](https://github.com/top-maker/modsim/issues/12)) ([0982f6a](https://github.com/top-maker/modsim/commit/0982f6aa10a8fcd83a7ad8c17cbbfec7a2bc4f9c))
+
+## [1.0.0](https://github.com/top-maker/modsim/compare/v0.5.2...v1.0.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* deps ([#11](https://github.com/top-maker/modsim/issues/11))
+
+### Features
+
+* prepare modsim 1.0.0 with graceful shutdown ([#9](https://github.com/top-maker/modsim/issues/9)) ([c2bcd5a](https://github.com/top-maker/modsim/commit/c2bcd5aa0a2788249931086d738b17e4ab29894c))
+
+
+### Bug Fixes
+
+* deps ([#11](https://github.com/top-maker/modsim/issues/11)) ([265d54d](https://github.com/top-maker/modsim/commit/265d54d392de65918ca4ba2e2f7fc797652ed8b3))
+
+## [0.5.2](https://github.com/top-maker/modsim/compare/v0.5.1...v0.5.2) (2024-12-22)
+
+
+### Bug Fixes
+
+* Example config issue ([6b47f09](https://github.com/top-maker/modsim/commit/6b47f092b23d4b3a23f1fbf11e15ad20b524e584))
+
+## [0.5.1](https://github.com/top-maker/modsim/compare/0.5.0...v0.5.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* Broken version info ([f70294c](https://github.com/top-maker/modsim/commit/f70294c9250c56ba4da1418a22e89f76ee34cba5))
+* validation pipeline ([f9236bc](https://github.com/top-maker/modsim/commit/f9236bc90bfbbcb4664684979b7174ef8083ebd3))
+
+## [0.5.0](https://github.com/top-maker/modsim/compare/v0.4.0...0.5.0) (2024-07-13)
+
+
+### Features
+
+* add docker related commands in Makefile ([d0fdc7e](https://github.com/top-maker/modsim/commit/d0fdc7e037273398cafb22a470948e736ac7a366))
+* add docs ([0a0c8a5](https://github.com/top-maker/modsim/commit/0a0c8a5298060dd6057e7eef2087287b692b0069))
+
+
+### Bug Fixes
+
+* include master branch ([85d758e](https://github.com/top-maker/modsim/commit/85d758e25cc87ac3f0a840d36684d88d0812aef9))
+* remove old CHANGELOG.md ([341520d](https://github.com/top-maker/modsim/commit/341520d114a5390aae3bc8ff46c0a976a7d472ff))
+
+## [0.4.0](https://github.com/top-maker/modsim/compare/v0.3.4...v0.4.0) (2024-07-07)
+
+
+### Features
+
+* add docs ([0a0c8a5](https://github.com/top-maker/modsim/commit/0a0c8a5298060dd6057e7eef2087287b692b0069))
+
+
+### Bug Fixes
+
+* include master branch ([85d758e](https://github.com/top-maker/modsim/commit/85d758e25cc87ac3f0a840d36684d88d0812aef9))
+* remove old CHANGELOG.md ([341520d](https://github.com/top-maker/modsim/commit/341520d114a5390aae3bc8ff46c0a976a7d472ff))

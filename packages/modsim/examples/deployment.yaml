@@ -1,0 +1,20 @@
+version: 2
+name: modsim-lab
+server:
+  bind: 0.0.0.0
+  port: 5020
+devices:
+- id: adam-5017uh
+  model: examples/models/products/advantech/adam-5017uh/model.tm.json
+  parameters:
+    THING_ID: urn:modsim:device:advantech:adam-5017uh
+    UNIT_ID: 1
+    HOST: 127.0.0.1
+  data: examples/models/products/advantech/adam-5017uh/model.sim.json
+- id: adam-6024
+  model: tests/fixtures/io-module/adam-6024.tm.json
+  parameters:
+    THING_ID: urn:modsim:device:advantech:adam-6024
+    UNIT_ID: 2
+    HOST: 127.0.0.1
+  data: tests/fixtures/io-module/simulation/adam-6024.data.json
