@@ -188,7 +188,8 @@ def test_csv_tm_td_mqtt_equivalence_and_local_write_commands(
             )
             output = tmp_path / (label + ".json")
             command = [
-                str(source / ".venv/bin/python"),
+                # 2.x runs in the test interpreter: the workspace environment is at the repository root.
+                sys.executable if source == ROOT else str(source / ".venv/bin/python"),
                 "-m",
                 "modpoll",
                 "--daemon",
