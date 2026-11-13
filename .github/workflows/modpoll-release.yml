@@ -1,18 +1,24 @@
-name: preview-app
+name: modpoll-release
+# Releases modpoll from a `modpoll-v<version>` tag. A push to v2 that changes this file only republishes the
+# image of the current version. Tags before TOOL-01 were `v<version>`; the scripts still take that form ($TAG).
 on:
   push:
-    tags: ['v2.*']
+    tags: ['modpoll-v2.*']
     branches: [v2]
-    paths: ['.github/workflows/preview-app.yml']
+    paths: ['.github/workflows/modpoll-release.yml']
 permissions:
   contents: read
 concurrency:
   group: preview-app-publish
   cancel-in-progress: false
+defaults:
+  run:
+    working-directory: packages/modpoll
 jobs:
   candidate:
     runs-on: ubuntu-latest
     outputs:
+      git-tag: ${{ steps.release.outputs.git-tag }}
       tag: ${{ steps.release.outputs.tag }}
       image-version: ${{ steps.release.outputs.image-version }}
     steps:
@@ -21,16 +27,19 @@ jobs:
           fetch-depth: 0
       - id: release
         run: |
-          tag="$GITHUB_REF_NAME"
-          if [ "$tag" = v2 ]; then
-            tag="v$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            git_tag="$GITHUB_REF_NAME"
+          else
+            git_tag="modpoll-v$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
           fi
-          git rev-parse --verify "refs/tags/$tag^{commit}"
-          git merge-base --is-ancestor "refs/tags/$tag^{commit}" origin/v2
+          git rev-parse --verify "refs/tags/$git_tag^{commit}"
+          git merge-base --is-ancestor "refs/tags/$git_tag^{commit}" origin/v2
+          tag="${git_tag#modpoll-}"
           image_version="${tag#v}"
           if [ "$GITHUB_REF_NAME" = v2 ]; then
             image_version="$image_version-r1"
           fi
+          echo "git-tag=$git_tag" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "image-version=$image_version" >> "$GITHUB_OUTPUT"
   publish:
@@ -45,44 +54,48 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
       - uses: ./.github/actions/setup-uv
+        with:
+          package: modpoll
       - name: Require an accepted v2 preview candidate
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ needs.candidate.outputs.tag }}
         run: |
           git merge-base --is-ancestor "$GITHUB_SHA" origin/v2
           python .github/scripts/preview-release.py guard "$TAG"
       - name: Build portable distributions
-        run: uv build --no-sources
+        run: uv build --no-sources --out-dir dist
       - uses: actions/upload-artifact@v4
         with:
           name: application-distributions
-          path: dist/*
+          path: packages/modpoll/dist/*
       - name: Verify wheel dependencies and installation
         run: |
           python .github/scripts/check-portable-wheel.py dist/*.whl
+          dist="$PWD/dist"
           cd "$RUNNER_TEMP"
-          uv run --isolated --with "$GITHUB_WORKSPACE"/dist/*.whl modpoll --version
-          uv run --isolated --with "$GITHUB_WORKSPACE"/dist/*.tar.gz modpoll --version
+          uv run --isolated --with "$dist"/*.whl modpoll --version
+          uv run --isolated --with "$dist"/*.tar.gz modpoll --version
       - name: Check immutable version
         id: pypi
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ needs.candidate.outputs.tag }}
         run: python .github/scripts/preview-release.py pypi "$TAG"
       - name: Publish application to PyPI
         if: steps.pypi.outputs.state == 'absent'
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: uv publish --no-progress
+        run: uv publish --no-progress dist/*
       - name: Record functional prerelease
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
+          TAG: ${{ needs.candidate.outputs.tag }}
         run: |
-          if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --verify-tag --prerelease --latest=false --title "Modpoll ${TAG#v} — WoT configuration preview" --notes-file docs/preview-notes.md
+          if ! gh release view "$GIT_TAG" >/dev/null 2>&1; then
+            gh release create "$GIT_TAG" --verify-tag --prerelease --latest=false --title "Modpoll ${TAG#v} — WoT configuration preview" --notes-file docs/preview-notes.md
           fi
-          gh release upload "$TAG" dist/*
+          gh release upload "$GIT_TAG" dist/*
   image:
     needs: [candidate, publish]
     if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
@@ -107,12 +120,13 @@ jobs:
         run: |
           python .github/scripts/check_release_version.py "$TAG"
           image="$REGISTRY/$OWNER/modpoll:$IMAGE_VERSION"
+          # The image installs from the workspace lock, so it builds from the repository root.
           if docker buildx imagetools inspect "$image" >/dev/null 2>&1; then
             docker run --rm "$image" | grep -Fx "v${TAG#v}"
           else
-            docker buildx build --load --platform linux/amd64 -t modpoll-preview-smoke .
+            docker buildx build --load --platform linux/amd64 -f Dockerfile -t modpoll-preview-smoke ../..
             docker run --rm modpoll-preview-smoke | grep -Fx "v${TAG#v}"
-            docker buildx build --platform linux/amd64,linux/arm64 -t "$image" --push .
+            docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t "$image" --push ../..
           fi
   docs:
     needs: [candidate, publish]
@@ -126,15 +140,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.candidate.outputs.tag }}
+          ref: ${{ needs.candidate.outputs.git-tag }}
       - uses: ./.github/actions/setup-uv
+        with:
+          package: modpoll
       - uses: ./.github/actions/setup-pandoc
       - name: Build preview documentation
         run: make docs
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
-          path: .pages
+          path: packages/modpoll/.pages
       - name: Assemble both versions while preserving the vocabulary
         run: |
           mkdir .site
@@ -143,7 +159,8 @@ jobs:
           test -f .site/vocab/wot-modbus/acquisition-0.1.json
           test -f .site/vocab/wot-modbus/contract-0.1.txt
           wot_version=$(uv run --locked --no-sync python -c 'import importlib.metadata as m; print(m.version("modpoll-wot"))')
-          wot_source="https://raw.githubusercontent.com/top-maker/modpoll-wot/v$wot_version"
+          # modpoll-wot is released from this repository since TOOL-01, under packages/modpoll-wot.
+          wot_source="https://raw.githubusercontent.com/top-maker/modpoll/modpoll-wot-v$wot_version/packages/modpoll-wot"
           curl -fsSL "$wot_source/modpoll_wot/schemas/acquisition-0.2.json" -o vocab/wot-modbus/acquisition-0.2.json
           curl -fsSL "$wot_source/profile.md" -o vocab/wot-modbus/contract-0.2.txt
           python .github/scripts/assemble-docs.py docs/_build/html .site v2 --vocab vocab
@@ -151,7 +168,7 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ github.token }}
-          publish_dir: .site
+          publish_dir: packages/modpoll/.site
   acceptance:
     needs: [candidate, publish, image, docs]
     if: ${{ !cancelled() && needs.docs.result == 'success' && needs.image.result == 'success' }}
@@ -159,7 +176,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.candidate.outputs.tag }}
+          ref: ${{ needs.candidate.outputs.git-tag }}
       - uses: astral-sh/setup-uv@v6
         with:
           version: 0.11.19
@@ -168,12 +185,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 0b42099e8b22eaaa4788a9f91e8bf60b4870204c
-          path: .interop/modpoll-1x
+          path: packages/modpoll/.interop/modpoll-1x
       - uses: actions/checkout@v4
         with:
           repository: top-maker/modsim
           ref: 92fe5d4c417b2691693feb2b6bd93fd1f54439fe
-          path: .interop/modsim
+          path: packages/modpoll/.interop/modsim
       - name: Download published application and install isolated fixtures
         env:
           TAG: ${{ needs.candidate.outputs.tag }}
@@ -194,9 +211,9 @@ jobs:
           docker run -d --name preview-acceptance -p 127.0.0.1:18883:1883 -v "$RUNNER_TEMP/mqtt.conf:/mosquitto/config/mosquitto.conf:ro" eclipse-mosquitto:2
       - name: Verify the registry-installed application without application source
         env:
-          MODSIM_SOURCE: ${{ github.workspace }}/.interop/modsim
-          MODSIM_PYTHON: ${{ github.workspace }}/.interop/modsim/.venv/bin/python
-          MODPOLL_1X_SOURCE: ${{ github.workspace }}/.interop/modpoll-1x
+          MODSIM_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modsim
+          MODSIM_PYTHON: ${{ github.workspace }}/packages/modpoll/.interop/modsim/.venv/bin/python
+          MODPOLL_1X_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modpoll-1x
           MODPOLL_MQTT_HOST: 127.0.0.1
           MODPOLL_MQTT_PORT: '18883'
           MODPOLL_MQTT_INTEGRATION: '1'

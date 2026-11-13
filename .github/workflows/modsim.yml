@@ -1,13 +1,36 @@
-name: main
+name: modsim
 
 on:
   push:
-    branches: [main, v2]
+    branches: [v2]
+    paths:
+      - packages/modsim/**
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .pre-commit-config.yaml
+      - .github/actions/**
+      - .github/workflows/modsim.yml
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - packages/modsim/**
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .pre-commit-config.yaml
+      - .github/actions/**
+      - .github/workflows/modsim.yml
 
+defaults:
+  run:
+    working-directory: packages/modsim
+
+# Job names are prefixed so they never share a check name with modpoll's; the release guard
+# (packages/modsim/.github/scripts/preview-release.py) requires exactly these jobs.
 jobs:
   quality:
+    name: modsim quality
     runs-on: ubuntu-latest
     steps:
       - name: Check out
@@ -20,12 +43,14 @@ jobs:
 
       - name: Set up the environment
         uses: ./.github/actions/setup-uv
+        with:
+          package: modsim
 
       - name: Run checks
         run: make check
 
   tox:
-    name: tox (${{ matrix.python-version }})
+    name: modsim tox (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,6 +67,7 @@ jobs:
       - name: Set up uv and Python
         uses: ./.github/actions/setup-uv
         with:
+          package: modsim
           python-version: ${{ matrix.python-version }}
 
       - name: Prepare immutable public model inputs
@@ -59,6 +85,8 @@ jobs:
 
       - name: Set up uv and Python
         uses: ./.github/actions/setup-uv
+        with:
+          package: modsim
 
       - name: Install an independent released modpoll
         run: |
@@ -71,9 +99,12 @@ jobs:
         run: uv run --locked pytest tests/test_snapshot_replay.py -v
 
   docs:
+    name: modsim docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-uv
+        with:
+          package: modsim
       - run: uv run --locked --no-sync --group docs mkdocs build -s
       - run: uv run --locked --no-sync python tools/generate-td.py --check

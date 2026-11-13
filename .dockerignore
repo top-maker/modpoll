@@ -1,0 +1,12 @@
+.git
+**/.venv
+**/.tox
+**/.pytest_cache
+**/.mypy_cache
+**/__pycache__
+**/dist
+**/site
+**/docs/_build
+**/.interop
+packages/modsim/output
+packages/modsim/contrib/**/*.pdf

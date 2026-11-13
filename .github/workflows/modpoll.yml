@@ -1,11 +1,32 @@
-name: main
+name: modpoll
 
 on:
   push:
-    branches: [main, v2]
+    branches: [v2]
+    paths:
+      - packages/modpoll/**
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .pre-commit-config.yaml
+      - .github/actions/**
+      - .github/workflows/modpoll.yml
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - packages/modpoll/**
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .pre-commit-config.yaml
+      - .github/actions/**
+      - .github/workflows/modpoll.yml
 
+defaults:
+  run:
+    working-directory: packages/modpoll
+
+# Job names are the check names the release guard requires (packages/modpoll/.github/scripts/preview-release.py).
 jobs:
   quality-check:
     runs-on: ubuntu-latest
@@ -17,6 +38,8 @@ jobs:
 
       - name: Set up uv
         uses: ./.github/actions/setup-uv
+        with:
+          package: modpoll
 
       - name: Run checks
         run: make check
@@ -41,6 +64,7 @@ jobs:
       - name: Set up uv
         uses: ./.github/actions/setup-uv
         with:
+          package: modpoll
           python-version: ${{ matrix.python-version }}
 
       - name: Test with tox
@@ -56,6 +80,8 @@ jobs:
 
       - name: Set up uv
         uses: ./.github/actions/setup-uv
+        with:
+          package: modpoll
 
       - name: Set up pandoc
         uses: ./.github/actions/setup-pandoc
@@ -63,6 +89,7 @@ jobs:
       - name: Build documentation
         run: make docs
 
+  # Unchanged by TOOL-01: the interop checks keep their pinned 1.x baseline and simulator fixture.
   modsim-equivalence:
     runs-on: ubuntu-latest
     permissions:
@@ -70,18 +97,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-uv
+        with:
+          package: modpoll
       - name: Check out the 1.x baseline
         uses: actions/checkout@v4
         with:
           repository: top-maker/modpoll
           ref: 0b42099e8b22eaaa4788a9f91e8bf60b4870204c
-          path: .interop/modpoll-1x
+          path: packages/modpoll/.interop/modpoll-1x
       - name: Check out the simulator fixture
         uses: actions/checkout@v4
         with:
           repository: top-maker/modsim
           ref: 92fe5d4c417b2691693feb2b6bd93fd1f54439fe
-          path: .interop/modsim
+          path: packages/modpoll/.interop/modsim
       - name: Install isolated baseline and simulator environments
         run: |
           uv venv .interop/modpoll-1x/.venv
@@ -97,13 +126,13 @@ jobs:
         with:
           node-version: '24.16.0'
           cache: npm
-          cache-dependency-path: tools/wot-interop/package-lock.json
+          cache-dependency-path: packages/modpoll/tools/wot-interop/package-lock.json
       - name: Install locked node-wot interop tools
         run: npm ci --prefix tools/wot-interop --ignore-scripts --no-audit --no-fund
       - name: Verify the pinned contract and external TD read/write semantics
         env:
-          MODSIM_PYTHON: ${{ github.workspace }}/.interop/modsim/.venv/bin/python
-          MODSIM_SOURCE: ${{ github.workspace }}/.interop/modsim
+          MODSIM_PYTHON: ${{ github.workspace }}/packages/modpoll/.interop/modsim/.venv/bin/python
+          MODSIM_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modsim
         run: |
           uv run --locked --no-sync python -m modpoll_wot validate examples/modsim.tm.json --profile
           uv run --locked --no-sync pytest -q tests/test_profile_interop.py --junitxml=.interop/profile-results.xml
@@ -112,9 +141,9 @@ jobs:
           uv run --locked --no-sync python tools/verify_modsim_equivalence.py --modpoll-1x .interop/modpoll-1x --modsim .interop/modsim --report .interop/report.json
       - name: Verify lifecycle, transports and existing write commands
         env:
-          MODSIM_PYTHON: ${{ github.workspace }}/.interop/modsim/.venv/bin/python
-          MODSIM_SOURCE: ${{ github.workspace }}/.interop/modsim
-          MODPOLL_1X_SOURCE: ${{ github.workspace }}/.interop/modpoll-1x
+          MODSIM_PYTHON: ${{ github.workspace }}/packages/modpoll/.interop/modsim/.venv/bin/python
+          MODSIM_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modsim
+          MODPOLL_1X_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modpoll-1x
         run: uv run --locked --no-sync pytest -q tests/test_process_lifecycle.py tests/test_modsim_interop.py tests/test_wot_reading_interop.py tests/test_transport_interop.py tests/test_failure_interop.py --junitxml=.interop/transport-results.xml
       - name: Start private MQTT acceptance broker
         run: |
@@ -122,9 +151,9 @@ jobs:
           docker run -d --name modpoll-mqtt-${{ github.run_id }}-${{ github.run_attempt }} -p 127.0.0.1:18883:1883 -v "$RUNNER_TEMP/modpoll-mqtt.conf:/mosquitto/config/mosquitto.conf:ro" eclipse-mosquitto:2
       - name: Verify MQTT equivalence, commands and broker recovery
         env:
-          MODSIM_PYTHON: ${{ github.workspace }}/.interop/modsim/.venv/bin/python
-          MODSIM_SOURCE: ${{ github.workspace }}/.interop/modsim
-          MODPOLL_1X_SOURCE: ${{ github.workspace }}/.interop/modpoll-1x
+          MODSIM_PYTHON: ${{ github.workspace }}/packages/modpoll/.interop/modsim/.venv/bin/python
+          MODSIM_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modsim
+          MODPOLL_1X_SOURCE: ${{ github.workspace }}/packages/modpoll/.interop/modpoll-1x
           MODPOLL_MQTT_HOST: 127.0.0.1
           MODPOLL_MQTT_PORT: '18883'
           MODPOLL_MQTT_INTEGRATION: '1'
@@ -137,7 +166,7 @@ jobs:
         with:
           name: modsim-equivalence
           path: |
-            .interop/report.json
-            .interop/mqtt-results.xml
-            .interop/transport-results.xml
-            .interop/profile-results.xml
+            packages/modpoll/.interop/report.json
+            packages/modpoll/.interop/mqtt-results.xml
+            packages/modpoll/.interop/transport-results.xml
+            packages/modpoll/.interop/profile-results.xml

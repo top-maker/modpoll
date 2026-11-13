@@ -1,6 +1,8 @@
 services:
   modpoll:
-    build: .
+    build:
+      context: ../..
+      dockerfile: packages/modpoll/Dockerfile
     depends_on:
       - modsim
       - mosquitto

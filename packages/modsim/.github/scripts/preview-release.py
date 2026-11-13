@@ -37,16 +37,24 @@ def guard(tag):
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     subprocess.run(["git", "merge-base", "--is-ancestor", sha, "origin/v2"], check=True)
     repo = os.environ["GITHUB_REPOSITORY"]
+    # Workflows live at the repository root since TOOL-01; job names carry the package so
+    # they never share a check name with modpoll's.
     require_ci(
         repo,
         sha,
-        "main.yml",
-        {"quality", "docs", "tox (3.10)", "tox (3.14)", "modpoll snapshot replay"},
+        "modsim.yml",
+        {
+            "modsim quality",
+            "modsim docs",
+            "modsim tox (3.10)",
+            "modsim tox (3.14)",
+            "modpoll snapshot replay",
+        },
     )
     require_ci(
         repo,
         sha,
-        "acceptance.yaml",
+        "modsim-acceptance.yml",
         {"catalog-interop"}
         | {
             f"single-device ({platform})"

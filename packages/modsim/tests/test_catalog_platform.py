@@ -14,7 +14,7 @@ import yaml
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("MODSIM_CATALOG_PLATFORM") != "1",
-    reason="Opt-in public URL/platform acceptance; see acceptance.yaml",
+    reason="Opt-in public URL/platform acceptance; see .github/workflows/modsim-acceptance.yml",
 )
 
 

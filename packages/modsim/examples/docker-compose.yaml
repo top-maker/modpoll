@@ -1,7 +1,9 @@
 name: modsim-lab
 services:
   modsim:
-    build: ..
+    build:
+      context: ../../..
+      dockerfile: packages/modsim/Dockerfile
     restart: unless-stopped
     command: ["python", "-m", "modsim", "up", "-f", "/app/deployment.yaml"]
     ports:

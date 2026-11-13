@@ -1,7 +1,10 @@
 name: "setup-uv"
-description: "Set up Python and sync the locked uv environment."
+description: "Set up Python and sync one workspace member's locked environment."
 
 inputs:
+  package:
+    required: true
+    description: "The workspace member to install: modpoll, modsim or modpoll-wot"
   python-version:
     required: false
     description: "The Python version to use"
@@ -17,5 +20,5 @@ runs:
         enable-cache: true
         cache-dependency-glob: uv.lock
     - name: Install dependencies
-      run: uv sync --locked --all-extras --all-groups
+      run: uv sync --locked --all-extras --all-groups --package ${{ inputs.package }}
       shell: bash

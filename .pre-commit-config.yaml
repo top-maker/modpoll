@@ -1,3 +1,6 @@
+# One configuration for the workspace. Each hook keeps the scope it had in its package before TOOL-01:
+# modpoll and modsim shared the same hooks and modpoll added two; modpoll-wot was never checked by pre-commit.
+files: ^packages/(modpoll|modsim)/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v4.6.0"
@@ -5,11 +8,13 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-json
+        files: ^packages/modpoll/
       - id: check-toml
       - id: check-yaml
       - id: trailing-whitespace
       - id: mixed-line-ending
         args: [--fix=lf]
+        files: ^packages/modpoll/
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:

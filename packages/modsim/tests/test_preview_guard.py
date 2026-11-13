@@ -20,10 +20,10 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
     jobs = [
         {"name": name, "conclusion": "success"}
         for name in (
-            "quality",
-            "docs",
-            "tox (3.10)",
-            "tox (3.14)",
+            "modsim quality",
+            "modsim docs",
+            "modsim tox (3.10)",
+            "modsim tox (3.14)",
             "modpoll snapshot replay",
         )
     ]
@@ -49,7 +49,7 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
                             "head_branch": "v2",
                             "status": "completed",
                             "conclusion": "success",
-                            "id": 43 if "acceptance.yaml" in " ".join(args) else 42,
+                            "id": 43 if "modsim-acceptance.yml" in " ".join(args) else 42,
                         }
                     ]
                 }
@@ -69,7 +69,7 @@ def test_guard_requires_all_current_ci_jobs(monkeypatch):
 
     jobs[-1]["conclusion"] = "success"
     platform_jobs.pop()
-    with pytest.raises(ValueError, match="acceptance.yaml"):
+    with pytest.raises(ValueError, match="modsim-acceptance.yml"):
         release.guard("v" + __import__("modsim").__version__)
 
 
@@ -140,11 +140,14 @@ def test_pypi_retry_times_out_and_does_not_hide_other_errors(monkeypatch):
 def test_workflow_names_match_the_release_guard():
     import yaml
 
+    # The workflows live at the repository root (packages/modsim/tests -> repository).
     workflow = yaml.safe_load(
-        (Path(__file__).resolve().parents[1] / ".github/workflows/main.yml").read_text()
+        (
+            Path(__file__).resolve().parents[3] / ".github/workflows/modsim.yml"
+        ).read_text()
     )
     job = workflow["jobs"]["tox"]
-    assert job["name"] == "tox (${{ matrix.python-version }})"
+    assert job["name"] == "modsim tox (${{ matrix.python-version }})"
     assert {row["python-version"] for row in job["strategy"]["matrix"]["include"]} == {
         "3.10",
         "3.14",

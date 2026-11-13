@@ -3,14 +3,15 @@ PROJECT_NAME ?= modpoll
 .PHONY: install
 install: ## Install the uv environment and pre-commit hooks
 	@uv sync --all-extras --all-groups
-	@uv run pre-commit install --allow-missing-config
+	@cd ../.. && uv run --no-sync pre-commit install --allow-missing-config
 
 .PHONY: check
 check: ## Run code quality tools.
 	@echo "🚀 Checking uv lock file consistency with 'pyproject.toml'"
 	@uv lock --check
 	@echo "🚀 Linting code: Running pre-commit"
-	@uv run pre-commit run -a
+	@# One pre-commit configuration serves the workspace; check this package's files only.
+	@git ls-files -z . | xargs -0 uv run pre-commit run --config ../../.pre-commit-config.yaml --files
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
 	@uv run deptry .
 
@@ -45,7 +46,7 @@ build-and-publish: build publish ## Build and publish.
 .PHONY: docker-build-dev
 docker-build-dev: ## Build docker for local dev
 	@echo "🚀 Creating docker image file"
-	@docker build -t ${PROJECT_NAME}:dev .
+	@docker build -f Dockerfile -t ${PROJECT_NAME}:dev ../..
 
 .PHONY: docker-run-dev
 docker-run-dev: docker-build-dev ## Run docker compose for local dev

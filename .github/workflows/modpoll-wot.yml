@@ -1,16 +1,30 @@
-name: ci
+name: modpoll-wot
 
 on:
   push:
-    branches: [main]
+    branches: [v2]
+    paths:
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/modpoll-wot.yml
   pull_request:
+    paths:
+      - packages/modpoll-wot/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/modpoll-wot.yml
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: packages/modpoll-wot
+
 jobs:
   test:
-    name: test (${{ matrix.python-version }})
+    name: modpoll-wot test (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -26,35 +40,38 @@ jobs:
       - run: uv run --locked pytest -q
 
   package:
+    name: modpoll-wot package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
         with:
           version: '2026.10.1'
+          working_directory: packages/modpoll-wot
       - run: mise run check
       - uses: actions/upload-artifact@v4
         with:
           name: distributions
-          path: dist/*
+          path: packages/modpoll-wot/dist/*
 
+  # The consumers run their own tests against the candidate wheel instead of the workspace source.
   consumers:
-    name: consumer (${{ matrix.repository }})
+    name: consumer (${{ matrix.package }})
     needs: package
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - repository: modpoll
+          - package: modpoll
             prepare: 'true'
-          - repository: modsim
+          - package: modsim
             prepare: uv run --no-sync python tools/fetch-models.py
+    defaults:
+      run:
+        working-directory: packages/${{ matrix.package }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          repository: top-maker/${{ matrix.repository }}
-          ref: v2
       - uses: actions/download-artifact@v4
         with:
           name: distributions
