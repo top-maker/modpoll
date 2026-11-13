@@ -281,6 +281,8 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
 
 
 def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
+    # The scripted answers also reach the save-location prompt; keep that report out of the repository.
+    monkeypatch.chdir(tmp_path)
     path = tmp_path / "meter.tm.json"
     path.write_text(json.dumps(three_group_model()))
     posted = []
