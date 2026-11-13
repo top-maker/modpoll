@@ -1,10 +1,13 @@
 v1 compatibility and M3 acceptance
 ===================================
 
-The v2 change replaces CSV loading with the executable TM/TD profile. The existing
-transport, decoder, output and raw write paths remain. This table compares the
-pinned v1 baseline ``0b42099`` with the v2 implementation; it is not a claim that
-all WoT documents or every operating system has been validated.
+The v2 change adds the executable TM/TD profile alongside the retained v1 CSV
+loader. ``--config`` is the single configuration argument and detects the
+format from the content. The
+existing transport, decoder, output and raw write paths remain. This table
+compares the pinned v1 baseline ``0b42099`` with the v2 implementation; it is
+not a claim that all WoT documents or every operating system has been
+validated.
 
 .. list-table:: Capability and evidence
    :header-rows: 1
@@ -15,9 +18,11 @@ all WoT documents or every operating system has been validated.
      - Evidence / limit
    * - Existing CLI
      - Existing transport, rate, interval, output and MQTT arguments retained;
-       ``--unit-id`` adds an explicit override.
-     - ``test_framer_validation.py`` and existing CLI tests. No ``--model`` or
-       automatic connection from TD Forms is introduced.
+       ``--unit-id`` adds an explicit override. v1 CSV configurations load
+       through the same ``--config`` argument, detected from the content.
+     - ``test_framer_validation.py``, ``test_csv_config.py`` and existing CLI
+       tests. No automatic connection from TM Forms is introduced; a concrete
+       TD still supplies its endpoint.
    * - Multiple devices/configurations
      - One Thing per file; split an old multi-device CSV into several JSON files.
        Per-file Unit IDs and unique titles are retained.
@@ -97,7 +102,9 @@ all WoT documents or every operating system has been validated.
 Current boundaries
 ------------------
 
-CSV runtime support is intentionally removed; use :doc:`csv-migration`. Strings
+CSV runtime support is retained, so v1 configurations and commands keep
+working; new configurations should still prefer profile 0.2 (see
+:doc:`csv-migration`). Strings
 and bit arrays carrying meaningless numeric scales, invalid rw modes, unknown
 types and incomplete payload spans require review rather than silent conversion.
 Profile inheritance/templates/actions and new property-based writes are separate

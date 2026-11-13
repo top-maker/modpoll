@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Migrating CSV configurations" href="csv-migration.html" />
-    <link rel="prev" title="WoT TM/TD configuration" href="configure.html" /> 
+    <link rel="prev" title="CSV and WoT TM/TD configuration" href="configure.html" /> 
 </head>
 
 <body class="wy-body-for-nav"><nav id="modpoll-versions"><a href="/modpoll/1.x/">1.x (CSV)</a> | <a href="/modpoll/v2/">2.x preview (TM/TD)</a></nav> 
@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configure.html">WoT TM/TD configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html">CSV and WoT TM/TD configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">v1 compatibility and M3 acceptance</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#current-boundaries">Current boundaries</a></li>
 </ul>
@@ -82,10 +82,13 @@
              
   <section id="v1-compatibility-and-m3-acceptance">
 <h1>v1 compatibility and M3 acceptance<a class="headerlink" href="#v1-compatibility-and-m3-acceptance" title="Link to this heading"></a></h1>
-<p>The v2 change replaces CSV loading with the executable TM/TD profile. The existing
-transport, decoder, output and raw write paths remain. This table compares the
-pinned v1 baseline <code class="docutils literal notranslate"><span class="pre">0b42099</span></code> with the v2 implementation; it is not a claim that
-all WoT documents or every operating system has been validated.</p>
+<p>The v2 change adds the executable TM/TD profile alongside the retained v1 CSV
+loader. <code class="docutils literal notranslate"><span class="pre">--config</span></code> is the single configuration argument and detects the
+format from the content. The
+existing transport, decoder, output and raw write paths remain. This table
+compares the pinned v1 baseline <code class="docutils literal notranslate"><span class="pre">0b42099</span></code> with the v2 implementation; it is
+not a claim that all WoT documents or every operating system has been
+validated.</p>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text">Capability and evidence</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <colgroup>
@@ -102,9 +105,11 @@ all WoT documents or every operating system has been validated.</p>
 <tbody>
 <tr class="row-even"><td><p>Existing CLI</p></td>
 <td><p>Existing transport, rate, interval, output and MQTT arguments retained;
-<code class="docutils literal notranslate"><span class="pre">--unit-id</span></code> adds an explicit override.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">test_framer_validation.py</span></code> and existing CLI tests. No <code class="docutils literal notranslate"><span class="pre">--model</span></code> or
-automatic connection from TD Forms is introduced.</p></td>
+<code class="docutils literal notranslate"><span class="pre">--unit-id</span></code> adds an explicit override. v1 CSV configurations load
+through the same <code class="docutils literal notranslate"><span class="pre">--config</span></code> argument, detected from the content.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">test_framer_validation.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_csv_config.py</span></code> and existing CLI
+tests. No automatic connection from TM Forms is introduced; a concrete
+TD still supplies its endpoint.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Multiple devices/configurations</p></td>
 <td><p>One Thing per file; split an old multi-device CSV into several JSON files.
@@ -199,7 +204,9 @@ QoS handshakes do not make raw Modbus writes idempotent.</p></td>
 </table>
 <section id="current-boundaries">
 <h2>Current boundaries<a class="headerlink" href="#current-boundaries" title="Link to this heading"></a></h2>
-<p>CSV runtime support is intentionally removed; use <a class="reference internal" href="csv-migration.html"><span class="doc">Migrating CSV configurations</span></a>. Strings
+<p>CSV runtime support is retained, so v1 configurations and commands keep
+working; new configurations should still prefer profile 0.2 (see
+<a class="reference internal" href="csv-migration.html"><span class="doc">Migrating CSV configurations</span></a>). Strings
 and bit arrays carrying meaningless numeric scales, invalid rw modes, unknown
 types and incomplete payload spans require review rather than silent conversion.
 Profile inheritance/templates/actions and new property-based writes are separate
@@ -219,7 +226,7 @@ Docker and registry-installed acceptance have passed. See the <a class="referenc
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="configure.html" class="btn btn-neutral float-left" title="WoT TM/TD configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configure.html" class="btn btn-neutral float-left" title="CSV and WoT TM/TD configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="csv-migration.html" class="btn btn-neutral float-right" title="Migrating CSV configurations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

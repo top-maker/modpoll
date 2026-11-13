@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configure.html">WoT TM/TD configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html">CSV and WoT TM/TD configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility and M3 acceptance</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating CSV configurations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#migration-procedure">Migration procedure</a></li>
@@ -84,10 +84,15 @@
              
   <section id="migrating-csv-configurations">
 <h1>Migrating CSV configurations<a class="headerlink" href="#migrating-csv-configurations" title="Link to this heading"></a></h1>
-<p>v1 remains available for existing CSV users. v2 accepts TM/TD JSON and provides
-an offline validator; it does not load CSV or invoke an AI service at runtime.
-Convert new configurations to profile 0.2 as described in
-<code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot/profile.md</span></code>. Current development source rejects profile
+<p>v2 loads v1 CSV configurations again: pass them to <code class="docutils literal notranslate"><span class="pre">--config</span></code> as before, and
+the format is detected from the content. Existing v1 commands keep working
+unchanged. Migrating to profile 0.2 remains the recommended path for new or
+heavily edited configurations, because a Thing Model is validated offline,
+carries access and unit metadata explicitly, and is what the ModioHub catalog
+publishes. v2 does not invoke an AI service at runtime.
+Convert configurations to profile 0.2 as described in the
+<a class="reference external" href="https://github.com/top-maker/modpoll-wot/blob/main/profile.md">modpoll-wot profile documentation</a>. Current
+development source rejects profile
 0.1; migrate its member mapping into Forms and use physical bit addresses.
 Check the executable profile and bundled schemas before using a conversion.</p>
 <section id="migration-procedure">
@@ -114,9 +119,9 @@ expectations: these flags do not authorize or block MQTT address writes.</p></li
 Review the report before using the file on a device. A successful schema check
 alone cannot certify a vendor register map.</p></li>
 </ol>
-<p>Commands from the development checkout (the validation command uses the
-candidate shared package; version 0.2.0a1 does not provide this subcommand):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PYTHONPATH</span><span class="o">=</span><span class="n">packages</span><span class="o">/</span><span class="n">modpoll</span><span class="o">-</span><span class="n">wot</span> <span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">modpoll_wot</span> <span class="n">validate</span> <span class="n">meter</span><span class="o">.</span><span class="n">tm</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">profile</span>
+<p>Commands from the development checkout (the pinned <code class="docutils literal notranslate"><span class="pre">modpoll-wot</span></code> dependency
+provides the validation subcommand):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">modpoll_wot</span> <span class="n">validate</span> <span class="n">meter</span><span class="o">.</span><span class="n">tm</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">profile</span>
 <span class="n">uv</span> <span class="n">run</span> <span class="n">modpoll</span> <span class="o">--</span><span class="n">once</span> <span class="o">--</span><span class="n">config</span> <span class="n">meter</span><span class="o">.</span><span class="n">tm</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">tcp</span> <span class="n">HOST</span> <span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">PORT</span> <span class="o">--</span><span class="n">export</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span>
 <span class="n">uv</span> <span class="n">run</span> <span class="n">modpoll</span> <span class="o">--</span><span class="n">config</span> <span class="n">first</span><span class="o">.</span><span class="n">tm</span><span class="o">.</span><span class="n">json</span> <span class="n">second</span><span class="o">.</span><span class="n">tm</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">tcp</span> <span class="n">HOST</span>
 </pre></div>
@@ -194,7 +199,7 @@ prompt. The AI may prepare files, but an operator still verifies the result:</p>
 <li><p>Access corrections and rejected source mistakes are explicit in the report.</p></li>
 <li><p>All JSON files pass the offline profile validator; independent vectors and
 output comparisons pass. Unknown vendor facts remain unresolved, not guessed.</p></li>
-<li><p>No runtime CSV fallback, AI calls or device-library dependency is introduced.</p></li>
+<li><p>No AI calls or device-library dependency are introduced at conversion time.</p></li>
 </ul>
 <p>The authored <code class="docutils literal notranslate"><span class="pre">examples/modsim.tm.json</span></code> / <code class="docutils literal notranslate"><span class="pre">modsim.generated.td.json</span></code> pair and the
 independent vectors in the tests demonstrate the process. Migrating the entire

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WoT TM/TD configuration &mdash; Modpoll  documentation</title>
+  <title>CSV and WoT TM/TD configuration &mdash; Modpoll  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">WoT TM/TD configuration</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CSV and WoT TM/TD configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#migration-from-csv">Migration from CSV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#standard-form-profile-0-2">Standard Form profile 0.2</a></li>
 </ul>
@@ -71,7 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">WoT TM/TD configuration</li>
+      <li class="breadcrumb-item active">CSV and WoT TM/TD configuration</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/configure.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -81,25 +81,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="wot-tm-td-configuration">
-<h1>WoT TM/TD configuration<a class="headerlink" href="#wot-tm-td-configuration" title="Link to this heading"></a></h1>
-<p>The 2.x development branch accepts JSON configurations using WoT TM/TD 1.1.
-Use the same <code class="docutils literal notranslate"><span class="pre">--config</span></code> argument for either format. A top-level <code class="docutils literal notranslate"><span class="pre">&#64;type</span></code>
-containing <code class="docutils literal notranslate"><span class="pre">tm:ThingModel</span></code> (a string or an array entry) selects TM validation;
-otherwise the document is validated as TD. File extensions and URL suffixes do
-not select the format. An invalid document fails its selected validation; the
-loader does not retry it as the other format. This preview supports the fixed
-<code class="docutils literal notranslate"><span class="pre">tm:ThingModel</span></code> spelling, without resolving alternate JSON-LD aliases.</p>
-<p>It rejects CSV input. The canonical <code class="docutils literal notranslate"><span class="pre">examples/modsim.tm.json</span></code> uses profile
-0.2 standard property Forms and explicit acquisition blocks. The generated
-<code class="docutils literal notranslate"><span class="pre">examples/modsim.generated.td.json</span></code> binds that same 37-property model to local
-TCP at port 5020. Current development source accepts only profile 0.2; older
-profiles must be migrated. Details are in <code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot/profile.md</span></code>.</p>
+  <section id="csv-and-wot-tm-td-configuration">
+<h1>CSV and WoT TM/TD configuration<a class="headerlink" href="#csv-and-wot-tm-td-configuration" title="Link to this heading"></a></h1>
+<p>The 2.x development branch accepts both the v1 CSV configuration format and
+JSON configurations using WoT TM/TD 1.1. <code class="docutils literal notranslate"><span class="pre">-f</span></code>/<code class="docutils literal notranslate"><span class="pre">--config</span></code>
+takes either format and detects it from the content, not the file name or URL
+suffix: a first
+non-whitespace byte of <code class="docutils literal notranslate"><span class="pre">{</span></code> or <code class="docutils literal notranslate"><span class="pre">[</span></code> selects JSON; anything else is parsed as
+v1 CSV. The same argument also accepts a <code class="docutils literal notranslate"><span class="pre">modiohub:&lt;id&gt;&#64;&lt;version&gt;</span></code> reference
+to a custom Thing Model in your ModioHub Workspace (run <code class="docutils literal notranslate"><span class="pre">modpoll</span> <span class="pre">login</span></code>
+first unless the version is shared); a reference is always a Thing Model.
+<code class="docutils literal notranslate"><span class="pre">--config</span></code> is the only configuration argument; there are no format-specific
+flags.</p>
+<p>For JSON input, a top-level <code class="docutils literal notranslate"><span class="pre">&#64;type</span></code> containing <code class="docutils literal notranslate"><span class="pre">tm:ThingModel</span></code> (a string or
+an array entry) selects TM validation; otherwise the document is validated as
+TD. An invalid document fails its selected validation; the loader does not
+retry it as the other format. This preview supports the fixed <code class="docutils literal notranslate"><span class="pre">tm:ThingModel</span></code>
+spelling, without resolving alternate JSON-LD aliases.</p>
+<p>The v1 CSV row format (<code class="docutils literal notranslate"><span class="pre">device</span></code>, <code class="docutils literal notranslate"><span class="pre">poll</span></code> and <code class="docutils literal notranslate"><span class="pre">ref</span></code> rows) keeps its original
+semantics: point names replace ASCII spaces with underscores, a blank access
+column defaults to <code class="docutils literal notranslate"><span class="pre">r</span></code>, the scale column multiplies the decoded value, and
+bit-table point addresses identify eight-bit groups. <code class="docutils literal notranslate"><span class="pre">--unit-id</span></code> overrides
+the per-device ID column; <code class="docutils literal notranslate"><span class="pre">--param</span></code> placeholder bindings require a Thing
+Model and are rejected for CSV. The canonical <code class="docutils literal notranslate"><span class="pre">examples/modsim.csv</span></code> produces
+the same four blocks and 37 points as <code class="docutils literal notranslate"><span class="pre">examples/modsim.tm.json</span></code>. Current
+development source accepts only profile 0.2; older profiles must be migrated.
+Details are in the <a class="reference external" href="https://github.com/top-maker/modpoll-wot/blob/main/profile.md">modpoll-wot profile documentation</a>.</p>
 <p>Each file describes one device. Its <code class="docutils literal notranslate"><span class="pre">title</span></code> is the output device name;
 <code class="docutils literal notranslate"><span class="pre">--unit-id</span></code> overrides the instance Unit ID (range 1–254). Without it, each file
 uses the Unit ID declared consistently in its Forms, falling back to 1. Different files
 can therefore address different Unit IDs in one process.
-Multiple files may be supplied to <code class="docutils literal notranslate"><span class="pre">--config</span></code>; titles must be unique.
+Multiple files may be supplied to <code class="docutils literal notranslate"><span class="pre">--config</span></code>; device names must be unique
+across all files.
 The existing transport CLI arguments explicitly select the connection endpoint.
 A concrete TD’s form Unit IDs, addresses and quantities must agree with the model.</p>
 <p>The interpreter validates the official, locally bundled TD/TM 1.1 schema,
@@ -130,8 +143,9 @@ not interpreted as divisors. Zero and negative multipliers are valid.</p></li>
 <li><p>Preserve effective point names from legacy <code class="docutils literal notranslate"><span class="pre">ref</span></code> rows: the old loader replaced spaces with
 underscores. Unknown types or ambiguous fields require review.</p></li>
 </ul>
-<p>The executable contract and test vectors live under
-<code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot</span></code>. Strings, bit selectors, four tables and all four
+<p>The executable contract and test vectors live in the
+<a class="reference external" href="https://github.com/top-maker/modpoll-wot">modpoll-wot repository</a>. Strings,
+bit selectors, four tables and all four
 byte/word orders are represented by the contract. Model inheritance, optional members, URI templates, non-Modbus forms,
 and security schemes other than <code class="docutils literal notranslate"><span class="pre">nosec</span></code> are rejected in this preview subset.
 The interpreter records access flags; raw MQTT write commands retain the existing
@@ -143,10 +157,11 @@ fixes and <a class="reference internal" href="csv-migration.html"><span class="d
 </section>
 <section id="standard-form-profile-0-2">
 <h2>Standard Form profile 0.2<a class="headerlink" href="#standard-form-profile-0-2" title="Link to this heading"></a></h2>
-<p>The shared package <code class="docutils literal notranslate"><span class="pre">0.2.0a1</span></code> introduces profile <code class="docutils literal notranslate"><span class="pre">0.2</span></code> with standard Form
+<p>The shared <code class="docutils literal notranslate"><span class="pre">modpoll-wot</span></code> package provides profile <code class="docutils literal notranslate"><span class="pre">0.2</span></code> with standard Form
 mappings and explicit blocks. The application uses the exact published package
-version. See
-<code class="docutils literal notranslate"><span class="pre">packages/modpoll-wot/profile.md</span></code> for API details, parameter precedence,
+version. See the
+<a class="reference external" href="https://github.com/top-maker/modpoll-wot/blob/main/profile.md">profile documentation</a>
+for API details, parameter precedence,
 necessary extensions and external Consumer limits. The source example is
 <code class="docutils literal notranslate"><span class="pre">examples/modsim.tm.json</span></code>. Generated TDs are instance artifacts.</p>
 </section>

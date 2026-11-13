@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="WoT TM/TD configuration" href="configure.html" />
+    <link rel="next" title="CSV and WoT TM/TD configuration" href="configure.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" /> 
 </head>
 
@@ -48,13 +48,14 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verification">verification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commandline-usage">Commandline Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#value-rendering">Value rendering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#framers-and-transports">Framers and transports</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="configure.html">WoT TM/TD configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html">CSV and WoT TM/TD configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility and M3 acceptance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="csv-migration.html">Migrating CSV configurations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -86,17 +87,14 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a7 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a8 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">device</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">[</span><span class="nd">@COMMIT</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">full</span><span class="o">-</span><span class="n">read</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="n">FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">upload</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">product</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">chassis</span> <span class="n">MANUFACTURER</span><span class="o">/</span><span class="n">MODEL</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">firmware</span> <span class="n">FIRMWARE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">configuration</span> <span class="n">CONFIGURATION</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">reject</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">upload</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">reject</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">baud</span> <span class="n">SERIAL_BAUD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">parity</span> <span class="p">{</span><span class="n">none</span><span class="p">,</span><span class="n">odd</span><span class="p">,</span><span class="n">even</span><span class="p">}]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">timeout</span> <span class="n">TIMEOUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">EXPORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">precision</span> <span class="n">auto</span><span class="o">|</span><span class="n">N</span><span class="p">]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="mf">3.1.1</span><span class="p">,</span><span class="mf">5.0</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">host</span> <span class="n">MQTT_HOST</span><span class="p">]</span>
@@ -119,46 +117,8 @@
 <dt><kbd>-v, --version</kbd></dt>
 <dd><p>show program’s version number and exit</p>
 </dd>
-<dt><kbd>-f, --config, --tm</kbd></dt>
-<dd><p>Local path or URL of a WoT TM/TD JSON configuration, or modiohub:&lt;id&gt;&#64;&lt;version&gt; for a custom Thing Model in your ModioHub Workspace (run modpoll login first unless it is shared). Type is detected from content, not the filename. Required unless –device is given.</p>
-</dd>
-<dt><kbd>--device</kbd></dt>
-<dd><p>Read the baseline Thing Model of a product in the Open Modbus Catalog, for example advantech/adam-5017uh, at a commit, tag or branch (default: main). Use instead of -f.</p>
-</dd>
-<dt><kbd>--full-read</kbd></dt>
-<dd><p>Read every point of the model once, read-only and without retries, and report which points could be read. Implies –once.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--report</kbd></dt>
-<dd><p>Write the verification report of a full read to FILE (‘-’ prints it). It lists each point’s result and carries no address, Unit ID, serial number or value; review it before sharing. Implies –full-read.</p>
-</dd>
-<dt><kbd>--upload</kbd></dt>
-<dd><p>After a full read, show the report and, once you confirm, upload it to ModioHub (run modpoll login first). Implies –full-read.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--yes</kbd></dt>
-<dd><p>Upload without asking for confirmation after the report is shown</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--product</kbd></dt>
-<dd><p>Catalog product ID the report is for; needed with -f, taken from –device otherwise</p>
-</dd>
-<dt><kbd>--chassis</kbd></dt>
-<dd><p>Chassis product ID, for the report</p>
-</dd>
-<dt><kbd>--firmware</kbd></dt>
-<dd><p>Firmware version of the device, for the report</p>
-</dd>
-<dt><kbd>--configuration</kbd></dt>
-<dd><p>Short note on the device configuration, such as an input range, for the report</p>
-</dd>
-<dt><kbd>--confirm</kbd></dt>
-<dd><p>Points whose values you checked and found right (‘all’ for every point), for the report</p>
-<p>Default: []</p>
-</dd>
-<dt><kbd>--reject</kbd></dt>
-<dd><p>Points whose values you checked and found wrong, for the report</p>
-<p>Default: []</p>
+<dt><kbd>-f, --config</kbd></dt>
+<dd><p>Local path or URL of a v1 CSV or WoT TM/TD JSON configuration, or modiohub:&lt;id&gt;&#64;&lt;version&gt; for a custom Thing Model in your ModioHub Workspace (run modpoll login first unless it is shared). The format is detected from the content, not the filename. Required unless –device is given.</p>
 </dd>
 <dt><kbd>--param</kbd></dt>
 <dd><p>Typed TM placeholder binding (requires the profile 0.2 interpreter)</p>
@@ -304,6 +264,31 @@
 </dd>
 </dl>
 </section>
+<section id="verification">
+<h2>verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>–report/–upload read every point of one Thing Model once, read-only and without retries, and report which points could be read</p>
+<dl class="option-list">
+<dt><kbd>--report</kbd></dt>
+<dd><p>Read every point of the model once and write the verification report to FILE (‘-’ prints it). Without FILE the save location, your judgment of the values and the upload are asked interactively. The report lists each point’s result and carries no address, Unit ID, serial number or value.</p>
+</dd>
+<dt><kbd>--upload</kbd></dt>
+<dd><p>After the verification read, show the report and, once you confirm, upload it to ModioHub; signs you in with the browser when needed</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--yes</kbd></dt>
+<dd><p>Upload without being asked</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--confirm</kbd></dt>
+<dd><p>Points whose values you checked and found right (‘all’ for every point), for the report</p>
+<p>Default: []</p>
+</dd>
+<dt><kbd>--reject</kbd></dt>
+<dd><p>Points whose values you checked and found wrong, for the report</p>
+<p>Default: []</p>
+</dd>
+</dl>
+</section>
 <p>The <cite>config</cite> option is required.</p>
 <section id="commandline-usage">
 <h2>Commandline Usage<a class="headerlink" href="#commandline-usage" title="Link to this heading"></a></h2>
@@ -364,7 +349,9 @@ when that happens. The value is still written as asked for.</p>
 </section>
 <section id="configuration-file">
 <h2>Configuration File<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h2>
-<p>The configuration file (<cite>–config</cite>) is a WoT TM/TD JSON file that defines the devices, pollers, and references to be read.</p>
+<p>The configuration file (<cite>–config</cite>) defines the devices, pollers, and points
+to be read. It can be a WoT TM/TD JSON file or a v1 CSV file; the format is
+detected from the content, no other configuration flag is needed.</p>
 <p>For register references (i.e., Holding or Input registers) with a <code class="docutils literal notranslate"><span class="pre">dtype</span></code> of <code class="docutils literal notranslate"><span class="pre">bool</span></code>, you can specify a single bit to be extracted from the 16-bit register. This is done by appending <code class="docutils literal notranslate"><span class="pre">:bit</span></code> to the address, where <code class="docutils literal notranslate"><span class="pre">bit</span></code> is an integer from 0 to 15.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">40110</span></code>: Reads the entire 16-bit register at address 40110.</p></li>
@@ -388,7 +375,7 @@ when that happens. The value is still written as asked for.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="configure.html" class="btn btn-neutral float-right" title="WoT TM/TD configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="configure.html" class="btn btn-neutral float-right" title="CSV and WoT TM/TD configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
