@@ -1,4 +1,10 @@
-# Modsim 2.0.0a9 preview
+# Modsim 2.0.0a10 preview
+
+Modsim 2.0.0a10 keeps modpoll-wot 0.5.0a1. `modsim login` prints the sign-in link and opens a browser only
+where one can be opened; the opener's output no longer fills the terminal, and Ctrl-C cancels with one line.
+The login is shared with modpoll 2.0.0a8.
+
+## Modsim 2.0.0a9 preview
 
 Modsim 2.0.0a9 pins modpoll-wot 0.5.0a1 and connects to ModioHub:
 

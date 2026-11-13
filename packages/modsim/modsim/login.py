@@ -4,10 +4,13 @@
 back is kept in the credentials file shared with modpoll (see modpoll_wot.session). ``modsim logout`` removes it.
 """
 
+import os
+import shutil
+import subprocess
 import sys
 import time
 import webbrowser
-from typing import Any, Callable, TextIO
+from typing import Any, Callable, Mapping, TextIO
 
 import modpoll_wot  # type: ignore[import-untyped]
 
@@ -21,6 +24,44 @@ class LoginError(ValueError):
     """The login did not complete; the message says why and what to do."""
 
 
+def open_in_browser(
+    url: str,
+    *,
+    environ: Mapping[str, str] | None = None,
+    platform: str | None = None,
+    run: Callable[..., Any] = subprocess.run,
+    which: Callable[[str], str | None] = shutil.which,
+) -> bool:
+    """Try to open an address in a browser; False means the user has to open it from the printed link.
+
+    Where there is no desktop (SSH, a minimal WSL) nothing is tried, and the opener's own complaints
+    never reach the terminal.
+    """
+    environ = os.environ if environ is None else environ
+    platform = platform or sys.platform
+    if environ.get("BROWSER") or platform in ("darwin", "win32"):
+        return webbrowser.open(url)
+    if not (environ.get("DISPLAY") or environ.get("WAYLAND_DISPLAY")) or environ.get(
+        "SSH_CONNECTION"
+    ):
+        return False
+    opener = which("xdg-open")
+    if not opener:
+        return False
+    try:
+        return bool(
+            run(
+                [opener, url],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+            ).returncode
+            == 0
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
 def login(
     server: str,
     *,
@@ -31,7 +72,7 @@ def login(
 ) -> Any:
     """Run the flow against a server; returns the saved Session."""
     sleep, monotonic = sleep or time.sleep, monotonic or time.monotonic
-    open_browser, out = open_browser or webbrowser.open, out or sys.stdout
+    open_browser, out = open_browser or open_in_browser, out or sys.stdout
     status, grant = call_json(
         f"{server}/api/v1/tool-sessions/device-authorization",
         method="POST",
@@ -46,7 +87,11 @@ def login(
     )
     # A browser opens only where one can; otherwise the address and code above are all there is.
     if not open_browser(grant["verification_uri_complete"]):
-        print("Open that address in a browser on any computer.", file=out, flush=True)
+        print(
+            "Open the address above in a browser on any computer, then wait here.",
+            file=out,
+            flush=True,
+        )
     interval = grant["interval"]
     deadline = monotonic() + grant["expires_in"]
     while monotonic() < deadline:
@@ -110,7 +155,11 @@ def command(arguments: list[str], *, out: TextIO | None = None) -> int:
             else:
                 print(f"No stored login for {server}.", file=out)
             return 0
-        session = login(server, out=out)
+        try:
+            session = login(server, out=out)
+        except KeyboardInterrupt:
+            print("\nLogin cancelled.", file=sys.stderr)
+            return 130
         who = f" as @{session.github_user}" if session.github_user else ""
         print(f"Signed in to {server}{who}. modpoll uses the same login.", file=out)
         return 0
