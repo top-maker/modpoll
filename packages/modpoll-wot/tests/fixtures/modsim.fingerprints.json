@@ -1,0 +1,155 @@
+{
+  "model": "modsim.tm.json",
+  "version": "pf1+mf1",
+  "fingerprint": "mf1:72518eae5d2994efe3ea56fdd26d737c4ef0f4b4f004bc329e24caa2686a2e97",
+  "points": {
+    "coil01-08": {
+      "canonical": "{\"modv:address\":0,\"modv:entity\":\"Coil\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":8,\"modv:type\":\"xsd:boolean\",\"type\":\"array\"}",
+      "fingerprint": "pf1:0a5cc398975cc1141206c13a64c5e1394b316d1bb7b8211b68c888957cdaffdf"
+    },
+    "coil09-16": {
+      "canonical": "{\"modv:address\":8,\"modv:entity\":\"Coil\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":8,\"modv:type\":\"xsd:boolean\",\"type\":\"array\"}",
+      "fingerprint": "pf1:6692950f1401e86dfd78f9b66390aaf5e2247ecf2efdd9d876af070aca4de193"
+    },
+    "di01-08": {
+      "canonical": "{\"modv:address\":10000,\"modv:entity\":\"DiscreteInput\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":8,\"modv:type\":\"xsd:boolean\",\"type\":\"array\"}",
+      "fingerprint": "pf1:88227f091cd6305714059e71341bf16c52e8cb17eca271313cb6bbb1ac5f90d3"
+    },
+    "di09-16": {
+      "canonical": "{\"modv:address\":10008,\"modv:entity\":\"DiscreteInput\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":8,\"modv:type\":\"xsd:boolean\",\"type\":\"array\"}",
+      "fingerprint": "pf1:cce7ed0073ea7b6c1570a3fbcb7a097e890f3d1eb6dc0757830ba74634cf9554"
+    },
+    "input_reg01": {
+      "canonical": "{\"modv:address\":30000,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:369f807eab8e37ff442004f002e7bf55c6f01fa09303ea74ee6d86817c053d76"
+    },
+    "input_reg02": {
+      "canonical": "{\"modv:address\":30001,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:76b1cf686cd0805deec9f221d6fa26c58e59a6cc608e0b7e1cd07aa363bcfc5d"
+    },
+    "input_reg03": {
+      "canonical": "{\"modv:address\":30002,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:09c03cd9f6bb56ad740dac0b3b92fe9af4eeb2c7fa69d820762a59e14ed3c448"
+    },
+    "input_reg04": {
+      "canonical": "{\"modv:address\":30003,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:a3b70389cc0da736d4675397dc702f431521fd548c57bf4ddce6ea5022eda646"
+    },
+    "input_reg05": {
+      "canonical": "{\"modv:address\":30004,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:1c8f290c6e7bd2c6fb404578f09741967c1e7cd57fa0101bb8362cc2bcbfa095"
+    },
+    "input_reg06": {
+      "canonical": "{\"modv:address\":30005,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:31ffa61afcabf712f49f048fca935607fef6e2ea453a91b1023582400db4c17e"
+    },
+    "input_reg07": {
+      "canonical": "{\"modv:address\":30006,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:11926dc55e35ca89566db7dcfd342cce2e6d4264716adb37a1e1f691c3afd1db"
+    },
+    "input_reg08": {
+      "canonical": "{\"modv:address\":30007,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:8bc2b64762fcecc90e66b7ddae28fee56a93ed7a5012c37c1609885e382c756a"
+    },
+    "input_reg09": {
+      "canonical": "{\"modv:address\":30008,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"number\"}",
+      "fingerprint": "pf1:1b305c7ab081f1f6d46741438bba2904400796d14d2fff547120dba33b89dc11"
+    },
+    "input_reg10": {
+      "canonical": "{\"modpoll:multiplier\":\"0.001\",\"modv:address\":30010,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"number\"}",
+      "fingerprint": "pf1:5cf94c2360f70938540e98c9e259527cf631ec0dde4fbc6ec2adcfd9894ff945"
+    },
+    "input_reg11": {
+      "canonical": "{\"modv:address\":30012,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:int\",\"type\":\"number\"}",
+      "fingerprint": "pf1:c0381ea2e8abaefedda2ac35a4e7ee9e8140bf1150a48476410fc5273d75b16c"
+    },
+    "input_reg12": {
+      "canonical": "{\"modpoll:multiplier\":\"1000\",\"modv:address\":30014,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:int\",\"type\":\"number\"}",
+      "fingerprint": "pf1:1cc481ac8e5ba84eaed6a65fa96e954474a1505ce7bf643d2c999d173650594f"
+    },
+    "input_reg13": {
+      "canonical": "{\"modv:address\":30016,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:float\",\"type\":\"number\"}",
+      "fingerprint": "pf1:25098743f634f66d581e03917dfca461b240ebf3bb96664481c271a0c674574b"
+    },
+    "input_reg14": {
+      "canonical": "{\"modv:address\":30018,\"modv:entity\":\"InputRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:float\",\"type\":\"number\"}",
+      "fingerprint": "pf1:c565484339f4267a761bc8647f2b6096bbb6779f59d3dd1f1810dd4e7b5664ef"
+    },
+    "holding_reg01": {
+      "canonical": "{\"modv:address\":40000,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:df9e449a3a999601097588ea54ef67e2a37a8d11918f9a399c2e395d94450ce4"
+    },
+    "holding_reg02": {
+      "canonical": "{\"modv:address\":40001,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:96d572b07e576c8e85a465b6d1addd100281f11947d0320bb61ef732d79b73da"
+    },
+    "holding_reg03": {
+      "canonical": "{\"modv:address\":40002,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:a42e11e6c926189623e3e59082763e1cd8a2ccbf4b5eb1cd83f641b10cefebd9"
+    },
+    "holding_reg04": {
+      "canonical": "{\"modv:address\":40003,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"number\"}",
+      "fingerprint": "pf1:5ae64a57465970ae7eeda59b51bc922b499cf1b76e7345f976cdb69d93cb388d"
+    },
+    "holding_reg05": {
+      "canonical": "{\"modv:address\":40004,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:9e833a9d9860cfc9c5536b6118e4d473b7e1e46a31899b8423ff60c70abb303d"
+    },
+    "holding_reg06": {
+      "canonical": "{\"modv:address\":40005,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:b3e823dd547628bf7810d016b1e6ff381f1376a408821ea7e114ca1a98dfd6a4"
+    },
+    "holding_reg07": {
+      "canonical": "{\"modv:address\":40006,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:88dd09a4760ec2f496cc73348cb5a2be247c4a507c7e845c019d17e63fd7c7bd"
+    },
+    "holding_reg08": {
+      "canonical": "{\"modv:address\":40007,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:5040aaff29790e302167b753688f3a86c6b5e5758a5330f1c0c77528719b81da"
+    },
+    "holding_reg09": {
+      "canonical": "{\"modv:address\":40008,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"number\"}",
+      "fingerprint": "pf1:5b008d1a575dcc8268e3068f76e1546ddff3e4a6b5ef43245cd62bb16e630272"
+    },
+    "holding_reg10": {
+      "canonical": "{\"modpoll:multiplier\":\"0.001\",\"modv:address\":40010,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"number\"}",
+      "fingerprint": "pf1:c962264addbd2d0f5bc0fb1c166d551bea3d2ad6be9f232f37c54548bc45c038"
+    },
+    "holding_reg11": {
+      "canonical": "{\"modv:address\":40012,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:int\",\"type\":\"number\"}",
+      "fingerprint": "pf1:be3565c0f127bb9d56f7d77c7b7231b139d5569c5297c1666545dfc442026ed8"
+    },
+    "holding_reg12": {
+      "canonical": "{\"modpoll:multiplier\":\"1000\",\"modv:address\":40014,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:int\",\"type\":\"number\"}",
+      "fingerprint": "pf1:2e4a9d93be8a88ebe45058252ea1a287655805f9a67e2eda9279c420ee59c187"
+    },
+    "holding_reg13": {
+      "canonical": "{\"modv:address\":40016,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:float\",\"type\":\"number\"}",
+      "fingerprint": "pf1:008d56907d1e9fce9088960a5dbad33a84ef7b630ef71e329862881c851394f8"
+    },
+    "holding_reg14": {
+      "canonical": "{\"modv:address\":40018,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:float\",\"type\":\"number\"}",
+      "fingerprint": "pf1:9214a021c9406fe876230b1c5adc49e68bbb42e2d49d2d771f79e8e212564bbf"
+    },
+    "holding_reg15": {
+      "canonical": "{\"modv:address\":40020,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":4,\"modv:type\":\"xsd:unsignedLong\",\"type\":\"number\"}",
+      "fingerprint": "pf1:1f0b838692da984a79055d8af1a28326ba6a5e6de8f7818a7c4460dd7204c5a7"
+    },
+    "holding_reg16": {
+      "canonical": "{\"modv:address\":40024,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":4,\"modv:type\":\"xsd:long\",\"type\":\"number\"}",
+      "fingerprint": "pf1:be9d25dae63e963c3e44dd84c0aa84bbbcbefe1c8a59a62593a8b1ac5f0de5ae"
+    },
+    "holding_reg17": {
+      "canonical": "{\"modv:address\":40028,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":4,\"modv:type\":\"xsd:double\",\"type\":\"number\"}",
+      "fingerprint": "pf1:18eaa33af7d7db4cfe9d99f5f7dc4f1a8bdc4fe03bf3b922ee7cdf832075ec56"
+    },
+    "holding_reg18": {
+      "canonical": "{\"modv:address\":40032,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":4,\"modv:type\":\"xsd:double\",\"type\":\"number\"}",
+      "fingerprint": "pf1:eee4645d649bb219a679a2b1e1b307bba6f717333009a33e9300a3edd30803d5"
+    },
+    "holding_reg19": {
+      "canonical": "{\"modpoll:byteLength\":16,\"modv:address\":40036,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":8,\"modv:type\":\"xsd:string\",\"type\":\"string\"}",
+      "fingerprint": "pf1:14e82f419bf51638af5f26a74ae3d0bafb29c7dec9d46b74fe806cb940665e5b"
+    }
+  }
+}

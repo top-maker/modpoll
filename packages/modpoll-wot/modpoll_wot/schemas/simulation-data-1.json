@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://top-maker.github.io/modpoll/schemas/simulation-data-1.json",
+  "title": "Modpoll simulation data, version 1",
+  "description": "Declarative values a simulator serves for one device described by a Thing Model. Static values in initial are the default; generators change values over time and bindings make one property follow another. No executable code. Values are engineering values as Modpoll reads them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version"
+  ],
+  "properties": {
+    "version": {
+      "const": "1"
+    },
+    "initial": {
+      "description": "Property name to static value.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/value"
+      }
+    },
+    "generators": {
+      "description": "Property name to a value that changes over time.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/generator"
+      }
+    },
+    "bindings": {
+      "description": "Target property name to the source property it follows.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tick": {
+      "description": "Update interval in seconds, default 1.",
+      "type": "number",
+      "minimum": 0.001
+    },
+    "seed": {
+      "description": "Random seed for noise, default 0.",
+      "type": "integer"
+    },
+    "writePolicy": {
+      "description": "Whether client writes to generated properties hold (default) or are overwritten by the generator.",
+      "enum": [
+        "hold",
+        "overwrite"
+      ]
+    }
+  },
+  "$defs": {
+    "generator": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "constant"
+            },
+            "value": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "center",
+            "amplitude",
+            "period"
+          ],
+          "properties": {
+            "kind": {
+              "const": "sine"
+            },
+            "center": {
+              "type": "number"
+            },
+            "amplitude": {
+              "type": "number",
+              "minimum": 0
+            },
+            "period": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "rate",
+            "minimum",
+            "maximum"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ramp"
+            },
+            "start": {
+              "type": "number"
+            },
+            "rate": {
+              "type": "number"
+            },
+            "minimum": {
+              "type": "number"
+            },
+            "maximum": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "minimum",
+            "maximum"
+          ],
+          "properties": {
+            "kind": {
+              "const": "noise"
+            },
+            "minimum": {
+              "type": "number"
+            },
+            "maximum": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "value": {
+      "description": "A property value: a scalar, or an array of scalars for array properties.",
+      "anyOf": [
+        {
+          "type": [
+            "boolean",
+            "number",
+            "string"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": [
+              "boolean",
+              "number",
+              "string"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
