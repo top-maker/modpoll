@@ -258,10 +258,10 @@ def test_a_report_read_asks_each_group_once():
 
 
 def test_bare_report_interactively_saves_and_judges(monkeypatch, tmp_path, capsys):
-    """--report without FILE asks where to save and whether the values look right."""
+    """--report without FILE asks where to save, whether the values look right and whether to upload."""
     path = write_model(tmp_path, three_group_model())
     monkeypatch.chdir(tmp_path)
-    answers = iter(["y", ""])  # values look right; save to the default name
+    answers = iter(["y", "", "n"])  # values look right; default name; do not upload
     monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
     monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
     run_app(
@@ -273,6 +273,33 @@ def test_bare_report_interactively_saves_and_judges(monkeypatch, tmp_path, capsy
     report = json.loads(saved.read_text())
     assert {p["expected"] for p in report["points"]} == {"confirmed"}
     assert "product" not in report
+    assert "Uploaded." not in capsys.readouterr().out
+
+
+def test_bare_report_uploads_after_a_yes(monkeypatch, tmp_path, capsys):
+    """A yes to the bare --report upload question shows the report and uploads it."""
+    path = write_model(tmp_path, three_group_model())
+    monkeypatch.chdir(tmp_path)
+    answers = iter(["y", "", "y"])  # values look right; default name; upload
+    monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
+    monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
+    monkeypatch.setattr(main, "_ensure_login", lambda: None)
+    uploaded = {}
+
+    def fake_upload(report, *, timeout):
+        uploaded["report"] = report
+        return {"fullRead": True}
+
+    monkeypatch.setattr(verification, "upload_report", fake_upload)
+    run_app(
+        monkeypatch,
+        ["-f", str(path), "--tcp", "192.0.2.10", "--report"],
+        FakeClient(False, False),
+    )
+    assert uploaded["report"]["reportVersion"] == 4
+    out = capsys.readouterr().out
+    assert "Report to upload:" in out
+    assert "Uploaded." in out
 
 
 def test_bare_report_without_a_terminal_names_a_file(monkeypatch, tmp_path, caplog):

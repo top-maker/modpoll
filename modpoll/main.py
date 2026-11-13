@@ -192,7 +192,12 @@ def _finish_full_read(args, handler):
                 "serial numbers or values; review it before sharing.",
                 flush=True,
             )
-    if args.upload and not _upload(args, report):
+    upload = args.upload
+    confirmed = False
+    if not upload and not args.yes and sys.stdin.isatty():
+        upload = _ask("Upload this report to ModioHub? [y/N] ") in ("y", "yes")
+        confirmed = upload
+    if upload and not _upload(args, report, confirm=not confirmed):
         return False
     return full
 
@@ -207,10 +212,14 @@ def _ensure_login():
         login.login(server)
 
 
-def _upload(args, report):
-    """Show the report and, once the user agrees, upload it. Returns whether it was uploaded."""
+def _upload(args, report, *, confirm=True):
+    """Show the report and, once the user agrees, upload it. Returns whether it was uploaded.
+
+    ``confirm`` is false when the caller already asked (a yes to the bare
+    ``--report`` upload question), or with ``--yes``.
+    """
     print("\nReport to upload:\n" + json.dumps(report, indent=2), flush=True)
-    if not args.yes:
+    if confirm and not args.yes:
         if not sys.stdin.isatty():
             logger.error("Add --yes to upload without being asked.")
             return False
