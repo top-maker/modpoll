@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -36,9 +37,8 @@ jobs:
           working_directory: packages/modpoll-wot
       - run: mise run check
       - name: Publish to PyPI without replacing existing files
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: uv publish --no-progress --check-url https://pypi.org/simple/ dist/*
+        # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
+        run: uv publish --no-progress --trusted-publishing always --check-url https://pypi.org/simple/ dist/*
       - name: Verify the registry installation
         timeout-minutes: 15
         run: |

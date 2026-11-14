@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
       actions: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -62,9 +63,8 @@ jobs:
         run: python .github/scripts/preview-release.py immutable "${GIT_TAG#modsim-v}"
       - name: Publish PyPI package
         if: steps.registry.outputs.exists == 'false'
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: uv publish --no-progress dist/*
+        # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
+        run: uv publish --no-progress --trusted-publishing always dist/*
       - name: Publish GitHub prerelease
         env:
           GH_TOKEN: ${{ github.token }}
