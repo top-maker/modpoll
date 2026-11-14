@@ -145,7 +145,10 @@ def test_exported_snapshot_replays_unchanged(tmp_path):
 
     first = serve_and_read(tmp_path, model, data, "first")
     exported = json.loads(first.read_text())["replay-meter"]
-    assert exported["VOLTAGE"] == float(2301) * 0.1 != 230.1
+    # modpoll exports the exact decimal of a scaled reading. Releases up to 2.0.0a5 exported
+    # float(raw) * multiplier (230.10000000000002); modpoll-wot's scaled_raw property tests
+    # show that form maps back to the same raw value too.
+    assert exported["VOLTAGE"] == 230.1
     assert exported["STATUS"] == 4660
 
     replayed = serve_and_read(tmp_path, model, first, "replay")

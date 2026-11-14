@@ -1,0 +1,47 @@
+{
+  "model": "conformance.tm.json",
+  "version": "pf1+mf1",
+  "fingerprint": "mf1:9734b3d68662e9381eb34a9fd7f682ed98c76b121ba60d0fd6a646420669a004",
+  "points": {
+    "u32_be": {
+      "canonical": "{\"modv:address\":0,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"integer\"}",
+      "fingerprint": "pf1:e76d712016a2e139ef9e1d040b6e9c987fc5db1cb004719f71f804988a3d9c7e"
+    },
+    "u32_word_swap": {
+      "canonical": "{\"modv:address\":2,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":false,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"integer\"}",
+      "fingerprint": "pf1:26a40fad3299451018146debae91203d0f20313b066eab6caca1470cad82980e"
+    },
+    "u32_byte_swap": {
+      "canonical": "{\"modv:address\":4,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":false,\"modv:mostSignificantWord\":true,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"integer\"}",
+      "fingerprint": "pf1:f88ae861eb7833f7aafa53e90520b742d6fd29ba9bc43db7a7542cde6783146c"
+    },
+    "u32_both_swap": {
+      "canonical": "{\"modv:address\":6,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":false,\"modv:mostSignificantWord\":false,\"modv:quantity\":2,\"modv:type\":\"xsd:unsignedInt\",\"type\":\"integer\"}",
+      "fingerprint": "pf1:08dc02f6136c44928c62f93a96e2a645d75a4a0b35ab79522e9ae33871ce743e"
+    },
+    "f32_word_swap": {
+      "canonical": "{\"modv:address\":8,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":false,\"modv:quantity\":2,\"modv:type\":\"xsd:float\",\"type\":\"number\"}",
+      "fingerprint": "pf1:2593aca018b58711c600a44951271bde9b8a969b749acafb94a2280c260456e7"
+    },
+    "i16_scaled": {
+      "canonical": "{\"modpoll:multiplier\":\"0.1\",\"modv:address\":10,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:short\",\"type\":\"number\"}",
+      "fingerprint": "pf1:21b24d28bad0be40835294ba7f777a2ac9f3c6ccf9b3d49f93f5bbe4063805c4"
+    },
+    "label": {
+      "canonical": "{\"modpoll:byteLength\":5,\"modv:address\":11,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":3,\"modv:type\":\"xsd:string\",\"type\":\"string\"}",
+      "fingerprint": "pf1:24d7e4210406c8add96bf96c24565da1adf226aeed48e7f0174b296f80d3a60f"
+    },
+    "flag_bit3": {
+      "canonical": "{\"modpoll:bit\":3,\"modv:address\":14,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"boolean\"}",
+      "fingerprint": "pf1:e534b297aa25a8f52c97cc78d244997d7083b7f09e8730bf04d4349f5e0e8fd0"
+    },
+    "half": {
+      "canonical": "{\"modpoll:codec\":\"float16\",\"modv:address\":15,\"modv:entity\":\"HoldingRegister\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":1,\"modv:type\":\"xsd:hexBinary\",\"type\":\"number\"}",
+      "fingerprint": "pf1:5f13e6b33c19000d7ecc48fcfd6a892f0727973abd5bfba18421accd692887c0"
+    },
+    "packed_coils": {
+      "canonical": "{\"modpoll:bitPacking\":\"legacy-msb\",\"modv:address\":0,\"modv:entity\":\"Coil\",\"modv:mostSignificantByte\":true,\"modv:mostSignificantWord\":true,\"modv:quantity\":16,\"modv:type\":\"xsd:unsignedShort\",\"type\":\"integer\"}",
+      "fingerprint": "pf1:a7dcaf6a928482445357a82449d60c55f75814cfbb4bf191a673deb6db1a6569"
+    }
+  }
+}

@@ -5,6 +5,7 @@ on:
     branches: [v2]
     paths:
       - packages/modsim/**
+      - packages/modpoll/**
       - packages/modpoll-wot/**
       - pyproject.toml
       - uv.lock
@@ -15,6 +16,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - packages/modsim/**
+      - packages/modpoll/**
       - packages/modpoll-wot/**
       - pyproject.toml
       - uv.lock
@@ -88,10 +90,13 @@ jobs:
         with:
           package: modsim
 
-      - name: Install an independent released modpoll
+      # SIM-08: the client is this commit's modpoll, installed from its wheels apart from modsim.
+      - name: Install this commit's modpoll in its own environment
         run: |
+          uv build --wheel --no-sources --package modpoll --out-dir "$RUNNER_TEMP/modpoll-dist"
+          uv build --wheel --no-sources --package modpoll-wot --out-dir "$RUNNER_TEMP/modpoll-dist"
           uv venv "$RUNNER_TEMP/modpoll"
-          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" 'modpoll==2.0.0a5'
+          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" "$RUNNER_TEMP"/modpoll-dist/*.whl
 
       - name: Export with modpoll and replay with modsim
         env:

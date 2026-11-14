@@ -5,6 +5,7 @@ on:
     branches: [v2]
     paths:
       - packages/modsim/**
+      - packages/modpoll/**
       - packages/modpoll-wot/**
       - pyproject.toml
       - uv.lock
@@ -13,6 +14,7 @@ on:
   pull_request:
     paths:
       - packages/modsim/**
+      - packages/modpoll/**
       - packages/modpoll-wot/**
       - pyproject.toml
       - uv.lock
@@ -70,20 +72,18 @@ jobs:
       - uses: ./.github/actions/setup-uv
         with:
           package: modsim
-      # Unchanged by TOOL-01: the independent clients stay pinned to the modpoll commit and release they used.
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          repository: top-maker/modpoll
-          ref: 93daa74bc859fe8a5704f3e94e4f6eb0df797ec2
-          path: packages/modsim/.interop/modpoll
+      # SIM-08: the independent clients are this commit's modpoll, installed from its wheels apart
+      # from modsim, and modpoll's pinned node-wot reader.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
-      - run: npm ci --prefix .interop/modpoll/tools/wot-interop --ignore-scripts --no-audit --no-fund
-      - name: Install independent public modpoll
+      - run: npm ci --prefix ../modpoll/tools/wot-interop --ignore-scripts --no-audit --no-fund
+      - name: Install this commit's modpoll in its own environment
         run: |
+          uv build --wheel --no-sources --package modpoll --out-dir "$RUNNER_TEMP/modpoll-dist"
+          uv build --wheel --no-sources --package modpoll-wot --out-dir "$RUNNER_TEMP/modpoll-dist"
           uv venv "$RUNNER_TEMP/modpoll"
-          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" 'modpoll==2.0.0a2'
+          uv pip install --python "$RUNNER_TEMP/modpoll/bin/python" "$RUNNER_TEMP"/modpoll-dist/*.whl
       - name: Test fixed public model with independent clients
         run: |
           uv build --wheel --no-sources --out-dir dist
@@ -93,7 +93,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/catalog-acceptance/tools" "$RUNNER_TEMP/catalog-acceptance/examples"
           cp tools/catalog-interop.py tools/fetch-models.py "$RUNNER_TEMP/catalog-acceptance/tools/"
           cp examples/model-source.yaml "$RUNNER_TEMP/catalog-acceptance/examples/"
-          reader="$PWD/.interop/modpoll/tools/wot-interop/read-write.cjs"
+          reader="$PWD/../modpoll/tools/wot-interop/read-write.cjs"
           cd "$RUNNER_TEMP/catalog-acceptance"
           "$RUNNER_TEMP/modsim/bin/python" tools/fetch-models.py --output "$RUNNER_TEMP/catalog-acceptance/inputs"
           "$RUNNER_TEMP/modsim/bin/python" tools/catalog-interop.py --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$reader" --output "$RUNNER_TEMP/catalog-interop.json"
