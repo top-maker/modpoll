@@ -1,3 +1,13 @@
+# Modpoll 2.0.0a12 preview
+
+Modpoll 2.0.0a12 pins modpoll-wot 0.7.0a1:
+
+- Modbus RTU works without extras: pyserial is now a regular dependency, so `uvx modpoll --rtu ...` and
+  `uv tool install modpoll` read serial devices. `modpoll[serial]` still installs, as an empty extra.
+- A verification report whose date is not on the calendar (such as `2026-02-31`) is rejected, as ModioHub
+  already did on upload.
+- modpoll reaches modpoll-wot through its public top-level interface only.
+
 # Modpoll 2.0.0a11 preview
 
 Modpoll 2.0.0a11 pins modpoll-wot 0.6.0a3 and is the first release after modsim and modpoll-wot joined this
