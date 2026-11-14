@@ -11,7 +11,7 @@ from typing import List, Optional, Tuple
 
 import requests
 from prettytable import PrettyTable
-from modpoll_wot.acquisition import type_width
+from modpoll_wot import type_width
 from pymodbus.client import ModbusSerialClient, ModbusTcpClient, ModbusUdpClient
 from pymodbus.exceptions import ModbusException
 from pymodbus.framer import FramerType
@@ -893,8 +893,6 @@ def setup_modbus_handlers(args, mqtt_handler: Optional[MqttHandler] = None):
     if args.param:
         import modpoll_wot
 
-        if not hasattr(modpoll_wot, "parse_parameters"):
-            raise ValueError("TM parameters require the profile 0.2 interpreter")
         parameters = modpoll_wot.parse_parameters(args.param)
     try:
         for config_file in args.config or []:

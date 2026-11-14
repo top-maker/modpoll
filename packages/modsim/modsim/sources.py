@@ -6,8 +6,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-import modpoll_wot  # type: ignore[import-untyped]
-from modpoll_wot.loading import MAX_BYTES, load_document  # type: ignore[import-untyped]
+import modpoll_wot
+from modpoll_wot import MAX_BYTES, load_document
 
 from . import __version__
 from .hub import call, call_json

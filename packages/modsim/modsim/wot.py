@@ -3,7 +3,7 @@
 import json
 from typing import Any
 
-from modpoll_wot import parse_model, parse_parameters  # type: ignore[import-untyped]
+from modpoll_wot import parse_model, parse_parameters
 from pymodbus.constants import ExcCodes
 from pymodbus.simulator import DataType, SimData, SimDevice
 

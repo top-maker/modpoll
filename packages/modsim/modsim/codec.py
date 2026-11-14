@@ -6,7 +6,7 @@ from fractions import Fraction
 from typing import Any
 
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
-from modpoll_wot import DataError, scaled_raw  # type: ignore[import-untyped]
+from modpoll_wot import DataError, scaled_raw
 
 FORMATS = {
     "uint16": "H",

@@ -1,5 +1,6 @@
 """Point fingerprints and hardware verification reports."""
 
+from datetime import date
 from decimal import Decimal
 from functools import lru_cache
 from hashlib import sha256
@@ -143,6 +144,10 @@ def validate_report(report, *, model: bytes | None = None):
             str(p).replace("~", "~0").replace("/", "~1") for p in error.absolute_path
         )
         raise ReportError(f"{path}: {error.message}")
+    try:
+        date.fromisoformat(report["date"])
+    except ValueError:
+        raise ReportError(f"/date: {report['date']!r} is not a calendar date") from None
     names = [point["property"] for point in report["points"]]
     duplicates = sorted({name for name in names if names.count(name) > 1})
     if duplicates:

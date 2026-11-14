@@ -22,7 +22,7 @@ jobs:
       tag: ${{ steps.release.outputs.tag }}
       image-version: ${{ steps.release.outputs.image-version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
       - id: release
@@ -49,7 +49,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -65,7 +65,7 @@ jobs:
           python .github/scripts/preview-release.py guard "$TAG"
       - name: Build portable distributions
         run: uv build --no-sources --out-dir dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: application-distributions
           path: packages/modpoll/dist/*
@@ -74,8 +74,8 @@ jobs:
           python .github/scripts/check-portable-wheel.py dist/*.whl
           dist="$PWD/dist"
           cd "$RUNNER_TEMP"
-          uv run --isolated --with "$dist"/*.whl modpoll --version
-          uv run --isolated --with "$dist"/*.tar.gz modpoll --version
+          uv run --isolated --refresh-package modpoll-wot --with "$dist"/*.whl modpoll --version
+          uv run --isolated --refresh-package modpoll-wot --with "$dist"/*.tar.gz modpoll --version
       - name: Check immutable version
         id: pypi
         env:
@@ -101,12 +101,12 @@ jobs:
     if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ${{ vars.DOCKER_REGISTRY }}
           username: ${{ vars.DOCKER_USERNAME }}
@@ -138,7 +138,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.candidate.outputs.git-tag }}
       - uses: ./.github/actions/setup-uv
@@ -147,7 +147,7 @@ jobs:
       - uses: ./.github/actions/setup-pandoc
       - name: Build preview documentation
         run: make docs
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: gh-pages
           path: packages/modpoll/.pages
@@ -165,7 +165,7 @@ jobs:
           curl -fsSL "$wot_source/profile.md" -o vocab/wot-modbus/contract-0.2.txt
           python .github/scripts/assemble-docs.py docs/_build/html .site v2 --vocab vocab
           printf '%s\n' "$(git rev-parse HEAD)" > .site/v2/source-sha.txt
-      - uses: peaceiris/actions-gh-pages@v4
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           github_token: ${{ github.token }}
           publish_dir: packages/modpoll/.site
@@ -174,19 +174,19 @@ jobs:
     if: ${{ !cancelled() && needs.docs.result == 'success' && needs.image.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.candidate.outputs.git-tag }}
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: 0.11.19
           python-version: '3.12'
           enable-cache: true
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: 0b42099e8b22eaaa4788a9f91e8bf60b4870204c
           path: packages/modpoll/.interop/modpoll-1x
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: top-maker/modsim
           ref: 92fe5d4c417b2691693feb2b6bd93fd1f54439fe
@@ -229,7 +229,7 @@ jobs:
       - name: Remove acceptance broker
         if: always()
         run: docker rm -f preview-acceptance || true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: published-acceptance

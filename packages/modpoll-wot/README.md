@@ -5,8 +5,17 @@ An independently versioned TM/TD configuration interpreter for
 [Modsim](https://github.com/top-maker/modpoll/tree/v2/packages/modsim) and future compatible consumers.
 No Modbus execution, scheduler or MQTT service is included.
 
-Releases up to `0.2.0a4` were developed in the Modpoll repository under
-`packages/modpoll-wot`; this repository keeps that history and tags them as `v<version>`.
+```bash
+uv add --prerelease allow modpoll-wot      # or: pip install --pre modpoll-wot
+uvx --prerelease allow modpoll-wot validate device.tm.json --profile
+```
+
+Import from `modpoll_wot` only; its submodules are not a public interface. The package ships
+`py.typed`.
+
+It is developed in the [modpoll repository](https://github.com/top-maker/modpoll/tree/v2/packages/modpoll-wot)
+together with modpoll and modsim, and released with tags `modpoll-wot-v<version>`. Releases `0.3.0a1`
+to `0.6.0a2` came from a separate modpoll-wot repository (now archived); their history was carried over.
 
 The existing TM CLI is available in `modpoll-wot==0.2.0a2`.
 Version `0.5.0a1` adds the shared tool session credentials file and `modiohub:` references (`modpoll_wot.session`).

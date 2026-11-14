@@ -12,7 +12,7 @@ import time
 import webbrowser
 from typing import Any, Callable, Mapping, TextIO
 
-import modpoll_wot  # type: ignore[import-untyped]
+import modpoll_wot
 
 from .hub import call_json
 

@@ -1,7 +1,7 @@
 """Adapt validated WoT configuration to the existing Modpoll execution engine."""
 
 from modpoll_wot import AcquisitionError
-from modpoll_wot.loading import loads_model, MAX_BYTES
+from modpoll_wot import MAX_BYTES, loads_model
 import requests
 
 

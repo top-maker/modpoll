@@ -36,8 +36,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: 0.11.19
           python-version: '3.12'
@@ -66,17 +66,17 @@ jobs:
   catalog-interop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-uv
         with:
           package: modsim
       # Unchanged by TOOL-01: the independent clients stay pinned to the modpoll commit and release they used.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: top-maker/modpoll
           ref: 93daa74bc859fe8a5704f3e94e4f6eb0df797ec2
           path: packages/modsim/.interop/modpoll
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
       - run: npm ci --prefix .interop/modpoll/tools/wot-interop --ignore-scripts --no-audit --no-fund
@@ -97,7 +97,7 @@ jobs:
           cd "$RUNNER_TEMP/catalog-acceptance"
           "$RUNNER_TEMP/modsim/bin/python" tools/fetch-models.py --output "$RUNNER_TEMP/catalog-acceptance/inputs"
           "$RUNNER_TEMP/modsim/bin/python" tools/catalog-interop.py --modpoll-python "$RUNNER_TEMP/modpoll/bin/python" --node-reader "$reader" --output "$RUNNER_TEMP/catalog-interop.json"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: catalog-interop
           path: |

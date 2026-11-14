@@ -5,8 +5,8 @@ import math
 from pathlib import Path
 from typing import Any
 
-from modpoll_wot import load_simulation_data  # type: ignore[import-untyped]
-from modpoll_wot.loading import load_document  # type: ignore[import-untyped]
+from modpoll_wot import load_simulation_data
+from modpoll_wot import load_document
 
 from .sources import is_remote, local_path, remote_document
 

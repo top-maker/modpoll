@@ -1,7 +1,6 @@
 """Independent acceptance vectors for the profile 0.2 configuration contract."""
 
 import copy
-import json
 from pathlib import Path
 import unittest
 from unittest.mock import patch

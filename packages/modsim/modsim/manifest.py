@@ -10,12 +10,12 @@ from typing import Any
 
 import yaml  # type: ignore[import-untyped]
 from jsonschema import Draft7Validator  # type: ignore[import-untyped]
-from modpoll_wot import (  # type: ignore[import-untyped]
+from modpoll_wot import (
     export_td,
     load_simulation_data,
     parse_model,
 )
-from modpoll_wot.loading import MAX_BYTES, load_document  # type: ignore[import-untyped]
+from modpoll_wot import MAX_BYTES, load_document
 
 from .deployment import STRING, obj
 from .sources import local_path, model_document

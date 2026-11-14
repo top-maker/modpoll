@@ -37,7 +37,7 @@ def parse_csv(text, *, source, unit_id=None, logger=None):
     device names abort the load; every other bad row is reported and skipped,
     matching the v1 loader.
     """
-    from .modbus_task import Device, Point, Poller
+    from .modbus_task import Device
 
     logger = logger or logging.getLogger(__name__)
     device_list = []

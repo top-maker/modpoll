@@ -1,7 +1,7 @@
+"""Cross-project TCP regression; set MODSIM_PYTHON and MODSIM_SOURCE to opt in."""
+
 import json
 from pathlib import Path
-
-"""Cross-project TCP regression; set MODSIM_PYTHON and MODSIM_SOURCE to opt in."""
 
 import os
 import socket
