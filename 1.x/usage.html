@@ -47,7 +47,6 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commandline-usage">Commandline Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#framers-and-transports">Framers and transports</a></li>
@@ -83,171 +82,6 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v1.6.1 - A New Command-line Tool for Modbus and MQTT</p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">baud</span> <span class="n">SERIAL_BAUD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">parity</span> <span class="p">{</span><span class="n">none</span><span class="p">,</span><span class="n">odd</span><span class="p">,</span><span class="n">even</span><span class="p">}]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">timeout</span> <span class="n">TIMEOUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">EXPORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="mf">3.1.1</span><span class="p">,</span><span class="mf">5.0</span><span class="p">}]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">host</span> <span class="n">MQTT_HOST</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">port</span> <span class="n">MQTT_PORT</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">clientid</span> <span class="n">MQTT_CLIENTID</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">publish</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_PUBLISH_TOPIC_PATTERN</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">subscribe</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_SUBSCRIBE_TOPIC_PATTERN</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_DIAGNOSTICS_TOPIC_PATTERN</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">qos</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">user</span> <span class="n">MQTT_USER</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="k">pass</span> <span class="n">MQTT_PASS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">use</span><span class="o">-</span><span class="n">tls</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">insecure</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">cacerts</span> <span class="n">MQTT_CACERTS</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">tls</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="n">tlsv1</span><span class="mf">.2</span><span class="p">,</span><span class="n">tlsv1</span><span class="mf">.1</span><span class="p">,</span><span class="n">tlsv1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">single</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">rate</span> <span class="n">DIAGNOSTICS_RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">autoremove</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">loglevel</span> <span class="p">{</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">INFO</span><span class="p">,</span><span class="n">WARNING</span><span class="p">,</span><span class="n">ERROR</span><span class="p">,</span><span class="n">CRITICAL</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">timestamp</span><span class="p">]</span>
-               <span class="p">[</span><span class="o">--</span><span class="n">delay</span> <span class="n">DELAY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">framer</span> <span class="p">{</span><span class="n">default</span><span class="p">,</span><span class="n">ascii</span><span class="p">,</span><span class="n">rtu</span><span class="p">,</span><span class="n">socket</span><span class="p">}]</span>
-</pre></div>
-</div>
-<section id="Named Arguments">
-<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Link to this heading"></a></h2>
-<dl class="option-list">
-<dt><kbd>-v, --version</kbd></dt>
-<dd><p>show program’s version number and exit</p>
-</dd>
-<dt><kbd>-f, --config</kbd></dt>
-<dd><p>A local path or URL of Modbus configuration file. Required!</p>
-</dd>
-<dt><kbd>-d, --daemon</kbd></dt>
-<dd><p>Run in daemon mode without printing result. Recommended to use with docker</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>-r, --rate</kbd></dt>
-<dd><p>The sampling rate (s) to poll modbus device, Defaults to 10.0</p>
-<p>Default: 10.0</p>
-</dd>
-<dt><kbd>-1, --once</kbd></dt>
-<dd><p>Only run polling at one time</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--interval</kbd></dt>
-<dd><p>The time interval in seconds between two polling, Defaults to 0.5</p>
-<p>Default: 0.5</p>
-</dd>
-<dt><kbd>--tcp</kbd></dt>
-<dd><p>Act as a Modbus TCP master, connecting to host TCP</p>
-</dd>
-<dt><kbd>--tcp-port</kbd></dt>
-<dd><p>Port for MODBUS TCP. Defaults to 502</p>
-<p>Default: 502</p>
-</dd>
-<dt><kbd>--udp</kbd></dt>
-<dd><p>Act as a Modbus UDP master, connecting to host UDP</p>
-</dd>
-<dt><kbd>--udp-port</kbd></dt>
-<dd><p>Port for MODBUS UDP. Defaults to 502</p>
-<p>Default: 502</p>
-</dd>
-<dt><kbd>--serial, --rtu</kbd></dt>
-<dd><p>pyserial URL (or port name) for serial transport (alias: –rtu)</p>
-</dd>
-<dt><kbd>--serial-baud, --rtu-baud</kbd></dt>
-<dd><p>Baud rate for serial port. Defaults to 9600</p>
-<p>Default: 9600</p>
-</dd>
-<dt><kbd>--serial-parity, --rtu-parity</kbd></dt>
-<dd><p>Possible choices: none, odd, even</p>
-<p>Parity for serial port. Defaults to none</p>
-<p>Default: “none”</p>
-</dd>
-<dt><kbd>--timeout</kbd></dt>
-<dd><p>Response time-out seconds for MODBUS devices, Defaults to 3.0</p>
-<p>Default: 3.0</p>
-</dd>
-<dt><kbd>-o, --export</kbd></dt>
-<dd><p>The file name to export references/registers</p>
-</dd>
-<dt><kbd>--mqtt-version</kbd></dt>
-<dd><p>Possible choices: 3.1.1, 5.0</p>
-<p>MQTT version. Defaults to MQTT v3.1.1</p>
-<p>Default: “3.1.1”</p>
-</dd>
-<dt><kbd>--mqtt-host</kbd></dt>
-<dd><p>MQTT server address. Skip MQTT setup if not specified</p>
-</dd>
-<dt><kbd>--mqtt-port</kbd></dt>
-<dd><p>1883 for non-TLS or 8883 for TLS, Defaults to 1883</p>
-<p>Default: 1883</p>
-</dd>
-<dt><kbd>--mqtt-clientid</kbd></dt>
-<dd><p>MQTT client name, If qos &gt; 0, set unique name for multiple clients</p>
-</dd>
-<dt><kbd>--mqtt-publish-topic-pattern</kbd></dt>
-<dd><p>Topic pattern for MQTT publish. Use {{device_name}} as placeholder for the device names in Modbus config. Defaults to “modpoll/{{device_name}}/data”</p>
-<p>Default: “modpoll/{{device_name}}/data”</p>
-</dd>
-<dt><kbd>--mqtt-subscribe-topic-pattern</kbd></dt>
-<dd><p>Topic pattern for MQTT subscribe. Defaults to “modpoll/+/set”</p>
-<p>Default: “modpoll/+/set”</p>
-</dd>
-<dt><kbd>--mqtt-diagnostics-topic-pattern</kbd></dt>
-<dd><p>Topic pattern for MQTT diagnostics. Use {{device_name}} as placeholder for the device names in Modbus config. Defaults to modpoll/{{device_name}}/diagnostics</p>
-<p>Default: “modpoll/{{device_name}}/diagnostics”</p>
-</dd>
-<dt><kbd>--mqtt-qos</kbd></dt>
-<dd><p>Possible choices: 0, 1, 2</p>
-<p>MQTT QoS value. Defaults to 0</p>
-<p>Default: 0</p>
-</dd>
-<dt><kbd>--mqtt-user</kbd></dt>
-<dd><p>Username for authentication (optional)</p>
-</dd>
-<dt><kbd>--mqtt-pass</kbd></dt>
-<dd><p>Password for authentication (optional)</p>
-</dd>
-<dt><kbd>--mqtt-use-tls</kbd></dt>
-<dd><p>Use TLS</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--mqtt-insecure</kbd></dt>
-<dd><p>Use TLS without providing certificates</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--mqtt-cacerts</kbd></dt>
-<dd><p>Path to ca keychain</p>
-</dd>
-<dt><kbd>--mqtt-tls-version</kbd></dt>
-<dd><p>Possible choices: tlsv1.2, tlsv1.1, tlsv1</p>
-<p>TLS protocol version, can be one of tlsv1.2 tlsv1.1 or tlsv1</p>
-<p>Default: “tlsv1.2”</p>
-</dd>
-<dt><kbd>--mqtt-single</kbd></dt>
-<dd><p>Publish each value in a single topic. If not specified, groups all values in one topic.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--diagnostics-rate</kbd></dt>
-<dd><p>Time in seconds as publishing period for each device diagnostics</p>
-<p>Default: 0</p>
-</dd>
-<dt><kbd>--autoremove</kbd></dt>
-<dd><p>Automatically remove poller if modbus communication has failed 3 times.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--loglevel</kbd></dt>
-<dd><p>Possible choices: DEBUG, INFO, WARNING, ERROR, CRITICAL</p>
-<p>Set log level, Defaults to INFO</p>
-<p>Default: “INFO”</p>
-</dd>
-<dt><kbd>--timestamp</kbd></dt>
-<dd><p>Add timestamp to the result</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--delay</kbd></dt>
-<dd><p>Time to delay sending first request in seconds after connecting. Default to 0</p>
-<p>Default: 0</p>
-</dd>
-<dt><kbd>--framer</kbd></dt>
-<dd><p>Possible choices: default, ascii, rtu, socket</p>
-<p>The type of framer for Modbus messages. Serial supports ascii/rtu; TCP/UDP use socket.</p>
-<p>Default: “default”</p>
-</dd>
-</dl>
-</section>
 <p>The <cite>config</cite> option is required.</p>
 <section id="commandline-usage">
 <h2>Commandline Usage<a class="headerlink" href="#commandline-usage" title="Link to this heading"></a></h2>
@@ -267,8 +101,8 @@
 </pre></div>
 </div>
 </li>
-<li><p>Connect to Modbus TCP device and export data to local csv file</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--tcp<span class="w"> </span>modsim.topmaker.net<span class="w"> </span>--config<span class="w"> </span>https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv<span class="w"> </span>--export<span class="w"> </span>data.csv
+<li><p>Connect to Modbus TCP device and export a local JSON snapshot</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--tcp<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--tcp-port<span class="w"> </span><span class="m">5020</span><span class="w"> </span>--config<span class="w"> </span>examples/modsim.csv<span class="w"> </span>--export<span class="w"> </span>data.json
 </pre></div>
 </div>
 </li>

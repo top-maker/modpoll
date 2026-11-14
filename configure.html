@@ -87,7 +87,8 @@
 <p>In order to communicate with modbus devices, a proper modbus configure file is required.
 It is mainly to describe the device address and register mappings.</p>
 <p>Here is the basic structure of modbus configure file.</p>
-<p>The parser checks device IDs (1–254), unique device and reference names, positive poll sizes within the function-code limits, address ranges, endian settings, data types, read/write modes, and numeric scales. Configuration errors include the CSV line number; invalid rows are skipped while later rows continue to be checked.</p>
+<p>The parser checks device IDs (1–254), unique device and reference names, positive poll sizes within the function-code limits, address ranges, endian settings, data types, read/write modes, and numeric scales. Configuration errors include the file name and CSV line number. Invalid rows are skipped while later rows continue to be checked; duplicate device names stop startup, including duplicates across configuration files. Rename duplicates and update the associated MQTT topics before upgrading. Non-finite scales are rejected.</p>
+<p>Each read poll can request up to 2000 coils or discrete inputs, or 125 registers. A <code class="docutils literal notranslate"><span class="pre">stringN</span></code> reference reads exactly N bytes, occupying <code class="docutils literal notranslate"><span class="pre">ceil(N</span> <span class="pre">/</span> <span class="pre">2)</span></code> registers. The <code class="docutils literal notranslate"><span class="pre">address:bit</span></code> syntax applies only to <code class="docutils literal notranslate"><span class="pre">bool</span></code> references on register polls.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Modbus Configuration File</span>
 <span class="linenos"> 2</span><span class="c1"># --------------------------</span>
 <span class="linenos"> 3</span><span class="c1"># This configuration file is to describe the Modbus registers of target device(s) and defines poller(s) to help polling data.</span>
@@ -105,11 +106,11 @@ It is mainly to describe the device address and register mappings.</p>
 <span class="linenos">15</span><span class="c1"># &lt;device_id&gt;: integer 1 to 254 to describe device ID</span>
 <span class="linenos">16</span><span class="c1"># &lt;object_type&gt;: coil/discrete_input/holding_register/input_register</span>
 <span class="linenos">17</span><span class="c1"># &lt;start_address&gt;: integer 0 to 65535 (The start address of Modbus registers to poll)</span>
-<span class="linenos">18</span><span class="c1"># &lt;size&gt;: positive integer within the Modbus limit (2000 bits or 123 registers per poll)</span>
+<span class="linenos">18</span><span class="c1"># &lt;size&gt;: positive integer within the Modbus limit (2000 bits or 125 registers per poll)</span>
 <span class="linenos">19</span><span class="c1"># &lt;endian&gt;: byte_order and word_order e.g. BE_BE/BE_LE/LE_LE/LE_BE</span>
 <span class="linenos">20</span><span class="c1"># &lt;ref_name&gt;: any string without spaces to describe the reference</span>
 <span class="linenos">21</span><span class="c1"># &lt;address&gt;: integer 0 to 65535 (the modbus address and should match the poller range)</span>
-<span class="linenos">22</span><span class="c1"># &lt;dtype&gt;: uint16/int16/uint32/int32/float16/float32/bool8/bool16/stringXXX (defaults to uint16)</span>
+<span class="linenos">22</span><span class="c1"># &lt;dtype&gt;: uint16/int16/uint32/int32/uint64/int64/float16/float32/float64/bool/bool8/bool16/stringXXX (XXX is the number of bytes)</span>
 <span class="linenos">23</span><span class="c1"># &lt;rw&gt;: read/write setting e.g. r/w/rw</span>
 <span class="linenos">24</span><span class="c1"># &lt;unit&gt; (optional): the measurement unit of reference</span>
 <span class="linenos">25</span><span class="c1"># &lt;scale&gt; (Optional): a float value to be multiplied with actual register reading</span>

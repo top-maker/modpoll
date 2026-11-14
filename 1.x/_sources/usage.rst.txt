@@ -29,11 +29,11 @@ Commandline Usage
 
     modpoll --tcp 192.168.1.10 --config examples/modsim.csv --mqtt-host broker.emqx.io
 
-- Connect to Modbus TCP device and export data to local csv file
+- Connect to Modbus TCP device and export a local JSON snapshot
 
   .. code-block:: shell
 
-    modpoll --tcp modsim.topmaker.net --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv --export data.csv
+    modpoll --tcp 127.0.0.1 --tcp-port 5020 --config examples/modsim.csv --export data.json
 
 Configuration File
 ------------------

@@ -1,42 +1,43 @@
 Quickstart
-===========
+==========
 
-**Modpoll** is a tool for communication with Modbus devices, so ideally it makes more sense if you have a real modbus device on hand for the following test, but it is OK if you don't, we have deployed a virtual Modbus TCP device on cloud at `<modsim.topmaker.net:502>`_, the code is available in my another project `modsim <https://github.com/gavinying/modsim>`_, let's start expoloring *modpoll* tool with the virtual device *modsim*.
+Use the public Modbus TCP simulator at ``modsim.topmaker.net:502`` to try
+modpoll without starting a local server:
 
-Test with modsim
-------------------------
-  *modsim* is a very simple Modbus TCP device simulator deployed on cloud, it populates the first 100 registers for each type of Coil / Discrete input / Input register / Holding register,
+.. code-block:: shell
 
-  .. csv-table:: modsim register configuration
-    :header: "Object type","Access","Size","Address Space"
-    :widths: 20, 15, 10, 20
+    modpoll --once --tcp modsim.topmaker.net --tcp-port 502 --config https://raw.githubusercontent.com/top-maker/modpoll/main/examples/modsim.csv
 
-    "Coil", "Read-write", "1 bit", "1-100"
-    "Discrete Input", "Read-only", "1 bit", "10001-10100"
-    "Input Register", "Read-only", "16 bits", "30001-30100"
-    "Holding Register", "Read-write", "16 bits", "40001-40100"
+Run a local simulator
+---------------------
 
-  Using *modpoll* tool, you can poll the first 5 holding registers via the following command,
+Start a local `modsim <https://github.com/top-maker/modsim>`_ simulator in one
+terminal:
 
-  .. code-block:: shell
+.. code-block:: shell
 
-    modpoll --tcp modsim.topmaker.net --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
+    docker run --rm -p 5020:5020 topmaker/modsim:latest
 
-  or run *modpoll* in docker,
+In another terminal, poll its sample data once:
 
-  .. code-block:: shell
+.. code-block:: shell
 
-    docker run topmaker/modpoll modpoll --tcp modsim.topmaker.net --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
+    modpoll --once --tcp 127.0.0.1 --tcp-port 5020 --config examples/modsim.csv
 
+The command assumes you are in the modpoll repository. You can instead provide
+the published configuration URL or your own local CSV file.
 
-  Meanwhile, if you prefer a local test or simply failed to connect to online *modsim* service, you can always launch your own device simulator via the following command,
+The simulator's default datastore uses literal Modbus addresses:
 
-  .. code-block:: shell
+.. csv-table:: Default simulator tables
+   :header: "Table", "Access", "Addresses"
+   :widths: 25, 20, 25
 
-    docker run -p 5020:5020 topmaker/modsim
+   "Coils", "Read/write", "0–31"
+   "Discrete inputs", "Read-only", "10000–10031"
+   "Input registers", "Read-only", "30000–30043"
+   "Holding registers", "Read/write", "40000–40043"
 
-  It will simulate a Modbus TCP device running at `<localhost:5020>`_, and you shall be able to connect it via the following command,
-
-  .. code-block:: shell
-
-    modpoll --tcp localhost --tcp-port 5020 --config https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
+Coil and discrete input blocks contain 32 bits including padding. All Unit IDs
+share the default simulator datastore. See the modsim documentation for other
+transports and their limitations.

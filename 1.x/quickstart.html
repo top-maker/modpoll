@@ -46,7 +46,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#test-with-modsim">Test with modsim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-local-simulator">Run a local simulator</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
@@ -80,66 +80,60 @@
              
   <section id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
-<p><strong>Modpoll</strong> is a tool for communication with Modbus devices, so ideally it makes more sense if you have a real modbus device on hand for the following test, but it is OK if you don’t, we have deployed a virtual Modbus TCP device on cloud at <a class="reference external" href="modsim.topmaker.net:502">modsim.topmaker.net:502</a>, the code is available in my another project <a class="reference external" href="https://github.com/gavinying/modsim">modsim</a>, let’s start expoloring <em>modpoll</em> tool with the virtual device <em>modsim</em>.</p>
-<section id="test-with-modsim">
-<h2>Test with modsim<a class="headerlink" href="#test-with-modsim" title="Link to this heading"></a></h2>
-<blockquote>
-<div><p><em>modsim</em> is a very simple Modbus TCP device simulator deployed on cloud, it populates the first 100 registers for each type of Coil / Discrete input / Input register / Holding register,</p>
+<p>Use the public Modbus TCP simulator at <code class="docutils literal notranslate"><span class="pre">modsim.topmaker.net:502</span></code> to try
+modpoll without starting a local server:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--once<span class="w"> </span>--tcp<span class="w"> </span>modsim.topmaker.net<span class="w"> </span>--tcp-port<span class="w"> </span><span class="m">502</span><span class="w"> </span>--config<span class="w"> </span>https://raw.githubusercontent.com/top-maker/modpoll/main/examples/modsim.csv
+</pre></div>
+</div>
+<section id="run-a-local-simulator">
+<h2>Run a local simulator<a class="headerlink" href="#run-a-local-simulator" title="Link to this heading"></a></h2>
+<p>Start a local <a class="reference external" href="https://github.com/top-maker/modsim">modsim</a> simulator in one
+terminal:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">5020</span>:5020<span class="w"> </span>topmaker/modsim:latest
+</pre></div>
+</div>
+<p>In another terminal, poll its sample data once:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--once<span class="w"> </span>--tcp<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--tcp-port<span class="w"> </span><span class="m">5020</span><span class="w"> </span>--config<span class="w"> </span>examples/modsim.csv
+</pre></div>
+</div>
+<p>The command assumes you are in the modpoll repository. You can instead provide
+the published configuration URL or your own local CSV file.</p>
+<p>The simulator’s default datastore uses literal Modbus addresses:</p>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">modsim register configuration</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Default simulator tables</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <colgroup>
-<col style="width: 31%" />
-<col style="width: 23%" />
-<col style="width: 15%" />
-<col style="width: 31%" />
+<col style="width: 36%" />
+<col style="width: 29%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Object type</p></th>
+<tr class="row-odd"><th class="head"><p>Table</p></th>
 <th class="head"><p>Access</p></th>
-<th class="head"><p>Size</p></th>
-<th class="head"><p>Address Space</p></th>
+<th class="head"><p>Addresses</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Coil</p></td>
-<td><p>Read-write</p></td>
-<td><p>1 bit</p></td>
-<td><p>1-100</p></td>
+<tr class="row-even"><td><p>Coils</p></td>
+<td><p>Read/write</p></td>
+<td><p>0–31</p></td>
 </tr>
-<tr class="row-odd"><td><p>Discrete Input</p></td>
+<tr class="row-odd"><td><p>Discrete inputs</p></td>
 <td><p>Read-only</p></td>
-<td><p>1 bit</p></td>
-<td><p>10001-10100</p></td>
+<td><p>10000–10031</p></td>
 </tr>
-<tr class="row-even"><td><p>Input Register</p></td>
+<tr class="row-even"><td><p>Input registers</p></td>
 <td><p>Read-only</p></td>
-<td><p>16 bits</p></td>
-<td><p>30001-30100</p></td>
+<td><p>30000–30043</p></td>
 </tr>
-<tr class="row-odd"><td><p>Holding Register</p></td>
-<td><p>Read-write</p></td>
-<td><p>16 bits</p></td>
-<td><p>40001-40100</p></td>
+<tr class="row-odd"><td><p>Holding registers</p></td>
+<td><p>Read/write</p></td>
+<td><p>40000–40043</p></td>
 </tr>
 </tbody>
 </table>
-<p>Using <em>modpoll</em> tool, you can poll the first 5 holding registers via the following command,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--tcp<span class="w"> </span>modsim.topmaker.net<span class="w"> </span>--config<span class="w"> </span>https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
-</pre></div>
-</div>
-<p>or run <em>modpoll</em> in docker,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>topmaker/modpoll<span class="w"> </span>modpoll<span class="w"> </span>--tcp<span class="w"> </span>modsim.topmaker.net<span class="w"> </span>--config<span class="w"> </span>https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
-</pre></div>
-</div>
-<p>Meanwhile, if you prefer a local test or simply failed to connect to online <em>modsim</em> service, you can always launch your own device simulator via the following command,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">5020</span>:5020<span class="w"> </span>topmaker/modsim
-</pre></div>
-</div>
-<p>It will simulate a Modbus TCP device running at <a class="reference external" href="localhost:5020">localhost:5020</a>, and you shall be able to connect it via the following command,</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>modpoll<span class="w"> </span>--tcp<span class="w"> </span>localhost<span class="w"> </span>--tcp-port<span class="w"> </span><span class="m">5020</span><span class="w"> </span>--config<span class="w"> </span>https://raw.githubusercontent.com/gavinying/modpoll/main/examples/modsim.csv
-</pre></div>
-</div>
-</div></blockquote>
+<p>Coil and discrete input blocks contain 32 bits including padding. All Unit IDs
+share the default simulator datastore. See the modsim documentation for other
+transports and their limitations.</p>
 </section>
 </section>
 
