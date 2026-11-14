@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -83,9 +84,8 @@ jobs:
         run: python .github/scripts/preview-release.py pypi "$TAG"
       - name: Publish application to PyPI
         if: steps.pypi.outputs.state == 'absent'
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: uv publish --no-progress dist/*
+        # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
+        run: uv publish --no-progress --trusted-publishing always dist/*
       - name: Record functional prerelease
         env:
           GH_TOKEN: ${{ github.token }}

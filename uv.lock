@@ -1338,19 +1338,15 @@ wheels = [
 
 [[package]]
 name = "modpoll"
-version = "2.0.0a11"
+version = "2.0.0a12"
 source = { editable = "packages/modpoll" }
 dependencies = [
     { name = "modpoll-wot", marker = "python_full_version < '3.15'" },
     { name = "paho-mqtt", marker = "python_full_version < '3.15'" },
     { name = "prettytable", marker = "python_full_version < '3.15'" },
     { name = "pymodbus", marker = "python_full_version < '3.15'" },
-    { name = "requests", marker = "python_full_version < '3.15'" },
-]
-
-[package.optional-dependencies]
-serial = [
     { name = "pyserial", marker = "python_full_version < '3.15'" },
+    { name = "requests", marker = "python_full_version < '3.15'" },
 ]
 
 [package.dev-dependencies]
@@ -1377,7 +1373,7 @@ requires-dist = [
     { name = "paho-mqtt", specifier = ">=2.1.0,<3.0.0" },
     { name = "prettytable", specifier = ">=3.9.0,<4.0.0" },
     { name = "pymodbus", specifier = "~=3.16.1" },
-    { name = "pyserial", marker = "extra == 'serial'", specifier = ">=3.5,<4.0" },
+    { name = "pyserial", specifier = ">=3.5,<4.0" },
     { name = "requests", specifier = ">=2.32.5,<3.0.0" },
 ]
 provides-extras = ["serial"]
@@ -1434,7 +1430,7 @@ dev = [
 
 [[package]]
 name = "modsim"
-version = "2.0.0a13"
+version = "2.0.0a14"
 source = { editable = "packages/modsim" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },

@@ -1,4 +1,4 @@
-> **2.x development branch.** This checkout accepts v1 CSV and WoT TM/TD JSON using profile 0.2; `--config` detects the format from the content. Install the current preview with `uv tool install --prerelease allow 'modpoll[serial]==2.0.0a8'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
+> **2.x development branch.** This checkout accepts v1 CSV and WoT TM/TD JSON using profile 0.2; `--config` detects the format from the content. Install the current preview with `uv tool install --prerelease allow 'modpoll==2.0.0a12'`; stable 1.x remains available with `uv tool install 'modpoll<2'`. For development, run `make install`, then prefix project commands with `uv run`.
 
 # Modpoll - A New Command-line Tool for Modbus and MQTT
 
@@ -47,14 +47,10 @@ This tool requires Python 3.10+ (Ubuntu 22.04+ or equivalent) and is available o
 Install *modpoll* using the following command,
 
 ```bash
-uv tool install --prerelease allow "modpoll==2.0.0a8"
+uv tool install --prerelease allow "modpoll==2.0.0a12"
 ```
 
-Optionally, [pyserial](https://pyserial.readthedocs.io/) library can be installed for Modbus-RTU communication,
-
-```bash
-uv tool install --prerelease allow 'modpoll[serial]==2.0.0a8'
-```
+Modbus RTU support ([pyserial](https://pyserial.readthedocs.io/)) is included since 2.0.0a12.
 
 Upgrade the tool via the following command,
 
@@ -173,7 +169,7 @@ so `modsim --config device.tm.json --data snapshot.json` replays it locally.
 A docker image has been provided for user to directly run the tool without local installation,
 
   ```bash
-  docker run --rm topmaker/modpoll:2.0.0a8
+  docker run --rm topmaker/modpoll:2.0.0a12
   ```
 
 It shows the version of the tool by default.
@@ -185,7 +181,7 @@ If you want to load a local configure file, you need to mount a local folder ont
 for example, if the child folder `examples` contains the config file `modsim.tm.json`, we can use it via the following command,
 
   ```bash
-  docker run --rm --network host -v "$(pwd)/examples:/app/examples:ro" topmaker/modpoll:2.0.0a8 \
+  docker run --rm --network host -v "$(pwd)/examples:/app/examples:ro" topmaker/modpoll:2.0.0a12 \
     modpoll -d \
       --tcp 127.0.0.1 --tcp-port 5020 \
       --config /app/examples/modsim.tm.json
