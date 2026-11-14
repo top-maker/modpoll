@@ -15,6 +15,8 @@ check: ## Run code quality tools.
 	@git ls-files -z . | xargs -0 uv run pre-commit run --config ../../.pre-commit-config.yaml --files
 	@echo "🚀 Static type checking: Running mypy"
 	@uv run mypy
+	@echo "🚀 Linting code: Running ruff"
+	@uv run ruff check .
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
 	@uv run deptry .
 

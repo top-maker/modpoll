@@ -4,12 +4,13 @@ uv = "0.11.19"
 
 [tasks.install]
 description = "Install the locked development environment"
-run = "uv sync --locked"
+# --inexact: the workspace shares one environment; do not remove modpoll and modsim from it.
+run = "uv sync --locked --inexact"
 
 [tasks.test]
 description = "Run the source test suite"
 depends = ["install"]
-run = "uv run --locked pytest -q"
+run = "uv run --locked ruff check . && uv run --locked pytest -q --cov"
 
 [tasks.build]
 description = "Build the wheel and sdist into dist/"

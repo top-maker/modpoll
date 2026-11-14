@@ -1,6 +1,6 @@
-from tests.wot_helpers import write_meter
-
 """Process-level Modbus TCP lifecycle coverage without external services."""
+
+from tests.wot_helpers import write_meter
 
 import signal
 import socketserver

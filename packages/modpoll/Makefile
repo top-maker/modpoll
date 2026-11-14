@@ -12,6 +12,8 @@ check: ## Run code quality tools.
 	@echo "🚀 Linting code: Running pre-commit"
 	@# One pre-commit configuration serves the workspace; check this package's files only.
 	@git ls-files -z . | xargs -0 uv run pre-commit run --config ../../.pre-commit-config.yaml --files
+	@echo "🚀 Linting code: Running ruff"
+	@uv run ruff check .
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
 	@uv run deptry .
 

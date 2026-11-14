@@ -14,9 +14,10 @@ from pymodbus.client import ModbusTcpClient
 profile = pytest.importorskip(
     "modpoll_wot.profile", reason="requires the candidate shared wheel/source"
 )
-from modpoll.modbus_task import ModbusHandler
-from modpoll.wot_config import create_devices
-from tools.verify_modsim_equivalence import assert_values
+# Imported after importorskip on purpose: these need the candidate modpoll-wot.
+from modpoll.modbus_task import ModbusHandler  # noqa: E402
+from modpoll.wot_config import create_devices  # noqa: E402
+from tools.verify_modsim_equivalence import assert_values  # noqa: E402
 
 pytestmark = pytest.mark.integration
 ROOT = Path(__file__).resolve().parents[1]

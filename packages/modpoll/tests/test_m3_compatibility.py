@@ -1,7 +1,6 @@
 """Regression cases for legitimate v1 mappings and precise v2 failure reporting."""
 
 import logging
-import json
 
 import pytest
 

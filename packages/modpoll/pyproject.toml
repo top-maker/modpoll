@@ -24,6 +24,7 @@ dev = [
     "tox>=4.16.0,<5.0.0",
     "tomli>=2,<3; python_version < '3.11'",
     "pytest-cov>=5,<8",
+    "ruff>=0.14,<0.15",
 ]
 docs = [
     "sphinx>=6,<8",

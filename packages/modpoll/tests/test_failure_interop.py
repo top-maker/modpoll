@@ -7,7 +7,6 @@ import socketserver
 import subprocess
 import sys
 import threading
-import time
 
 import pytest
 from pymodbus.client import ModbusTcpClient
@@ -15,7 +14,7 @@ from pymodbus.client import ModbusTcpClient
 from modpoll.arg_parser import get_parser
 from modpoll.modbus_task import setup_modbus_handlers
 from modpoll.mqtt_task import MqttHandler
-from tests.wot_helpers import meter_model, write_meter
+from tests.wot_helpers import write_meter
 from tests.test_transport_interop import start_simulator, stop_simulator, wait_ready
 
 ROOT = Path(__file__).resolve().parents[1]
