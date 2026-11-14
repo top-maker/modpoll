@@ -37,9 +37,14 @@ def test_process_exits_promptly_after_successful_poll(tmp_path, sig):
         server.polled = threading.Event()
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
+        # faulthandler dumps every thread's stack on SIGABRT, so a process that does not exit in time
+        # shows where it is blocked.
+        stderr = (tmp_path / "stderr.txt").open("w+")
         process = subprocess.Popen(
             [
                 sys.executable,
+                "-X",
+                "faulthandler",
                 "-m",
                 "modpoll",
                 "--config",
@@ -53,16 +58,26 @@ def test_process_exits_promptly_after_successful_poll(tmp_path, sig):
                 "0",
             ],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stderr=stderr,
         )
         try:
             assert server.polled.wait(10), "polling did not start"
             process.send_signal(sig)
-            assert process.wait(timeout=5) == 0
+            try:
+                returncode = process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.send_signal(signal.SIGABRT)
+                process.wait(timeout=5)
+                stderr.seek(0)
+                pytest.fail(
+                    f"modpoll did not exit within 5 s of {sig.name}:\n{stderr.read()}"
+                )
+            assert returncode == 0
         finally:
             if process.poll() is None:
                 process.kill()
                 process.wait(timeout=5)
+            stderr.close()
             server.shutdown()
             thread.join(timeout=5)
 

@@ -112,6 +112,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.candidate.outputs.git-tag }}
+      # The release checks come from the workflow's own commit: a republish builds an older tag that may
+      # predate them.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          path: .release-tools
+          sparse-checkout: .github/scripts
       - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
@@ -127,7 +134,7 @@ jobs:
           GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
           IMAGE_VERSION: ${{ needs.candidate.outputs.image-version }}
         run: |
-          python "$GITHUB_WORKSPACE/.github/scripts/release.py" version "$GIT_TAG"
+          python "$GITHUB_WORKSPACE/.release-tools/.github/scripts/release.py" version "$GIT_TAG" --root "$GITHUB_WORKSPACE"
           image="$REGISTRY/$OWNER/modpoll:$IMAGE_VERSION"
           # The image installs from the workspace lock, so it builds from the repository root.
           if docker buildx imagetools inspect "$image" >/dev/null 2>&1; then
@@ -188,6 +195,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.candidate.outputs.git-tag }}
+      # The release checks come from the workflow's own commit: a republish builds an older tag that may
+      # predate them.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          path: .release-tools
+          sparse-checkout: .github/scripts
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: 0.11.19
@@ -206,7 +220,7 @@ jobs:
         env:
           GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
         run: |
-          python "$GITHUB_WORKSPACE/.github/scripts/release.py" download "$GIT_TAG" --directory "$RUNNER_TEMP/acceptance/distributions"
+          python "$GITHUB_WORKSPACE/.release-tools/.github/scripts/release.py" download "$GIT_TAG" --directory "$RUNNER_TEMP/acceptance/distributions"
           cp -r tests tools examples "$RUNNER_TEMP/acceptance/"
           uv venv "$RUNNER_TEMP/acceptance/.venv"
           uv pip install --python "$RUNNER_TEMP/acceptance/.venv/bin/python" "$RUNNER_TEMP"/acceptance/distributions/*.whl pytest pyserial==3.5
