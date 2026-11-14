@@ -218,8 +218,8 @@ requires a new prefix.
 ## Verification reports
 
 A verification report records one reading of a Thing Model on a physical device. Its schema is
-[schemas/verification-report-4.json](modpoll_wot/schemas/verification-report-4.json)
-(JSON Schema 2020-12; schema 3 remains valid). A report carries:
+[schemas/verification-report-5.json](modpoll_wot/schemas/verification-report-5.json)
+(JSON Schema 2020-12; schemas 3 and 4 remain valid). A report carries:
 
 - Optional `product`: the catalog product ID `<manufacturer>/<model-number>`. The receiving
   service resolves the product from the model fingerprint, so tools do not need to know it;
@@ -236,6 +236,23 @@ A verification report records one reading of a Thing Model on a physical device.
   `exception` with its exception code, `no-response` or `not-tested`) and
   the user's judgment of the value (`confirmed`, `rejected` or `unchecked`).
   Only a successful read can be judged.
+- `identity` on an identity point (schema 5): `match` or `mismatch`, see below.
+
+### Identity points
+
+An identity point is a readable property whose DataSchema declares `const`: the
+value the document gives for this product, such as a meter code or a module
+name. `identity_constants(model)` lists them. A tool compares the value it reads
+with the constant on the local computer and reports only the result, so the
+value itself still never leaves the computer. `identity_result(const, value)`
+applies JSON Schema `const` equality: numbers compare by value (`137` equals
+`137.0`), booleans never equal numbers, and strings compare exactly, so a value
+with a multiplier or a float raw type should not be an identity point.
+In a schema 5 report every successfully read identity point carries `identity`,
+and no other point does; a failed read carries none. A report with a `mismatch`
+was read on different hardware, so receiving services do not count it.
+`const` does not contribute to point or model fingerprints: marking an identity
+point later keeps every fingerprint and every earlier report valid.
 
 A report is a full read when its points cover every readable property of the
 model and every read is `ok`, so that executing the whole
@@ -250,7 +267,8 @@ markers and account data belong to the receiving service, not the report.
 `validate_report(report, model=tm_bytes)` and
 `modpoll-wot validate-report REPORT [--model TM]` check the schema and unique
 properties. With the model, they also check its hash and model fingerprint, and that
-every point names a readable property with a matching fingerprint.
+every point names a readable property with a matching fingerprint, and for
+schema 5 that `identity` appears exactly on the successfully read identity points.
 
 ## Tool sessions and Workspace references
 

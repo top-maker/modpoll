@@ -87,7 +87,7 @@
              
   <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
-<p><p>Modpoll v2.0.0a12 - A New Command-line Tool for Modbus and MQTT</p>
+<p><p>Modpoll v2.0.0a13 - A New Command-line Tool for Modbus and MQTT</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span>
                <span class="p">[</span><span class="o">--</span><span class="n">upload</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
@@ -272,7 +272,7 @@
 <dd><p>Read every point of the model once and write the verification report to FILE (‘-’ prints it). Without FILE the save location, your judgment of the values and whether to upload are asked interactively. The report lists each point’s result and carries no address, Unit ID, serial number or value.</p>
 </dd>
 <dt><kbd>--upload</kbd></dt>
-<dd><p>Upload a verification report to ModioHub. With FILE (or a file chosen interactively, the newest report-<a href="#id1"><span class="problematic" id="id2">*</span></a>.json by default) a saved report is uploaded without reading a device: it is shown for confirmation and uploaded once you agree; you are signed in with the browser only when no login exists. Together with –report, the report of the verification read is uploaded instead of only being saved.</p>
+<dd><p>Upload a verification report to ModioHub. With FILE (or a file chosen interactively, the newest report-<a href="#id1"><span class="problematic" id="id2">*</span></a>.json by default) a saved report is uploaded without reading a device: it is shown for confirmation and uploaded once you agree; you are signed in with the browser only when no login exists. Together with –report, the report of the verification read is uploaded instead of only being saved. Only a full read whose identity points match can be uploaded.</p>
 </dd>
 <dt><kbd>--yes</kbd></dt>
 <dd><p>Answer the report questions without asking: keep the default report file and upload it. Needs –report or –upload and an existing sign-in (the browser sign-in is interactive).</p>
