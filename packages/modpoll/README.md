@@ -120,8 +120,24 @@ The report records, per point, whether the read worked (`ok`, a Modbus `exceptio
 ID, serial number or value; review it before sharing. It is checked with
 [modpoll-wot](https://github.com/top-maker/modpoll/tree/v2/packages/modpoll-wot) (`modpoll-wot validate-report report.json --model
 model.tm.json`), and `--export` still writes the snapshot of the same read. ModioHub resolves the product
-from the model fingerprint, so you never name the product. The exit
-code is 1 unless every point was read.
+from the model fingerprint; when it does not know the model, modpoll names the product whose baseline
+Thing Model holds all of the report's points, or lets you choose one from the matched products or a search,
+and otherwise prints a prefilled catalog request. A point whose DataSchema declares `const` (an identity
+point, such as a meter code) is compared with the value read, and the report records only `match` or
+`mismatch`.
+
+When a read fails, modpoll lists each failed group as the device answered it, without guessing why:
+
+```text
+Group 3 of 8 (holding registers 40-59): exception code 02 (illegal data address).
+Group 5 of 8 (input registers 0-59): no response.
+Groups 6-8 of 8: not tried.
+Not a full read: 21 of 44 points read.
+```
+
+Only a full read whose identity points match can be uploaded; any other report is saved for your own checks
+or a catalog request, and `--upload` refuses it without contacting ModioHub. The exit code is 1 unless the
+report can be uploaded.
 
 ### Sign in to ModioHub, read a Workspace Thing Model and upload the report
 

@@ -241,7 +241,7 @@ def test_full_read_of_a_workspace_model_names_the_workspace_as_its_source(
             FakeClient(),
         )
     report = json.loads(report_path.read_text())
-    assert "product" not in report
+    assert report["product"] == PRODUCT
     assert (
         report["model"]["source"] == "workspace" and report["model"]["ref"] == f"{ID}@2"
     )
@@ -260,7 +260,7 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
 
     def post(url, json=None, headers=None, timeout=None):
         sent.update(url=url, body=json, headers=headers)
-        return Reply(201, {"id": "p7n2d9x4k8m3q5ra", "fullRead": True})
+        return Reply(201, {"id": "p7n2d9x4k8m3q5ra"})
 
     monkeypatch.setattr(verification.requests, "post", post)
     run_app(
@@ -269,9 +269,9 @@ def test_upload_shows_the_report_and_sends_it_with_the_login(
         FakeClient(False, False),
     )
     out = capsys.readouterr().out
-    assert "Report to upload:" in out and "Uploaded. This is a full read" in out
+    assert "Report to upload:" in out and "Uploaded. Thank you" in out
     assert (
-        sent["url"] == f"{SERVER}/api/v1/reports" and sent["body"]["reportVersion"] == 4
+        sent["url"] == f"{SERVER}/api/v1/reports" and sent["body"]["reportVersion"] == 5
     )
     assert "product" not in sent["body"]
     assert (
@@ -289,7 +289,8 @@ def test_upload_asks_first_and_needs_a_login(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(
         verification.requests,
         "post",
-        lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
+        lambda *args, **kwargs: posted.append(args)
+        or Reply(201, {"id": "p7n2d9x4k8m3q5ra"}),
     )
     arguments = ["-f", str(path), "--tcp", "x", "--report", "--upload"]
     # Not a terminal and no --yes: nothing is sent.
@@ -339,7 +340,8 @@ def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, 
     monkeypatch.setattr(
         verification.requests,
         "post",
-        lambda *args, **kwargs: posted.append(args) or Reply(201, {"fullRead": True}),
+        lambda *args, **kwargs: posted.append(args)
+        or Reply(201, {"id": "p7n2d9x4k8m3q5ra"}),
     )
     monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
     monkeypatch.setattr("builtins.input", lambda prompt: "y")

@@ -136,11 +136,13 @@ def _ask(prompt):
 
 
 def _finish_full_read(args, handler):
-    """Summarize the verification read, save the report, and upload it when asked.
+    """Report the verification read, save the report, and upload it when asked.
 
+    Failures are listed as the device answered them; a report with any, or
+    with an identity point that does not match, is saved but never uploaded.
     On a terminal without --yes the save location, the judgment of the values
-    and the upload are asked interactively. The result is whether every point
-    was read.
+    and the upload are asked interactively. The result is whether the report
+    can be uploaded.
     """
     try:
         report = verification.build_report(handler, args)
@@ -148,27 +150,22 @@ def _finish_full_read(args, handler):
         logger.error("%s", exc)
         logger.debug("Report error details", exc_info=True)
         return False
-    print(f"\n{verification.summary(report)}", flush=True)
-    full = verification.is_full_read(report)
-    if sys.stdin.isatty() and not args.yes:
-        if not full and _ask(
-            "Not every point was read, so this report does not count as a "
-            "full read. Continue? [y/N] "
-        ) not in ("y", "yes"):
-            return False
+    lines = verification.failure_lines(handler) + verification.identity_lines(
+        handler, report
+    )
+    print("\n" + "\n".join([*lines, verification.summary(report)]), flush=True)
+    refused = verification.refusal(report)
+    if refused is None and sys.stdin.isatty() and not args.yes:
         verdict = _ask(
             "Do the values in the table above look right? "
             "[y]es, [n]o, [Enter] not checked: "
         )
         if verdict in ("y", "yes", "n", "no"):
-            # Judge only the points the device actually answered.
-            judged = [
-                point["property"] for point in report["points"] if point["read"] == "ok"
-            ]
+            names = [point["property"] for point in report["points"]]
             if verdict in ("y", "yes"):
-                args.confirm = judged
+                args.confirm = names
             else:
-                args.reject = judged
+                args.reject = names
             try:
                 report = verification.build_report(handler, args)
             except (ValueError, OSError, AcquisitionError) as exc:
@@ -197,6 +194,16 @@ def _finish_full_read(args, handler):
                 "serial numbers or values; review it before sharing.",
                 flush=True,
             )
+    if refused is not None:
+        print(
+            (
+                "Only a full read can be uploaded."
+                if not verification.is_full_read(report)
+                else "The device may be a different product, so the report cannot be uploaded."
+            ),
+            flush=True,
+        )
+        return False
     # --report includes the upload: interactive runs ask, --yes uploads without
     # asking and therefore needs an existing sign-in.
     upload = args.upload is not None or args.yes
@@ -206,7 +213,7 @@ def _finish_full_read(args, handler):
         confirmed = upload
     if upload and not _upload(args, report, confirm=not confirmed):
         return False
-    return full
+    return True
 
 
 def _ensure_login():
@@ -263,12 +270,95 @@ def _upload_saved(args):
     return _upload(args, report)
 
 
+def _choose(options):
+    """The number the user picks from a printed list, or None for Enter."""
+    for number, (_, label) in enumerate(options, 1):
+        print(f"  {number}. {label}", flush=True)
+    answer = input("Number of the product, or Enter for none: ").strip()
+    if answer.isdigit() and 1 <= int(answer) <= len(options):
+        return options[int(answer) - 1][0]
+    return None
+
+
+def _identify_product(args, report):
+    """The report with the product it belongs to, or None when no catalog product fits.
+
+    A Workspace model names its product; otherwise the matched products of the
+    point fingerprints decide: an exact model is identified by ModioHub, and
+    a report whose points all belong to one baseline gets that product. Other
+    cases are chosen interactively, from the matches or a search.
+    """
+    if "product" in report:
+        return report
+    matches = verification.matched_products(report, timeout=args.timeout)
+    if any(match["exact"] for match in matches):
+        return report
+    total = len(report["points"])
+    if len(matches) == 1 and matches[0]["matched"] == total:
+        print(
+            f"Product: {matches[0]['productId']} (all {total} points are in its baseline Thing Model).",
+            flush=True,
+        )
+        return {**report, "product": matches[0]["productId"]}
+    interactive = sys.stdin.isatty() and not args.yes
+    if matches:
+        print(
+            "ModioHub does not know this Thing Model. Products that share points with it:",
+            flush=True,
+        )
+        options = [
+            (
+                m["productId"],
+                f"{m['productId']}: {m['matched']} of {total} points match",
+            )
+            for m in matches
+        ]
+        if not interactive:
+            for _, label in options:
+                print(f"  {label}", flush=True)
+            logger.error("Upload interactively to choose the product.")
+            return None
+        product = _choose(options)
+        if product:
+            return {**report, "product": product}
+    elif not interactive:
+        logger.error("The report does not match a catalog product.")
+    while interactive:
+        text = input("Model number to search, or Enter to stop: ").strip()
+        if not text:
+            break
+        found = verification.search_products(text, timeout=args.timeout)
+        if not found:
+            print("No product found.", flush=True)
+            continue
+        product = _choose(found)
+        if product:
+            return {**report, "product": product}
+    print(
+        "Not uploaded. Request the product in the catalog and attach the report:\n"
+        + verification.catalog_request(report),
+        flush=True,
+    )
+    return None
+
+
 def _upload(args, report, *, confirm=True):
     """Show the report and, once the user agrees, upload it. Returns whether it was uploaded.
 
     ``confirm`` is false when the caller already asked (a yes to the bare
     ``--report`` upload question), or with ``--yes``.
     """
+    refused = verification.refusal(report)
+    if refused is not None:
+        logger.error("%s", refused)
+        return False
+    try:
+        report = _identify_product(args, report)
+    except ValueError as exc:
+        logger.error("%s", exc)
+        return False
+    if report is None:
+        return False
     print("\nReport to upload:\n" + json.dumps(report, indent=2), flush=True)
     if confirm and not args.yes:
         if not sys.stdin.isatty():
@@ -282,20 +372,15 @@ def _upload(args, report, *, confirm=True):
             return False
     try:
         _ensure_login()
-        stored = verification.upload_report(report, timeout=args.timeout)
+        verification.upload_report(report, timeout=args.timeout)
     except (ValueError, login.LoginError, OSError) as exc:
         logger.error("%s", exc)
         return False
     print(
-        "Uploaded. "
-        + (
-            "This is a full read and counts toward the community level."
-            if stored["fullRead"]
-            else "It is not a full read, so it does not count toward the community level."
-        ),
+        "Uploaded. Thank you: every point you read counts toward the hardware "
+        "verification on ModioHub.",
         flush=True,
     )
-    print("Thank you for verifying the Thing Model on real hardware.", flush=True)
     return True
 
 

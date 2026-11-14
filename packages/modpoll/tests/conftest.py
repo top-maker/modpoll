@@ -45,3 +45,22 @@ def live_modsim():
             process.wait(timeout=5)
         process.stderr.close()
     assert process.returncode == 0
+
+
+@pytest.fixture(autouse=True)
+def known_model(monkeypatch):
+    """Uploads go to a ModioHub that knows the model exactly, unless a test says otherwise."""
+    from modpoll import verification
+
+    monkeypatch.setattr(
+        verification,
+        "matched_products",
+        lambda report, *, timeout: [
+            {
+                "productId": "acme/meter",
+                "matched": len(report["points"]),
+                "readablePoints": len(report["points"]),
+                "exact": True,
+            }
+        ],
+    )
