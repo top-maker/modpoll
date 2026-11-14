@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modpoll"
-version = "1.6.1"
+version = "1.6.2"
 description = "A New Command-line Tool for Modbus and MQTT"
 authors = ["Ying Shaodong <helloysd@gmail.com>"]
 repository = "https://github.com/top-maker/modpoll"

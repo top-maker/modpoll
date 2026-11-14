@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.2](https://github.com/top-maker/modpoll/compare/v1.6.1...v1.6.2) (2026-10-28)
+
+
+### Bug Fixes
+
+* Codex/1x reliability gaps ([#111](https://github.com/top-maker/modpoll/issues/111)) ([83c76d9](https://github.com/top-maker/modpoll/commit/83c76d92b83b0a5f191d8f26f433903191597c22))
+* correct polling limits and MQTT queue handling ([3d1c4f9](https://github.com/top-maker/modpoll/commit/3d1c4f9619678c926c7ce6b67a7e88c9b8888de1))
+* harden polling correctness and release safety ([#109](https://github.com/top-maker/modpoll/issues/109)) ([9139956](https://github.com/top-maker/modpoll/commit/9139956481d47961cf8313cb46e579b136888013))
+* preserve versioned documentation across stable releases ([#115](https://github.com/top-maker/modpoll/issues/115)) ([0866a43](https://github.com/top-maker/modpoll/commit/0866a43e00ffdbec96ab83b59e813eff413584b6))
+
 ## [1.6.1](https://github.com/top-maker/modpoll/compare/v1.6.0...v1.6.1) (2026-10-27)
 
 
