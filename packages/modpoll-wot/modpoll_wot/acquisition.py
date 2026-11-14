@@ -57,6 +57,8 @@ class Group:
     table: str
     start: int
     quantity: int
+    # Always "BE_BE": byte and word order are per member (Member.byte_order). Kept until the
+    # next breaking release, which removes it together with modpoll's last reader.
     byte_order: str
     members: tuple[Member, ...]
 

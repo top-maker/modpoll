@@ -5,7 +5,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from modpoll_wot.loading import MAX_BYTES  # type: ignore[import-untyped]
+from modpoll_wot import MAX_BYTES
 
 from . import __version__
 

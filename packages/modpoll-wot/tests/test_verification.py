@@ -290,3 +290,24 @@ def test_present_but_invalid_product_is_still_rejected():
     report["product"] = "Example/Numeric"
     with pytest.raises(ReportError):
         validate_report(report)
+
+
+def test_a_report_date_must_be_a_calendar_date():
+    report = json.loads((FIXTURES / "numeric.report.json").read_text())
+    validate_report(report)
+    for impossible in ("2026-02-31", "2026-02-29", "2026-04-31"):
+        with pytest.raises(ReportError, match="/date: .* is not a calendar date"):
+            validate_report({**report, "date": impossible})
+    validate_report({**report, "date": "2028-02-29"})
+
+
+def test_the_public_interface_is_the_package_top_level():
+    import importlib.metadata
+
+    import modpoll_wot
+
+    assert modpoll_wot.__version__ == importlib.metadata.version("modpoll-wot")
+    assert set(modpoll_wot.__all__) <= set(dir(modpoll_wot))
+    for name in ("MAX_BYTES", "load_document", "type_width"):
+        assert name in modpoll_wot.__all__
+    assert (Path(modpoll_wot.__file__).parent / "py.typed").is_file()

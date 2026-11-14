@@ -1205,7 +1205,7 @@ docs = [
 
 [[package]]
 name = "modpoll-wot"
-version = "0.6.0a3"
+version = "0.7.0a1"
 source = { editable = "packages/modpoll-wot" }
 dependencies = [
     { name = "jsonschema", marker = "python_full_version < '3.15'" },

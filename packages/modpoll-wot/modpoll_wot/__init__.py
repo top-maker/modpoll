@@ -1,7 +1,12 @@
-"""Modpoll's versioned executable subset of WoT TM/TD and Modbus metadata."""
+"""Modpoll's versioned executable subset of WoT TM/TD and Modbus metadata.
 
-from .acquisition import AcquisitionError, Group, Member, parse_acquisition
-from .loading import Model, load_model, loads_model, parse_model
+Consumers import from this package only; its submodules are not a public interface.
+"""
+
+from importlib.metadata import version as _version
+
+from .acquisition import AcquisitionError, Group, Member, parse_acquisition, type_width
+from .loading import MAX_BYTES, Model, load_document, load_model, loads_model, parse_model
 from .validation import ModelValidationError, validate_standard
 from .profile import instantiate, export_td, parse_parameters
 from .delivery import project_point_table
@@ -25,7 +30,13 @@ from .verification import (
     validate_report,
 )
 
+__version__ = _version("modpoll-wot")
+
 __all__ = [
+    "__version__",
+    "MAX_BYTES",
+    "load_document",
+    "type_width",
     "REFERENCE_PREFIX",
     "CredentialError",
     "Reference",

@@ -21,7 +21,7 @@ def main():
     args = parser.parse_args()
     try:
         from modpoll_wot import export_td
-        from modpoll_wot.loading import load_document
+        from modpoll_wot import load_document
     except ImportError:
         parser.error("requires modpoll-wot==0.2.0a2; see README.md")
     changed = []
