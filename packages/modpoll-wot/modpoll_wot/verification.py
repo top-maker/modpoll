@@ -15,7 +15,10 @@ from .profile import instantiate
 
 FINGERPRINT_VERSION = "pf1"
 MODEL_FINGERPRINT_VERSION = "mf1"
-REPORT_VERSION = 3
+# The newest verification report schema; validate_report also accepts the older ones.
+REPORT_VERSION = 5
+REPORT_VERSIONS = (3, 4, 5)
+IDENTITY_RESULTS = ("match", "mismatch")
 # Form fields that decide which bytes are read and how they become a value.
 OPTIONAL_FIELDS = (
     "modpoll:codec",
@@ -109,6 +112,34 @@ def combine_fingerprints(fingerprints) -> str:
     return f"{MODEL_FINGERPRINT_VERSION}:{sha256(encoded).hexdigest()}"
 
 
+def identity_constants(model) -> dict[str, object]:
+    """Return the expected value of each readable point whose DataSchema declares ``const``.
+
+    These are identity points, such as a meter code or a module name: a tool
+    compares the value it reads with the constant and reports only whether
+    they match. ``const`` does not contribute to point or model fingerprints.
+    """
+    try:
+        _, effective = instantiate(_document(model))
+    except (TypeError, RecursionError) as exc:
+        raise AcquisitionError(str(exc)) from exc
+    return {
+        name: prop["const"]
+        for name, prop in effective["properties"].items()
+        if "const" in prop and canonical_point(prop) is not None
+    }
+
+
+def identity_result(expected, value) -> str:
+    """Compare a decoded value with an identity point's ``const``: ``match`` or ``mismatch``.
+
+    Equality follows JSON Schema ``const``: numbers compare by value (137 equals
+    137.0), booleans never equal numbers, and strings compare exactly.
+    """
+    valid = Draft202012Validator({"const": expected}).is_valid(value)
+    return "match" if valid else "mismatch"
+
+
 def model_fingerprint(model) -> str:
     """Return the fingerprint of the set of readable point mappings of a model.
 
@@ -121,7 +152,7 @@ def model_fingerprint(model) -> str:
 @lru_cache(maxsize=1)
 def _report_validators():
     validators = {}
-    for version in (3, 4):
+    for version in REPORT_VERSIONS:
         schema = json.loads(
             files("modpoll_wot")
             .joinpath("schemas", f"verification-report-{version}.json")
@@ -133,7 +164,11 @@ def _report_validators():
 
 
 def validate_report(report, *, model: bytes | None = None):
-    """Validate a verification report (schema 3 or 4), optionally against its exact TM bytes."""
+    """Validate a verification report (schema 3, 4 or 5), optionally against its exact TM bytes.
+
+    With the model, a schema 5 report must carry ``identity`` exactly for the
+    successfully read points whose DataSchema declares ``const``.
+    """
     version = report.get("reportVersion") if isinstance(report, dict) else None
     validator = _report_validators().get(version)
     if validator is None:
@@ -167,3 +202,16 @@ def validate_report(report, *, model: bytes | None = None):
             )
         if actual != point["fingerprint"]:
             raise ReportError(f"/points/{index}/fingerprint: does not match the model")
+    if report["reportVersion"] < 5:
+        return
+    constants = identity_constants(model)
+    for index, point in enumerate(report["points"]):
+        declared = point["property"] in constants
+        if "identity" in point and not declared:
+            raise ReportError(
+                f"/points/{index}/identity: {point['property']} declares no const"
+            )
+        if declared and point["read"] == "ok" and "identity" not in point:
+            raise ReportError(
+                f"/points/{index}: identity is required for a read of a const point"
+            )

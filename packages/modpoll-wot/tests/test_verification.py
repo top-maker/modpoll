@@ -10,8 +10,11 @@ import sys
 import pytest
 
 from modpoll_wot import (
+    REPORT_VERSION,
     ReportError,
     export_td,
+    identity_constants,
+    identity_result,
     model_fingerprint,
     point_fingerprints,
     validate_report,
@@ -43,8 +46,7 @@ def test_shared_vectors_pin_the_canonical_encoding(vector_file):
         assert canonical == expected["canonical"]
         assert fingerprint(point) == expected["fingerprint"]
         assert (
-            expected["fingerprint"]
-            == "pf1:" + sha256(canonical.encode()).hexdigest()
+            expected["fingerprint"] == "pf1:" + sha256(canonical.encode()).hexdigest()
         )
     payload = (FIXTURES / vectors["model"]).read_bytes()
     assert vectors["points"].keys() == point_fingerprints(payload).keys()
@@ -92,7 +94,9 @@ def test_mapping_changes_split_fingerprints(field, value):
     source["properties"]["signed"]["forms"][0][field] = value
     if field == "modv:type":
         source["properties"]["signed"]["minimum"] = 0
-    assert point_fingerprints(source)["signed"] != point_fingerprints(numeric())["signed"]
+    assert (
+        point_fingerprints(source)["signed"] != point_fingerprints(numeric())["signed"]
+    )
     assert model_fingerprint(source) != model_fingerprint(numeric())
 
 
@@ -285,7 +289,7 @@ def test_version_3_reports_with_product_still_validate():
 
 def test_unknown_report_version_is_rejected():
     report = report_for(NUMERIC.read_bytes())
-    report["reportVersion"] = 5
+    report["reportVersion"] = 6
     with pytest.raises(ReportError, match="unsupported report version"):
         validate_report(report)
 
@@ -316,3 +320,89 @@ def test_the_public_interface_is_the_package_top_level():
     for name in ("MAX_BYTES", "load_document", "type_width"):
         assert name in modpoll_wot.__all__
     assert (Path(modpoll_wot.__file__).parent / "py.typed").is_file()
+
+
+# VER-01: identity points declare their documented value with const; the report records whether it matched.
+def identity_model():
+    source = numeric()
+    source["properties"]["counter"]["const"] = 7
+    return json.dumps(source).encode()
+
+
+def identity_report(payload, **counter):
+    report = report_for(payload)
+    report["reportVersion"] = 5
+    report["points"][0].update(counter)
+    return report
+
+
+def test_const_marks_identity_points_without_changing_fingerprints():
+    payload = identity_model()
+    assert identity_constants(payload) == {"counter": 7}
+    assert identity_constants(NUMERIC.read_bytes()) == {}
+    assert point_fingerprints(payload) == point_fingerprints(NUMERIC.read_bytes())
+    assert model_fingerprint(payload) == model_fingerprint(NUMERIC.read_bytes())
+
+
+def test_write_only_points_are_not_identity_points():
+    source = numeric()
+    prop = source["properties"]["counter"]
+    prop.pop("readOnly")
+    prop["writeOnly"] = True
+    prop["forms"][0]["op"] = "writeproperty"
+    prop["const"] = 7
+    assert identity_constants(source) == {}
+
+
+@pytest.mark.parametrize(
+    ("expected", "value", "result"),
+    [
+        (137, 137, "match"),
+        (137, 137.0, "match"),
+        (137, 132, "mismatch"),
+        (1, True, "mismatch"),
+        (True, True, "match"),
+        ("ADAM-5017UH", "ADAM-5017UH", "match"),
+        ("ADAM-5017UH", "ADAM-5017UH ", "mismatch"),
+        (137, None, "mismatch"),
+    ],
+)
+def test_identity_result_follows_json_schema_const(expected, value, result):
+    assert identity_result(expected, value) == result
+
+
+def test_a_version_5_report_carries_identity_for_read_const_points():
+    payload = identity_model()
+    assert REPORT_VERSION == 5
+    for identity in ("match", "mismatch"):
+        validate_report(identity_report(payload, identity=identity), model=payload)
+
+    with pytest.raises(ReportError, match="identity is required"):
+        validate_report(identity_report(payload), model=payload)
+    with pytest.raises(ReportError, match="counter declares no const"):
+        validate_report(
+            identity_report(NUMERIC.read_bytes(), identity="match"),
+            model=NUMERIC.read_bytes(),
+        )
+
+
+def test_identity_is_only_a_result_of_a_successful_read():
+    payload = identity_model()
+    failed = identity_report(
+        payload, read="no-response", expected="unchecked", identity="match"
+    )
+    with pytest.raises(ReportError):
+        validate_report(failed)
+    del failed["points"][0]["identity"]
+    validate_report(failed, model=payload)
+    with pytest.raises(ReportError):
+        validate_report(identity_report(payload, identity="unknown"))
+
+
+def test_identity_needs_report_version_5():
+    report = report_for(identity_model())
+    report["points"][0]["identity"] = "match"
+    with pytest.raises(ReportError, match="Additional properties"):
+        validate_report(report)
+    del report["points"][0]["identity"]
+    validate_report(report, model=identity_model())
