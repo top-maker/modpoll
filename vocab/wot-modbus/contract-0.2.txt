@@ -211,6 +211,9 @@ do not contribute.
 pins the canonical strings, point fingerprints and model fingerprint of the
 37-property fixture for other implementations. Changing either canonical form
 requires a new prefix.
+[tests/fixtures/conformance.fingerprints.json](tests/fixtures/conformance.fingerprints.json) does the same for
+`conformance.tm.json`, which covers every byte and word order and each Form extension; with
+`conformance.data.json` it is also what the workspace integration tests serve with modsim and read with modpoll.
 
 ## Verification reports
 
