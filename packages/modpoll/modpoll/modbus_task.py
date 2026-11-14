@@ -206,10 +206,13 @@ class Poller:
         self.failcounter = 0
         # Why the last read of this group failed: ("exception", code) or ("no-response", None).
         self.failure: Optional[Tuple[str, Optional[int]]] = None
+        # Whether the last poll cycle did not send this group's request at all.
+        self.skipped = False
         self.logger = logging.getLogger(__name__)
 
     def poll(self, master) -> bool:
         self.failure = None
+        self.skipped = False
         try:
             result = None
             data = None
@@ -633,6 +636,7 @@ class ModbusHandler:
                     dev.pollCount += 1
                     dev.errorCount += 1
                 for poller in active:
+                    poller.failure, poller.skipped = None, True
                     previous_failures = poller.failcounter
                     poller.update_statistics(False)
                     self._record_poller_result(poller, False, previous_failures)
@@ -668,6 +672,7 @@ class ModbusHandler:
                             len(skipped),
                         )
                         for rest in skipped:
+                            rest.failure, rest.skipped = None, True
                             previous = rest.failcounter
                             rest.update_statistics(False)
                             self._record_poller_result(rest, False, previous)

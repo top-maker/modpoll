@@ -69,7 +69,8 @@ def get_parser():
             "for confirmation and uploaded once you agree; you are signed in "
             "with the browser only when no login exists. Together with "
             "--report, the report of the verification read is uploaded "
-            "instead of only being saved."
+            "instead of only being saved. Only a full read whose identity "
+            "points match can be uploaded."
         ),
     )
     verification.add_argument(

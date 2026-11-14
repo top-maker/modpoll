@@ -1,3 +1,22 @@
+# Modpoll 2.0.0a13 preview (unreleased)
+
+Modpoll 2.0.0a13 writes verification report schema 5 (modpoll-wot with `identity_constants`):
+
+- A failed read lists each failed group as the device answered it (data table, addresses, exception code and
+  its Modbus name, or no response), each point whose answer could not be decoded, and the groups not tried.
+  modpoll does not guess why and does not change the configuration.
+- Only a full read whose identity points match can be uploaded. The `Continue?` question is gone: a report
+  with failures is saved and not offered for upload, and `--upload FILE` refuses it, or a schema 3 or 4
+  report, without contacting ModioHub.
+- Points whose DataSchema declares `const` are compared with the value read; the report records `match` or
+  `mismatch`, never the value.
+- Before an upload, a model ModioHub does not know is matched by its point fingerprints: a report whose points
+  all belong to one baseline gets that product, other matches or a search are offered interactively, and
+  otherwise a prefilled catalog request is printed. A Workspace model's report names its product.
+- Refusals from ModioHub are explained by their code (`not-full-read`, `identity-mismatch`,
+  `identity-missing`, `unknown-model` and others).
+- The signal handler no longer waits for the exit event's lock, so Ctrl-C cannot deadlock a run.
+
 # Modpoll 2.0.0a12 preview
 
 Modpoll 2.0.0a12 pins modpoll-wot 0.7.0a1:
