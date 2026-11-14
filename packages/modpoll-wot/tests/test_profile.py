@@ -22,9 +22,7 @@ class ProfileTests(unittest.TestCase):
     def test_removed_audit_plan_is_an_unsupported_extension(self):
         source = numeric()
         source["modpoll:audit"] = {"identity": ["counter"]}
-        with self.assertRaisesRegex(
-            AcquisitionError, "unsupported root project extension"
-        ):
+        with self.assertRaisesRegex(AcquisitionError, "unsupported root project extension"):
             instantiate(source)
 
     def test_shared_td_preserves_consistent_binary_media_parameters(self):
