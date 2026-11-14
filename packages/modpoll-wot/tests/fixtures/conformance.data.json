@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "initial": {
+    "u32_be": 16909060,
+    "u32_word_swap": 16909060,
+    "u32_byte_swap": 16909060,
+    "u32_both_swap": 16909060,
+    "f32_word_swap": 230.2,
+    "i16_scaled": -12.3,
+    "label": "ABCDE",
+    "flag_bit3": true,
+    "half": 1.5,
+    "packed_coils": 4660
+  }
+}

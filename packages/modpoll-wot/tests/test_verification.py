@@ -27,8 +27,13 @@ def numeric():
     return json.loads(NUMERIC.read_bytes())
 
 
-def test_shared_vectors_pin_the_canonical_encoding():
-    vectors = json.loads((FIXTURES / "modsim.fingerprints.json").read_bytes())
+# modsim.tm.json is the 37-point fixture modpoll compares with 1.x; conformance.tm.json (SIM-08)
+# adds every byte and word order and each profile extension.
+@pytest.mark.parametrize(
+    "vector_file", ["modsim.fingerprints.json", "conformance.fingerprints.json"]
+)
+def test_shared_vectors_pin_the_canonical_encoding(vector_file):
+    vectors = json.loads((FIXTURES / vector_file).read_bytes())
     _, effective = instantiate(json.loads((FIXTURES / vectors["model"]).read_bytes()))
     for name, expected in vectors["points"].items():
         point = canonical_point(effective["properties"][name])

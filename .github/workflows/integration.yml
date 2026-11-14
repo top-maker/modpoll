@@ -1,0 +1,45 @@
+name: integration
+# SIM-08: this commit's modsim and modpoll against each other, with the conformance model of
+# modpoll-wot, over Modbus TCP and RTU on a virtual serial port.
+
+on:
+  push:
+    branches: [v2]
+    paths:
+      - packages/**
+      - integration/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/integration.yml
+  pull_request:
+    paths:
+      - packages/**
+      - integration/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/integration.yml
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    name: integration conformance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.19
+          python-version: '3.12'
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install every workspace member
+        run: uv sync --locked --all-packages --all-extras --all-groups
+      - name: Read modsim with modpoll
+        run: uv run --locked --no-sync pytest -q integration --junitxml=integration-results.xml
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: integration
+          path: integration-results.xml

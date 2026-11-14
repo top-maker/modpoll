@@ -19,5 +19,7 @@ uv sync --all-packages --all-extras --all-groups
 cd packages/modpoll && uv run pytest
 ```
 
-Each package keeps its own `Makefile`, tests and release notes. A release is a tag named after the package,
+Each package keeps its own `Makefile`, tests and release notes. `integration/` runs this commit's modsim and
+modpoll against each other with modpoll-wot's conformance model, over Modbus TCP and RTU on a virtual serial
+port (`uv run pytest integration` after the sync above). A release is a tag named after the package,
 for example `modsim-v2.0.0a13`, which runs that package's release workflow.

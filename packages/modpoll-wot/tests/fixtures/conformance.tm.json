@@ -1,0 +1,212 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "modpoll": "https://top-maker.github.io/modpoll/vocab/wot-modbus#",
+      "modv": "https://www.w3.org/2019/wot/modbus",
+      "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+  ],
+  "@type": "tm:ThingModel",
+  "title": "conformance",
+  "description": "SIM-08 conformance fixture: every byte and word order and each profile extension, read by modpoll from modsim over TCP and RTU.",
+  "modpoll:version": "0.2",
+  "properties": {
+    "u32_be": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 0,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt"
+        }
+      ]
+    },
+    "u32_word_swap": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 2,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt",
+          "modv:mostSignificantWord": false
+        }
+      ]
+    },
+    "u32_byte_swap": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 4,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt",
+          "modv:mostSignificantByte": false
+        }
+      ]
+    },
+    "u32_both_swap": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 6,
+          "modv:quantity": 2,
+          "modv:type": "xsd:unsignedInt",
+          "modv:mostSignificantByte": false,
+          "modv:mostSignificantWord": false
+        }
+      ]
+    },
+    "f32_word_swap": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 8,
+          "modv:quantity": 2,
+          "modv:type": "xsd:float",
+          "modv:mostSignificantWord": false
+        }
+      ]
+    },
+    "i16_scaled": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 10,
+          "modv:quantity": 1,
+          "modv:type": "xsd:short",
+          "modpoll:multiplier": "0.1"
+        }
+      ]
+    },
+    "label": {
+      "type": "string",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 11,
+          "modv:quantity": 3,
+          "modv:type": "xsd:string",
+          "modpoll:byteLength": 5
+        }
+      ]
+    },
+    "flag_bit3": {
+      "type": "boolean",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 14,
+          "modv:quantity": 1,
+          "modv:type": "xsd:unsignedShort",
+          "modpoll:bit": 3
+        }
+      ]
+    },
+    "half": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "HoldingRegister",
+          "modv:address": 15,
+          "modv:quantity": 1,
+          "modv:type": "xsd:hexBinary",
+          "modpoll:codec": "float16"
+        }
+      ]
+    },
+    "packed_coils": {
+      "type": "integer",
+      "readOnly": true,
+      "forms": [
+        {
+          "op": [
+            "readproperty"
+          ],
+          "contentType": "application/octet-stream",
+          "modv:entity": "Coil",
+          "modv:address": 0,
+          "modv:quantity": 16,
+          "modv:type": "xsd:unsignedShort",
+          "modpoll:bitPacking": "legacy-msb"
+        }
+      ]
+    }
+  },
+  "modpoll:acquisition": [
+    {
+      "modv:entity": "HoldingRegister",
+      "modv:address": 0,
+      "modv:quantity": 16,
+      "modpoll:members": [
+        "u32_be",
+        "u32_word_swap",
+        "u32_byte_swap",
+        "u32_both_swap",
+        "f32_word_swap",
+        "i16_scaled",
+        "label",
+        "flag_bit3",
+        "half"
+      ]
+    },
+    {
+      "modv:entity": "Coil",
+      "modv:address": 0,
+      "modv:quantity": 16,
+      "modpoll:members": [
+        "packed_coils"
+      ]
+    }
+  ]
+}
