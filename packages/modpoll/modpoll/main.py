@@ -2,6 +2,7 @@ import json
 import logging
 import signal
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -298,10 +299,20 @@ def _upload(args, report, *, confirm=True):
     return True
 
 
-def _signal_handler(signal_number, frame):
+def _request_exit():
     if logger:
         logger.info(f"Exiting {sys.argv[0]}")
     set_threading_event()
+
+
+def _signal_handler(signal_number, frame):
+    # Python runs the handler between two bytecodes of the main thread, which may hold
+    # the exit event's internal (non-reentrant) lock inside delay_thread(); setting the
+    # event here would then wait for that lock forever. Another thread sets it as soon
+    # as the main thread lets the lock go.
+    thread = threading.Thread(target=_request_exit, name="modpoll-exit", daemon=True)
+    thread.start()
+    return thread
 
 
 def setup_logging(level, format):

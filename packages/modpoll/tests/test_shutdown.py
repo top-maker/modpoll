@@ -1,4 +1,5 @@
 import signal
+import subprocess
 import sys
 
 import pytest
@@ -76,6 +77,21 @@ def test_signal_handler_tolerates_uninitialized_logger(monkeypatch):
     monkeypatch.setattr(main, "logger", None)
     monkeypatch.setattr(main, "set_threading_event", lambda: called.append(True))
 
-    main._signal_handler(signal.SIGTERM, None)
+    main._signal_handler(signal.SIGTERM, None).join(timeout=5)
 
     assert called == [True]
+
+
+def test_signal_handler_does_not_wait_for_the_exit_event_lock():
+    # The signal can arrive while the main thread holds the event's lock in delay_thread().
+    script = """
+from modpoll import main, utils
+with utils._thread_event._cond:
+    thread = main._signal_handler(15, None)
+thread.join(timeout=5)
+assert utils.on_threading_event()
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True, timeout=10
+    )
+    assert result.returncode == 0, result.stderr
