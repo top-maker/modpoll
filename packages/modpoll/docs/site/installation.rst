@@ -3,11 +3,11 @@ Installation
 
 This documentation describes the 2.x functional preview. Install the exact version::
 
-    uv tool install --prerelease allow 'modpoll==2.0.0a12'
+    uv tool install --prerelease allow 'modpoll==2.0.0a13'
 
 For existing CSV installations use ``uv tool install 'modpoll<2'`` and the
 `1.x documentation <https://top-maker.github.io/modpoll/1.x/>`_.
-The preview image is ``topmaker/modpoll:2.0.0a12``; stable ``latest`` stays on 1.x.
+The preview image is ``topmaker/modpoll:2.0.0a13``; stable ``latest`` stays on 1.x.
 See :doc:`v1-compatibility` for tested platforms and hardware limitations.
 
 This program is tested on python 3.10+ (Ubuntu 22.04+ or equivalent). Ubuntu 20.04 and python 3.8 are no longer supported.
@@ -19,7 +19,7 @@ The package is available in the `Python Package Index <https://pypi.org/>`_,
 
 .. code-block:: shell
 
-    uv tool install --prerelease allow "modpoll==2.0.0a12"
+    uv tool install --prerelease allow "modpoll==2.0.0a13"
 
 Modbus RTU support (pyserial) is included since 2.0.0a12.
 

@@ -1,6 +1,6 @@
-# Modpoll 2.0.0a13 preview (unreleased)
+# Modpoll 2.0.0a13 preview
 
-Modpoll 2.0.0a13 writes verification report schema 5 (modpoll-wot with `identity_constants`):
+Modpoll 2.0.0a13 pins modpoll-wot 0.7.0a2 and writes verification report schema 5:
 
 - A failed read lists each failed group as the device answered it (data table, addresses, exception code and
   its Modbus name, or no response), each point whose answer could not be decoded, and the groups not tried.

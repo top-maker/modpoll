@@ -1,4 +1,9 @@
-# Modsim 2.0.0a14 preview
+# Modsim 2.0.0a15 preview
+
+Modsim 2.0.0a15 pins modpoll-wot 0.7.0a2, which adds verification report schema 5 with identity results. It
+changes nothing in the simulator.
+
+## Modsim 2.0.0a14 preview
 
 Modsim 2.0.0a14 pins modpoll-wot 0.7.0a1 and uses only its public, typed top-level interface. It
 changes nothing in the simulator.
