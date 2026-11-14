@@ -26,7 +26,7 @@ defaults:
   run:
     working-directory: packages/modpoll
 
-# Job names are the check names the release guard requires (packages/modpoll/.github/scripts/preview-release.py).
+# Job names are the check names the release guard requires (.github/scripts/release.py).
 jobs:
   quality-check:
     runs-on: ubuntu-latest

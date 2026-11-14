@@ -209,23 +209,6 @@ def test_occupied_tcp_port_fails_promptly():
     assert "Could not start Modbus TCP listener" in result.stderr
 
 
-def test_release_version_guard_accepts_matching_tag_and_rejects_mismatch():
-    from pathlib import Path
-
-    project = Path(__file__).resolve().parents[1]
-    guard = project / ".github/scripts/check-release-version.py"
-    for tag, expected in (("v" + modsim.__version__, 0), ("v9.9.9", 1)):
-        result = subprocess.run(
-            [sys.executable, str(guard), tag],
-            cwd=project,
-            capture_output=True,
-            text=True,
-        )
-        assert result.returncode == expected
-        if expected:
-            assert "does not match" in result.stderr
-
-
 @pytest.mark.integration
 def test_local_udp_server_and_shutdown():
     from pymodbus.client import ModbusUdpClient

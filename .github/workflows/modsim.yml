@@ -29,7 +29,7 @@ defaults:
     working-directory: packages/modsim
 
 # Job names are prefixed so they never share a check name with modpoll's; the release guard
-# (packages/modsim/.github/scripts/preview-release.py) requires exactly these jobs.
+# (.github/scripts/release.py) requires these checks.
 jobs:
   quality:
     name: modsim quality
