@@ -26,6 +26,7 @@ defaults:
 
 jobs:
   publish:
+    name: modsim release publish
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -76,6 +77,7 @@ jobs:
           gh release upload "$GIT_TAG" dist/*
 
   image:
+    name: modsim release image
     needs: publish
     runs-on: ubuntu-latest
     steps:
@@ -100,6 +102,7 @@ jobs:
   # The modsim documentation site is not published from this repository yet (TOOL-01 decision 7); the
   # release still proves that the preview documentation builds.
   docs:
+    name: modsim release docs
     needs: publish
     runs-on: ubuntu-latest
     steps:
@@ -112,6 +115,7 @@ jobs:
       - run: uv run --locked --no-sync --group docs mkdocs build -s -f mkdocs-preview.yml --site-dir "$RUNNER_TEMP/site"
 
   acceptance:
+    name: modsim release acceptance
     if: ${{ always() && (github.event_name == 'workflow_dispatch' || (needs.publish.result == 'success' && needs.image.result == 'success' && needs.docs.result == 'success')) }}
     needs: [publish, image, docs]
     runs-on: ubuntu-latest

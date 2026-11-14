@@ -16,6 +16,7 @@ defaults:
     working-directory: packages/modpoll
 jobs:
   candidate:
+    name: modpoll release candidate
     runs-on: ubuntu-latest
     outputs:
       git-tag: ${{ steps.release.outputs.git-tag }}
@@ -32,7 +33,11 @@ jobs:
           else
             git_tag="modpoll-v$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
           fi
-          git rev-parse --verify "refs/tags/$git_tag^{commit}"
+          # Changing this file before the current version is tagged has nothing to republish yet.
+          if ! git rev-parse --verify --quiet "refs/tags/$git_tag^{commit}" >/dev/null; then
+            echo "::notice::$git_tag is not tagged yet; nothing to republish."
+            exit 0
+          fi
           git merge-base --is-ancestor "refs/tags/$git_tag^{commit}" origin/v2
           tag="${git_tag#modpoll-}"
           image_version="${tag#v}"
@@ -43,6 +48,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "image-version=$image_version" >> "$GITHUB_OUTPUT"
   publish:
+    name: modpoll release publish
     needs: candidate
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
@@ -97,8 +103,9 @@ jobs:
           fi
           gh release upload "$GIT_TAG" dist/*
   image:
+    name: modpoll release image
     needs: [candidate, publish]
-    if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
+    if: ${{ !cancelled() && needs.candidate.result == 'success' && needs.candidate.outputs.git-tag != '' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
     runs-on: ubuntu-latest
     steps:
       # Build the released source: a push to v2 that changes this file republishes the current
@@ -131,8 +138,9 @@ jobs:
             docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t "$image" --push ../..
           fi
   docs:
+    name: modpoll release docs
     needs: [candidate, publish]
-    if: ${{ !cancelled() && needs.candidate.result == 'success' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
+    if: ${{ !cancelled() && needs.candidate.result == 'success' && needs.candidate.outputs.git-tag != '' && (needs.publish.result == 'success' || (github.ref_name == 'v2' && needs.publish.result == 'skipped')) }}
     runs-on: ubuntu-latest
     concurrency:
       group: modpoll-pages
@@ -172,6 +180,7 @@ jobs:
           github_token: ${{ github.token }}
           publish_dir: packages/modpoll/.site
   acceptance:
+    name: modpoll release acceptance
     needs: [candidate, publish, image, docs]
     if: ${{ !cancelled() && needs.docs.result == 'success' && needs.image.result == 'success' }}
     runs-on: ubuntu-latest
