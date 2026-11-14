@@ -32,7 +32,7 @@ jobs:
       contents: write
       actions: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -45,7 +45,7 @@ jobs:
           GIT_TAG: ${{ github.ref_name }}
         run: python .github/scripts/preview-release.py guard "${GIT_TAG#modsim-}"
       - run: uv build --no-sources --clear --out-dir dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: preview-distributions
           path: packages/modsim/dist/*
@@ -53,8 +53,8 @@ jobs:
         run: |
           dist="$PWD/dist"
           cd "$RUNNER_TEMP"
-          uv run --isolated --with "$dist"/*.whl modsim --version
-          uv run --isolated --with "$dist"/*.tar.gz modsim --version
+          uv run --isolated --refresh-package modpoll-wot --with "$dist"/*.whl modsim --version
+          uv run --isolated --refresh-package modpoll-wot --with "$dist"/*.tar.gz modsim --version
       - name: Check immutable version
         id: registry
         env:
@@ -79,12 +79,12 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ${{ vars.DOCKER_REGISTRY }}
           username: ${{ vars.DOCKER_USERNAME }}
@@ -103,7 +103,7 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
       - uses: ./.github/actions/setup-uv
@@ -116,14 +116,14 @@ jobs:
     needs: [publish, image, docs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.ref }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ inputs.tag || github.ref }}
           path: release
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: 0.11.19
           python-version: '3.12'
@@ -151,8 +151,8 @@ jobs:
           if [ -f "$release/deployment.yaml" ]; then cp "$release/deployment.yaml" "$RUNNER_TEMP/acceptance/"; fi
           prepare="$PWD/tools/prepare-acceptance.py"
           cd "$RUNNER_TEMP/acceptance"
-          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl python "$prepare" "$RUNNER_TEMP/acceptance"
-          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl --with pytest python -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
+          uv run --isolated --refresh-package modpoll-wot --with "$RUNNER_TEMP"/distributions/*.whl python "$prepare" "$RUNNER_TEMP/acceptance"
+          uv run --isolated --refresh-package modpoll-wot --with "$RUNNER_TEMP"/distributions/*.whl --with pytest python -m pytest tests/test_wot.py tests/test_deployment.py tests/test_codec.py -q --junitxml=acceptance.xml
       - name: Verify published image and contributed deployment
         env:
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
@@ -169,10 +169,10 @@ jobs:
             docker run -d --name modsim-preview -p 127.0.0.1:5020:5020 "$REGISTRY/$USERNAME/modsim:$version" python -m modsim up -f /app/deployment.yaml
           fi
           cd "$RUNNER_TEMP/acceptance"
-          uv run --isolated --with "$RUNNER_TEMP"/distributions/*.whl python tools/preview-acceptance.py
+          uv run --isolated --refresh-package modpoll-wot --with "$RUNNER_TEMP"/distributions/*.whl python tools/preview-acceptance.py
       - if: always()
         run: docker rm -f modsim-preview || true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: published-acceptance
