@@ -24,7 +24,10 @@ from .session import (
     server_url,
 )
 from .verification import (
+    REPORT_VERSION,
     ReportError,
+    identity_constants,
+    identity_result,
     model_fingerprint,
     point_fingerprints,
     validate_report,
@@ -52,7 +55,10 @@ __all__ = [
     "load_simulation_data",
     "scaled_raw",
     "parse_parameters",
+    "REPORT_VERSION",
     "ReportError",
+    "identity_constants",
+    "identity_result",
     "model_fingerprint",
     "point_fingerprints",
     "validate_report",
