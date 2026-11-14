@@ -1,0 +1,38 @@
+name: release tooling
+# The release checks every package's release workflow runs (.github/scripts/release.py), and the
+# property they rely on: job names are unique across the repository's workflows.
+
+on:
+  push:
+    branches: [v2]
+    paths:
+      - .github/**
+      - packages/*/pyproject.toml
+      - packages/modsim/modsim/__init__.py
+  pull_request:
+    paths:
+      - .github/**
+      - packages/*/pyproject.toml
+      - packages/modsim/modsim/__init__.py
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: release tooling tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.19
+          python-version: '3.12'
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install the workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Lint the release checks
+        run: uv run --locked --no-sync ruff check .github/scripts
+      - name: Test the release checks
+        run: uv run --locked --no-sync pytest -q .github/scripts

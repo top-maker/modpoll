@@ -22,24 +22,29 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      checks: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
-      - name: Require a tag on v2 that matches the package version
+      - name: Require an accepted v2 candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/v2
-          version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
-          test "$GITHUB_REF_NAME" = "modpoll-wot-v$version"
-          echo "VERSION=$version" >> "$GITHUB_ENV"
+          python "$GITHUB_WORKSPACE/.github/scripts/release.py" guard "$GITHUB_REF_NAME"
+          echo "VERSION=${GITHUB_REF_NAME#modpoll-wot-v}" >> "$GITHUB_ENV"
       - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
         with:
           version: '2026.10.1'
           working_directory: packages/modpoll-wot
       - run: mise run check
-      - name: Publish to PyPI without replacing existing files
+      - name: Check immutable version
+        id: pypi
+        run: python "$GITHUB_WORKSPACE/.github/scripts/release.py" pypi "$GITHUB_REF_NAME"
+      - name: Publish to PyPI
+        if: steps.pypi.outputs.state == 'absent'
         # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
-        run: uv publish --no-progress --trusted-publishing always --check-url https://pypi.org/simple/ dist/*
+        run: uv publish --no-progress --trusted-publishing always dist/*
       - name: Verify the registry installation
         timeout-minutes: 15
         run: |

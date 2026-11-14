@@ -32,7 +32,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
-      actions: read
+      checks: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -45,7 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GIT_TAG: ${{ github.ref_name }}
-        run: python .github/scripts/preview-release.py guard "${GIT_TAG#modsim-}"
+        run: python "$GITHUB_WORKSPACE/.github/scripts/release.py" guard "$GIT_TAG"
       - run: uv build --no-sources --clear --out-dir dist
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -61,9 +61,9 @@ jobs:
         id: registry
         env:
           GIT_TAG: ${{ github.ref_name }}
-        run: python .github/scripts/preview-release.py immutable "${GIT_TAG#modsim-v}"
+        run: python "$GITHUB_WORKSPACE/.github/scripts/release.py" pypi "$GIT_TAG"
       - name: Publish PyPI package
-        if: steps.registry.outputs.exists == 'false'
+        if: steps.registry.outputs.state == 'absent'
         # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
         run: uv publish --no-progress --trusted-publishing always dist/*
       - name: Publish GitHub prerelease
@@ -136,15 +136,14 @@ jobs:
         env:
           GIT_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          cd "$GITHUB_WORKSPACE/release/packages/modsim"
-          python .github/scripts/check_release_version.py "${GIT_TAG#modsim-}"
-          git rev-parse HEAD
+          python "$GITHUB_WORKSPACE/.github/scripts/release.py" version "$GIT_TAG" --root "$GITHUB_WORKSPACE/release"
+          git -C "$GITHUB_WORKSPACE/release" rev-parse HEAD
       - name: Install published wheel and test dependencies
         timeout-minutes: 15
         env:
           GIT_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          python .github/scripts/preview-release.py download "${GIT_TAG#modsim-v}" "$RUNNER_TEMP/distributions"
+          python "$GITHUB_WORKSPACE/.github/scripts/release.py" download "$GIT_TAG" --directory "$RUNNER_TEMP/distributions"
       - name: Test without application source
         run: |
           release="$GITHUB_WORKSPACE/release/packages/modsim"

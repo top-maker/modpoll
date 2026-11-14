@@ -55,6 +55,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      checks: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -66,10 +67,8 @@ jobs:
       - name: Require an accepted v2 preview candidate
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ needs.candidate.outputs.tag }}
-        run: |
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/v2
-          python .github/scripts/preview-release.py guard "$TAG"
+          GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
+        run: python "$GITHUB_WORKSPACE/.github/scripts/release.py" guard "$GIT_TAG"
       - name: Build portable distributions
         run: uv build --no-sources --out-dir dist
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -86,8 +85,8 @@ jobs:
       - name: Check immutable version
         id: pypi
         env:
-          TAG: ${{ needs.candidate.outputs.tag }}
-        run: python .github/scripts/preview-release.py pypi "$TAG"
+          GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
+        run: python "$GITHUB_WORKSPACE/.github/scripts/release.py" pypi "$GIT_TAG"
       - name: Publish application to PyPI
         if: steps.pypi.outputs.state == 'absent'
         # Trusted Publishing: PyPI accepts this workflow's OIDC identity; no token is stored.
@@ -125,9 +124,10 @@ jobs:
           REGISTRY: ${{ vars.DOCKER_REGISTRY }}
           OWNER: ${{ vars.DOCKER_USERNAME }}
           TAG: ${{ needs.candidate.outputs.tag }}
+          GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
           IMAGE_VERSION: ${{ needs.candidate.outputs.image-version }}
         run: |
-          python .github/scripts/check_release_version.py "$TAG"
+          python "$GITHUB_WORKSPACE/.github/scripts/release.py" version "$GIT_TAG"
           image="$REGISTRY/$OWNER/modpoll:$IMAGE_VERSION"
           # The image installs from the workspace lock, so it builds from the repository root.
           if docker buildx imagetools inspect "$image" >/dev/null 2>&1; then
@@ -204,9 +204,9 @@ jobs:
           path: packages/modpoll/.interop/modsim
       - name: Download published application and install isolated fixtures
         env:
-          TAG: ${{ needs.candidate.outputs.tag }}
+          GIT_TAG: ${{ needs.candidate.outputs.git-tag }}
         run: |
-          python .github/scripts/preview-release.py download "$TAG" --directory "$RUNNER_TEMP/acceptance/distributions"
+          python "$GITHUB_WORKSPACE/.github/scripts/release.py" download "$GIT_TAG" --directory "$RUNNER_TEMP/acceptance/distributions"
           cp -r tests tools examples "$RUNNER_TEMP/acceptance/"
           uv venv "$RUNNER_TEMP/acceptance/.venv"
           uv pip install --python "$RUNNER_TEMP/acceptance/.venv/bin/python" "$RUNNER_TEMP"/acceptance/distributions/*.whl pytest pyserial==3.5
