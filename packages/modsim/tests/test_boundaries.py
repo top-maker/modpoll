@@ -29,4 +29,6 @@ def test_modpoll_wot_is_used_through_its_top_level_only():
 
 
 def test_modsim_does_not_import_modpoll():
-    assert not _violations(lambda name: name == "modpoll" or name.startswith("modpoll."))
+    assert not _violations(
+        lambda name: name == "modpoll" or name.startswith("modpoll.")
+    )

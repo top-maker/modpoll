@@ -38,8 +38,7 @@ def test_shared_vectors_pin_the_canonical_encoding():
         assert canonical == expected["canonical"]
         assert fingerprint(point) == expected["fingerprint"]
         assert (
-            expected["fingerprint"]
-            == "pf1:" + sha256(canonical.encode()).hexdigest()
+            expected["fingerprint"] == "pf1:" + sha256(canonical.encode()).hexdigest()
         )
     payload = (FIXTURES / vectors["model"]).read_bytes()
     assert vectors["points"].keys() == point_fingerprints(payload).keys()
@@ -87,7 +86,9 @@ def test_mapping_changes_split_fingerprints(field, value):
     source["properties"]["signed"]["forms"][0][field] = value
     if field == "modv:type":
         source["properties"]["signed"]["minimum"] = 0
-    assert point_fingerprints(source)["signed"] != point_fingerprints(numeric())["signed"]
+    assert (
+        point_fingerprints(source)["signed"] != point_fingerprints(numeric())["signed"]
+    )
     assert model_fingerprint(source) != model_fingerprint(numeric())
 
 
