@@ -17,6 +17,7 @@ defaults:
 
 jobs:
   publish:
+    name: modpoll-wot release publish
     runs-on: ubuntu-latest
     permissions:
       contents: write
