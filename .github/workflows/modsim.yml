@@ -51,6 +51,9 @@ jobs:
       - name: Run checks
         run: make check
 
+      - name: Check the generated ADAM-6024 TD
+        run: uv run --locked --no-sync python tools/generate-td.py --check
+
   tox:
     name: modsim tox (${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -102,14 +105,3 @@ jobs:
         env:
           MODSIM_TEST_MODPOLL_PYTHON: ${{ runner.temp }}/modpoll/bin/python
         run: uv run --locked pytest tests/test_snapshot_replay.py -v
-
-  docs:
-    name: modsim docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: ./.github/actions/setup-uv
-        with:
-          package: modsim
-      - run: uv run --locked --no-sync --group docs mkdocs build -s
-      - run: uv run --locked --no-sync python tools/generate-td.py --check

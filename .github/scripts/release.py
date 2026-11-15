@@ -68,7 +68,7 @@ PACKAGES = {
         frozenset(
             {
                 "modsim quality",
-                "modsim docs",
+                "docs",
                 "modsim tox (3.10)",
                 "modsim tox (3.14)",
                 "modpoll snapshot replay",
@@ -91,6 +91,7 @@ PACKAGES = {
                 "modpoll-wot package",
                 "consumer (modpoll)",
                 "consumer (modsim)",
+                "docs",
                 INTEGRATION,
             }
         ),

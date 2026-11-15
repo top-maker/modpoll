@@ -1,0 +1,117 @@
+name: docs
+
+# The documentation site of all three packages (DOC-02). Pull requests and v2 build it with warnings as errors
+# and check its links. A package release, or a manual run, builds it from the release tag and publishes it to
+# /v2/ on gh-pages; the 1.x site at the root and /1.x/ is left alone. A modpoll-wot release also publishes the
+# vocabulary at /vocab/wot-modbus/ from the same checkout. .nojekyll at the root of gh-pages keeps the _static
+# directories served.
+on:
+  push:
+    branches: [v2]
+    paths: &paths
+      - docs/**
+      - packages/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/docs.yml
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths: *paths
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and publish, such as modpoll-v2.0.0a13
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  # The release guard (.github/scripts/release.py) requires this check on every release commit.
+  docs:
+    if: ${{ !inputs.tag }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.19
+          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --locked --only-group docs
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/html"
+
+  links:
+    name: docs links
+    if: ${{ !inputs.tag }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.19
+          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --locked --only-group docs
+      - run: uv run --no-sync sphinx-build -b linkcheck -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/linkcheck"
+
+  publish:
+    name: docs publish
+    if: ${{ inputs.tag }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.19
+          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --locked --only-group docs
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/html"
+      # The vocabulary is a machine identifier outside the version tree. Files of earlier contract versions are
+      # never removed.
+      - name: Collect the vocabulary
+        if: ${{ startsWith(inputs.tag, 'modpoll-wot-v') }}
+        run: |
+          vocab="$RUNNER_TEMP/vocab"
+          cp -r packages/modpoll-wot/vocab/wot-modbus "$vocab"
+          cp packages/modpoll-wot/modpoll_wot/schemas/acquisition-0.2.json "$vocab/"
+          cp packages/modpoll-wot/profile.md "$vocab/contract-0.2.txt"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: gh-pages
+          path: pages
+      # Replaces /v2/ only. The packages of one release batch publish at the same time, so a rejected push is
+      # retried on top of the other one.
+      - name: Publish to gh-pages
+        working-directory: pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch -q origin gh-pages
+            git reset -q --hard origin/gh-pages
+            rsync -a --delete "$RUNNER_TEMP/html/" v2/
+            if [ -d "$RUNNER_TEMP/vocab" ]; then rsync -a "$RUNNER_TEMP/vocab/" vocab/wot-modbus/; fi
+            git add -A v2 vocab
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -q -m "docs: publish from $TAG"
+            if git push -q origin HEAD:gh-pages; then exit 0; fi
+            sleep $((attempt * 5))
+          done
+          exit 1

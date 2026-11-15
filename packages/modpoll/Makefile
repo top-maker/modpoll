@@ -55,16 +55,6 @@ docker-run-dev: docker-build-dev ## Run docker compose for local dev
 	@echo "🚀 Docker compose run: ${PROJECT_NAME}:dev"
 	@docker compose up --build
 
-.PHONY: docs
-docs: ## Build docs into html files
-	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/site/changelog.rst
-	@uv run --group docs sphinx-build docs/site/ docs/_build/html
-
-.PHONY: docs-serve
-docs-serve: ## Build and serve the docs for local dev
-	@uv run --group docs pandoc --from=markdown --to=rst CHANGELOG.md -o docs/site/changelog.rst
-	@uv run --group docs sphinx-autobuild docs/site/ docs/_build/html
-
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'

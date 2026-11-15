@@ -1,7 +1,6 @@
 # Model-driven simulation
 
-The v2 source uses the published, exact `modpoll-wot==0.2.0a2` dependency.
-Install with `uv sync --all-groups`. Model parsing and TM instantiation belong to that
+modsim depends on an exact published modpoll-wot version. Model parsing and TM instantiation belong to that
 shared package; Modsim owns state and protocol execution.
 
 ## One device
@@ -63,7 +62,7 @@ be unique. Unknown addresses or Unit IDs never inherit another device's state.
 ## Simulation data
 
 `--data` takes a local path or HTTPS URL of simulation data, defined by
-[modpoll-wot](https://github.com/top-maker/modpoll-wot/blob/main/profile.md#simulation-data).
+[modpoll-wot](../modpoll-wot/profile.md#simulation-data).
 Version `"1"` fields:
 
 | Field | Meaning |

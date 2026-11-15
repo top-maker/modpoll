@@ -4,7 +4,7 @@ This directory retains vendor register documentation and contributed mappings.
 CSV files are v1 migration sources; modpoll 2.x loads them again through the
 same `--config` content detection, and new configurations should still be
 written as profile 0.2 Thing Models. Use the
-[migration guide and AI prompt](../docs/site/csv-migration.rst), then validate the new
+[migration guide and AI prompt](https://top-maker.github.io/modpoll/v2/guide/migrate-from-v1-csv.html), then validate the new
 file with `modpoll-wot validate MODEL --profile` and compare known device
 readings.
 

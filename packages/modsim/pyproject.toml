@@ -23,14 +23,6 @@ dev = [
     "tox>=4.16.0,<5.0.0",
     "tomli>=2,<3; python_version < '3.11'",
 ]
-docs = [
-    "mkdocs>=1.6.0,<2.0.0",
-    "mkdocs-material>=9.5.28,<10.0.0",
-    "mkdocstrings[python]>=0.25.1,<0.26.0",
-    "mkdocs-autorefs>=1.2,<1.4",
-    "markdown>=3.7,<3.8",
-    "pymdown-extensions>=10.11,<11",
-]
 
 [build-system]
 requires = ["uv_build>=0.11.19,<0.12.0"]
@@ -46,7 +38,7 @@ modpoll-wot = { workspace = true }
 
 [project.urls]
 Repository = "https://github.com/top-maker/modpoll"
-Documentation = "https://top-maker.github.io/modsim/"
+Documentation = "https://top-maker.github.io/modpoll/v2/"
 
 [tool.mypy]
 files = ["modsim"]
