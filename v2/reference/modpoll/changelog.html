@@ -1,0 +1,622 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Command line" href="../modsim/cli.html"><link rel="prev" title="v1 compatibility" href="v1-compatibility.html">
+        <link rel="canonical" href="https://top-maker.github.io/modpoll/v2/reference/modpoll/changelog.html">
+
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
+        <title>Changelog - modpoll, modsim and modpoll-wot</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     This is the 2.x preview of modpoll, modsim and modpoll-wot. Stable modpoll 1.x (CSV configurations) is documented at <a href="/modpoll/1.x/">1.x</a>. 
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">modpoll, modsim and modpoll-wot</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">modpoll, modsim and modpoll-wot</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/read-a-device.html">Read a device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/simulate-a-device.html">Simulate a device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/verification-reports.html">Verification reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/migrate-from-v1-csv.html">Migrate from v1 CSV</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modpoll</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modsim</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/model-driven-simulation.html">Model-driven simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/managed-deployments.html">Managed deployments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modpoll-wot</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/profile.html">Executable profile 0.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/contract.html">Executable configuration contract 0.2</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/top-maker/modpoll/blob/v2/docs/reference/modpoll/changelog.md?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/top-maker/modpoll/edit/v2/docs/reference/modpoll/changelog.md" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<span id="161-2026-10-27"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.6.0...v1.6.1">1.6.1</a> (2026-10-27)<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<section id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Fail fast on Poetry lock drift and invalidate stale CI venv caches (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/107">#107</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/e274c4afaff286bee248b12e356b906c24c22b44">e274c4a</a>)</p></li>
+<li><p>harden modpoll writes and polling reliability (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/108">#108</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/6b6a49afd5c3cec6c522a1f70fa703c8bbc435f8">6b6a49a</a>)</p></li>
+<li><p>remove clean_session from MQTT v3.1.1 connect call (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/105">#105</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/565e4c9d58fd542c74a708952c7723bafdbbca1a">565e4c9</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<span id="160-2025-12-06"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.5.1...v1.6.0">1.6.0</a> (2025-12-06)<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add bit-level access for boolean registers (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/cecf79d24de79fdda7f524516fb163f35f392e3f">cecf79d</a>)</p></li>
+<li><p>add new argument 'serial' to support multiple framers, including rtu/ascii/binary. Keep the old 'rtu' argument as an alias to 'serial' argument for backward compatibility. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/d42ab78801d16c96cde852686f77ec6694776cf9">d42ab78</a>)</p></li>
+<li><p>add support for ascii framer (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/97">#97</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/c918e74ca9e9c69c8fbf47712cb46300bf0630a9">c918e74</a>)</p></li>
+<li><p>upgrade to python 3.10 and pymodbus 3.9.0 (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/189b3fd71876e64e9ef6e81b5832508fb451a37c">189b3fd</a>)</p></li>
+</ul>
+</section>
+<section id="id3">
+<span id="bug-fixes-1"></span><h3>Bug Fixes<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>bit syntax is only used with bool dtype (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/cf1e2b9b732c5de1639549b06744251a9b7e746e">cf1e2b9</a>)</p></li>
+<li><p>forward mqtt tls flags to handler (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/93">#93</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/d31db252257cc4b8c1ddcd5b8cdca2c8072ca227">d31db25</a>)</p></li>
+<li><p>guard mqtt cleanup on setup errors (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/95">#95</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/daa8c0c7d838468ba880397c5e38f98a3b0eb460">daa8c0c</a>)</p></li>
+<li><p>incompatibility issues due to pymodbus 3.9+ (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/d59a336eb68758f2bd521158926a1c1c6171a995">d59a336</a>)</p></li>
+<li><p>Sphinx build errors (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/2d06ee64ebda3303e9c8be9ebecdf0808c72b3f7">2d06ee6</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id4">
+<span id="151-2025-09-29"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.5.0...v1.5.1">1.5.1</a> (2025-09-29)<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<section id="id5">
+<span id="bug-fixes-2"></span><h3>Bug Fixes<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Clear reference value when disconnect (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/90">#90</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/9543ce0407686fd1398fd2db2eaecc42192d08e0">9543ce0</a>), closes <a class="reference external" href="https://github.com/top-maker/modpoll/issues/87">#87</a></p></li>
+<li><p>Replace unreliable mqtt broker (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/88">#88</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/bce269c3ce246ecf493b8a992c2f6e6293e7407e">bce269c</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id6">
+<span id="150-2025-03-13"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.4.1...v1.5.0">1.5.0</a> (2025-03-13)<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<section id="id7">
+<span id="features-1"></span><h3>Features<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Update docker compose to conform to new specification (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/abc55aa363d76dc35b6a9731e31ab4b551a7b435">abc55aa</a>)</p></li>
+</ul>
+</section>
+<section id="id8">
+<span id="bug-fixes-3"></span><h3>Bug Fixes<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>CI pipelines issue with wrong poetry version (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/14d0563f0928b4dd0673290660bf56908090c836">14d0563</a>)</p></li>
+<li><p>Install specific version of plugins (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/98af91c5dcf241754e05182e4865595ea9d5a381">98af91c</a>)</p></li>
+<li><p>Wrong poll size in docs (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/4ad6dbfeabeaa8f5e9fdbe7dfeb240c6eb6ecab1">4ad6dbf</a>)</p></li>
+</ul>
+</section>
+<section id="reverts">
+<h3>Reverts<a class="headerlink" href="#reverts" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Install poetry before cache check (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/2041db7c3e583e3acb75bc3b7836db46efa2589d">2041db7</a>)</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Add description for polling string reference example (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/3bb8adeb4ca09bed05bf87cb8271dc02bfc8a585">3bb8ade</a>)</p></li>
+<li><p>Update screenshots (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/e44ac1a33cb3806a665103e1e304e909c1a2f73a">e44ac1a</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id9">
+<span id="141-2025-01-03"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.4.0...v1.4.1">1.4.1</a> (2025-01-03)<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<section id="id10">
+<span id="bug-fixes-4"></span><h3>Bug Fixes<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Eastron meter config issue (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/d58ed36e1bc75be72e4d14ffbcf16f41f7958386">d58ed36</a>)</p></li>
+</ul>
+</section>
+<section id="id11">
+<span id="documentation-1"></span><h3>Documentation<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Add reference scale usage in examples (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/8b4319c014be71bb5ac121888cc7dd9b8f552765">8b4319c</a>), closes <a class="reference external" href="https://github.com/top-maker/modpoll/issues/75">#75</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id12">
+<span id="140-2024-11-15"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.3.3...v1.4.0">1.4.0</a> (2024-11-15)<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<section id="id13">
+<span id="features-2"></span><h3>Features<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Add example config for Eastron SDM120 (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/72">#72</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/2dde6b9b413a1c7fba19ba88dc8f1e7df8287c25">2dde6b9</a>)</p></li>
+<li><p>Allow HEX number in configuration file (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/70">#70</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/63242699b75b5169abc8064c1546faa92a8754de">6324269</a>)</p></li>
+<li><p>Publish MQTT message for each single reference. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/adb869faeb375ec92d1158bd87c0389de7eceb09">adb869f</a>)</p></li>
+</ul>
+</section>
+<section id="id14">
+<span id="bug-fixes-5"></span><h3>Bug Fixes<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Rename doc include config_template.csv (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/73">#73</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/8003ff33a42143766223f2b02307cd17409b4059">8003ff3</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id15">
+<span id="133-2024-10-15"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.3.2...v1.3.3">1.3.3</a> (2024-10-15)<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
+<section id="id16">
+<span id="bug-fixes-6"></span><h3>Bug Fixes<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>CI docs pipeline issue (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/ada4089df1bb3063641820274a2c476d4a421321">ada4089</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id17">
+<span id="132-2024-10-15"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.3.1...v1.3.2">1.3.2</a> (2024-10-15)<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<section id="id18">
+<span id="bug-fixes-7"></span><h3>Bug Fixes<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>CI pipeline issue (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/9386455652025ea300dfdef5034738fa8936a66e">9386455</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id19">
+<span id="131-2024-10-14"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.3.0...v1.3.1">1.3.1</a> (2024-10-14)<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
+<section id="id20">
+<span id="bug-fixes-8"></span><h3>Bug Fixes<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Arguments mqtt-qos doesn't work for publish (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/0a65d0ad1efe5067c080f7dd02afc1a8cb3c8478">0a65d0a</a>)</p></li>
+<li><p>Zsh parse error due to the special character used in mqtt-publish-topic-pattern. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/98230e8e78c77e7a0334d101ac990f53e599ce1d">98230e8</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id21">
+<span id="130-2024-10-13"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.2.0...v1.3.0">1.3.0</a> (2024-10-13)<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
+<section id="id22">
+<span id="features-3"></span><h3>Features<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Optimize code to make it more object oriented (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/7195e297b5e658b05bb1c7c75c2d02f2ab886331">7195e29</a>)</p></li>
+<li><p>Remove importlib-metadata dependency since we drop support for pre-python3.8 environments. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/36a6fd43e81512af819cd7e00cdef4385e56e7ca">36a6fd4</a>)</p></li>
+<li><p>Support running multiple master instances (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/64">#64</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/c44b597f45a1c9fd8b3b49562d74f959d21cd1f0">c44b597</a>)</p></li>
+</ul>
+</section>
+<section id="id23">
+<span id="bug-fixes-9"></span><h3>Bug Fixes<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Adjust delay to every loop iteration (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/e368922b925bcdf602d42716d2a72631f1134639">e368922</a>)</p></li>
+<li><p>Allow github action to read the PR title and add labels (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/22cb7c8dce284675193865c8fe399320bb0f2636">22cb7c8</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id24">
+<span id="120-2024-08-25"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/v1.1.0...v1.2.0">1.2.0</a> (2024-08-25)<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h2>
+<section id="id25">
+<span id="features-4"></span><h3>Features<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Introduce MQTT topic pattern to replace the existing MQTT topic prefix. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/58d3f6719b7c78b0c17cfb60ca7013e5f8d1bccb">58d3f67</a>)</p></li>
+<li><p>Add docker compose for better developer experience. (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/01f15e8d140eadf3413471463fbb26cd7d8fc175">01f15e8</a>)</p></li>
+</ul>
+</section>
+<section id="id26">
+<span id="bug-fixes-10"></span><h3>Bug Fixes<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Validate action issue (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/f8ef12e018009ec1c8b4d554829156e93c9a5b98">f8ef12e</a>)</p></li>
+<li><p>Typos (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/9349864c5712fad3da9218d8f8b72529da5e03fa">9349864</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id27">
+<span id="110-2024-08-03"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/1.0.0...v1.1.0">1.1.0</a> (2024-08-03)<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
+<section id="id28">
+<span id="features-5"></span><h3>Features<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add docker run commands for dev (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/074d51e6196ca342d71c103e55a9c9e72cd3462b">074d51e</a>)</p></li>
+<li><p>add test cases for pytest (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/99fc4613034e8aac1a24a760bfe395467a554092">99fc461</a>)</p></li>
+<li><p>support paho v2 (<a class="reference external" href="https://github.com/top-maker/modpoll/issues/52">#52</a>) (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/3e6681a56497672c664a200e95728d7202a1964f">3e6681a</a>)</p></li>
+</ul>
+</section>
+<section id="id29">
+<span id="bug-fixes-11"></span><h3>Bug Fixes<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>allow user defined docker registry (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/38acfcc16f8143fe91e716ff734d4e96e8cc9035">38acfcc</a>)</p></li>
+<li><p>device list is not properly used (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/1824bede7a4085cf31243a261a7e074ad506c453">1824bed</a>)</p></li>
+<li><p>duplications in ci actions (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/db5c667138afa4d0226b77655a4abe179bce866a">db5c667</a>)</p></li>
+<li><p>paho v2 changes in callbacks (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/09316f8e8c247148d22f1b56a60fd35d6072ab6f">09316f8</a>)</p></li>
+<li><p>poetry warning (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/44ec61fd159e89b630ded9674c0a535cd1ba1a60">44ec61f</a>)</p></li>
+<li><p>Unexpected input for release-please (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/24703fe098379016447ab50ab89276e0f0f734ef">24703fe</a>)</p></li>
+</ul>
+</section>
+<section id="id30">
+<span id="documentation-2"></span><h3>Documentation<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>update CHANGELOG.md (<a class="reference external" href="https://github.com/top-maker/modpoll/commit/73fcc010cb0ddbf4a1aa149ac28a354cd1bc5c39">73fcc01</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id31">
+<span id="100-2024-07-11"></span><h2><a class="reference external" href="https://github.com/top-maker/modpoll/compare/0.8.4...1.0.0">1.0.0</a> (2024-07-11)<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h2>
+<section id="breaking-changes">
+<span id="-breaking-changes"></span><h3>⚠ BREAKING CHANGES<a class="headerlink" href="#breaking-changes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Release v1.0.0</p></li>
+</ul>
+</section>
+<section id="id32">
+<span id="features-6"></span><h3>Features<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Support Modbus RTU/TCP/UDP devices</p></li>
+<li><p>Poll data from multiple Modbus devices</p></li>
+<li><p>Publish data to MQTT broker for remote debugging</p></li>
+<li><p>Log data for further investigation</p></li>
+<li><p>Provide docker solution for continuous data polling in production</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../modsim/cli.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Command line</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="v1-compatibility.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">v1 compatibility</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021-2026, Ying Shaodong
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#id1">1.6.1 (2026-10-27)</a><ul>
+<li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">1.6.0 (2025-12-06)</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#id3">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">1.5.1 (2025-09-29)</a><ul>
+<li><a class="reference internal" href="#id5">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">1.5.0 (2025-03-13)</a><ul>
+<li><a class="reference internal" href="#id7">Features</a></li>
+<li><a class="reference internal" href="#id8">Bug Fixes</a></li>
+<li><a class="reference internal" href="#reverts">Reverts</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">1.4.1 (2025-01-03)</a><ul>
+<li><a class="reference internal" href="#id10">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id11">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">1.4.0 (2024-11-15)</a><ul>
+<li><a class="reference internal" href="#id13">Features</a></li>
+<li><a class="reference internal" href="#id14">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15">1.3.3 (2024-10-15)</a><ul>
+<li><a class="reference internal" href="#id16">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17">1.3.2 (2024-10-15)</a><ul>
+<li><a class="reference internal" href="#id18">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id19">1.3.1 (2024-10-14)</a><ul>
+<li><a class="reference internal" href="#id20">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21">1.3.0 (2024-10-13)</a><ul>
+<li><a class="reference internal" href="#id22">Features</a></li>
+<li><a class="reference internal" href="#id23">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id24">1.2.0 (2024-08-25)</a><ul>
+<li><a class="reference internal" href="#id25">Features</a></li>
+<li><a class="reference internal" href="#id26">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id27">1.1.0 (2024-08-03)</a><ul>
+<li><a class="reference internal" href="#id28">Features</a></li>
+<li><a class="reference internal" href="#id29">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id30">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id31">1.0.0 (2024-07-11)</a><ul>
+<li><a class="reference internal" href="#breaking-changes">⚠ BREAKING CHANGES</a></li>
+<li><a class="reference internal" href="#id32">Features</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

@@ -207,18 +207,18 @@ The model fingerprint is `mf1:` followed by the SHA-256 hex digest of the
 sorted, deduplicated point fingerprints serialized as a JSON array without
 whitespace. Aliases with identical mappings count once; write-only properties
 do not contribute.
-[tests/fixtures/modsim.fingerprints.json](tests/fixtures/modsim.fingerprints.json)
+[tests/fixtures/modsim.fingerprints.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/tests/fixtures/modsim.fingerprints.json)
 pins the canonical strings, point fingerprints and model fingerprint of the
 37-property fixture for other implementations. Changing either canonical form
 requires a new prefix.
-[tests/fixtures/conformance.fingerprints.json](tests/fixtures/conformance.fingerprints.json) does the same for
+[tests/fixtures/conformance.fingerprints.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/tests/fixtures/conformance.fingerprints.json) does the same for
 `conformance.tm.json`, which covers every byte and word order and each Form extension; with
 `conformance.data.json` it is also what the workspace integration tests serve with modsim and read with modpoll.
 
 ## Verification reports
 
 A verification report records one reading of a Thing Model on a physical device. Its schema is
-[schemas/verification-report-5.json](modpoll_wot/schemas/verification-report-5.json)
+[schemas/verification-report-5.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/modpoll_wot/schemas/verification-report-5.json)
 (JSON Schema 2020-12; schemas 3 and 4 remain valid). A report carries:
 
 - Optional `product`: the catalog product ID `<manufacturer>/<model-number>`. The receiving
@@ -293,7 +293,7 @@ that a login made by any tool works for every tool on the same computer. It make
 
 Simulation data describes the values a simulator serves for one device of a
 Thing Model. Its schema is
-[schemas/simulation-data-1.json](modpoll_wot/schemas/simulation-data-1.json)
+[schemas/simulation-data-1.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/modpoll_wot/schemas/simulation-data-1.json)
 (JSON Schema 2020-12), and Modsim loads it with `--data`.
 
 | Field | Meaning |

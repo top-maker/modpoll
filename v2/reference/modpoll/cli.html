@@ -1,0 +1,547 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Configuration" href="configuration.html"><link rel="prev" title="Migrate from v1 CSV" href="../../guide/migrate-from-v1-csv.html">
+        <link rel="canonical" href="https://top-maker.github.io/modpoll/v2/reference/modpoll/cli.html">
+
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
+        <title>Command line - modpoll, modsim and modpoll-wot</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     This is the 2.x preview of modpoll, modsim and modpoll-wot. Stable modpoll 1.x (CSV configurations) is documented at <a href="/modpoll/1.x/">1.x</a>. 
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">modpoll, modsim and modpoll-wot</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">modpoll, modsim and modpoll-wot</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/read-a-device.html">Read a device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/simulate-a-device.html">Simulate a device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/verification-reports.html">Verification reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/migrate-from-v1-csv.html">Migrate from v1 CSV</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modpoll</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="v1-compatibility.html">v1 compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modsim</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/model-driven-simulation.html">Model-driven simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/managed-deployments.html">Managed deployments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modsim/changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">modpoll-wot</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/profile.html">Executable profile 0.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modpoll-wot/contract.html">Executable configuration contract 0.2</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/top-maker/modpoll/blob/v2/docs/reference/modpoll/cli.md?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/top-maker/modpoll/edit/v2/docs/reference/modpoll/cli.md" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="command-line">
+<h1>Command line<a class="headerlink" href="#command-line" title="Link to this heading">¶</a></h1>
+<p><p>Modpoll v2.0.0a14 - A New Command-line Tool for Modbus and MQTT</p>
+</p>
+<div class="highlight-default notranslate" id="modpoll"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">modpoll</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG</span> <span class="p">[</span><span class="n">CONFIG</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">report</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">upload</span> <span class="p">[</span><span class="n">FILE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">yes</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">confirm</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">reject</span> <span class="n">POINT</span> <span class="p">[</span><span class="n">POINT</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">param</span> <span class="n">NAME</span><span class="o">=</span><span class="n">JSON</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">unit</span><span class="o">-</span><span class="nb">id</span> <span class="n">UNIT_ID</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">interval</span> <span class="n">INTERVAL</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">tcp</span> <span class="n">TCP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span> <span class="n">TCP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">udp</span> <span class="n">UDP</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">udp</span><span class="o">-</span><span class="n">port</span> <span class="n">UDP_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span> <span class="n">SERIAL</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">baud</span> <span class="n">SERIAL_BAUD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">serial</span><span class="o">-</span><span class="n">parity</span> <span class="p">{</span><span class="n">none</span><span class="p">,</span><span class="n">odd</span><span class="p">,</span><span class="n">even</span><span class="p">}]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">timeout</span> <span class="n">TIMEOUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">EXPORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">precision</span> <span class="n">auto</span><span class="o">|</span><span class="n">N</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="mf">3.1.1</span><span class="p">,</span><span class="mf">5.0</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">host</span> <span class="n">MQTT_HOST</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">port</span> <span class="n">MQTT_PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">clientid</span> <span class="n">MQTT_CLIENTID</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">publish</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_PUBLISH_TOPIC_PATTERN</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">subscribe</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_SUBSCRIBE_TOPIC_PATTERN</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">topic</span><span class="o">-</span><span class="n">pattern</span> <span class="n">MQTT_DIAGNOSTICS_TOPIC_PATTERN</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">qos</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">user</span> <span class="n">MQTT_USER</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="k">pass</span> <span class="n">MQTT_PASS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">use</span><span class="o">-</span><span class="n">tls</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">insecure</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">cacerts</span> <span class="n">MQTT_CACERTS</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">tls</span><span class="o">-</span><span class="n">version</span> <span class="p">{</span><span class="n">tlsv1</span><span class="mf">.2</span><span class="p">,</span><span class="n">tlsv1</span><span class="mf">.1</span><span class="p">,</span><span class="n">tlsv1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">mqtt</span><span class="o">-</span><span class="n">single</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">diagnostics</span><span class="o">-</span><span class="n">rate</span> <span class="n">DIAGNOSTICS_RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">autoremove</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">loglevel</span> <span class="p">{</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">INFO</span><span class="p">,</span><span class="n">WARNING</span><span class="p">,</span><span class="n">ERROR</span><span class="p">,</span><span class="n">CRITICAL</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">timestamp</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">delay</span> <span class="n">DELAY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">framer</span> <span class="p">{</span><span class="n">default</span><span class="p">,</span><span class="n">ascii</span><span class="p">,</span><span class="n">rtu</span><span class="p">,</span><span class="n">socket</span><span class="p">}]</span>
+</pre></div>
+</div>
+<section id="modpoll-named-arguments">
+<span id="modpoll.arg_parser-get_parser-named-arguments"></span><h2>Named Arguments<a class="headerlink" href="#modpoll-named-arguments" title="Link to this heading">¶</a></h2>
+<dl class="option-list">
+<dt><kbd>-v, --version</kbd></dt>
+<dd><p>show program's version number and exit</p>
+</dd>
+<dt><kbd>-f, --config</kbd></dt>
+<dd><p>Local path or URL of a v1 CSV or WoT TM/TD JSON configuration, or modiohub:&lt;id&gt;&#64;&lt;version&gt; for a custom Thing Model in your ModioHub Workspace (run modpoll login first unless it is shared). The format is detected from the content, not the filename. Required unless --device is given.</p>
+</dd>
+<dt><kbd>--param</kbd></dt>
+<dd><p>Typed TM placeholder binding (requires the profile 0.2 interpreter)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</dd>
+<dt><kbd>--unit-id</kbd></dt>
+<dd><p>Override instance Unit ID (1-254); otherwise use the TD, the legacy CSV default, or 1</p>
+</dd>
+<dt><kbd>-d, --daemon</kbd></dt>
+<dd><p>Run in daemon mode without printing result. Recommended to use with docker</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>-r, --rate</kbd></dt>
+<dd><p>The sampling rate (s) to poll modbus device, Defaults to 10.0</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">10.0</span></code></p>
+</dd>
+<dt><kbd>-1, --once</kbd></dt>
+<dd><p>Only run polling at one time</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--interval</kbd></dt>
+<dd><p>The time interval in seconds between two polling, Defaults to 0.5</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">0.5</span></code></p>
+</dd>
+<dt><kbd>--tcp</kbd></dt>
+<dd><p>Explicit TCP host; a profile 0.2 TD uses its endpoint when omitted</p>
+</dd>
+<dt><kbd>--tcp-port</kbd></dt>
+<dd><p>Port for MODBUS TCP. Defaults to 502</p>
+</dd>
+<dt><kbd>--udp</kbd></dt>
+<dd><p>Act as a Modbus UDP master, connecting to host UDP</p>
+</dd>
+<dt><kbd>--udp-port</kbd></dt>
+<dd><p>Port for MODBUS UDP. Defaults to 502</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">502</span></code></p>
+</dd>
+<dt><kbd>--serial, --rtu</kbd></dt>
+<dd><p>pyserial URL (or port name) for serial transport (alias: --rtu)</p>
+</dd>
+<dt><kbd>--serial-baud, --rtu-baud</kbd></dt>
+<dd><p>Baud rate for serial port. Defaults to 9600</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">9600</span></code></p>
+</dd>
+<dt><kbd>--serial-parity, --rtu-parity</kbd></dt>
+<dd><p>Possible choices: none, odd, even</p>
+<p>Parity for serial port. Defaults to none</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'none'</span></code></p>
+</dd>
+<dt><kbd>--timeout</kbd></dt>
+<dd><p>Response time-out seconds for MODBUS devices, Defaults to 3.0</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">3.0</span></code></p>
+</dd>
+<dt><kbd>-o, --export</kbd></dt>
+<dd><p>The file name to export point values</p>
+</dd>
+<dt><kbd>--precision</kbd></dt>
+<dd><p>Decimals to show for float values. The default 'auto' keeps the precision of the source data; N rounds every float to at most that many decimals.</p>
+</dd>
+<dt><kbd>--mqtt-version</kbd></dt>
+<dd><p>Possible choices: 3.1.1, 5.0</p>
+<p>MQTT version. Defaults to MQTT v3.1.1</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'3.1.1'</span></code></p>
+</dd>
+<dt><kbd>--mqtt-host</kbd></dt>
+<dd><p>MQTT server address. Skip MQTT setup if not specified</p>
+</dd>
+<dt><kbd>--mqtt-port</kbd></dt>
+<dd><p>1883 for non-TLS or 8883 for TLS, Defaults to 1883</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">1883</span></code></p>
+</dd>
+<dt><kbd>--mqtt-clientid</kbd></dt>
+<dd><p>MQTT client name, If qos &gt; 0, set unique name for multiple clients</p>
+</dd>
+<dt><kbd>--mqtt-publish-topic-pattern</kbd></dt>
+<dd><p>Topic pattern for MQTT publish. Use {{device_name}} as placeholder for the device names in Modbus config. Defaults to &quot;modpoll/{{device_name}}/data&quot;</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'modpoll/{{device_name}}/data'</span></code></p>
+</dd>
+<dt><kbd>--mqtt-subscribe-topic-pattern</kbd></dt>
+<dd><p>Topic pattern for MQTT subscribe. Defaults to &quot;modpoll/+/set&quot;</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'modpoll/+/set'</span></code></p>
+</dd>
+<dt><kbd>--mqtt-diagnostics-topic-pattern</kbd></dt>
+<dd><p>Topic pattern for MQTT diagnostics. Use {{device_name}} as placeholder for the device names in Modbus config. Defaults to modpoll/{{device_name}}/diagnostics</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'modpoll/{{device_name}}/diagnostics'</span></code></p>
+</dd>
+<dt><kbd>--mqtt-qos</kbd></dt>
+<dd><p>Possible choices: 0, 1, 2</p>
+<p>MQTT QoS value. Defaults to 0</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+</dd>
+<dt><kbd>--mqtt-user</kbd></dt>
+<dd><p>Username for authentication (optional)</p>
+</dd>
+<dt><kbd>--mqtt-pass</kbd></dt>
+<dd><p>Password for authentication (optional)</p>
+</dd>
+<dt><kbd>--mqtt-use-tls</kbd></dt>
+<dd><p>Use TLS</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--mqtt-insecure</kbd></dt>
+<dd><p>Use TLS without providing certificates</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--mqtt-cacerts</kbd></dt>
+<dd><p>Path to ca keychain</p>
+</dd>
+<dt><kbd>--mqtt-tls-version</kbd></dt>
+<dd><p>Possible choices: tlsv1.2, tlsv1.1, tlsv1</p>
+<p>TLS protocol version, can be one of tlsv1.2 tlsv1.1 or tlsv1</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'tlsv1.2'</span></code></p>
+</dd>
+<dt><kbd>--mqtt-single</kbd></dt>
+<dd><p>Publish each value in a single topic. If not specified, groups all values in one topic.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--diagnostics-rate</kbd></dt>
+<dd><p>Time in seconds as publishing period for each device diagnostics</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+</dd>
+<dt><kbd>--autoremove</kbd></dt>
+<dd><p>Automatically remove poller if modbus communication has failed 3 times.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--loglevel</kbd></dt>
+<dd><p>Possible choices: DEBUG, INFO, WARNING, ERROR, CRITICAL</p>
+<p>Set log level, Defaults to INFO</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code></p>
+</dd>
+<dt><kbd>--timestamp</kbd></dt>
+<dd><p>Add timestamp to the result</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--delay</kbd></dt>
+<dd><p>Time to delay sending first request in seconds after connecting. Default to 0</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+</dd>
+<dt><kbd>--framer</kbd></dt>
+<dd><p>Possible choices: default, ascii, rtu, socket</p>
+<p>The type of framer for Modbus messages. Serial supports ascii/rtu; TCP/UDP use socket.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'default'</span></code></p>
+</dd>
+</dl>
+</section>
+<section id="modpoll-verification">
+<span id="modpoll.arg_parser-get_parser-verification"></span><h2>verification<a class="headerlink" href="#modpoll-verification" title="Link to this heading">¶</a></h2>
+<p>--report reads every point of one Thing Model once, read-only and without retries, and reports which points could be read; --upload sends a verification report to ModioHub</p>
+<dl class="option-list">
+<dt><kbd>--report</kbd></dt>
+<dd><p>Read every point of the model once and write the verification report to FILE ('-' prints it). Without FILE the save location, your judgment of the values and whether to upload are asked interactively. The report lists each point's result and carries no address, Unit ID, serial number or value.</p>
+</dd>
+<dt><kbd>--upload</kbd></dt>
+<dd><p>Upload a verification report to ModioHub. With FILE (or a file chosen interactively, the newest report-DATE.json by default) a saved report is uploaded without reading a device: it is shown for confirmation and uploaded once you agree; you are signed in with the browser only when no login exists. Together with --report, the report of the verification read is uploaded instead of only being saved. Only a full read whose identity points match can be uploaded.</p>
+</dd>
+<dt><kbd>--yes</kbd></dt>
+<dd><p>Answer the report questions without asking: keep the default report file and upload it. Needs --report or --upload and an existing sign-in (the browser sign-in is interactive).</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--confirm</kbd></dt>
+<dd><p>Points whose values you checked and found right ('all' for every point), for the report</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</dd>
+<dt><kbd>--reject</kbd></dt>
+<dd><p>Points whose values you checked and found wrong, for the report</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</dd>
+</dl>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="configuration.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Configuration</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../../guide/migrate-from-v1-csv.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Migrate from v1 CSV</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021-2026, Ying Shaodong
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Command line</a><ul>
+<li><a class="reference internal" href="#modpoll-named-arguments">Named Arguments</a></li>
+<li><a class="reference internal" href="#modpoll-verification">verification</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
