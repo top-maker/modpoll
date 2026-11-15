@@ -1,4 +1,10 @@
-# Modpoll 2.0.0a13 preview
+# Modpoll 2.0.0a14 preview
+
+Modpoll 2.0.0a14 pins modpoll-wot 0.7.0a3 and moves its documentation to the shared site for modpoll, modsim
+and modpoll-wot at <https://top-maker.github.io/modpoll/v2/>. The `--upload` help names saved reports
+`report-DATE.json`. Nothing else changes.
+
+## Modpoll 2.0.0a13 preview
 
 Modpoll 2.0.0a13 pins modpoll-wot 0.7.0a2 and writes verification report schema 5:
 
