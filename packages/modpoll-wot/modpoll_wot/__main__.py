@@ -47,7 +47,8 @@ def _instance_options(parser):
     parser.add_argument("--param", action="append", default=[], metavar="NAME=JSON")
 
 
-def main():
+def get_parser():
+    """Build the command-line parser; the documentation site generates its reference from it."""
     parser = argparse.ArgumentParser(prog="modpoll-wot", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     check = commands.add_parser("validate", help="Validate TM/TD structure")
@@ -78,7 +79,11 @@ def main():
     report.add_argument(
         "--model", help="Exact TM bytes the report claims; checks hash and fingerprints"
     )
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = get_parser().parse_args()
     phase = "Input"
     try:
         if args.command == "new":

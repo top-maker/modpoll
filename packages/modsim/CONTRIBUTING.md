@@ -8,8 +8,19 @@ uv sync --all-groups
 make check
 make test
 uv run python tools/generate-td.py --check
-uv run --group docs mkdocs build -s
 ```
+
+The documentation site for all three tools is built from `docs/` at the repository root; see the repository
+README.
+
+`examples/deployment.yaml` uses the ADAM-5017UH model and simulation data from Open Modbus Catalog and the
+ADAM-6024 regression fixture in `tests/fixtures/io-module/`. `uv run python tools/fetch-models.py` downloads the
+inputs pinned in `examples/model-source.yaml` (a full catalog commit and individual SHA-256 hashes) to the
+ignored `examples/models/`; it never executes downloaded Python. The pinned preparation also includes the scoped
+product record and its schema, so their hashes and limits can be inspected next to the local models; they are
+verification metadata, not simulator instructions. Independent-wheel CI checks single-device startup from a
+remote TM, raw reads and process shutdown on Linux, macOS and native Windows; it does not certify managed
+commands on Windows or every OS and Python combination.
 
 Device TMs, metadata, sources and product-specific simulation data belong in
 [Open Modbus Catalog](https://github.com/top-maker/open-modbus-catalog), targeting

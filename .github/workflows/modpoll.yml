@@ -70,25 +70,6 @@ jobs:
       - name: Test with tox
         run: uv run --locked --no-sync tox -e ${{ matrix.tox-env }}
 
-  docs:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Check out
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Set up uv
-        uses: ./.github/actions/setup-uv
-        with:
-          package: modpoll
-
-      - name: Set up pandoc
-        uses: ./.github/actions/setup-pandoc
-
-      - name: Build documentation
-        run: make docs
-
   # Unchanged by TOOL-01: the interop checks keep their pinned 1.x baseline and simulator fixture.
   modsim-equivalence:
     runs-on: ubuntu-latest

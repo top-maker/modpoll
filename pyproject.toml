@@ -6,3 +6,26 @@ members = ["packages/modpoll", "packages/modsim", "packages/modpoll-wot"]
 [tool.uv]
 # Resolution covers Python 3.10 through 3.14; the CI matrix tests 3.10 and 3.14.
 environments = ["python_version < '3.15'"]
+
+# The documentation site for all three tools (DOC-02), built from docs/. Sphinx 9.2 needs Python 3.13, so only
+# this group is limited to it; the packages keep 3.10 through 3.14.
+[dependency-groups]
+docs = [
+    "modpoll",
+    "modsim",
+    "modpoll-wot",
+    "sphinx>=9.2,<10",
+    "myst-parser>=5.2,<6",
+    "furo>=2025.12.19",
+    "sphinx-argparse>=0.6.1,<0.7",
+    "sphinx-reredirects>=1.1,<2",
+    "sphinx-autobuild>=2025.8.25",
+]
+
+[tool.uv.dependency-groups]
+docs = { requires-python = ">=3.13" }
+
+[tool.uv.sources]
+modpoll = { workspace = true }
+modsim = { workspace = true }
+modpoll-wot = { workspace = true }

@@ -58,14 +58,6 @@ docker-run-dev: docker-build-dev ## Run docker for local dev
 	@echo "🚀 Docker run: ${PROJECT_NAME}:dev"
 	@docker run --rm ${PROJECT_NAME}:dev
 
-.PHONY: docs-test
-docs-test: ## Test if documentation can be built without warnings or errors
-	@uv run --group docs mkdocs build -s
-
-.PHONY: docs
-docs: ## Build and serve the documentation
-	@uv run --group docs mkdocs serve
-
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'

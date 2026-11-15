@@ -63,3 +63,12 @@ jobs:
         run: |
           gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 ||
             gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --prerelease --title "modpoll-wot $VERSION" --notes "See packages/modpoll-wot/CONTRACT.md and profile.md at this tag."
+
+  docs:
+    name: modpoll-wot release docs
+    needs: publish
+    permissions:
+      contents: write
+    uses: ./.github/workflows/docs.yml
+    with:
+      tag: ${{ github.ref_name }}

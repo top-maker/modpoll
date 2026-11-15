@@ -64,7 +64,7 @@ def get_parser():
         metavar="FILE",
         help=(
             "Upload a verification report to ModioHub. With FILE (or a file "
-            "chosen interactively, the newest report-*.json by default) a "
+            "chosen interactively, the newest report-DATE.json by default) a "
             "saved report is uploaded without reading a device: it is shown "
             "for confirmation and uploaded once you agree; you are signed in "
             "with the browser only when no login exists. Together with "

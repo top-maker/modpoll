@@ -14,7 +14,7 @@ dependencies = [
 
 [project.urls]
 Repository = "https://github.com/top-maker/modpoll"
-Documentation = "https://github.com/top-maker/modpoll/tree/v2/packages/modpoll-wot#readme"
+Documentation = "https://top-maker.github.io/modpoll/v2/"
 
 [project.scripts]
 modpoll-wot = "modpoll_wot.__main__:main"

@@ -1,8 +1,7 @@
 # Managed deployments
 
-The 2.0.0a2 candidate adds two-level commands for a local, single-listener
-deployment. These commands are not included in the published `2.0.0a1` preview.
-Managed commands currently require POSIX (Linux, macOS or WSL); the existing
+Managed commands run a local, single-listener deployment of several devices.
+They currently require POSIX (Linux, macOS or WSL); the existing
 flag-based server entry point remains available on other platforms.
 
 ## Start and reconcile
@@ -78,7 +77,7 @@ The deployment format is a Modsim contract, not a standard TD object. TD generat
 uses `modpoll-wot==0.2.0a2` and its bundled TD/Modbus/profile validation. There is
 no private TD parser or arbitrary TD patch mechanism.
 
-`data` names [simulation data](model-validation.md#simulation-data) or a modpoll
+`data` names [simulation data](model-driven-simulation.md#simulation-data) or a modpoll
 snapshot. Both JSON and YAML documents are accepted by managed deployments.
 There is no duplicate initial-value field in deployment v2. Omitting data
 produces valid static initial values from the model. Simulation data is not
@@ -167,3 +166,81 @@ included in this change.
 
 Prepare pinned example inputs from the repository root with
 `uv run python tools/fetch-models.py`; see `examples/model-source.yaml`.
+
+## Run with Docker Compose
+
+From the `examples/` directory of the modsim source, build and start the current source:
+
+```bash
+docker compose up -d --build
+docker compose logs -f
+```
+
+Compose publishes Modbus TCP only on host `127.0.0.1:5020` and restarts the container unless stopped. Each
+restart resets simulation state. TDs advertise `127.0.0.1` by default; configure the advertised host and port
+mapping when clients connect from another machine.
+
+The deployment, model and simulation data files are mounted from the repository. `docker compose up -d` starts
+the configured deployment; do not run `modsim up` again just to start it. After editing the mounted deployment
+file, apply it to the running simulator with:
+
+```bash
+docker compose exec modsim python -m modsim up -f /app/deployment.yaml -d
+```
+
+Use the mounted path Compose started (`/app/deployment.yaml`); the control socket rejects any other path. An
+unchanged device keeps its state; a changed device is replaced. Listener changes require a container restart.
+If you replace the deployment file itself, run `docker compose up -d --force-recreate` to refresh its bind
+mount. The Compose file maps the default output directory to the host's `examples/td/`, so this command, run
+from `examples/`, writes one `*.td.json` file per running device there:
+
+```bash
+docker compose exec modsim python -m modsim export --running
+```
+
+Stop the Compose deployment with `docker compose down`.
+
+## Example: read the deployment with modpoll
+
+Export all TDs from the current deployment file; modsim does not need to be running:
+
+```bash
+modsim export
+```
+
+In another terminal, read the exported TD:
+
+```bash
+modpoll --once --interval 0 --tcp 127.0.0.1 --tcp-port 5020 \
+  --config ./output/adam-6024.td.json --export ./adam-6024-snapshot.json
+```
+
+For the last applied configuration of a Docker Compose deployment, use the Compose export command above and
+read `./examples/td/adam-6024.td.json` instead. The TD selects Unit ID 2. On a fresh deployment,
+`adam6024_raw` reports `AO0_RAW: 100` and `AI0_RAW: 100`; values may differ if previously written.
+
+### Optional: write through MQTT
+
+Start a temporary local broker and a continuously running modpoll process:
+
+```bash
+docker run --rm -d --name modpoll-demo-mqtt -p 127.0.0.1:1883:1883 \
+  eclipse-mosquitto:2 mosquitto -c /mosquitto-no-auth.conf
+modpoll --interval 0 --rate 1 --tcp 127.0.0.1 --tcp-port 5020 \
+  --config ./output/adam-6024.td.json --mqtt-host 127.0.0.1 --mqtt-port 1883
+```
+
+After modpoll connects, publish a non-retained write to the topic named for the TD's `title`:
+
+```bash
+docker exec modpoll-demo-mqtt mosquitto_pub -h 127.0.0.1 \
+  -t modpoll/adam6024_raw/set \
+  -m '{"object_type":"holding_register","address":10,"value":432}'
+```
+
+Run the one-shot modpoll command again. `AO0_RAW` and the loopback `AI0_RAW` should both read `432`. This
+synthetic raw value does not verify the physical device's range or behavior. The example broker has no
+authentication and is published only on host loopback; port 1883 must be available.
+
+Stop modpoll with Ctrl+C, stop the broker (`docker stop modpoll-demo-mqtt`), then stop modsim with `modsim down`
+or the Compose deployment with `docker compose down`.
