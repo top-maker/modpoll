@@ -4,7 +4,7 @@ A Modbus device simulator for integration and testing. It runs a device from a W
 data, over Modbus TCP or a virtual serial port, and runs several devices on one listener from a deployment file.
 
 ```bash
-uv tool install --prerelease allow "modsim==2.0.0a15"
+uv tool install --prerelease allow "modsim==2.0.0a16"
 modsim --config device.tm.json --port 5020
 ```
 

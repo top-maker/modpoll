@@ -8,7 +8,7 @@ A command-line tool that reads Modbus TCP and RTU devices from a W3C WoT Thing M
 MQTT and writes verification reports. v1 CSV configurations keep working.
 
 ```bash
-uv tool install --prerelease allow "modpoll==2.0.0a13"
+uv tool install --prerelease allow "modpoll==2.0.0a14"
 modpoll --once --tcp 192.168.1.10 --config device.tm.json
 ```
 

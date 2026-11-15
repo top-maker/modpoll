@@ -1,4 +1,10 @@
-# Modsim 2.0.0a15 preview
+# Modsim 2.0.0a16 preview
+
+Modsim 2.0.0a16 pins modpoll-wot 0.7.0a3. Its documentation moved to the shared site for modpoll, modsim and
+modpoll-wot at <https://top-maker.github.io/modpoll/v2/>, which is also its PyPI documentation link. It changes
+nothing in the simulator.
+
+## Modsim 2.0.0a15 preview
 
 Modsim 2.0.0a15 pins modpoll-wot 0.7.0a2, which adds verification report schema 5 with identity results. It
 changes nothing in the simulator.
