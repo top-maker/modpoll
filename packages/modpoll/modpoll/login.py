@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 import webbrowser
+from http import HTTPStatus
 
 import modpoll_wot
 import requests
@@ -19,6 +20,9 @@ from . import __version__
 CLIENT_ID = "modpoll"
 GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
 REQUEST_TIMEOUT = 15
+PROJECT_URL = "https://github.com/top-maker/modpoll"
+# The one identity of every request this tool makes to ModioHub or to a --config link (the tool User-Agent).
+USER_AGENT = f"modpoll/{__version__} (+{PROJECT_URL})"
 
 
 class LoginError(ValueError):
@@ -27,10 +31,39 @@ class LoginError(ValueError):
 
 def headers(token=None):
     return {
-        "User-Agent": f"modpoll/{__version__}",
+        "User-Agent": USER_AGENT,
         "Accept": "application/json",
         **({"Authorization": f"Bearer {token}"} if token else {}),
     }
+
+
+def _body(response):
+    """The JSON object of an answer, or {} when it is plain text (the edge answers some refusals so)."""
+    if "json" not in response.headers.get("Content-Type", ""):
+        return {}
+    try:
+        body = response.json()
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
+
+
+def _why(response):
+    """What the platform said about a refusal: its detail (or the status name) and how long to wait."""
+    status = response.status_code
+    try:
+        phrase = HTTPStatus(status).phrase
+    except ValueError:
+        phrase = "refused"
+    text = _body(response).get("detail") or phrase
+    if not text.endswith("."):
+        text += "."
+    wait = response.headers.get("Retry-After")
+    if wait and wait.isdigit():
+        text += f" Wait {wait} seconds before trying again."
+    elif wait:
+        text += f" Retry after {wait}."
+    return text
 
 
 def _post(url, body):
@@ -81,7 +114,9 @@ def login(server, *, sleep=None, monotonic=None, open_browser=None, out=None):
         f"{server}/api/v1/tool-sessions/device-authorization", {"client_id": CLIENT_ID}
     )
     if not start.ok:
-        raise LoginError(f"{server} refused the login ({start.status_code})")
+        raise LoginError(
+            f"{server} refused the login ({start.status_code}): {_why(start)}"
+        )
     grant = start.json()
     print(
         f"To sign in, confirm the code {grant['user_code']} at:\n  {grant['verification_uri_complete']}",
@@ -107,11 +142,7 @@ def login(server, *, sleep=None, monotonic=None, open_browser=None, out=None):
                 "client_id": CLIENT_ID,
             },
         )
-        body = (
-            answer.json()
-            if answer.headers.get("Content-Type", "").startswith("application/json")
-            else {}
-        )
+        body = _body(answer)
         if answer.ok:
             return _save(server, body)
         error = body.get("error")
@@ -124,7 +155,9 @@ def login(server, *, sleep=None, monotonic=None, open_browser=None, out=None):
             raise LoginError("The login was denied in the browser.")
         if error == "expired_token":
             break
-        raise LoginError(f"The login failed ({error or answer.status_code}).")
+        if error:
+            raise LoginError(f"The login failed ({error}).")
+        raise LoginError(f"The login failed ({answer.status_code}): {_why(answer)}")
     raise LoginError(
         "The code expired before it was confirmed; run modpoll login again."
     )

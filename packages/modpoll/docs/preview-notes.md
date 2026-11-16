@@ -1,4 +1,15 @@
-# Modpoll 2.0.0a14 preview
+# Modpoll 2.0.0a15 preview
+
+Modpoll 2.0.0a15 pins modpoll-wot 0.7.0a4, which publishes the rejection vectors for other implementations of the
+Thing Model rules (`conformance.rejections.json`, with no change to the package code).
+
+- `modpoll login` prints what ModioHub answered when it refuses a sign-in, as an upload already did: during
+  maintenance or when the request limit is reached you see the platform's explanation and, when it sends one, how
+  long to wait. The exit code is not zero and the tool never retries on its own.
+- Every request to ModioHub (reading a `--config` link, the API, signing in, a Workspace download and a report
+  upload) identifies the tool as `modpoll/<version> (+https://github.com/top-maker/modpoll)`.
+
+## Modpoll 2.0.0a14 preview
 
 Modpoll 2.0.0a14 pins modpoll-wot 0.7.0a3 and moves its documentation to the shared site for modpoll, modsim
 and modpoll-wot at <https://top-maker.github.io/modpoll/v2/>. The `--upload` help names saved reports

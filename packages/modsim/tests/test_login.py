@@ -45,10 +45,12 @@ def reply(status, body):
     return HTTPError("https://hub.test", status, "error", {}, io.BytesIO(payload))
 
 
-def fake_hub(routes, calls):
-    """Answer by URL suffix; a list is consumed in order. Records (method, url, token)."""
+def fake_hub(routes, calls, agents=None):
+    """Answer by URL suffix; a list is consumed in order. Records (method, url, token) and the User-Agents."""
 
     def urlopen(request, timeout=None):
+        if agents is not None:
+            agents.append(request.get_header("User-agent"))
         calls.append(
             (
                 request.get_method(),
@@ -95,11 +97,12 @@ def test_login_waits_for_the_browser_and_shares_the_login_with_modpoll(isolated_
         ],
         "/api/v1/me": [reply(200, {"githubUser": "octo"})],
     }
-    slept, out = [], io.StringIO()
-    with fake_hub(routes, calls):
+    slept, out, agents = [], io.StringIO(), []
+    with fake_hub(routes, calls, agents):
         session = login.login(
             SERVER, sleep=slept.append, open_browser=lambda url: False, out=out
         )
+    assert set(agents) == {hub.USER_AGENT} and len(agents) == len(calls)
     assert slept == [5, 5, 10]
     assert (
         "ABCD1234" in out.getvalue()

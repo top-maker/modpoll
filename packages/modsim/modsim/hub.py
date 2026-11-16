@@ -10,13 +10,16 @@ from modpoll_wot import MAX_BYTES
 from . import __version__
 
 TIMEOUT = 15
+PROJECT_URL = "https://github.com/top-maker/modpoll"
+# The one identity of every request this tool makes to ModioHub or to a model or data link (the tool User-Agent).
+USER_AGENT = f"modsim/{__version__} (+{PROJECT_URL})"
 
 
 def call(
     url: str, *, method: str = "GET", body: Any = None, token: str | None = None
 ) -> tuple[int, bytes]:
     """One request; returns the status and at most 1 MiB of the answer. An error status is a result."""
-    headers = {"User-Agent": f"modsim/{__version__}", "Accept": "application/json"}
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
     data = None

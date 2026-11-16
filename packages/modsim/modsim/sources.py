@@ -9,11 +9,7 @@ from urllib.request import Request, urlopen
 import modpoll_wot
 from modpoll_wot import MAX_BYTES, load_document
 
-from . import __version__
-from .hub import call, call_json
-
-# Some CDNs reject the default Python-urllib agent; identify the tool instead.
-USER_AGENT = f"modsim/{__version__}"
+from .hub import USER_AGENT, call, call_json
 
 
 def is_remote(value: str) -> bool:
