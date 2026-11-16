@@ -270,9 +270,9 @@
 <p>This site describes the 2.x preview. The three tools need Python 3.10 or later and are installed with
 <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>, which keeps each tool in its own environment. The same commands work in
 Windows PowerShell.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modpoll==2.0.0a14"</span>
-uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modsim==2.0.0a16"</span>
-uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modpoll-wot==0.7.0a3"</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modpoll==2.0.0a15"</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modsim==2.0.0a17"</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--prerelease<span class="w"> </span>allow<span class="w"> </span><span class="s2">"modpoll-wot==0.7.0a4"</span>
 </pre></div>
 </div>
 <p>Modbus RTU support (pyserial) is included in modpoll since 2.0.0a12. For existing CSV installations use
@@ -289,13 +289,13 @@ package ships <code class="docutils literal notranslate"><span class="pre">py.ty
 <section id="run-with-docker">
 <h2>Run with Docker<a class="headerlink" href="#run-with-docker" title="Link to this heading">¶</a></h2>
 <p>The preview images run without a local installation and show the tool version by default:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>topmaker/modpoll:2.0.0a14
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>topmaker/modpoll:2.0.0a15
 </pre></div>
 </div>
 <p>The stable <code class="docutils literal notranslate"><span class="pre">latest</span></code> tag stays on 1.x. To read a local configuration file, mount its folder into the container.
 On Linux, host networking connects the container to a simulator on the host; <code class="docutils literal notranslate"><span class="pre">-d</span></code> (daemon mode) suppresses the
 tables:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>host<span class="w"> </span>-v<span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/examples:/app/examples:ro"</span><span class="w"> </span>topmaker/modpoll:2.0.0a14<span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>host<span class="w"> </span>-v<span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/examples:/app/examples:ro"</span><span class="w"> </span>topmaker/modpoll:2.0.0a15<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>modpoll<span class="w"> </span>-d<span class="w"> </span>--tcp<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--tcp-port<span class="w"> </span><span class="m">5020</span><span class="w"> </span>--config<span class="w"> </span>/app/examples/modsim.tm.json
 </pre></div>
 </div>
