@@ -215,6 +215,16 @@ requires a new prefix.
 `conformance.tm.json`, which covers every byte and word order and each Form extension; with
 `conformance.data.json` it is also what the workspace integration tests serve with modsim and read with modpoll.
 
+### Rejection vectors
+
+An implementation that accepts or stores Thing Models without this package, such as a web service, must refuse what
+this loader refuses. [tests/fixtures/conformance.rejections.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/tests/fixtures/conformance.rejections.json)
+lists documents that must be refused: each vector is a JSON Patch (RFC 6902, `add`, `replace` and `remove` only)
+applied to `conformance.tm.json`, with the name of the rule that refuses the result. The unchanged model must be
+accepted. The rule names group the vectors for readers and are not an error code contract; `schema` marks a vector
+that one of the bundled JSON Schemas already refuses. Two differences cannot be expressed as vectors, because they
+disappear when JSON is parsed outside Python: duplicate object keys, and an integer written as a float such as `1.0`.
+
 ## Verification reports
 
 A verification report records one reading of a Thing Model on a physical device. Its schema is
