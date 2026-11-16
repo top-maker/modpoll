@@ -1,4 +1,9 @@
-# Modsim 2.0.0a16 preview
+# Modsim 2.0.0a17 preview
+
+Modsim 2.0.0a17 pins modpoll-wot 0.7.0a4. Every request it makes to ModioHub or to a model or data link identifies
+the tool as `modsim/<version> (+https://github.com/top-maker/modpoll)`. It changes nothing in the simulator.
+
+## Modsim 2.0.0a16 preview
 
 Modsim 2.0.0a16 pins modpoll-wot 0.7.0a3. Its documentation moved to the shared site for modpoll, modsim and
 modpoll-wot at <https://top-maker.github.io/modpoll/v2/>, which is also its PyPI documentation link. It changes
