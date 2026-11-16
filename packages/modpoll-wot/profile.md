@@ -218,7 +218,7 @@ requires a new prefix.
 ### Rejection vectors
 
 An implementation that accepts or stores Thing Models without this package, such as a web service, must refuse what
-this loader refuses. [tests/fixtures/conformance.rejections.json](https://github.com/top-maker/modpoll/blob/v2/packages/modpoll-wot/tests/fixtures/conformance.rejections.json)
+this loader refuses. `tests/fixtures/conformance.rejections.json`, next to the fingerprint vectors,
 lists documents that must be refused: each vector is a JSON Patch (RFC 6902, `add`, `replace` and `remove` only)
 applied to `conformance.tm.json`, with the name of the rule that refuses the result. The unchanged model must be
 accepted. The rule names group the vectors for readers and are not an error code contract; `schema` marks a vector
