@@ -4,13 +4,14 @@ import hashlib
 import io
 import json
 import os
+import re
 import stat
 import sys
 
 import modpoll_wot
 import pytest
 
-from modpoll import login, main, utils, verification
+from modpoll import __version__, login, main, utils, verification, wot_config
 
 from .test_verification import (  # noqa: F401  (the fixture clears the process-wide stop event)
     FakeClient,
@@ -34,10 +35,15 @@ def isolated_login(monkeypatch, tmp_path):
 
 class Reply:
     def __init__(
-        self, status=200, body=None, content=b"", content_type="application/json"
+        self,
+        status=200,
+        body=None,
+        content=b"",
+        content_type="application/json",
+        headers=None,
     ):
         self.status_code, self._body, self.content = status, body, content
-        self.headers = {"Content-Type": content_type}
+        self.headers = {"Content-Type": content_type, **(headers or {})}
         self.ok = status < 400
 
     def json(self):
@@ -124,6 +130,79 @@ def test_login_ends_with_a_reason(monkeypatch, reply, message):
             out=io.StringIO(),
         )
     assert modpoll_wot.load_session(SERVER) is None
+
+
+MAINTENANCE = Reply(
+    503,
+    {
+        "title": "Service Unavailable",
+        "code": "maintenance",
+        "detail": "The service is in maintenance. Reading works; saving, uploading and signing in are paused. Try again later.",
+    },
+    content_type="application/problem+json",
+    headers={"Retry-After": "300"},
+)
+RATE_LIMIT = Reply(
+    429,
+    {"code": "rate-limit", "detail": "Too many requests. Try again later."},
+    content_type="application/problem+json",
+    headers={"Retry-After": "42"},
+)
+# The edge rule answers before the API does, in plain text.
+EDGE_RATE_LIMIT = Reply(
+    429,
+    None,
+    content_type="text/plain; charset=UTF-8",
+    headers={"Retry-After": "10"},
+)
+
+
+@pytest.mark.parametrize(
+    "reply, expected",
+    [
+        (
+            MAINTENANCE,
+            ["(503)", "in maintenance", "Wait 300 seconds before trying again."],
+        ),
+        (
+            RATE_LIMIT,
+            ["(429)", "Too many requests", "Wait 42 seconds before trying again."],
+        ),
+        (
+            EDGE_RATE_LIMIT,
+            ["(429): Too Many Requests.", "Wait 10 seconds before trying again."],
+        ),
+    ],
+)
+@pytest.mark.parametrize("step", ["start", "poll"])
+def test_a_refused_login_says_why_and_exits_non_zero(
+    monkeypatch, capsys, reply, expected, step
+):
+    posts = []
+
+    def post(url, json=None, headers=None, timeout=None):
+        posts.append(url)
+        if step == "start" or not url.endswith("/device-authorization"):
+            return reply
+        return Reply(
+            body={
+                "device_code": "secret",
+                "user_code": "ABCD1234",
+                "interval": 5,
+                "expires_in": 900,
+                "verification_uri_complete": f"{SERVER}/activate/?user_code=ABCD1234",
+            }
+        )
+
+    monkeypatch.setattr(login.requests, "post", post)
+    monkeypatch.setattr(login, "open_in_browser", lambda url: False)
+    monkeypatch.setattr(login.time, "sleep", lambda seconds: None)
+    assert login.command(["login"]) == 1
+    error = capsys.readouterr().err
+    assert all(text in error for text in expected), error
+    assert "Traceback" not in error
+    # One refusal ends the login: the tool never retries on its own.
+    assert len(posts) == (1 if step == "start" else 2)
 
 
 def test_the_code_expires_when_nobody_confirms(monkeypatch):
@@ -329,6 +408,62 @@ def test_a_refused_upload_reports_why(monkeypatch):
     monkeypatch.setattr(verification.requests, "post", lambda *a, **k: Reply(401, {}))
     with pytest.raises(ValueError, match="modpoll login"):
         verification.upload_report({}, timeout=3)
+
+
+def test_an_upload_in_maintenance_keeps_the_local_report(monkeypatch, tmp_path, caplog):
+    path = tmp_path / "meter.tm.json"
+    path.write_text(json.dumps(three_group_model()))
+    monkeypatch.chdir(tmp_path)
+    modpoll_wot.save_session(SERVER, "tok", expires_in=3600)
+    posts = []
+    monkeypatch.setattr(
+        verification.requests,
+        "post",
+        lambda *args, **kwargs: posts.append(args) or MAINTENANCE,
+    )
+    with pytest.raises(SystemExit) as exit_info:
+        run_app(
+            monkeypatch,
+            ["-f", str(path), "--tcp", "x", "--report", "--yes"],
+            FakeClient(False, False),
+        )
+    assert exit_info.value.code == 1 and len(posts) == 1
+    assert "in maintenance" in caplog.text and "refused the report" in caplog.text
+    (saved,) = tmp_path.glob("report-*.json")
+    assert json.loads(saved.read_text())["reportVersion"] == 5
+
+
+def test_every_request_to_modiohub_carries_the_tool_user_agent(monkeypatch, tmp_path):
+    """Sign-in, API, Workspace download, upload and a --config link all identify the tool the same way."""
+    seen = {}
+
+    def record(kind):
+        def fake(*args, **kwargs):
+            url = args[-1] if kind == "request" else args[0]
+            seen[(kind, url.rsplit("/", 1)[-1])] = kwargs["headers"]["User-Agent"]
+            raise login.requests.RequestException("stop here")
+
+        return fake
+
+    monkeypatch.setattr(login.requests, "get", record("get"))
+    monkeypatch.setattr(login.requests, "post", record("post"))
+    monkeypatch.setattr(login.requests, "request", record("request"))
+    modpoll_wot.save_session(SERVER, "tok", expires_in=3600)
+    with pytest.raises(login.LoginError):
+        login.login(SERVER)  # device authorization
+    with pytest.raises(ValueError):
+        verification.upload_report({}, timeout=3)  # upload
+    with pytest.raises(ValueError):
+        verification.search_products("meter", timeout=3)  # API
+    with pytest.raises(ValueError):
+        verification.fetch_workspace_model(f"modiohub:{ID}@1", timeout=3)  # Workspace
+    with pytest.raises(login.requests.RequestException):
+        wot_config.read_payload("https://example.test/m.tm.json", timeout=3)  # --config
+    assert len(seen) == 5, seen
+    (agent,) = set(seen.values())
+    assert agent == f"modpoll/{__version__} (+https://github.com/top-maker/modpoll)"
+    assert re.fullmatch(r"modpoll/\S+ \(\+https://\S+\)", agent)
+    assert agent == login.USER_AGENT == login.headers()["User-Agent"]
 
 
 def test_upload_signs_in_inline_when_there_is_no_session(monkeypatch, tmp_path, capsys):

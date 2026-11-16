@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from modpoll import login
 from modpoll.modbus_task import ModbusHandler
 from modpoll.wot_config import read_model, create_devices
 from tests.wot_helpers import meter_model, write_meter
@@ -49,7 +50,10 @@ def test_url_model_loader_keeps_timeout_and_streams(monkeypatch):
     model = read_model("https://example.test/model.tm.json", timeout=2.5, unit_id=7)
     assert model.unit_id == 7
     assert calls == [
-        ("https://example.test/model.tm.json", {"timeout": 2.5, "stream": True})
+        (
+            "https://example.test/model.tm.json",
+            {"headers": login.headers(), "timeout": 2.5, "stream": True},
+        )
     ]
 
 

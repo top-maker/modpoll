@@ -8,7 +8,7 @@ import pytest
 
 from modpoll_wot import load_simulation_data
 
-from modsim import __version__, deployment, sources
+from modsim import __version__, deployment, hub, sources
 
 
 class Response(BytesIO):
@@ -27,7 +27,12 @@ def test_remote_documents_identify_modsim():
     assert data == {"version": "1", "tick": 0.5}
     request = remote.call_args.args[0]
     assert request.full_url == "https://example.invalid/device.data.json"
-    assert request.get_header("User-agent") == f"modsim/{__version__}"
+    assert request.get_header("User-agent") == hub.USER_AGENT
+    assert (
+        hub.USER_AGENT
+        == f"modsim/{__version__} (+https://github.com/top-maker/modpoll)"
+    )
+    assert sources.USER_AGENT is hub.USER_AGENT  # one construction for every request
 
 
 def test_simulation_data_rejects_scripts_and_plain_http():

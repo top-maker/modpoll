@@ -4,11 +4,15 @@ from modpoll_wot import AcquisitionError
 from modpoll_wot import MAX_BYTES, loads_model
 import requests
 
+from .login import headers
+
 
 def read_payload(location, *, timeout):
     """The exact bytes of a configuration, from a file or an http(s) URL, at most 1 MiB."""
     if location.startswith(("http://", "https://")):
-        with requests.get(location, timeout=timeout, stream=True) as response:
+        with requests.get(
+            location, headers=headers(), timeout=timeout, stream=True
+        ) as response:
             response.raise_for_status()
             chunks, size = [], 0
             for chunk in response.iter_content(65536):
