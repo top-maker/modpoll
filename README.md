@@ -23,7 +23,9 @@ cd packages/modpoll && uv run pytest
 
 Each package keeps its own `Makefile`, tests and release notes. `integration/` runs this commit's modsim and
 modpoll against each other with modpoll-wot's conformance model, over Modbus TCP and RTU on a virtual serial
-port (`uv run pytest integration` after the sync above). A release is a tag named after the package,
+port, and reads a round-trip matrix (data type × byte and word order × multiplier × boundary value) with
+modpoll, pymodbus and node-wot (`uv run pytest integration` after the sync above; node-wot needs
+`npm ci --prefix packages/modpoll/tools/wot-interop`). A release is a tag named after the package,
 for example `modsim-v2.0.0a13`, which runs that package's release workflow.
 
 The documentation site for all three packages is built from `docs/` with Sphinx, MyST and Furo. Its dependency

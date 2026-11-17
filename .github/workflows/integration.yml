@@ -1,6 +1,7 @@
 name: integration
 # SIM-08: this commit's modsim and modpoll against each other, with the conformance model of
-# modpoll-wot, over Modbus TCP and RTU on a virtual serial port.
+# modpoll-wot, over Modbus TCP and RTU on a virtual serial port. The round-trip matrix (data type ×
+# byte and word order × multiplier × boundary value) also reads with node-wot (WOT-07 step 2).
 
 on:
   push:
@@ -34,6 +35,13 @@ jobs:
           python-version: '3.12'
           enable-cache: true
           cache-dependency-glob: uv.lock
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.16.0'
+          cache: npm
+          cache-dependency-path: packages/modpoll/tools/wot-interop/package-lock.json
+      - name: Install the pinned node-wot Consumer
+        run: npm ci --prefix packages/modpoll/tools/wot-interop --ignore-scripts --no-audit --no-fund
       - name: Install every workspace member
         run: uv sync --locked --all-packages --all-extras --all-groups
       - name: Read modsim with modpoll
