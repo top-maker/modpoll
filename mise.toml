@@ -1,0 +1,6 @@
+[tools]
+gitleaks = "8.30.1"
+
+[tasks.gitleaks]
+description = "Scan the full Git history (all refs) for secrets (matches are redacted in the output)"
+run = "gitleaks git --redact --no-banner --config .gitleaks.toml --log-opts=--all ."

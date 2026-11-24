@@ -28,6 +28,8 @@ modpoll, pymodbus and node-wot (`uv run pytest integration` after the sync above
 `npm ci --prefix packages/modpoll/tools/wot-interop`). A release is a tag named after the package,
 for example `modsim-v2.0.0a13`, which runs that package's release workflow.
 
+Run `mise run gitleaks` for a full-history secret scan (it also runs in CI).
+
 The documentation site for all three packages is built from `docs/` with Sphinx, MyST and Furo. Its dependency
 group needs Python 3.13 or later:
 

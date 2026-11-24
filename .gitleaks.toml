@@ -1,0 +1,7 @@
+# gitleaks configuration. Keep it generic: it extends the built-in rules, and
+# a false positive is allowlisted by its exact fingerprint, never by a path or
+# a pattern that would also hide a real secret.
+title = "gitleaks config"
+
+[extend]
+useDefault = true
