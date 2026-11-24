@@ -12,11 +12,6 @@ concurrency:
   group: gitleaks-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  # Keep in step with [tools] gitleaks in mise.toml.
-  GITLEAKS_VERSION: 8.30.1
-  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
-
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
@@ -25,11 +20,9 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
-      - name: Install gitleaks
-        run: |
-          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-          curl -fsSL -o "$RUNNER_TEMP/$archive" "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$archive"
-          echo "$GITLEAKS_SHA256  $RUNNER_TEMP/$archive" | sha256sum -c -
-          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" gitleaks
-      # Scans the history reachable from the checked-out ref; matches are redacted.
-      - run: '"$RUNNER_TEMP/gitleaks" git --redact --no-banner --config .gitleaks.toml .'
+      # Same pinned gitleaks and task as on developer machines; scans all fetched refs, matches redacted.
+      - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
+        with:
+          version: '2026.10.1'
+          install_args: gitleaks
+      - run: mise run gitleaks
