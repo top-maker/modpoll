@@ -30,7 +30,7 @@ html_baseurl = "https://top-maker.github.io/modpoll/v2/"
 html_theme_options = {
     "source_repository": "https://github.com/top-maker/modpoll/",
     "source_branch": "v2",
-    "source_directory": "docs/",
+    "source_directory": "site/",
     "announcement": (
         "This is the 2.x preview of modpoll, modsim and modpoll-wot. "
         'Stable modpoll 1.x (CSV configurations) is documented at <a href="/modpoll/1.x/">1.x</a>.'

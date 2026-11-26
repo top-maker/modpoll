@@ -30,13 +30,13 @@ for example `modsim-v2.0.0a13`, which runs that package's release workflow.
 
 Run `mise run gitleaks` for a full-history secret scan (it also runs in CI).
 
-The documentation site for all three packages is built from `docs/` with Sphinx, MyST and Furo. Its dependency
+The documentation site for all three packages is built from `site/` with Sphinx, MyST and Furo. Its dependency
 group needs Python 3.13 or later:
 
 ```bash
 uv sync --only-group docs --python 3.14
-uv run --no-sync sphinx-build -W -b html docs docs/_build/html
-uv run --no-sync sphinx-autobuild docs docs/_build/html
+uv run --no-sync sphinx-build -W -b html site site/_build/html
+uv run --no-sync sphinx-autobuild site site/_build/html
 ```
 
 Pull requests build it with warnings as errors and check its links. Each package release publishes it from the

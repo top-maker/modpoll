@@ -9,7 +9,7 @@ on:
   push:
     branches: [v2]
     paths: &paths
-      - docs/**
+      - site/**
       - packages/**
       - pyproject.toml
       - uv.lock
@@ -46,7 +46,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
       - run: uv sync --locked --only-group docs
-      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/html"
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" site "$RUNNER_TEMP/html"
 
   links:
     name: docs links
@@ -61,7 +61,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
       - run: uv sync --locked --only-group docs
-      - run: uv run --no-sync sphinx-build -b linkcheck -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/linkcheck"
+      - run: uv run --no-sync sphinx-build -b linkcheck -d "$RUNNER_TEMP/doctrees" site "$RUNNER_TEMP/linkcheck"
 
   publish:
     name: docs publish
@@ -82,7 +82,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
       - run: uv sync --locked --only-group docs
-      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" docs "$RUNNER_TEMP/html"
+      - run: uv run --no-sync sphinx-build -W --keep-going -b html -d "$RUNNER_TEMP/doctrees" site "$RUNNER_TEMP/html"
       # The vocabulary is a machine identifier outside the version tree. Files of earlier contract versions are
       # never removed.
       - name: Collect the vocabulary

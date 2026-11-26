@@ -10,7 +10,7 @@ make test
 uv run python tools/generate-td.py --check
 ```
 
-The documentation site for all three tools is built from `docs/` at the repository root; see the repository
+The documentation site for all three tools is built from `site/` at the repository root; see the repository
 README.
 
 `examples/deployment.yaml` uses the ADAM-5017UH model and simulation data from Open Modbus Catalog and the

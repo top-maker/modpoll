@@ -7,7 +7,7 @@ members = ["packages/modpoll", "packages/modsim", "packages/modpoll-wot"]
 # Resolution covers Python 3.10 through 3.14; the CI matrix tests 3.10 and 3.14.
 environments = ["python_version < '3.15'"]
 
-# The documentation site for all three tools (DOC-02), built from docs/. Sphinx 9.2 needs Python 3.13, so only
+# The documentation site for all three tools (DOC-02), built from site/. Sphinx 9.2 needs Python 3.13, so only
 # this group is limited to it; the packages keep 3.10 through 3.14.
 [dependency-groups]
 docs = [
